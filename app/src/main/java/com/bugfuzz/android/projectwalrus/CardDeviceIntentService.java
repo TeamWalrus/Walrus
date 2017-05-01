@@ -26,10 +26,10 @@ public class CardDeviceIntentService extends IntentService {
         context.startService(intent);
     }
 
-    public static void startCardDataWrite(Context context, String cardData) {
+    public static void startCardDataWrite(Context context, CardData cardData) {
         Intent intent = new Intent(context, CardDeviceIntentService.class);
         intent.setAction(ACTION_WRITE_CARD_DATA);
-        intent.putExtra(EXTRA_CARD_DATA, cardData);
+        intent.putExtra(EXTRA_CARD_DATA, Parcels.wrap(cardData));
         context.startService(intent);
     }
 
