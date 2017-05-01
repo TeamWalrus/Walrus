@@ -84,17 +84,17 @@ public class CardDeviceService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Message msg = serviceHandler.obtainMessage();
         msg.obj = intent;
         serviceHandler.sendMessage(msg);
 
         return START_STICKY;
+    }
+    
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
