@@ -22,7 +22,7 @@ public class CardDeviceService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            final Intent intent = (Intent) msg.getData().get("intent");
+            final Intent intent = (Intent) msg.obj;
 
             final String action = intent.getAction();
             Intent result = new Intent(CardDeviceService.this, CardDeviceService.class);
@@ -91,9 +91,7 @@ public class CardDeviceService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Message msg = serviceHandler.obtainMessage();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("intent", intent);
-        msg.setData(bundle);
+        msg.obj = intent;
         serviceHandler.sendMessage(msg);
 
         return START_STICKY;
