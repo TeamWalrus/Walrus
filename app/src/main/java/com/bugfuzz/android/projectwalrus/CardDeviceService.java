@@ -101,6 +101,6 @@ public class CardDeviceService extends Service {
 
     @Override
     public void onDestroy() {
-        handlerThread.quit();
+        handlerThread.quitSafely();
     }
 }
