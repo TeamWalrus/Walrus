@@ -17,8 +17,15 @@
         </activity>
 
         <service
-            android:name=".CardDeviceIntentService"
-            android:exported="false"></service>
+            android:name=".CardDeviceService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </service>
     </application>
 
 </manifest>

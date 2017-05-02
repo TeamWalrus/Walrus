@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <!-- Proxmark3, CDC -->
+    <usb-device vendor-id="2d2d" product-id="504d" class="2" subclass="0" protocol="0" />
+</resources>

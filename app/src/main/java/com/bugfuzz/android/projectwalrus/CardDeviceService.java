@@ -25,27 +25,34 @@ public class CardDeviceService extends Service {
         public void handleMessage(Message msg) {
             final Intent intent = (Intent) msg.obj;
 
-            final String action = intent.getAction();
-            Intent result = new Intent(CardDeviceService.this, CardDeviceService.class);
+            switch (intent.getAction()) {
+                case "android.hardware.usb.action.USB_DEVICE_ATTACHED":
+                    return;
+            }
 
-            if (ACTION_READ_CARD_DATA.equals(action))
-                handleActionReadCardData(result);
-            else if (ACTION_WRITE_CARD_DATA.equals(action))
-                handleActionWriteCardData(result,
-                        (CardData) Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD_DATA)));
-            else
-                return;
+            Intent opResult = new Intent(CardDeviceService.this, CardDeviceService.class);
 
-            result.putExtra(EXTRA_OPERATION_ID, intent.getParcelableExtra(EXTRA_OPERATION_ID));
-            LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(result);
+            switch (intent.getAction()) {
+                case ACTION_READ_CARD_DATA:
+                    handleActionReadCardData(opResult);
+                    break;
+
+                case ACTION_WRITE_CARD_DATA:
+                    handleActionWriteCardData(opResult,
+                            (CardData) Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD_DATA)));
+                    break;
+            }
+
+            opResult.putExtra(EXTRA_OPERATION_ID, intent.getParcelableExtra(EXTRA_OPERATION_ID));
+            LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(opResult);
         }
 
-        private void handleActionReadCardData(Intent result) {
+        private void handleActionReadCardData(Intent opResult) {
             // TODO: Handle action
             throw new UnsupportedOperationException("Not yet implemented");
         }
 
-        private void handleActionWriteCardData(Intent result, CardData cardData) {
+        private void handleActionWriteCardData(Intent opResult, CardData cardData) {
             // TODO: Handle action
             throw new UnsupportedOperationException("Not yet implemented");
         }
