@@ -1,8 +1,12 @@
 package com.bugfuzz.android.projectwalrus;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -13,10 +17,28 @@ import android.os.Parcelable;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.felhr.usbserial.UsbSerialDevice;
+import com.felhr.usbserial.UsbSerialInterface;
+
 import org.parceler.Parcels;
 
 public class CardDeviceService extends Service {
     private final class ServiceHandler extends Handler {
+
+        UsbDevice usbDevice;
+        UsbSerialDevice serialDevice;
+
+        BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                if (device == usbDevice) {
+                    serialDevice.close();
+                    serialDevice = null;
+                    usbDevice = null;
+                }
+            }
+        };
+
         public ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -27,6 +49,17 @@ public class CardDeviceService extends Service {
 
             switch (intent.getAction()) {
                 case "android.hardware.usb.action.USB_DEVICE_ATTACHED":
+                    UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+                    usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                    serialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice,
+                            usbManager.openDevice(usbDevice));
+
+                    serialDevice.open();
+                    serialDevice.setBaudRate(115200);
+                    serialDevice.setDataBits(UsbSerialInterface.DATA_BITS_8);
+                    serialDevice.setParity(UsbSerialInterface.PARITY_NONE);
+                    serialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
+
                     return;
             }
 
@@ -69,7 +102,8 @@ public class CardDeviceService extends Service {
     private HandlerThread handlerThread;
     private ServiceHandler serviceHandler;
 
-    private static Intent getOperationIntent(Context context, String action, Parcelable operationID) {
+    private static Intent getOperationIntent(Context context, String action,
+                                             Parcelable operationID) {
         Intent intent = new Intent(context, CardDeviceService.class);
         intent.setAction(action);
         intent.putExtra(EXTRA_OPERATION_ID, operationID);
@@ -80,7 +114,8 @@ public class CardDeviceService extends Service {
         context.startService(getOperationIntent(context, ACTION_READ_CARD_DATA, operationID));
     }
 
-    public static void startCardDataWrite(Context context, Parcelable operationID, CardData cardData) {
+    public static void startCardDataWrite(Context context, Parcelable operationID,
+                                          CardData cardData) {
         Intent intent = getOperationIntent(context, ACTION_WRITE_CARD_DATA, operationID);
         intent.putExtra(EXTRA_CARD_DATA, Parcels.wrap(cardData));
         context.startService(intent);
