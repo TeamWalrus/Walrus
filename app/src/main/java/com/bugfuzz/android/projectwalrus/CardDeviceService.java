@@ -9,6 +9,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -61,15 +62,19 @@ public class CardDeviceService extends Service {
     private HandlerThread handlerThread;
     private ServiceHandler serviceHandler;
 
-    public static void startCardDataRead(Context context) {
+    private static Intent getOperationIntent(Context context, String action, Parcelable operationID) {
         Intent intent = new Intent(context, CardDeviceService.class);
-        intent.setAction(ACTION_READ_CARD_DATA);
-        context.startService(intent);
+        intent.setAction(action);
+        intent.putExtra(EXTRA_OPERATION_ID, operationID);
+        return intent;
     }
 
-    public static void startCardDataWrite(Context context, CardData cardData) {
-        Intent intent = new Intent(context, CardDeviceService.class);
-        intent.setAction(ACTION_WRITE_CARD_DATA);
+    public static void startCardDataRead(Context context, Parcelable operationID) {
+        context.startService(getOperationIntent(context, ACTION_READ_CARD_DATA, operationID));
+    }
+
+    public static void startCardDataWrite(Context context, Parcelable operationID, CardData cardData) {
+        Intent intent = getOperationIntent(context, ACTION_WRITE_CARD_DATA, operationID);
         intent.putExtra(EXTRA_CARD_DATA, Parcels.wrap(cardData));
         context.startService(intent);
     }
@@ -91,7 +96,7 @@ public class CardDeviceService extends Service {
 
         return START_STICKY;
     }
-    
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
