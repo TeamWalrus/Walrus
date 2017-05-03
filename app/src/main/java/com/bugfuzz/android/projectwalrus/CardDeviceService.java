@@ -5,9 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -17,6 +15,7 @@ import android.os.Parcelable;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.bugfuzz.android.projectwalrus.carddevice.CardDevice;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -27,6 +26,7 @@ public class CardDeviceService extends Service {
 
         UsbDevice usbDevice;
         UsbSerialDevice serialDevice;
+        CardDevice cardDevice;
 
         BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
