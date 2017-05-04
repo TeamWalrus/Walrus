@@ -17,8 +17,8 @@ public class DisplayDetailedCardviewActivity extends AppCompatActivity {
         String message = intent.getStringExtra(MyWalletActivity.EXTRA_MESSAGE);
 
         // Capture the layout's TextView and set the string as its text
-        TextView textView = (TextView) findViewById(R.id.CardTitle);
-        textView.setText(message);
+        TextView textView = (TextView) findViewById(R.id.txtDetailedViewCardTitle);
+        //textView.setText(message);
     }
 
 }
