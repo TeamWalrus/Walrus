@@ -2,5 +2,5 @@
 
 <resources>
     <!-- Proxmark3, CDC -->
-    <usb-device vendor-id="2d2d" product-id="504d" class="2" subclass="0" protocol="0" />
+    <usb-device vendor-id="11565" product-id="20557" />
 </resources>
