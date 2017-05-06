@@ -1,77 +1,128 @@
 package com.bugfuzz.android.projectwalrus;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-
-import java.util.ArrayList;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MyWalletActivity extends AppCompatActivity {
+    private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
-    public static final String EXTRA_MESSAGE = "com.bugfuzz.android.projectwalrus.MESSAGE";
+        private final LayoutInflater inflater;
+        String[] cardtitle = {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private static String LOG_TAG = "MyWalletActivity";
+                "Office door",
+                "Office elevator",
+                "Server room",
+                "Garage parking",
+                "Secret room",
+                "Red team1",
+                "Red team2",
+                "Red team3",
+                "Red team4",
+                "Random card"
 
-    @Override
+        };
+
+        final String[] cardUID = {
+
+                "252500000251566",
+                "252500000251567",
+                "252500000251568",
+                "252500000251569",
+                "252500000251516",
+                "252500000268987",
+                "252500151626516",
+                "252500012566512",
+                "252500011259789",
+                "252500000287008"
+
+        };
+
+        int[] cardimage = {
+                R.drawable.hid,
+                R.drawable.hid,
+                R.drawable.mifare,
+                R.drawable.hid,
+                R.drawable.mifare,
+                R.drawable.mifare,
+                R.drawable.hid,
+                R.drawable.mifare,
+                R.drawable.hid,
+                R.drawable.hid
+
+        };
+
+        public CardAdapter(Context context){
+            inflater = LayoutInflater.from(context);
+        }
+        @Override
+        public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            View view = inflater.inflate(R.layout.activity_mywallet_card_row,parent,false);
+            final CardViewHolder holder = new CardViewHolder(view);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DetailedCardViewActivity.sendCardDetails(MyWalletActivity.this,
+                            holder._cardTitle.getText().toString(),
+                            holder._cardUID.getText().toString());
+                }
+            });
+
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(CardViewHolder holder, int position) {
+
+            holder._cardTitle.setText(cardtitle[position]);
+            holder._cardUID.setText(cardUID[position]);
+            holder._imgCard.setImageResource(cardimage[position]);
+        }
+
+        @Override
+        public int getItemCount() {
+            return cardtitle.length;
+        }
+
+        public class CardViewHolder extends RecyclerView.ViewHolder {
+
+            ImageView _imgCard;
+            TextView _cardTitle;
+            TextView _cardUID;
+
+            public CardViewHolder(View itemView) {
+
+                super(itemView);
+                _imgCard = (ImageView) itemView.findViewById(R.id.imgCard);
+                _cardTitle = (TextView) itemView.findViewById(R.id.txtCardTitle);
+                _cardUID = (TextView) itemView.findViewById(R.id.txtCardUID);
+            }
+        }
+    }
+
+    private RecyclerView rview;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mywallet);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyRecyclerViewAdapter(getDataSet());
-        mRecyclerView.setAdapter(mAdapter);
+        rview = (RecyclerView) findViewById(R.id.my_recycler_view);
+        rview.addItemDecoration(new DividerItemDecoration(getApplicationContext()));
+        rview.setItemAnimator(new DefaultItemAnimator());
+        rview.setAdapter(new CardAdapter(this));
+        rview.setHasFixedSize(true);
+        rview.setLayoutManager(new LinearLayoutManager(MyWalletActivity.this));
 
-        // Code to Add an item with default animation
-        //((MyRecyclerViewAdapter) mAdapter).addItem(obj, index);
-
-        // Code to remove an item with default animation
-        //((MyRecyclerViewAdapter) mAdapter).deleteItem(index);
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ((MyRecyclerViewAdapter) mAdapter).setOnItemClickListener(new MyRecyclerViewAdapter
-                .MyClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                Log.i(LOG_TAG, " Clicked on Item " + position);
-                sendCardDetails(v);
-            }
-        });
-    }
-
-    private ArrayList<CardDataObject> getDataSet() {
-        ArrayList results = new ArrayList<CardDataObject>();
-        for (int index = 0; index < 20; index++) {
-            CardDataObject obj = new CardDataObject("Cardslot" + index);
-            results.add(index, obj);
-        }
-        return results;
-    }
-
-    /** Called when the user taps a card */
-    public void sendCardDetails(View view) {
-        // Do something in response to button
-        Intent intent = new Intent(this, DisplayDetailedCardviewActivity.class);
-
-        // EditText editText = (EditText) findViewById(R.id.editText);
-        // String message = editText.getText().toString();
-        String message = "Awesome";
-
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
     }
 }

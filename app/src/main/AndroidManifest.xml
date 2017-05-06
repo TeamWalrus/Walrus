@@ -8,18 +8,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".DetailedCardViewActivity"
+            android:label=" "
+            android:parentActivityName=".MyWalletActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
         <activity android:name=".MyWalletActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".DisplayDetailedCardviewActivity"
-                  android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                  android:label=" "
-                  android:parentActivityName="com.bugfuzz.android.projectwalrus.MyWalletActivity" >
-
         </activity>
     </application>
 
