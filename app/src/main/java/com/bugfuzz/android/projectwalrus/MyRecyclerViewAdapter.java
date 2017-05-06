@@ -23,7 +23,7 @@ public class MyRecyclerViewAdapter extends RecyclerView
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            cardName = (TextView) itemView.findViewById(R.id.textView_CardName);
+            cardName = (TextView) itemView.findViewById(R.id.txttitle);
             Log.i(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
         }

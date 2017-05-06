@@ -15,7 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayDetailedCardviewActivity">
+        <activity android:name=".DisplayDetailedCardviewActivity"
+                  android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                  android:label=" "
+                  android:parentActivityName="com.bugfuzz.android.projectwalrus.MyWalletActivity" >
+
         </activity>
     </application>
 
