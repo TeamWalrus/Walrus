@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -17,25 +16,28 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.bugfuzz.android.projectwalrus.carddevice.CardDevice;
 import com.felhr.usbserial.UsbSerialDevice;
-import com.felhr.usbserial.UsbSerialInterface;
 
 import org.parceler.Parcels;
+import org.reflections.Reflections;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public class CardDeviceService extends Service {
     private final class ServiceHandler extends Handler {
 
-        UsbDevice usbDevice;
+        android.hardware.usb.UsbDevice usbDevice;
         UsbSerialDevice serialDevice;
         CardDevice cardDevice;
 
         BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (device == usbDevice) {
-                    serialDevice.close();
-                    serialDevice = null;
-                    usbDevice = null;
-                }
+            android.hardware.usb.UsbDevice device = (android.hardware.usb.UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            if (device == usbDevice) {
+                serialDevice.close();
+                serialDevice = null;
+                usbDevice = null;
+            }
             }
         };
 
@@ -47,25 +49,22 @@ public class CardDeviceService extends Service {
         public void handleMessage(Message msg) {
             final Intent intent = (Intent) msg.obj;
 
-            switch (intent.getAction()) {
+            /*switch (intent.getAction()) {
                 case "android.hardware.usb.action.USB_DEVICE_ATTACHED":
                     UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
                     usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                     serialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice,
                             usbManager.openDevice(usbDevice));
 
-                    serialDevice.open();
-                    serialDevice.setBaudRate(115200);
-                    serialDevice.setDataBits(UsbSerialInterface.DATA_BITS_8);
-                    serialDevice.setParity(UsbSerialInterface.PARITY_NONE);
-                    serialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
-
-                    return;
-            }
+            }*/
 
             Intent opResult = new Intent(CardDeviceService.this, CardDeviceService.class);
 
             switch (intent.getAction()) {
+                case ACTION_SCAN_FOR_DEVICES:
+                    handleActionScanForDevices(opResult);
+                    break;
+
                 case ACTION_READ_CARD_DATA:
                     handleActionReadCardData(opResult);
                     break;
@@ -80,6 +79,46 @@ public class CardDeviceService extends Service {
             LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(opResult);
         }
 
+        private void handleActionScanForDevices(Intent opResult) {
+            UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+
+            for (android.hardware.usb.UsbDevice usbDevice : usbManager.getDeviceList().values()) {
+                for (Class<?> klass :
+                        new Reflections(BuildConfig.APPLICATION_ID)
+                                .getTypesAnnotatedWith(CardDevice.UsbDevice.class)) {
+                    Class<? extends CardDevice> cardDeviceKlass;
+                    try {
+                        cardDeviceKlass = (Class<? extends CardDevice>) klass;
+                    } catch (ClassCastException e) {
+                        continue;
+                    }
+                    CardDevice.UsbDevice usbInfo = cardDeviceKlass.getAnnotation(
+                            CardDevice.UsbDevice.class);
+                    if (usbInfo.vendorId() == usbDevice.getVendorId() &&
+                            usbInfo.productId() == usbDevice.getProductId()) {
+                        Constructor<? extends CardDevice> constructor;
+                        try {
+                             constructor = cardDeviceKlass.getConstructor(
+                                     android.hardware.usb.UsbDevice.class);
+                        } catch (NoSuchMethodException e) {
+                            continue;
+                        }
+
+                        CardDevice cardDevice;
+                        try {
+                            cardDevice = constructor.newInstance(usbDevice);
+                        } catch (InstantiationException e) {
+                            continue;
+                        } catch (IllegalAccessException e) {
+                            continue;
+                        } catch (InvocationTargetException e) {
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+
         private void handleActionReadCardData(Intent opResult) {
             // TODO: Handle action
             throw new UnsupportedOperationException("Not yet implemented");
@@ -91,6 +130,8 @@ public class CardDeviceService extends Service {
         }
     }
 
+    private static final String ACTION_SCAN_FOR_DEVICES = "com.bugfuzz.android.projectwalrus.action.SCAN_FOR_DEVICES";
+    private static final String ACTION_SCAN_FOR_DEVICES_RESULT = "com.bugfuzz.android.projectwalrus.action.SCAN_FOR_DEVICES_RESULT";
     private static final String ACTION_READ_CARD_DATA = "com.bugfuzz.android.projectwalrus.action.READ_CARD_DATA";
     private static final String ACTION_READ_CARD_DATA_RESULT = "com.bugfuzz.android.projectwalrus.action.READ_CARD_DATA_RESULT";
     private static final String ACTION_WRITE_CARD_DATA = "com.bugfuzz.android.projectwalrus.action.WRITE_CARD_DATA";
@@ -108,6 +149,10 @@ public class CardDeviceService extends Service {
         intent.setAction(action);
         intent.putExtra(EXTRA_OPERATION_ID, operationID);
         return intent;
+    }
+
+    public static void scanForDevices(Context context, Parcelable operationID) {
+        context.startService(getOperationIntent(context, ACTION_SCAN_FOR_DEVICES, operationID));
     }
 
     public static void startCardDataRead(Context context, Parcelable operationID) {
