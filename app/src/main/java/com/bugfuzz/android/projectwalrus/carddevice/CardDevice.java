@@ -17,5 +17,5 @@ public interface CardDevice {
     }
 
     public CardData readCardData();
-    public void writeCardData(CardData cardData);
+    public boolean writeCardData(CardData cardData);
 }

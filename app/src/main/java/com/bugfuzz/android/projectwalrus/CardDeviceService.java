@@ -22,15 +22,15 @@ import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CardDeviceService extends Service {
     private final class ServiceHandler extends Handler {
 
-        android.hardware.usb.UsbDevice usbDevice;
-        UsbSerialDevice serialDevice;
-        CardDevice cardDevice;
+        List<CardDevice> cardDevices = new ArrayList<>();
 
-        BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
+        /*BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
             android.hardware.usb.UsbDevice device = (android.hardware.usb.UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
             if (device == usbDevice) {
@@ -39,7 +39,7 @@ public class CardDeviceService extends Service {
                 usbDevice = null;
             }
             }
-        };
+        };*/
 
         public ServiceHandler(Looper looper) {
             super(looper);
@@ -88,8 +88,10 @@ public class CardDeviceService extends Service {
                                 .getTypesAnnotatedWith(CardDevice.UsbDevice.class)) {
                     Class<? extends CardDevice> cardDeviceKlass;
                     try {
+                        // TODO: how to handle unchecked cast?
                         cardDeviceKlass = (Class<? extends CardDevice>) klass;
                     } catch (ClassCastException e) {
+                        // TODO: check this is actually catching and working
                         continue;
                     }
                     CardDevice.UsbDevice usbInfo = cardDeviceKlass.getAnnotation(
@@ -114,19 +116,48 @@ public class CardDeviceService extends Service {
                         } catch (InvocationTargetException e) {
                             continue;
                         }
+
+                        cardDevices.add(cardDevice);
                     }
                 }
             }
         }
 
         private void handleActionReadCardData(Intent opResult) {
-            // TODO: Handle action
-            throw new UnsupportedOperationException("Not yet implemented");
+            switch (cardDevices.size()) {
+                case 0:
+                    // TODO: more description intent erroring
+                    opResult.putExtra(ACTION_READ_CARD_DATA_RESULT, (Parcelable) null);
+                    break;
+
+                case 1:
+                    opResult.putExtra(ACTION_READ_CARD_DATA_RESULT,
+                            Parcels.wrap(cardDevices.get(0).readCardData()));
+                    break;
+
+                default:
+                    // TODO: device selection, etc
+                    break;
+            }
         }
 
         private void handleActionWriteCardData(Intent opResult, CardData cardData) {
-            // TODO: Handle action
-            throw new UnsupportedOperationException("Not yet implemented");
+            // TODO: generic-ize with CardDevice somehow?
+            switch (cardDevices.size()) {
+                case 0:
+                    // TODO: more description intent erroring
+                    opResult.putExtra(ACTION_WRITE_CARD_DATA_RESULT, (Parcelable) null);
+                    break;
+
+                case 1:
+                    opResult.putExtra(ACTION_WRITE_CARD_DATA_RESULT,
+                            Parcels.wrap(cardDevices.get(0).writeCardData(cardData)));
+                    break;
+
+                default:
+                    // TODO: device selection, etc
+                    break;
+            }
         }
     }
 

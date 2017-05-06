@@ -12,7 +12,7 @@ public class ChameleonMiniDevice implements CardDevice {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public void writeCardData(CardData cardData) {
+    public boolean writeCardData(CardData cardData) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }
