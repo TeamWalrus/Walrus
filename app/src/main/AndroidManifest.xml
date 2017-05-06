@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".DetailedCardViewActivity"
-            android:label=" "
+            android:label="Card Details"
             android:parentActivityName=".MyWalletActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
@@ -20,6 +20,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".TerminalActivity"
+                  android:label="Terminal"
+                  android:parentActivityName=".MyWalletActivity"
+                  android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
     </application>
 

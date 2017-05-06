@@ -18,7 +18,7 @@ public class DetailedCardViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_detailed_cardview);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.detailedCardview_toolbar);
         setSupportActionBar(myToolbar);
         ActionBar ab = getSupportActionBar();
 
