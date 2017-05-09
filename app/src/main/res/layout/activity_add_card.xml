@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_weight="2"
+        android:background="@color/sea_green"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/button_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Save"/>
+
+        <Button
+            android:id="@+id/button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Cancel"/>
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_alignParentTop="@id/buttons"
+        android:layout_below="@id/buttons">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="5dp">
+
+                <ImageView
+                    android:id="@+id/Img_NewCard"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp"
+                    app:srcCompat="@android:drawable/ic_menu_camera"/>
+
+                <TextView android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:text="Card Name"/>
+
+                <EditText
+                    android:id="@+id/editTxt_NewCardName"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="5dp">
+                <TextView android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:text="Card Data"/>
+
+                <TextView
+                    android:id="@+id/editTxt_NewCardData"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"/>
+
+                <Button
+                    android:id="@+id/btn_NewReadCard"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Read Card"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="5dp">
+                <TextView android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:text="Notes" />
+
+                <EditText
+                    android:id="@+id/editTxt_NewCardNotes"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

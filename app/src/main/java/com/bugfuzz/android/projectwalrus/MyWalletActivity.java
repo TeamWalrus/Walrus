@@ -2,6 +2,7 @@ package com.bugfuzz.android.projectwalrus;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 public class MyWalletActivity extends AppCompatActivity {
 
+    // set out wallet menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mywallet_menu, menu);
@@ -146,6 +148,17 @@ public class MyWalletActivity extends AppCompatActivity {
         rview.setAdapter(new CardAdapter(this));
         rview.setHasFixedSize(true);
         rview.setLayoutManager(new LinearLayoutManager(MyWalletActivity.this));
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click action
+                Intent intent = new Intent(MyWalletActivity.this, AddCardActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 }

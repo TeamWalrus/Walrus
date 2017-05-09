@@ -20,8 +20,8 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        app:backgroundTint="@android:color/background_dark"
+        app:backgroundTint="@color/wet_asphalt"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"/>
 
 </RelativeLayout>
