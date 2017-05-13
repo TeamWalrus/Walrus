@@ -3,6 +3,7 @@
 <resources>
     <!-- Proxmark3, CDC -->
     <usb-device vendor-id="11565" product-id="20557" />
+    <usb-device vendor-id="39620" product-id="19343" />
 
     <!-- Chameleon Mini -->
     <usb-device vendor-id="5840" product-id="1202" />
