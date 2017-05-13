@@ -55,7 +55,9 @@ public class CardDeviceService extends Service {
                     break;
             }
 
-            opResult.putExtra(EXTRA_OPERATION_ID, intent.getParcelableExtra(EXTRA_OPERATION_ID));
+            Parcelable operationID = intent.getParcelableExtra(EXTRA_OPERATION_ID);
+            if (operationID != null)
+                opResult.putExtra(EXTRA_OPERATION_ID, operationID);
             LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(opResult);
         }
 
