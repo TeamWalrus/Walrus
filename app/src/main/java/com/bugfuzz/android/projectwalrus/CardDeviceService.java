@@ -30,17 +30,6 @@ public class CardDeviceService extends Service {
 
         List<CardDevice> cardDevices = new ArrayList<>();
 
-        /*BroadcastReceiver deviceDetachReceiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-            android.hardware.usb.UsbDevice device = (android.hardware.usb.UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-            if (device == usbDevice) {
-                serialDevice.close();
-                serialDevice = null;
-                usbDevice = null;
-            }
-            }
-        };*/
-
         public ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -48,15 +37,6 @@ public class CardDeviceService extends Service {
         @Override
         public void handleMessage(Message msg) {
             final Intent intent = (Intent) msg.obj;
-
-            /*switch (intent.getAction()) {
-                case "android.hardware.usb.action.USB_DEVICE_ATTACHED":
-                    UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-                    usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                    serialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice,
-                            usbManager.openDevice(usbDevice));
-
-            }*/
 
             Intent opResult = new Intent(CardDeviceService.this, CardDeviceService.class);
 
