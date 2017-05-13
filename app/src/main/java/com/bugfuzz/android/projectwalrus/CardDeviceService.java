@@ -1,7 +1,6 @@
 package com.bugfuzz.android.projectwalrus;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbManager;
@@ -13,17 +12,20 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.carddevice.CardDevice;
-import com.felhr.usbserial.UsbSerialDevice;
+import com.bugfuzz.android.projectwalrus.carddevice.ChameleonMiniDevice;
+import com.bugfuzz.android.projectwalrus.carddevice.Proxmark3Device;
 
 import org.parceler.Parcels;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CardDeviceService extends Service {
     private final class ServiceHandler extends Handler {
@@ -64,10 +66,25 @@ public class CardDeviceService extends Service {
         private void handleActionScanForDevices(Intent opResult) {
             UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
+            Set<Class<?>> cs = new HashSet<>();
+            cs.add(Proxmark3Device.class);
+            cs.add(ChameleonMiniDevice.class);
+
             for (android.hardware.usb.UsbDevice usbDevice : usbManager.getDeviceList().values()) {
-                for (Class<?> klass :
+                boolean alreadyCreated = false;
+                for (CardDevice cardDevice : cardDevices)
+                    if (cardDevice.getUsbDevice() == usbDevice) {
+                        alreadyCreated = true;
+                        break;
+                    }
+                if (alreadyCreated)
+                    continue;
+
+                for (Class<?> klass : cs
+                        /* TODO: fix and use
                         new Reflections(BuildConfig.APPLICATION_ID)
-                                .getTypesAnnotatedWith(CardDevice.UsbDevice.class)) {
+                                .getTypesAnnotatedWith(CardDevice.UsbCardDevice.class)*/
+                        ) {
                     Class<? extends CardDevice> cardDeviceKlass;
                     try {
                         // TODO: how to handle unchecked cast?
@@ -76,45 +93,54 @@ public class CardDeviceService extends Service {
                         // TODO: check this is actually catching and working
                         continue;
                     }
-                    CardDevice.UsbDevice usbInfo = cardDeviceKlass.getAnnotation(
-                            CardDevice.UsbDevice.class);
-                    if (usbInfo.vendorId() == usbDevice.getVendorId() &&
-                            usbInfo.productId() == usbDevice.getProductId()) {
-                        Constructor<? extends CardDevice> constructor;
-                        try {
-                             constructor = cardDeviceKlass.getConstructor(
-                                     android.hardware.usb.UsbDevice.class);
-                        } catch (NoSuchMethodException e) {
-                            continue;
-                        }
+                    CardDevice.UsbCardDevice usbInfo = cardDeviceKlass.getAnnotation(
+                            CardDevice.UsbCardDevice.class);
+                    for (CardDevice.UsbCardDevice.IDs ids : usbInfo.value()) {
+                        if (ids.vendorId() == usbDevice.getVendorId() &&
+                                ids.productId() == usbDevice.getProductId()) {
+                            Constructor<? extends CardDevice> constructor;
+                            try {
+                                constructor = cardDeviceKlass.getConstructor(
+                                        android.hardware.usb.UsbDevice.class);
+                            } catch (NoSuchMethodException e) {
+                                continue;
+                            }
 
-                        CardDevice cardDevice;
-                        try {
-                            cardDevice = constructor.newInstance(usbDevice);
-                        } catch (InstantiationException e) {
-                            continue;
-                        } catch (IllegalAccessException e) {
-                            continue;
-                        } catch (InvocationTargetException e) {
-                            continue;
-                        }
+                            CardDevice cardDevice;
+                            try {
+                                cardDevice = constructor.newInstance(usbDevice);
+                            } catch (InstantiationException e) {
+                                continue;
+                            } catch (IllegalAccessException e) {
+                                continue;
+                            } catch (InvocationTargetException e) {
+                                continue;
+                            }
 
-                        // TODO: removal handling
-                        cardDevices.add(cardDevice);
+                            // TODO: removal handling
+                            cardDevices.add(cardDevice);
+
+                            Toast toast = Toast.makeText(CardDeviceService.this,
+                                    cardDeviceKlass.getSimpleName() + " found (len = " +
+                                            cardDevices.size() + ")", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
                     }
                 }
             }
         }
 
         private void handleActionReadCardData(Intent opResult) {
+            opResult.setAction(ACTION_READ_CARD_DATA_RESULT);
+
             switch (cardDevices.size()) {
                 case 0:
                     // TODO: more description intent erroring
-                    opResult.putExtra(ACTION_READ_CARD_DATA_RESULT, (Parcelable) null);
+                    opResult.putExtra(EXTRA_CARD_DATA, (Parcelable) null);
                     break;
 
                 case 1:
-                    opResult.putExtra(ACTION_READ_CARD_DATA_RESULT,
+                    opResult.putExtra(EXTRA_CARD_DATA,
                             Parcels.wrap(cardDevices.get(0).readCardData()));
                     break;
 
@@ -125,15 +151,17 @@ public class CardDeviceService extends Service {
         }
 
         private void handleActionWriteCardData(Intent opResult, CardData cardData) {
+            opResult.setAction(ACTION_WRITE_CARD_DATA_RESULT);
+
             // TODO: generic-ize with CardDevice somehow?
             switch (cardDevices.size()) {
                 case 0:
                     // TODO: more description intent erroring
-                    opResult.putExtra(ACTION_WRITE_CARD_DATA_RESULT, (Parcelable) null);
+                    opResult.putExtra(EXTRA_CARD_WRITE_RESULT, false);
                     break;
 
                 case 1:
-                    opResult.putExtra(ACTION_WRITE_CARD_DATA_RESULT,
+                    opResult.putExtra(EXTRA_CARD_WRITE_RESULT,
                             cardDevices.get(0).writeCardData(cardData));
                     break;
 
@@ -153,6 +181,7 @@ public class CardDeviceService extends Service {
 
     public static final String EXTRA_OPERATION_ID = "com.bugfuzz.android.projectwalrus.extra.OPERATION_ID";
     public static final String EXTRA_CARD_DATA = "com.bugfuzz.android.projectwalrus.extra.CARD_DATA";
+    public static final String EXTRA_CARD_WRITE_RESULT = "com.bugfuzz.android.projectwalrus.extra.CARD_WRITE_RESULT";
 
     private HandlerThread handlerThread;
     private ServiceHandler serviceHandler;

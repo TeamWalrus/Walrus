@@ -9,13 +9,28 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface CardDevice {
+public abstract class CardDevice {
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface UsbDevice {
-        int vendorId();
-        int productId();
+    public @interface UsbCardDevice {
+        @Retention(RetentionPolicy.RUNTIME)
+        public @interface IDs {
+            int vendorId();
+            int productId();
+        }
+
+        IDs[] value();
     }
 
-    public CardData readCardData();
-    public boolean writeCardData(CardData cardData);
+    protected UsbDevice usbDevice;
+
+    public CardDevice(UsbDevice usbDevice) {
+        this.usbDevice = usbDevice;
+    }
+
+    public UsbDevice getUsbDevice() {
+        return usbDevice;
+    }
+
+    public abstract CardData readCardData();
+    public abstract boolean writeCardData(CardData cardData);
 }

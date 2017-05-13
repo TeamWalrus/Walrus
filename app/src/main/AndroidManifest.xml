@@ -25,7 +25,7 @@
 
         <activity
             android:name=".DebugActivity"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>

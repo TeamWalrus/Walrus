@@ -1,11 +1,22 @@
 package com.bugfuzz.android.projectwalrus.carddevice;
 
+import android.hardware.usb.UsbDevice;
+
 import com.bugfuzz.android.projectwalrus.CardData;
 
-@CardDevice.UsbDevice(vendorId = 11565, productId = 20557)
-public class Proxmark3 implements CardDevice {
+@CardDevice.UsbCardDevice({
+        @CardDevice.UsbCardDevice.IDs(vendorId = 11565, productId = 20557),
+        @CardDevice.UsbCardDevice.IDs(vendorId = 39620, productId = 19343)
+})
+public class Proxmark3Device extends CardDevice {
+    public Proxmark3Device(UsbDevice usbDevice) {
+        super(usbDevice);
+    }
+
     public CardData readCardData() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        CardData cd = new CardData();
+        cd.data = "hi";
+        return cd;
     }
 
     public boolean writeCardData(CardData cardData) {

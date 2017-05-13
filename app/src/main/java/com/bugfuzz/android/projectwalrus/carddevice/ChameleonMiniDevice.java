@@ -1,11 +1,13 @@
 package com.bugfuzz.android.projectwalrus.carddevice;
 
+import android.hardware.usb.UsbDevice;
+
 import com.bugfuzz.android.projectwalrus.CardData;
 
-@CardDevice.UsbDevice(vendorId = 5840, productId = 1202)
-public class ChameleonMiniDevice implements CardDevice {
+@CardDevice.UsbCardDevice({@CardDevice.UsbCardDevice.IDs(vendorId = 5840, productId = 1202)})
+public class ChameleonMiniDevice extends CardDevice {
     public ChameleonMiniDevice(UsbDevice usbDevice) {
-
+        super(usbDevice);
     }
 
     public CardData readCardData() {
