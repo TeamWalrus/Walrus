@@ -29,21 +29,23 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Read"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginLeft="16dp"
+        android:onClick="onReadCardClick"
+        android:text="Read"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="0dp"
+        android:onClick="onWriteCardClick"
         android:text="Write"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/button"
-        android:layout_marginLeft="0dp" />
+        app:layout_constraintLeft_toRightOf="@+id/button" />
 
     <TextView
         android:id="@+id/textView"

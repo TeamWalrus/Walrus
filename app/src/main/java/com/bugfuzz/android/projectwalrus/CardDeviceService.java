@@ -99,6 +99,7 @@ public class CardDeviceService extends Service {
                             continue;
                         }
 
+                        // TODO: removal handling
                         cardDevices.add(cardDevice);
                     }
                 }
@@ -133,7 +134,7 @@ public class CardDeviceService extends Service {
 
                 case 1:
                     opResult.putExtra(ACTION_WRITE_CARD_DATA_RESULT,
-                            Parcels.wrap(cardDevices.get(0).writeCardData(cardData)));
+                            cardDevices.get(0).writeCardData(cardData));
                     break;
 
                 default:
