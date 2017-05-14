@@ -29,6 +29,8 @@ public abstract class CardDevice {
         return usbDevice;
     }
 
+    public abstract String getName();
+
     public abstract CardData readCardData();
     public abstract boolean writeCardData(CardData cardData);
 }

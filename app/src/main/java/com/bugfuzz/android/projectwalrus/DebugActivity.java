@@ -19,7 +19,17 @@ public class DebugActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                case CardDeviceService.ACTION_READ_CARD_DATA_RESULT:
+                case CardDeviceService.ACTION_DEVICE_CHANGE: {
+                    String text = "Device " +
+                            intent.getStringExtra(CardDeviceService.EXTRA_DEVICE_NAME) + " " +
+                            (intent.getBooleanExtra(CardDeviceService.EXTRA_DEVICE_WAS_ADDED, false) ?
+                                    "connected" : "removed");
+                    Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+                    toast.show();
+                    break;
+                }
+
+                case CardDeviceService.ACTION_READ_CARD_DATA_RESULT: {
                     CardData cardData = Parcels.unwrap(
                             intent.getParcelableExtra(CardDeviceService.EXTRA_CARD_DATA));
                     if (cardData != null)
@@ -30,6 +40,7 @@ public class DebugActivity extends AppCompatActivity {
                         toast.show();
                     }
                     break;
+                }
             }
         }
     };
@@ -40,6 +51,7 @@ public class DebugActivity extends AppCompatActivity {
         setContentView(R.layout.activity_debug);
 
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CardDeviceService.ACTION_DEVICE_CHANGE);
         intentFilter.addAction(CardDeviceService.ACTION_READ_CARD_DATA_RESULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
 

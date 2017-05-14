@@ -10,6 +10,10 @@ public class ChameleonMiniDevice extends CardDevice {
         super(usbDevice);
     }
 
+    public String getName() {
+        return "Chameleon Mini";
+    }
+
     public CardData readCardData() {
         throw new UnsupportedOperationException("Not yet implemented");
     }

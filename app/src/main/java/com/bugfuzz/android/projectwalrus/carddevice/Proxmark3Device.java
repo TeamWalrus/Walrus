@@ -13,6 +13,10 @@ public class Proxmark3Device extends CardDevice {
         super(usbDevice);
     }
 
+    public String getName() {
+        return "Proxmark3";
+    }
+
     public CardData readCardData() {
         CardData cd = new CardData();
         cd.data = "hi";
