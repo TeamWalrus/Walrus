@@ -7,7 +7,7 @@ public final class CardData {
     public enum Type {
         HID,
         MIFARE
-    };
+    }
 
     public Type type;
     public String data;

@@ -24,12 +24,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CardDeviceService extends Service {
     private final class ServiceHandler extends Handler {
-
         List<CardDevice> cardDevices = new ArrayList<>();
 
         public ServiceHandler(Looper looper) {
