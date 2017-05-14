@@ -30,8 +30,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CardDeviceService extends Service {
     private final class ServiceHandler extends Handler {
@@ -135,8 +133,6 @@ public class CardDeviceService extends Service {
                             intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getName());
                             LocalBroadcastManager.getInstance(CardDeviceService.this)
                                     .sendBroadcast(intent);
-
-                            Logger.getAnonymousLogger().log(Level.INFO, "added, usb devices count " + cardDevices.size());
                         }
                     }
                 }
@@ -147,15 +143,13 @@ public class CardDeviceService extends Service {
             Iterator<CardDevice> it = cardDevices.iterator();
             while (it.hasNext()) {
                 CardDevice cardDevice = it.next();
-                if (cardDevice.getUsbDevice() == usbDevice) {
+                if (cardDevice.getUsbDevice().equals(usbDevice)) {
                     it.remove();
 
                     Intent intent = new Intent(ACTION_DEVICE_CHANGE);
                     intent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
                     intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getName());
                     LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(intent);
-
-                    Logger.getAnonymousLogger().log(Level.INFO, "removed, usb devices count " + cardDevices.size());
                 }
             }
         }
@@ -204,16 +198,19 @@ public class CardDeviceService extends Service {
 
     BroadcastReceiver usbDetachedReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            Logger.getAnonymousLogger().log(Level.INFO, "usb detached received");
-            if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED))
+            if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
+                intent.setClass(context, CardDeviceService.class);
                 context.startService(intent);
+            }
         }
     };
 
+    // Incoming external
     public static final String ACTION_SCAN_FOR_DEVICES = "com.bugfuzz.android.projectwalrus.action.SCAN_FOR_DEVICES";
     public static final String ACTION_READ_CARD_DATA = "com.bugfuzz.android.projectwalrus.action.READ_CARD_DATA";
     public static final String ACTION_WRITE_CARD_DATA = "com.bugfuzz.android.projectwalrus.action.WRITE_CARD_DATA";
 
+    // Outgoing external
     public static final String ACTION_DEVICE_CHANGE = "com.bugfuzz.android.projectwalrus.action.DEVICE_CHANGE";
     public static final String ACTION_READ_CARD_DATA_RESULT = "com.bugfuzz.android.projectwalrus.action.READ_CARD_DATA_RESULT";
     public static final String ACTION_WRITE_CARD_DATA_RESULT = "com.bugfuzz.android.projectwalrus.action.WRITE_CARD_DATA_RESULT";
@@ -230,8 +227,7 @@ public class CardDeviceService extends Service {
 
     private static Intent getOperationIntent(Context context, String action,
                                              Parcelable operationID) {
-        Intent intent = new Intent(context, CardDeviceService.class);
-        intent.setAction(action);
+        Intent intent = new Intent(action, null, context, CardDeviceService.class);
         intent.putExtra(EXTRA_OPERATION_ID, operationID);
         return intent;
     }
@@ -255,7 +251,7 @@ public class CardDeviceService extends Service {
     public void onCreate() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        LocalBroadcastManager.getInstance(this).registerReceiver(usbDetachedReceiver, intentFilter);
+        registerReceiver(usbDetachedReceiver, intentFilter);
 
         handlerThread = new HandlerThread("CardDeviceServiceHandlerThread",
                 Process.THREAD_PRIORITY_BACKGROUND);
