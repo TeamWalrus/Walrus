@@ -1,6 +1,7 @@
 package com.bugfuzz.android.projectwalrus.carddevice;
 
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
 
 import com.bugfuzz.android.projectwalrus.CardData;
 
@@ -20,9 +21,11 @@ public abstract class CardDevice {
     }
 
     protected UsbDevice usbDevice;
+    protected UsbDeviceConnection usbDeviceConnection;
 
-    public CardDevice(UsbDevice usbDevice) {
+    public CardDevice(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
         this.usbDevice = usbDevice;
+        this.usbDeviceConnection = usbDeviceConnection;
     }
 
     public UsbDevice getUsbDevice() {

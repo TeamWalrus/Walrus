@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -108,16 +109,20 @@ public class CardDeviceService extends Service {
                     for (CardDevice.UsbCardDevice.IDs ids : usbInfo.value()) {
                         if (ids.vendorId() == usbDevice.getVendorId() &&
                                 ids.productId() == usbDevice.getProductId()) {
+                            UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(
+                                    usbDevice);
+
                             Constructor<? extends CardDevice> constructor;
                             try {
-                                constructor = cardDeviceKlass.getConstructor(UsbDevice.class);
+                                constructor = cardDeviceKlass.getConstructor(UsbDevice.class,
+                                        UsbDeviceConnection.class);
                             } catch (NoSuchMethodException e) {
                                 continue;
                             }
 
                             CardDevice cardDevice;
                             try {
-                                cardDevice = constructor.newInstance(usbDevice);
+                                cardDevice = constructor.newInstance(usbDevice, usbDeviceConnection);
                             } catch (InstantiationException e) {
                                 continue;
                             } catch (IllegalAccessException e) {
@@ -220,7 +225,6 @@ public class CardDeviceService extends Service {
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.extra.DEVICE_NAME";
     public static final String EXTRA_CARD_DATA = "com.bugfuzz.android.projectwalrus.extra.CARD_DATA";
     public static final String EXTRA_CARD_WRITE_RESULT = "com.bugfuzz.android.projectwalrus.extra.CARD_WRITE_RESULT";
-
 
     private HandlerThread handlerThread;
     private ServiceHandler serviceHandler;

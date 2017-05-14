@@ -1,6 +1,7 @@
 package com.bugfuzz.android.projectwalrus.carddevice;
 
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
 
 import com.bugfuzz.android.projectwalrus.CardData;
 
@@ -8,9 +9,9 @@ import com.bugfuzz.android.projectwalrus.CardData;
         @CardDevice.UsbCardDevice.IDs(vendorId = 11565, productId = 20557),
         @CardDevice.UsbCardDevice.IDs(vendorId = 39620, productId = 19343)
 })
-public class Proxmark3Device extends CardDevice {
-    public Proxmark3Device(UsbDevice usbDevice) {
-        super(usbDevice);
+public class Proxmark3Device extends UsbSerialCardDevice {
+    public Proxmark3Device(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
+        super(usbDevice, usbDeviceConnection);
     }
 
     public String getName() {
