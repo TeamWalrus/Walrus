@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class MyWalletActivity extends AppCompatActivity {
 
@@ -42,6 +45,7 @@ public class MyWalletActivity extends AppCompatActivity {
     private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
         private final LayoutInflater inflater;
+
         String[] cardtitle = {
 
                 "Office door",
@@ -143,7 +147,7 @@ public class MyWalletActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mywallet);
 
         rview = (RecyclerView) findViewById(R.id.my_recycler_view);
-        rview.addItemDecoration(new DividerItemDecoration(getApplicationContext()));
+        //rview.addItemDecoration(new DividerItemDecoration(getApplicationContext()));
         rview.setItemAnimator(new DefaultItemAnimator());
         rview.setAdapter(new CardAdapter(this));
         rview.setHasFixedSize(true);
@@ -159,6 +163,25 @@ public class MyWalletActivity extends AppCompatActivity {
             }
         });
 
+        DatabaseHandler db = new DatabaseHandler(this);
+
+        /**
+         * CRUD Operations
+         * */
+        // Inserting cards
+        Log.d("Insert: ", "Inserting ..");
+        //db.addCard(new CardObject("asd"));
+
+        // Reading all cards
+        Log.d("Reading: ", "Reading all cards..");
+        List<CardObject> cards = db.getAllCards();
+
+        for (CardObject cn : cards) {
+            String log = "Id: " + cn.getID() + " ,Name: " + cn.getName();
+            // Writing Contacts to log
+            Log.d("Name: ", log);
+
+        }
 
     }
 }

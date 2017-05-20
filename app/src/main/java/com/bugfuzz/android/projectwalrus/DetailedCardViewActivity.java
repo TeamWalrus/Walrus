@@ -62,11 +62,8 @@ public class DetailedCardViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_editCard:
-                Context contextEdit = getApplicationContext();
-                CharSequence testTxtEdit = "edit card selected";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toastEdit = Toast.makeText(contextEdit, testTxtEdit, duration);
-                toastEdit.show();
+                Intent intent = new Intent(this, EditCardActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.action_deleteCard:
                 Context contextDelete = getApplicationContext();

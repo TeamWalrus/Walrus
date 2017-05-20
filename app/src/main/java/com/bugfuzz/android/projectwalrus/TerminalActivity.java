@@ -1,5 +1,6 @@
 package com.bugfuzz.android.projectwalrus;
 
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
