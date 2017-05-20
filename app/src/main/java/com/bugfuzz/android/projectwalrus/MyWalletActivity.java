@@ -3,11 +3,13 @@ package com.bugfuzz.android.projectwalrus;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,26 +22,6 @@ import android.widget.TextView;
 import java.util.List;
 
 public class MyWalletActivity extends AppCompatActivity {
-
-    // set out wallet menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mywallet_menu, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_terminalActivity:
-                Intent intent = new Intent(this, TerminalActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
 
     private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
@@ -142,9 +124,32 @@ public class MyWalletActivity extends AppCompatActivity {
 
     private RecyclerView rview;
 
+    // set out wallet menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mywallet_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_terminalActivity:
+                Intent intent = new Intent(this, TerminalActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mywallet);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        ActionBar ab = getSupportActionBar();
 
         rview = (RecyclerView) findViewById(R.id.my_recycler_view);
         //rview.addItemDecoration(new DividerItemDecoration(getApplicationContext()));

@@ -7,17 +7,24 @@
     android:layout_height="match_parent"
     tools:context="com.bugfuzz.android.projectwalrus.DetailedCardViewActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/detailedCardview_toolbar"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:elevation="4dp"
-        android:background="@color/sea_green"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:id="@+id/appBarLayout">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <View
         android:id="@+id/card_header"
@@ -30,15 +37,15 @@
         android:background="@drawable/rounded_cardview"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/detailedCardview_toolbar"/>
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"/>
 
     <TextView
         android:id="@+id/txtView_DetailedViewCardTitle"
         android:layout_width="182dp"
         android:layout_height="32dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
         android:text="Office Entrace"
