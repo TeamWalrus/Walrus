@@ -1,6 +1,9 @@
 package com.bugfuzz.android.projectwalrus;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -66,11 +69,25 @@ public class DetailedCardViewActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_deleteCard:
-                Context contextDelete = getApplicationContext();
-                CharSequence testTxtDelete = "delete card selected";
-                int duration2 = Toast.LENGTH_SHORT;
-                Toast toastDelete = Toast.makeText(contextDelete, testTxtDelete, duration2);
-                toastDelete.show();
+                AlertDialog.Builder alert = new AlertDialog.Builder(
+                        DetailedCardViewActivity.this);
+                alert.setTitle("Delete Confirmation");
+                alert.setMessage("This card entry will disappear from your device. Are you sure you want to continue?");
+                alert.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dismiss dialogs for now
+                        dialog.dismiss();
+                    }
+                });
+                alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dismiss dialogs for now
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
