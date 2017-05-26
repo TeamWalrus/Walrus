@@ -16,11 +16,10 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.carddevice.CardDevice;
 import com.bugfuzz.android.projectwalrus.carddevice.ChameleonMiniDevice;
-import com.bugfuzz.android.projectwalrus.carddevice.Proxmark3Device;
+import com.bugfuzz.android.projectwalrus.carddevice.proxmark3.Proxmark3Device;
 
 import org.parceler.Parcels;
 
