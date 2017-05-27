@@ -11,42 +11,39 @@ import com.felhr.usbserial.UsbSerialInterface;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CardDevice.UsbCardDevice({
         @CardDevice.UsbCardDevice.IDs(vendorId = 11565, productId = 20557),
         @CardDevice.UsbCardDevice.IDs(vendorId = 39620, productId = 19343)
 })
 public class Proxmark3Device extends UsbSerialCardDevice {
+    private interface CommandHandler<R> {
+        R handle(Proxmark3Command command);
+    }
+
+    private class CommandWaiter implements CommandHandler<Proxmark3Command> {
+        private Proxmark3Command.Op op;
+
+        public CommandWaiter(Proxmark3Command.Op op) {
+            this.op = op;
+        }
+
+        public Proxmark3Command handle(Proxmark3Command command) {
+            return command.op == op ? command : null;
+        }
+    }
+
     private static final int DEFAULT_TIMEOUT = 20 * 1000;
 
     private byte[] buffer = new byte[0]; /* todo: use better class */
     private BlockingQueue<Proxmark3Command> readQueue = new LinkedBlockingQueue<>();
     private boolean reading = false;
-
-    private UsbSerialInterface.UsbReadCallback readCallback = new UsbSerialInterface.UsbReadCallback() {
-        @Override
-        public void onReceivedData(byte[] bytes)  {
-            buffer = ArrayUtils.addAll(buffer, bytes);
-            while (buffer.length >= Proxmark3Command.getByteLength()) {
-                Proxmark3Command command = Proxmark3Command.fromBytes(
-                        Arrays.copyOf(buffer, Proxmark3Command.getByteLength()));
-                buffer = ArrayUtils.subarray(buffer, Proxmark3Command.getByteLength(), buffer.length);
-
-                if (reading)
-                    try {
-                        readQueue.put(command);
-                    } catch (InterruptedException e) {
-                    }
-                else
-                    Logger.getLogger("proxmark").log(Level.INFO, "dropped: " + command.op);
-            }
-        }
-    };
 
     public Proxmark3Device(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
         super(usbDevice, usbDeviceConnection);
@@ -61,7 +58,25 @@ public class Proxmark3Device extends UsbSerialCardDevice {
 
         usbSerialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
 
-        usbSerialDevice.read(readCallback);
+        usbSerialDevice.read(new UsbSerialInterface.UsbReadCallback() {
+            @Override
+            public void onReceivedData(byte[] bytes) {
+                buffer = ArrayUtils.addAll(buffer, bytes);
+                while (buffer.length >= Proxmark3Command.getByteLength()) {
+                    Proxmark3Command command = Proxmark3Command.fromBytes(
+                            Arrays.copyOf(buffer, Proxmark3Command.getByteLength()));
+                    buffer = ArrayUtils.subarray(buffer, Proxmark3Command.getByteLength(), buffer.length);
+
+                    if (reading)
+                        try {
+                            readQueue.put(command);
+                        } catch (InterruptedException e) {
+                        }
+                    else
+                        Logger.getLogger("proxmark").log(Level.INFO, "dropped: " + command.op);
+                }
+            }
+        });
     }
 
     public String getName() {
@@ -73,12 +88,12 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         usbSerialDevice.write(command.toBytes()); /* TODO: "buffer" send */
     }
 
-    private Proxmark3Command receiveCommand(Proxmark3Command.Op requiredOp, int timeout) {
+    private <R> R receiveCommand(CommandHandler<R> handler, int timeout) {
         long end = timeout != 0 ? System.currentTimeMillis() + timeout : 0;
 
-        Proxmark3Command command = null;
-        while ((end == 0 || System.currentTimeMillis() < end) &&
-                (command == null || (requiredOp != null && command.op != requiredOp)))
+        R handled = null;
+        while (end == 0 || System.currentTimeMillis() < end) {
+            Proxmark3Command command;
             try {
                 command = readQueue.take();
                 Logger.getLogger("proxmark").log(Level.INFO, "got: " + command.op);
@@ -86,15 +101,20 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                 break;
             }
 
-        return command;
+            handled = handler.handle(command);
+            if (handled != null)
+                break;
+        }
+
+        return handled;
     }
 
-    private Proxmark3Command sendReceiveCommand(Proxmark3Command command, Proxmark3Command.Op requiredOp, int timeout) {
+    private <R> R sendReceiveCommand(Proxmark3Command command, CommandHandler<R> handler, int timeout) {
         readQueue.clear();
         reading = true;
         try {
             sendCommand(command);
-            return receiveCommand(requiredOp, timeout);
+            return receiveCommand(handler, timeout);
         } finally {
             reading = false;
         }
@@ -106,11 +126,11 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         // TODO: only tune once
         Proxmark3Command command = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{1, 0, 0}),
-                Proxmark3Command.Op.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT);
+                new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING), DEFAULT_TIMEOUT);
         if (command == null)
             return null;
 
-        // TODO: use tune result (in args)
+        // TODO: use tune result (in args), only continue when ready. give status, allow cancel
         float v_125 = (command.args[0] & 0xffff) / 1000,
                 v_134 = (command.args[0] >> 16) / 1000,
                 peak_f = 12000000 / ((command.args[2] & 0xffff) + 1),
@@ -119,15 +139,25 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         Logger.getLogger("proxmark").log(Level.INFO, "tuning: v125 = " + v_125 + "V, v_134 = " +
                 v_134 + "V, peak_f = " + (peak_f / 1000) + "kHz, peak_v = " + peak_v + "V");
 
-        command = sendReceiveCommand(
+        String data = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{1, 0, 0}),
-                Proxmark3Command.Op.DEBUG_PRINT_STRING, DEFAULT_TIMEOUT);
+                new CommandHandler<String>() {
+                    @Override
+                    public String handle(Proxmark3Command command) {
+                        if (command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
+                            return null;
+                        Matcher matcher = Pattern.compile("TAG ID: ([0-9a-f]+)", Pattern.CASE_INSENSITIVE)
+                                .matcher(new String(command.data));
+                        Logger.getLogger("proxmark").log(Level.INFO, "matching: " + new String(command.data) + ", " + matcher.matches());
+                        return matcher.find() ? matcher.group(1) : null;
+                    }
+                }, DEFAULT_TIMEOUT);
         if (command == null)
             return null;
 
         CardData result = new CardData();
         result.type = CardData.Type.HID;
-        result.data = new String(command.data); // TODO: lol
+        result.data = new String(data); // TODO: lol
 
         return result;
     }
