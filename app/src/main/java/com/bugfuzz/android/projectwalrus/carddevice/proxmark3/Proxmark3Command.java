@@ -6,8 +6,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.EnumSet;
 
-public class Proxmark3Command {
-    public enum Op {
+class Proxmark3Command {
+    enum Op {
         DEBUG_PRINT_STRING(0x100),
 
         HID_DEMOD_FSK(0x20b),
@@ -37,15 +37,15 @@ public class Proxmark3Command {
         }
     }
 
-    public Op op;
-    public long[] args;
-    public byte[] data;
+    Op op;
+    long[] args;
+    byte[] data;
 
-    public static int getByteLength() {
+    static int getByteLength() {
         return 8 + 3 * 8 + 512;
     }
 
-    public static Proxmark3Command fromBytes(byte[] bytes) {
+    static Proxmark3Command fromBytes(byte[] bytes) {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         bb.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -61,7 +61,7 @@ public class Proxmark3Command {
         return new Proxmark3Command(op, args, data);
     }
 
-    public Proxmark3Command(Op op, long[] args, byte[] data) {
+    Proxmark3Command(Op op, long[] args, byte[] data) {
         this.op = op;
 
         if (args.length != 3)
@@ -73,11 +73,11 @@ public class Proxmark3Command {
         this.data = data;
     }
 
-    public Proxmark3Command(Op op, long[] args) {
+    Proxmark3Command(Op op, long[] args) {
         this(op, args, new byte[512]);
     }
 
-    public byte[] toBytes() {
+    byte[] toBytes() {
         ByteBuffer bb = ByteBuffer.allocate(getByteLength());
         bb.order(ByteOrder.LITTLE_ENDIAN);
 
