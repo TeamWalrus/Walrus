@@ -9,10 +9,12 @@ import com.bugfuzz.android.projectwalrus.carddevice.UsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -30,7 +32,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     private class CommandWaiter implements CommandHandler<Proxmark3Command> {
         private Proxmark3Command.Op op;
 
-        public CommandWaiter(Proxmark3Command.Op op) {
+        CommandWaiter(Proxmark3Command.Op op) {
             this.op = op;
         }
 
@@ -89,13 +91,22 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     }
 
     private <R> R receiveCommand(CommandHandler<R> handler, int timeout) {
-        long end = timeout != 0 ? System.currentTimeMillis() + timeout : 0;
+        long start = System.currentTimeMillis();
 
         R handled = null;
-        while (end == 0 || System.currentTimeMillis() < end) {
+        for(;;) {
+            long thisTimeout;
+            if (timeout == 0)
+                thisTimeout = 0;
+            else {
+                thisTimeout = timeout - (System.currentTimeMillis() - start);
+                if (thisTimeout <= 0)
+                    break;
+            }
+
             Proxmark3Command command;
             try {
-                command = readQueue.take();
+                command = readQueue.poll(thisTimeout, TimeUnit.MILLISECONDS);
                 Logger.getLogger("proxmark").log(Level.INFO, "got: " + command.op);
             } catch (InterruptedException e) {
                 break;
@@ -152,12 +163,12 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                         return matcher.find() ? matcher.group(1) : null;
                     }
                 }, DEFAULT_TIMEOUT);
-        if (command == null)
+        if (data == null)
             return null;
 
         CardData result = new CardData();
         result.type = CardData.Type.HID;
-        result.data = new String(data); // TODO: lol
+        result.data = data; // TODO: lol
 
         return result;
     }
