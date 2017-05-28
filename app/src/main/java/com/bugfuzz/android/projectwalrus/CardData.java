@@ -11,4 +11,9 @@ public final class CardData {
 
     public Type type;
     public String data;
+
+    public CardData(Type type, String data) {
+        this.type = type;
+        this.data = data;
+    }
 }

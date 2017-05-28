@@ -9,7 +9,6 @@ import com.bugfuzz.android.projectwalrus.carddevice.UsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.SystemUtils;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
@@ -94,7 +93,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         long start = System.currentTimeMillis();
 
         R handled = null;
-        for(;;) {
+        for (; ; ) {
             long thisTimeout;
             if (timeout == 0)
                 thisTimeout = 0;
@@ -132,8 +131,6 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     }
 
     public CardData readCardData() {
-        // TODO: uncrappify
-
         // TODO: only tune once
         Proxmark3Command command = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{1, 0, 0}),
@@ -157,20 +154,17 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                     public String handle(Proxmark3Command command) {
                         if (command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
                             return null;
-                        Matcher matcher = Pattern.compile("TAG ID: ([0-9a-f]+)", Pattern.CASE_INSENSITIVE)
+                        Matcher matcher = Pattern.compile("TAG ID: ([0-9a-fA-F]+)")
                                 .matcher(new String(command.data));
-                        Logger.getLogger("proxmark").log(Level.INFO, "matching: " + new String(command.data) + ", " + matcher.matches());
+                        Logger.getLogger("proxmark").log(Level.INFO, "matching: " +
+                                new String(command.data) + ", " + matcher.matches());
                         return matcher.find() ? matcher.group(1) : null;
                     }
                 }, DEFAULT_TIMEOUT);
         if (data == null)
             return null;
 
-        CardData result = new CardData();
-        result.type = CardData.Type.HID;
-        result.data = data; // TODO: lol
-
-        return result;
+        return new CardData(CardData.Type.HID, data /* TODO: lol */);
     }
 
     public boolean writeCardData(CardData cardData) {
