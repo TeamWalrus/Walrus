@@ -4,6 +4,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_readCard">Read Card</string>
     <string name="btn_writeCard">Write Card</string>
+    <string name="btn_emulateCard">Emulate Card</string>
     <string name="btn_sendTerminalCmd">Send</string>
     <string name="btn_scanFD">ScanFD</string>
     <string name="textView_title_cardName">Name</string>

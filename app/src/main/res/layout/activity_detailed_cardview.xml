@@ -101,6 +101,18 @@
         app:layout_constraintTop_toBottomOf="@+id/card_header"
         app:layout_constraintVertical_bias="0.0"/>
 
+    <Button
+        android:id="@+id/button_emulate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_emulateCard"
+        app:layout_constraintLeft_toLeftOf="@+id/card_body"
+        app:layout_constraintRight_toRightOf="@+id/card_body"
+        app:layout_constraintTop_toTopOf="@+id/card_body"/>
+
     <TextView
         android:id="@+id/txtView_DateAcquired_title"
         android:layout_width="328dp"
@@ -109,11 +121,11 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:text="@string/textView_title_dateAcquired"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
-        app:layout_constraintTop_toTopOf="@+id/card_body"/>
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/button_emulate"/>
 
     <TextView
         android:id="@+id/txtView_DetailedCardView_CardAcquiredDate"
@@ -123,10 +135,10 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="3dp"
         android:text="@string/hint_dateAcquired_format"
         android:textSize="12sp"
-        app:layout_constraintHorizontal_bias="0.72"
+        app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
         app:layout_constraintTop_toBottomOf="@+id/txtView_DateAcquired_title"/>
@@ -139,7 +151,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="@string/textView_title_cardNotes"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
@@ -153,10 +165,10 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="7dp"
         android:text="@string/hint_cardNotes"
         android:textSize="12sp"
-        app:layout_constraintHorizontal_bias="0.72"
+        app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
         app:layout_constraintTop_toBottomOf="@+id/txtView_CardNotes_title"/>
