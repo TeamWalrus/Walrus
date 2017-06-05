@@ -149,7 +149,6 @@ public class MyWalletActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mywallet);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-        ActionBar ab = getSupportActionBar();
 
         rview = (RecyclerView) findViewById(R.id.my_recycler_view);
         rview.setItemAnimator(new DefaultItemAnimator());
