@@ -152,7 +152,6 @@ public class MyWalletActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
 
         rview = (RecyclerView) findViewById(R.id.my_recycler_view);
-        //rview.addItemDecoration(new DividerItemDecoration(getApplicationContext()));
         rview.setItemAnimator(new DefaultItemAnimator());
         rview.setAdapter(new CardAdapter(this));
         rview.setHasFixedSize(true);
