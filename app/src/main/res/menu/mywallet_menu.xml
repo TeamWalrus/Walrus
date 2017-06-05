@@ -5,8 +5,9 @@
 
 
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_terminalActivity"
-          android:orderInCategory="1"
-          android:title="Terminal"
-          app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_terminalActivity"
+        android:orderInCategory="1"
+        android:title="@string/actionBar_terminal"
+        app:showAsAction="never"/>
 </menu>
