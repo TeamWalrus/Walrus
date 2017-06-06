@@ -1,4 +1,4 @@
-package com.bugfuzz.android.projectwalrus;
+package com.bugfuzz.android.projectwalrus.data;
 
 import android.content.ContentValues;
 import android.content.Context;

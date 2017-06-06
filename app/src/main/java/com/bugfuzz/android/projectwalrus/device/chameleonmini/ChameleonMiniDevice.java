@@ -1,9 +1,11 @@
-package com.bugfuzz.android.projectwalrus.carddevice;
+package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
-import com.bugfuzz.android.projectwalrus.CardData;
+import com.bugfuzz.android.projectwalrus.device.CardData;
+import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.UsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.UnsupportedEncodingException;

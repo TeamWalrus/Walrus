@@ -1,4 +1,4 @@
-package com.bugfuzz.android.projectwalrus.carddevice.proxmark3;
+package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
 import android.util.LongSparseArray;
 

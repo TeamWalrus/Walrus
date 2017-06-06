@@ -12,12 +12,12 @@
         android:theme="@style/AppTheme">
 
         <service
-            android:name=".CardDeviceService"
+            android:name=".device.CardDeviceService"
             android:exported="false">
         </service>
 
         <activity
-            android:name=".DebugActivity"
+            android:name=".ui.DebugActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
@@ -28,7 +28,7 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
-        <activity android:name=".MyWalletActivity"
+        <activity android:name=".ui.MyWalletActivity"
                   android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -37,29 +37,29 @@
         </activity>
 
         <activity
-            android:name=".DetailedCardViewActivity"
+            android:name=".ui.DetailedCardViewActivity"
             android:label="Card Details"
-            android:parentActivityName=".MyWalletActivity"
+            android:parentActivityName=".ui.MyWalletActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
-            android:name=".TerminalActivity"
+            android:name=".ui.TerminalActivity"
             android:label="Terminal"
-            android:parentActivityName=".MyWalletActivity"
+            android:parentActivityName=".ui.MyWalletActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
-            android:name=".AddCardActivity"
+            android:name=".ui.AddCardActivity"
             android:label="Add Card"
-            android:parentActivityName=".MyWalletActivity"
+            android:parentActivityName=".ui.MyWalletActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <activity android:name=".EditCardActivity"
+        <activity android:name=".ui.EditCardActivity"
             android:label="Edit Card"
-            android:parentActivityName=".DetailedCardViewActivity"
+            android:parentActivityName=".ui.DetailedCardViewActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

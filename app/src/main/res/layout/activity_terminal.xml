@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    tools:context="com.bugfuzz.android.projectwalrus.TerminalActivity">
+    tools:context="com.bugfuzz.android.projectwalrus.ui.TerminalActivity">
 
 
     <android.support.design.widget.AppBarLayout
