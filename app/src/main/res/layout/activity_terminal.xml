@@ -30,7 +30,7 @@
     <TextView
         android:id="@+id/txtView_TerminalOutput"
         android:scrollbars = "vertical"
-        android:layout_width="360dp"
+        android:layout_width="0dp"
         android:layout_height="428dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
@@ -49,14 +49,14 @@
         android:id="@+id/btn_SendTerminalCmd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="8dp"
+        android:text="@string/btn_sendTerminalCmd"
         app:layout_constraintBaseline_toBaselineOf="@+id/editTxt_TerminalCmd"
-        android:layout_marginEnd="8dp"/>
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <EditText
         android:id="@+id/editTxt_TerminalCmd"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="8dp"

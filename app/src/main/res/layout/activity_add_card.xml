@@ -20,14 +20,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="Save"/>
+            android:text="@string/btn_save"/>
 
         <Button
             android:id="@+id/button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="Cancel"/>
+            android:text="@string/btn_cancel"/>
     </LinearLayout>
     <ScrollView
         android:layout_width="fill_parent"
@@ -57,9 +57,10 @@
                     android:layout_marginTop="16dp"
                     app:srcCompat="@android:drawable/ic_menu_camera"/>
 
-                <TextView android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:text="Card Name"/>
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textView_title_cardName"/>
 
                 <EditText
                     android:id="@+id/editTxt_NewCardName"
@@ -71,9 +72,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="5dp">
-                <TextView android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:text="Card Data"/>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textView_title_cardData"/>
 
                 <TextView
                     android:id="@+id/editTxt_NewCardData"
@@ -87,16 +90,18 @@
                     android:id="@+id/btn_NewReadCard"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Read Card"/>
+                    android:text="@string/btn_readCard"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="5dp">
-                <TextView android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:text="Notes" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/textView_title_cardNotes"/>
 
                 <EditText
                     android:id="@+id/editTxt_NewCardNotes"

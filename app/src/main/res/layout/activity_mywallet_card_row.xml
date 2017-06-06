@@ -40,20 +40,19 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="-1dp"
         android:layout_marginStart="99dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="marquee"
         android:lines="1"
         android:paddingTop="10dp"
-        android:text="Card Name"
+        android:text="@string/textView_title_cardName"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/clouds"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/txtCardUID"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintLeft_creator="1"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="99dp"
-        android:layout_marginTop="8dp"/>
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"/>
 
     <TextView
         android:id="@+id/txtCardUID"
@@ -65,16 +64,16 @@
         android:ellipsize="end"
         android:lines="2"
         android:paddingBottom="10dp"
-        android:text="Card UID"
+        android:text="@string/textView_titleUID"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/holo_green_dark"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.416"
         app:layout_constraintLeft_toRightOf="@+id/imgCard"
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        app:layout_constraintHorizontal_bias="0.416"
         tools:layout_editor_absoluteX="116dp"/>
 
 </android.support.constraint.ConstraintLayout>

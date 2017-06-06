@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Project Walrus</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_readCard">Read Card</string>
+    <string name="btn_writeCard">Write Card</string>
+    <string name="btn_emulateCard">Emulate Card</string>
+    <string name="btn_sendTerminalCmd">Send</string>
+    <string name="btn_scanFD">ScanFD</string>
+    <string name="textView_title_cardName">Name</string>
+    <string name="textView_title_cardData">Data</string>
+    <string name="textView_title_cardNotes">Notes</string>
+    <string name="textView_title_dateAcquired">Date Acquired</string>
+    <string name="textView_titleUID">UID</string>
+    <string name="textView_dummyCardData">000000125555</string>
+    <string name="textView_detailedCard_Title">Office Card</string>
+    <string name="hint_dateAcquired_format">DD/MM/YYYY</string>
+    <string name="hint_cardNotes">Some handy notes</string>
+    <string name="actionBar_deleteCard">Delete Card</string>
+    <string name="actionBar_terminal">Terminal</string>
 </resources>
