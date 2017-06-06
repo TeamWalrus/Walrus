@@ -40,4 +40,6 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.6'
     compile 'org.reflections:reflections:0.9.11'
     compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'com.j256.ormlite:ormlite-core:5.0'
+    compile 'com.j256.ormlite:ormlite-android:5.0'
 }
