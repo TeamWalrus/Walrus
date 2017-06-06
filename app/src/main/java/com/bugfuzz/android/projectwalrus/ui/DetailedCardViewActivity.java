@@ -1,6 +1,5 @@
-package com.bugfuzz.android.projectwalrus;
+package com.bugfuzz.android.projectwalrus.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bugfuzz.android.projectwalrus.R;
 
 public class DetailedCardViewActivity extends AppCompatActivity {
 

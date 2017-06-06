@@ -1,10 +1,12 @@
-package com.bugfuzz.android.projectwalrus;
+package com.bugfuzz.android.projectwalrus.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.bugfuzz.android.projectwalrus.R;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 

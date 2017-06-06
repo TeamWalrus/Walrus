@@ -1,4 +1,4 @@
-package com.bugfuzz.android.projectwalrus;
+package com.bugfuzz.android.projectwalrus.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.bugfuzz.android.projectwalrus.device.CardData;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
+import com.bugfuzz.android.projectwalrus.R;
 
 import org.parceler.Parcels;
 

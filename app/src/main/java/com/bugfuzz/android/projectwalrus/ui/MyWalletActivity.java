@@ -1,4 +1,4 @@
-package com.bugfuzz.android.projectwalrus;
+package com.bugfuzz.android.projectwalrus.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bugfuzz.android.projectwalrus.data.CardObject;
+import com.bugfuzz.android.projectwalrus.data.DatabaseHandler;
+import com.bugfuzz.android.projectwalrus.R;
 
 import java.util.List;
 

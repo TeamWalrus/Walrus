@@ -1,9 +1,7 @@
-package com.bugfuzz.android.projectwalrus.carddevice;
+package com.bugfuzz.android.projectwalrus.device;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
-
-import com.bugfuzz.android.projectwalrus.CardData;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

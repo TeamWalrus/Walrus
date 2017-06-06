@@ -1,4 +1,4 @@
-package com.bugfuzz.android.projectwalrus.carddevice;
+package com.bugfuzz.android.projectwalrus.device;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;

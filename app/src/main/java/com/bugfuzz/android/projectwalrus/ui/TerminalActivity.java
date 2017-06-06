@@ -1,4 +1,4 @@
-package com.bugfuzz.android.projectwalrus;
+package com.bugfuzz.android.projectwalrus.ui;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
+
+import com.bugfuzz.android.projectwalrus.R;
 
 public class TerminalActivity extends AppCompatActivity {
 
