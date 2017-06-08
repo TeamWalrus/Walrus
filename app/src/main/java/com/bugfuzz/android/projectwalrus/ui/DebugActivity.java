@@ -59,7 +59,7 @@ public class DebugActivity extends AppCompatActivity {
         intentFilter.addAction(CardDeviceService.ACTION_READ_CARD_DATA_RESULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
 
-        CardDeviceService.scanForDevices(this, null);
+        CardDeviceService.scanForDevices(this);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class DebugActivity extends AppCompatActivity {
     }
 
     public void onReadCardClick(View view) {
-        CardDeviceService.startCardDataRead(this, null);
+        CardDeviceService.startCardDataRead(this);
     }
 
     public void onWriteCardClick(View view) {
@@ -78,6 +78,6 @@ public class DebugActivity extends AppCompatActivity {
     }
 
     public void onScanFDClick(View view) {
-        CardDeviceService.scanForDevices(this, null);
+        CardDeviceService.scanForDevices(this);
     }
 }

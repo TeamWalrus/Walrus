@@ -227,26 +227,35 @@ public class CardDeviceService extends Service {
     private HandlerThread handlerThread;
     private ServiceHandler serviceHandler;
 
-    private static Intent getOperationIntent(Context context, String action,
-                                             Parcelable operationID) {
+    private static int nextOperationID;
+
+    private static Intent getOperationIntent(Context context, String action) {
         Intent intent = new Intent(action, null, context, CardDeviceService.class);
-        intent.putExtra(EXTRA_OPERATION_ID, operationID);
+        intent.putExtra(EXTRA_OPERATION_ID, ++nextOperationID);
         return intent;
     }
 
-    public static void scanForDevices(Context context, Parcelable operationID) {
-        context.startService(getOperationIntent(context, ACTION_SCAN_FOR_DEVICES, operationID));
+    public static int scanForDevices(Context context) {
+        Intent intent = getOperationIntent(context, ACTION_SCAN_FOR_DEVICES);
+        context.startService(intent);
+
+        return intent.getExtras().getInt(EXTRA_OPERATION_ID);
+
     }
 
-    public static void startCardDataRead(Context context, Parcelable operationID) {
-        context.startService(getOperationIntent(context, ACTION_READ_CARD_DATA, operationID));
+    public static int startCardDataRead(Context context) {
+        Intent intent = getOperationIntent(context, ACTION_READ_CARD_DATA);
+        context.startService(intent);
+
+        return intent.getExtras().getInt(EXTRA_OPERATION_ID);
     }
 
-    public static void startCardDataWrite(Context context, Parcelable operationID,
-                                          CardData cardData) {
-        Intent intent = getOperationIntent(context, ACTION_WRITE_CARD_DATA, operationID);
+    public static int startCardDataWrite(Context context, CardData cardData) {
+        Intent intent = getOperationIntent(context, ACTION_WRITE_CARD_DATA);
         intent.putExtra(EXTRA_CARD_DATA, Parcels.wrap(cardData));
         context.startService(intent);
+
+        return intent.getExtras().getInt(EXTRA_OPERATION_ID);
     }
 
     @Override
