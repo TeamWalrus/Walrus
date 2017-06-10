@@ -29,9 +29,10 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         return "Chameleon Mini";
     }
 
+    // Read card data
     public CardData readCardData() {
+        // Place chameleon mini in reader mode
         writeLine("Config=ISO14443A_READER");
-
         String line = readLine();
         if (line == null || !line.equals("100:OK"))
             return null;
@@ -54,14 +55,18 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 return null;
         }
 
+        // Create string result to store response from chameleon mini
         String result = "";
         for (int i = 0; i < 4; i++) {
             result += readLine() + "\n";
         }
 
-        /*CardData cd = new CardData();
+        /*String[] result_line = result.split("\n");
+
+        // Create new cardData object and set type and result
+        CardData cd = new CardData();
         cd.type = CardData.Type.MIFARE;
-        cd.data = result;
+        cd.data = result_line[2];
         return cd;*/
         return null;
     }
