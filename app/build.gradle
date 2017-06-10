@@ -42,4 +42,5 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.j256.ormlite:ormlite-core:5.0'
     compile 'com.j256.ormlite:ormlite-android:5.0'
+    compile 'com.google.android.gms:play-services-location:11.0.0'
 }

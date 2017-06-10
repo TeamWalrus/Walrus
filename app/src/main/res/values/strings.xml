@@ -11,6 +11,7 @@
     <string name="textView_title_cardData">Data</string>
     <string name="textView_title_cardNotes">Notes</string>
     <string name="textView_title_dateAcquired">Date Acquired</string>
+    <string name="textView_title_cardLocation">Location</string>
     <string name="textView_titleUID">UID</string>
     <string name="textView_dummyCardData">000000125555</string>
     <string name="textView_detailedCard_Title">Office Card</string>
