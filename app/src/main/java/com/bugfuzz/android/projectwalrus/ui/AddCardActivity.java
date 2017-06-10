@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class AddCardActivity extends AppCompatActivity {
 
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 1;
     TextView cardLocation;
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -28,21 +29,22 @@ public class AddCardActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.terminal_toolbar);
         setSupportActionBar(myToolbar);
 
-
-        cardLocation = (TextView)findViewById(R.id.textView_CardLocation);
+        cardLocation = (TextView) findViewById(R.id.textView_CardLocation);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        startGetLocation();
+    }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
+    private void startGetLocation() {
+        int hasLocationPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (hasLocationPermission == PackageManager.PERMISSION_GRANTED)
+            getLocation();
+        else
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+    }
+
+    private void getLocation() {
+        //noinspection MissingPermission
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -53,7 +55,24 @@ public class AddCardActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    getLocation();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(AddCardActivity.this, "ACCESS_FINE_LOCATION Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 }

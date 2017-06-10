@@ -9,7 +9,7 @@ android {
     }
     defaultConfig {
         applicationId "com.bugfuzz.android.projectwalrus"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 25
         versionCode 1
         versionName "0.1"
