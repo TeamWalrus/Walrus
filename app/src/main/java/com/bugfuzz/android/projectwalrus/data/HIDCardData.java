@@ -1,10 +1,16 @@
 package com.bugfuzz.android.projectwalrus.data;
 
+import org.parceler.Parcel;
+
 import java.math.BigInteger;
 
-public class HIDCardData implements CardData {
+@Parcel
+public class HIDCardData extends CardData {
 
     public BigInteger data;
+
+    public HIDCardData() {
+    }
 
     public HIDCardData(BigInteger data) {
         this.data = data;

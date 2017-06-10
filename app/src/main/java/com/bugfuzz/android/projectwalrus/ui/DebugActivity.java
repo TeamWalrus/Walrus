@@ -41,7 +41,8 @@ public class DebugActivity extends OrmLiteBaseActivity<DatabaseHelper> {
                     CardData cardData = Parcels.unwrap(
                             intent.getParcelableExtra(CardDeviceService.EXTRA_CARD_DATA));
                     if (cardData != null) {
-                        ((EditText) findViewById(R.id.cardData)).setText(cardData.getHumanReadableText());
+                        ((EditText) findViewById(R.id.cardData)).setText("Type: " + cardData.getType() + "\nValue: " +
+                                cardData.getHumanReadableText());
                     } else {
                         Toast toast = Toast.makeText(context, "Failed to read card data!",
                                 Toast.LENGTH_SHORT);

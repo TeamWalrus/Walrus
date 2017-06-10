@@ -1,6 +1,8 @@
 package com.bugfuzz.android.projectwalrus.data;
 
-public interface CardData {
-    String getType();
-    String getHumanReadableText();
+import java.io.Serializable;
+
+public abstract class CardData implements Serializable {
+    public abstract String getType();
+    public abstract String getHumanReadableText();
 }
