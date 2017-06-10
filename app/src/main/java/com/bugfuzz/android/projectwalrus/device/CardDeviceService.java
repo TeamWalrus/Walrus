@@ -17,6 +17,7 @@ import android.os.Parcelable;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 

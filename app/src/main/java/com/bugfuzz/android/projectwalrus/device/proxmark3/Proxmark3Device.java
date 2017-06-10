@@ -3,13 +3,15 @@ package com.bugfuzz.android.projectwalrus.device.proxmark3;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
-import com.bugfuzz.android.projectwalrus.device.CardData;
+import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -147,24 +149,24 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         Logger.getLogger("proxmark").log(Level.INFO, "tuning: v125 = " + v_125 + "V, v_134 = " +
                 v_134 + "V, peak_f = " + (peak_f / 1000) + "kHz, peak_v = " + peak_v + "V");
 
-        String data = sendReceiveCommand(
+        BigInteger data = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{1, 0, 0}),
-                new CommandHandler<String>() {
+                new CommandHandler<BigInteger>() {
                     @Override
-                    public String handle(Proxmark3Command command) {
+                    public BigInteger handle(Proxmark3Command command) {
                         if (command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
                             return null;
                         Matcher matcher = Pattern.compile("TAG ID: ([0-9a-fA-F]+)")
                                 .matcher(new String(command.data));
                         Logger.getLogger("proxmark").log(Level.INFO, "matching: " +
                                 new String(command.data) + ", " + matcher.matches());
-                        return matcher.find() ? matcher.group(1) : null;
+                        return matcher.find() ? new BigInteger(matcher.group(1), 16) : null;
                     }
                 }, DEFAULT_TIMEOUT);
         if (data == null)
             return null;
 
-        return new CardData(CardData.Type.HID, data /* TODO: lol */);
+        return new HIDCardData(data);
     }
 
     public boolean writeCardData(CardData cardData) {

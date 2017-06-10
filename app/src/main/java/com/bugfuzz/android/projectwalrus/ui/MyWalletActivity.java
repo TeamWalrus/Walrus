@@ -18,8 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bugfuzz.android.projectwalrus.data.CardObject;
-import com.bugfuzz.android.projectwalrus.data.DatabaseHandler;
+import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.R;
 
 import java.util.List;
@@ -168,26 +167,5 @@ public class MyWalletActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        DatabaseHandler db = new DatabaseHandler(this);
-
-        /**
-         * CRUD Operations
-         * */
-        // Inserting cards
-        Log.d("Insert: ", "Inserting ..");
-        //db.addCard(new CardObject("asd"));
-
-        // Reading all cards
-        Log.d("Reading: ", "Reading all cards..");
-        List<CardObject> cards = db.getAllCards();
-
-        for (CardObject cn : cards) {
-            String log = "Id: " + cn.getID() + " ,Name: " + cn.getName();
-            // Writing Contacts to log
-            Log.d("Name: ", log);
-
-        }
-
     }
 }

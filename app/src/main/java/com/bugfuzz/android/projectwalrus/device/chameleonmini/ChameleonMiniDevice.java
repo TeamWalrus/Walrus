@@ -3,7 +3,7 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
-import com.bugfuzz.android.projectwalrus.device.CardData;
+import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
@@ -59,10 +59,11 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             result += readLine() + "\n";
         }
 
-        CardData cd = new CardData();
+        /*CardData cd = new CardData();
         cd.type = CardData.Type.MIFARE;
         cd.data = result;
-        return cd;
+        return cd;*/
+        return null;
     }
 
     public boolean writeCardData(CardData cardData) {

@@ -6,18 +6,22 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.bugfuzz.android.projectwalrus.device.CardData;
+import com.bugfuzz.android.projectwalrus.data.Card;
+import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
 import com.bugfuzz.android.projectwalrus.R;
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 
 import org.parceler.Parcels;
 
-public class DebugActivity extends AppCompatActivity {
+import java.sql.SQLException;
+
+public class DebugActivity extends OrmLiteBaseActivity<DatabaseHelper> {
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -36,9 +40,9 @@ public class DebugActivity extends AppCompatActivity {
                 case CardDeviceService.ACTION_READ_CARD_DATA_RESULT: {
                     CardData cardData = Parcels.unwrap(
                             intent.getParcelableExtra(CardDeviceService.EXTRA_CARD_DATA));
-                    if (cardData != null)
-                        ((EditText) findViewById(R.id.cardData)).setText(cardData.data);
-                    else {
+                    if (cardData != null) {
+                        ((EditText) findViewById(R.id.cardData)).setText(cardData.getHumanReadableText());
+                    } else {
                         Toast toast = Toast.makeText(context, "Failed to read card data!",
                                 Toast.LENGTH_SHORT);
                         toast.show();
@@ -60,6 +64,13 @@ public class DebugActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
 
         CardDeviceService.scanForDevices(this);
+
+        Card card = new Card();
+        try {
+            getHelper().getCardDao().create(card);
+        } catch (SQLException e) {
+
+        }
     }
 
     @Override
