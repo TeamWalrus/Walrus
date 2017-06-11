@@ -236,11 +236,9 @@ public class CardDeviceService extends Service {
         return intent;
     }
 
-    public static int scanForDevices(Context context) {
-        Intent intent = getOperationIntent(context, ACTION_SCAN_FOR_DEVICES);
-        context.startService(intent);
-
-        return intent.getExtras().getInt(EXTRA_OPERATION_ID);
+    public static void scanForDevices(Context context) {
+        context.startService(new Intent(ACTION_SCAN_FOR_DEVICES, null, context,
+                CardDeviceService.class));
 
     }
 
