@@ -3,7 +3,7 @@ package com.bugfuzz.android.projectwalrus.data;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-public class ISO14443ACardData implements CardData {
+public class ISO14443ACardData extends CardData {
 
     private long uid;
     private short atqa;
