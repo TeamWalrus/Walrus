@@ -16,9 +16,11 @@ import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
 import com.bugfuzz.android.projectwalrus.R;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.j256.ormlite.dao.CloseableWrappedIterable;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class DebugActivity extends OrmLiteBaseActivity<DatabaseHelper> {
@@ -69,8 +71,27 @@ public class DebugActivity extends OrmLiteBaseActivity<DatabaseHelper> {
         Card card = new Card();
         try {
             getHelper().getCardDao().create(card);
+            getHelper().getCardDao().queryForId(123);
+            getHelper().getCardDao().update(card);
+            getHelper().getCardDao().delete(card);
         } catch (SQLException e) {
 
+        }
+
+        CloseableWrappedIterable<Card> wrappedIterable = null;
+        try {
+            wrappedIterable = getHelper().getCardDao().getWrappedIterable();
+            for (Card card2 : wrappedIterable) {
+                // ...
+            }
+        } catch (SQLException e) {
+
+        } finally {
+            try {
+                if (wrappedIterable != null)
+                    wrappedIterable.close();
+            } catch (IOException e) {
+            }
         }
     }
 
