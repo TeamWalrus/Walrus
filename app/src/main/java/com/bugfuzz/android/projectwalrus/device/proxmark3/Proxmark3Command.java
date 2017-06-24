@@ -19,21 +19,17 @@ class Proxmark3Command {
 
         static {
             for (Op op : EnumSet.allOf(Op.class))
-                codes.put(op.getCode(), op);
+                codes.put(op.code, op);
         }
 
         public static Op get(long code) {
             return codes.get(code);
         }
 
-        private long code;
+        public final long code;
 
-        private Op(long code) {
+        Op(long code) {
             this.code = code;
-        }
-
-        public long getCode() {
-            return code;
         }
     }
 
@@ -81,7 +77,7 @@ class Proxmark3Command {
         ByteBuffer bb = ByteBuffer.allocate(getByteLength());
         bb.order(ByteOrder.LITTLE_ENDIAN);
 
-        bb.putLong(op.getCode());
+        bb.putLong(op.code);
 
         for (long arg : args)
             bb.putLong(arg);
