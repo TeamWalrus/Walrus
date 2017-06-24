@@ -5,6 +5,7 @@ import android.hardware.usb.UsbDeviceConnection;
 
 import com.bugfuzz.android.projectwalrus.data.CardData;
 
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -34,6 +35,6 @@ public abstract class CardDevice {
 
     public abstract String getName();
 
-    public abstract CardData readCardData();
-    public abstract boolean writeCardData(CardData cardData);
+    public abstract CardData readCardData() throws IOException;
+    public abstract void writeCardData(CardData cardData) throws IOException;
 }

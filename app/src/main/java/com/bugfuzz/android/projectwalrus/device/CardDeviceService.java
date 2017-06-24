@@ -23,6 +23,7 @@ import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -161,41 +162,48 @@ public class CardDeviceService extends Service {
         private void handleActionReadCardData(Intent opResult) {
             opResult.setAction(ACTION_READ_CARD_DATA_RESULT);
 
-            switch (cardDevices.size()) {
-                case 0:
-                    // TODO: more description intent erroring
-                    opResult.putExtra(EXTRA_CARD_DATA, (Parcelable) null);
-                    break;
+            try {
+                switch (cardDevices.size()) {
+                    case 0:
+                        throw new IOException("No devices connected");
 
-                case 1:
-                    opResult.putExtra(EXTRA_CARD_DATA,
-                            Parcels.wrap(cardDevices.get(0).readCardData()));
-                    break;
+                    case 1: {
+                        CardData cardData = cardDevices.get(0).readCardData();
+                        if (cardData != null)
+                            opResult.putExtra(EXTRA_CARD_DATA,
+                                    Parcels.wrap(cardData));
+                        else
+                            throw new IOException("Generic read error");
+                        break;
+                    }
 
-                default:
-                    // TODO: device selection, etc
-                    break;
+                    default:
+                        // TODO: device selection, etc
+                        break;
+                }
+            } catch (IOException e) {
+                opResult.putExtra(EXTRA_OPERATION_ERROR, e.getMessage());
             }
         }
 
         private void handleActionWriteCardData(Intent opResult, CardData cardData) {
             opResult.setAction(ACTION_WRITE_CARD_DATA_RESULT);
 
-            // TODO: generic-ize with CardDevice somehow?
-            switch (cardDevices.size()) {
-                case 0:
-                    // TODO: more description intent erroring
-                    opResult.putExtra(EXTRA_CARD_WRITE_RESULT, false);
-                    break;
+            try {
+                switch (cardDevices.size()) {
+                    case 0:
+                        throw new IOException("No devices connected");
 
-                case 1:
-                    opResult.putExtra(EXTRA_CARD_WRITE_RESULT,
-                            cardDevices.get(0).writeCardData(cardData));
-                    break;
+                    case 1:
+                        cardDevices.get(0).writeCardData(cardData);
+                        break;
 
-                default:
-                    // TODO: device selection, etc
-                    break;
+                    default:
+                        // TODO: device selection, etc
+                        break;
+                }
+            } catch (IOException e) {
+                opResult.putExtra(EXTRA_OPERATION_ERROR, e.getMessage());
             }
         }
     }
@@ -220,6 +228,7 @@ public class CardDeviceService extends Service {
     public static final String ACTION_WRITE_CARD_DATA_RESULT = "com.bugfuzz.android.projectwalrus.action.WRITE_CARD_DATA_RESULT";
 
     public static final String EXTRA_OPERATION_ID = "com.bugfuzz.android.projectwalrus.extra.OPERATION_ID";
+    public static final String EXTRA_OPERATION_ERROR = "com.bugfuzz.android.projectwalrus.extra.OPERATION_ERROR";
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.extra.DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.extra.DEVICE_NAME";
     public static final String EXTRA_CARD_DATA = "com.bugfuzz.android.projectwalrus.extra.CARD_DATA";

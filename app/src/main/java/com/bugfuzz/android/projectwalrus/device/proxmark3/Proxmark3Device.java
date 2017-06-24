@@ -11,6 +11,7 @@ import com.felhr.usbserial.UsbSerialInterface;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
@@ -82,6 +83,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         });
     }
 
+    @Override
     public String getName() {
         return "Proxmark3";
     }
@@ -132,13 +134,14 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         }
     }
 
-    public CardData readCardData() {
+    @Override
+    public CardData readCardData() throws IOException {
         // TODO: only tune once
         Proxmark3Command command = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{1, 0, 0}),
                 new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING), DEFAULT_TIMEOUT);
         if (command == null)
-            return null;
+            throw new IOException("Failed to tune antenna");
 
         // TODO: use tune result (in args), only continue when ready. give status, allow cancel
         float v_125 = (command.args[0] & 0xffff) / 1000,
@@ -158,18 +161,17 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                             return null;
                         Matcher matcher = Pattern.compile("TAG ID: ([0-9a-fA-F]+)")
                                 .matcher(new String(command.data));
-                        Logger.getLogger("proxmark").log(Level.INFO, "matching: " +
-                                new String(command.data) + ", " + matcher.matches());
                         return matcher.find() ? new BigInteger(matcher.group(1), 16) : null;
                     }
                 }, DEFAULT_TIMEOUT);
         if (data == null)
-            return null;
+            throw new IOException("Failed to read card data before timeout");
 
         return new HIDCardData(data);
     }
 
-    public boolean writeCardData(CardData cardData) {
+    @Override
+    public void writeCardData(CardData cardData) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

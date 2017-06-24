@@ -8,6 +8,8 @@ import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
+import java.io.IOException;
+
 @CardDevice.UsbCardDevice({@CardDevice.UsbCardDevice.IDs(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
@@ -25,34 +27,33 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         usbSerialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
     }
 
+    @Override
     public String getName() {
         return "Chameleon Mini";
     }
 
-    // Read card data
-    public CardData readCardData() {
-        // Place chameleon mini in reader mode
+    @Override
+    public CardData readCardData() throws IOException {
         writeLine("Config=ISO14443A_READER");
         String line = readLine();
-        if (line == null || !line.equals("100:OK"))
-            return null;
+        if (line == null)
+            throw new IOException("Couldn't read Config result");
+        if (!line.equals("100:OK"))
+            throw new IOException("Unexpected response to Config command");
 
         writeLine("IDENTIFY");
-
         line = readLine();
         if (line == null)
-            return null;
+            throw new IOException("Couldn't read IDENTIFY result");
         switch (line) {
             case "101:OK WITH TEXT":
                 break;
 
             case "203:TIMEOUT":
-                // TODO: do this instead:
-                // throw new RuntimeException("Timed out reading card data");
-                return null;
+                throw new IOException("Timed out reading card data");
 
             default:
-                return null;
+                throw new IOException("Unexpected response to IDENTIFY command");
         }
 
         // Create string result to store response from chameleon mini
@@ -71,7 +72,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         return null;
     }
 
-    public boolean writeCardData(CardData cardData) {
+    @Override
+    public void writeCardData(CardData cardData) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
+import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
 import com.bugfuzz.android.projectwalrus.R;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
@@ -40,15 +41,16 @@ public class DebugActivity extends OrmLiteBaseActivity<DatabaseHelper> {
                 }
 
                 case CardDeviceService.ACTION_READ_CARD_DATA_RESULT: {
-                    CardData cardData = Parcels.unwrap(
-                            intent.getParcelableExtra(CardDeviceService.EXTRA_CARD_DATA));
-                    if (cardData != null) {
-                        ((EditText) findViewById(R.id.cardData)).setText("Type: " + cardData.getType() + "\nValue: " +
-                                cardData.getHumanReadableText());
-                    } else {
-                        Toast toast = Toast.makeText(context, "Failed to read card data!",
+                    if (intent.hasExtra(CardDeviceService.EXTRA_OPERATION_ERROR)) {
+                        Toast toast = Toast.makeText(context,
+                                "Failed to read card data: " + intent.getStringExtra(CardDeviceService.EXTRA_OPERATION_ERROR),
                                 Toast.LENGTH_SHORT);
                         toast.show();
+                    } else {
+                        CardData cardData = Parcels.unwrap(
+                                intent.getParcelableExtra(CardDeviceService.EXTRA_CARD_DATA));
+                        ((EditText) findViewById(R.id.cardData)).setText("Type: " + cardData.getType() + "\nValue: " +
+                                cardData.getHumanReadableText());
                     }
                     break;
                 }
