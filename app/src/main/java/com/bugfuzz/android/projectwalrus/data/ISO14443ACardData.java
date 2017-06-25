@@ -67,17 +67,21 @@ public class ISO14443ACardData extends CardData {
     }
 
     @Override
-    public String getType() {
+    public String getTypeInfo() {
+        return "ISO14333A";
+    }
+
+    @Override
+    public String getTypeDetailInfo() {
         for(KnownISO14333AType type : CARD_TYPES)
             if(type.matches(this))
                 return type.manufacturer + " " + type.type;
 
-        return "Unknown ISO14333A Card Type";
+        return null;
     }
 
     @Override
     public String getHumanReadableText() {
         return Long.toHexString(uid);
     }
-
 }

@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
-import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
 import com.bugfuzz.android.projectwalrus.R;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
@@ -49,8 +48,13 @@ public class DebugActivity extends OrmLiteBaseActivity<DatabaseHelper> {
                     } else {
                         CardData cardData = Parcels.unwrap(
                                 intent.getParcelableExtra(CardDeviceService.EXTRA_CARD_DATA));
-                        ((EditText) findViewById(R.id.cardData)).setText("Type: " + cardData.getType() + "\nValue: " +
-                                cardData.getHumanReadableText());
+
+                        String text = "Type: " + cardData.getTypeInfo();
+                        if (cardData.getTypeDetailInfo() != null)
+                            text += " (" + cardData.getTypeDetailInfo() + ")";
+                        text += "\n" + cardData.getHumanReadableText();
+
+                        ((EditText) findViewById(R.id.cardData)).setText(text);
                     }
                     break;
                 }

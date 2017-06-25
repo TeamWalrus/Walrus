@@ -17,8 +17,13 @@ public class HIDCardData extends CardData {
     }
 
     @Override
-    public String getType() {
+    public String getTypeInfo() {
         return "HID";
+    }
+
+    @Override
+    public String getTypeDetailInfo() {
+        return (data.bitLength() + (data.signum() == -1 ? 1 : 0)) + "-bit";
     }
 
     @Override
