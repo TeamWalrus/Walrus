@@ -13,11 +13,19 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.data.Card;
+import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
+import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 
-public class DetailedCardViewActivity extends AppCompatActivity {
+import java.sql.SQLException;
+
+public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
     public static final String EXTRA_CARD_TITLE = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD_TITLE";
     public static final String EXTRA_UID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_UID";
+    public static final String EXTRA_CARD_ID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD_ID";
+
+    private static int cardID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,27 +39,45 @@ public class DetailedCardViewActivity extends AppCompatActivity {
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
 
-        // Get the Intent that started this activity and extract the string
+        // Get the Intent that started this activity and extract card details
         Intent intent = getIntent();
-        String cardTitle = intent.getStringExtra(EXTRA_CARD_TITLE),
-                cardUID = intent.getStringExtra(EXTRA_UID);
+        cardID = intent.getIntExtra(EXTRA_CARD_ID, 0);
+        updateUI();
 
-        // Capture the layout's TextView and set the string as its text
+    }
+
+    private void updateUI() {
+        String cardTitle;
+        String cardUID;
+        try {
+            Card card = getHelper().getCardDao().queryForId(cardID);
+            cardTitle = card.name;
+            cardUID = card.cardData.getHumanReadableText();
+            if (card == null) {
+                // Handle card not found
+            }
+        } catch (SQLException e) {
+            return;
+        }
         TextView textView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
         textView.setText(cardTitle);
-
         TextView uidView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
         uidView.setText(cardUID);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
 
     /** Called when the user taps a card */
-    public static void sendCardDetails(Context context, String cardTitle, String cardUID) {
+    public static void startActivity(Context context, int id) {
         Intent intent = new Intent(context, DetailedCardViewActivity.class);
-        intent.putExtra(EXTRA_CARD_TITLE, cardTitle);
-        intent.putExtra(EXTRA_UID, cardUID);
+        intent.putExtra(EXTRA_CARD_ID, id);
         context.startActivity(intent);
     }
+
 
     // set out detailed card menu
     @Override
@@ -65,8 +91,7 @@ public class DetailedCardViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_editCard:
-                Intent intent = new Intent(this, EditCardActivity.class);
-                startActivity(intent);
+                EditCardActivity.startActivity(this, cardID);
                 return true;
             case R.id.action_deleteCard:
                 AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -76,8 +101,18 @@ public class DetailedCardViewActivity extends AppCompatActivity {
                 alert.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //dismiss dialogs for now
                         dialog.dismiss();
+
+                        try {
+                            Card card = getHelper().getCardDao().queryForId(cardID);
+                            if (card != null){
+                                getHelper().getCardDao().delete(card);
+                            }
+                            // does this really work
+                            finish();
+                        } catch (SQLException e) {
+                            // Handle failure
+                        }
                     }
                 });
                 alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

@@ -45,13 +45,6 @@
         </activity>
 
         <activity
-            android:name=".ui.TerminalActivity"
-            android:label="Terminal"
-            android:parentActivityName=".ui.MyWalletActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
             android:name=".ui.AddCardActivity"
             android:label="Add Card"
             android:parentActivityName=".ui.MyWalletActivity"

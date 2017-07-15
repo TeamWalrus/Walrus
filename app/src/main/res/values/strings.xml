@@ -18,7 +18,7 @@
     <string name="hint_dateAcquired_format">DD/MM/YYYY</string>
     <string name="hint_cardNotes">Some handy notes</string>
     <string name="actionBar_deleteCard">Delete Card</string>
-    <string name="actionBar_terminal">Terminal</string>
+    <string name="actionBar_Settings">Settings</string>
 
     <string name="dialog_write_chameleon">Write to Chameleon Mini card slot</string>
 </resources>

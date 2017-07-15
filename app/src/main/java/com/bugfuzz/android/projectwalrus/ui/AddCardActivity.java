@@ -12,11 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
+import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class AddCardActivity extends AppCompatActivity {
+public class AddCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
     final private int REQUEST_CODE_ASK_PERMISSIONS = 1;
     TextView cardLocation;
@@ -26,15 +28,17 @@ public class AddCardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_card);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.terminal_toolbar);
-        setSupportActionBar(myToolbar);
 
+
+
+        // Set location UI element
         cardLocation = (TextView) findViewById(R.id.textView_CardLocation);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         startGetLocation();
     }
 
+    // Get current location
     private void startGetLocation() {
         int hasLocationPermission = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
         if (hasLocationPermission == PackageManager.PERMISSION_GRANTED)
@@ -56,7 +60,7 @@ public class AddCardActivity extends AppCompatActivity {
                     }
                 });
     }
-
+    // Request location data permissions
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {

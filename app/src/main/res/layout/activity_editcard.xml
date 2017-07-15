@@ -20,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:onClick="onEditCardSaveCardClick"
             android:text="@string/btn_save"/>
 
         <Button
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:onClick="onCancelClick"
             android:text="@string/btn_cancel"/>
     </LinearLayout>
     <ScrollView
