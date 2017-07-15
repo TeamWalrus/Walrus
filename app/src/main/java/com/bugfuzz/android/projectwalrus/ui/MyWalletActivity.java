@@ -94,8 +94,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             @Override
             public void onClick(View view) {
                 // Click action
-                Intent intent = new Intent(MyWalletActivity.this, AddCardActivity.class);
-                startActivity(intent);
+                EditCardActivity.startActivity(MyWalletActivity.this, new Card());
             }
         });
     }
@@ -141,7 +140,10 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
 
             holder._cardTitle.setText(card.name);
-            holder._cardUID.setText(card.cardData.getHumanReadableText());
+            if (card.cardData != null) {
+                holder._cardUID.setText(card.cardData.getHumanReadableText());
+            } else
+                holder._cardUID.setText("");
             holder.id = card.id;
             //holder._imgCard.setImageResource(cardimage[position]);
         }

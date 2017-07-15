@@ -17,6 +17,8 @@ import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 
+import org.parceler.Parcels;
+
 import java.sql.SQLException;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
@@ -25,7 +27,14 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     public static final String EXTRA_UID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_UID";
     public static final String EXTRA_CARD_ID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD_ID";
 
-    private static int cardID;
+    private static int id;
+
+    /** Called when the user taps a card */
+    public static void startActivity(Context context, int id) {
+        Intent intent = new Intent(context, DetailedCardViewActivity.class);
+        intent.putExtra(EXTRA_CARD_ID, id);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,28 +50,29 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
         // Get the Intent that started this activity and extract card details
         Intent intent = getIntent();
-        cardID = intent.getIntExtra(EXTRA_CARD_ID, 0);
-        updateUI();
+        id = intent.getIntExtra(EXTRA_CARD_ID, 0);
 
+        updateUI();
     }
 
     private void updateUI() {
-        String cardTitle;
-        String cardUID;
+        Card card;
         try {
-            Card card = getHelper().getCardDao().queryForId(cardID);
-            cardTitle = card.name;
-            cardUID = card.cardData.getHumanReadableText();
+            card = getHelper().getCardDao().queryForId(id);
             if (card == null) {
-                // Handle card not found
+                return;
             }
         } catch (SQLException e) {
             return;
         }
+
+        String cardTitle = card.name;
+        if (card.cardData != null) {
+            TextView uidView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
+            uidView.setText(card.cardData.getHumanReadableText());
+        }
         TextView textView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
         textView.setText(cardTitle);
-        TextView uidView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
-        uidView.setText(cardUID);
     }
 
     @Override
@@ -70,14 +80,6 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         super.onResume();
         updateUI();
     }
-
-    /** Called when the user taps a card */
-    public static void startActivity(Context context, int id) {
-        Intent intent = new Intent(context, DetailedCardViewActivity.class);
-        intent.putExtra(EXTRA_CARD_ID, id);
-        context.startActivity(intent);
-    }
-
 
     // set out detailed card menu
     @Override
@@ -91,7 +93,16 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_editCard:
-                EditCardActivity.startActivity(this, cardID);
+                Card card;
+                try {
+                    card = getHelper().getCardDao().queryForId(id);
+                    if (card == null) {
+                        return true;
+                    }
+                } catch (SQLException e) {
+                    return true;
+                }
+                EditCardActivity.startActivity(this, card);
                 return true;
             case R.id.action_deleteCard:
                 AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -104,11 +115,9 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
                         dialog.dismiss();
 
                         try {
-                            Card card = getHelper().getCardDao().queryForId(cardID);
-                            if (card != null){
+                            Card card = card = getHelper().getCardDao().queryForId(id);
+                            if (card != null)
                                 getHelper().getCardDao().delete(card);
-                            }
-                            // does this really work
                             finish();
                         } catch (SQLException e) {
                             // Handle failure
