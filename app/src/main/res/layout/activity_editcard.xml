@@ -92,6 +92,7 @@
                     android:id="@+id/btn_editCardView_ReadCard"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:onClick="onReadCardClick"
                     android:text="@string/btn_readCard"/>
             </LinearLayout>
             <LinearLayout
