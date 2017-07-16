@@ -32,14 +32,16 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         return "Chameleon Mini";
     }
 
+    // FIXME: Random data in buffer when readline() is called. Therefore when trying to use the identify command to read card data, the response does not match the case "101:OK WITH TEXT":
+    // Handled the same error for changing config by checking if the line ends with 100:OK instead of doing a string match
     @Override
     public CardData readCardData() throws IOException {
         writeLine("Config=ISO14443A_READER");
         String line = readLine();
         if (line == null)
             throw new IOException("Couldn't read Config result");
-        if (!line.equals("100:OK"))
-            throw new IOException("Unexpected response to Config command");
+        if (!line.endsWith("100:OK"))
+            throw new IOException("Unexpected response to Config command: " + line);
 
         writeLine("IDENTIFY");
         line = readLine();
@@ -53,7 +55,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 throw new IOException("Timed out reading card data");
 
             default:
-                throw new IOException("Unexpected response to IDENTIFY command");
+                throw new IOException("Unexpected response to IDENTIFY command: " + line);
         }
 
         // Create string result to store response from chameleon mini

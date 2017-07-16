@@ -21,6 +21,7 @@ import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 
 import java.math.BigInteger;
@@ -55,6 +56,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         setContentView(R.layout.activity_mywallet);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+        CardDeviceService.scanForDevices(this);
 
         try {
             if (getHelper().getCardDao().countOf() == 0) {
