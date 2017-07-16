@@ -68,8 +68,8 @@ public class CardDeviceService extends Service {
                     break;
             }
 
-            Parcelable operationID = intent.getParcelableExtra(EXTRA_OPERATION_ID);
-            if (operationID != null)
+            int operationID = intent.getIntExtra(EXTRA_OPERATION_ID, 0);
+            if (operationID != 0)
                 opResult.putExtra(EXTRA_OPERATION_ID, operationID);
             LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(opResult);
         }
@@ -237,18 +237,17 @@ public class CardDeviceService extends Service {
     private HandlerThread handlerThread;
     private ServiceHandler serviceHandler;
 
-    private static int nextOperationID;
+    private static int nextOperationID = 1;
 
     private static Intent getOperationIntent(Context context, String action) {
         Intent intent = new Intent(action, null, context, CardDeviceService.class);
-        intent.putExtra(EXTRA_OPERATION_ID, ++nextOperationID);
+        intent.putExtra(EXTRA_OPERATION_ID, nextOperationID++);
         return intent;
     }
 
     public static void scanForDevices(Context context) {
         context.startService(new Intent(ACTION_SCAN_FOR_DEVICES, null, context,
                 CardDeviceService.class));
-
     }
 
     public static int startCardDataRead(Context context) {
