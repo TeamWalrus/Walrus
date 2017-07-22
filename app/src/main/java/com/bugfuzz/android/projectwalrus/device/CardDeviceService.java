@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.Set;
 
 public class CardDeviceService extends Service {
-    private final class ServiceHandler extends Handler {
-        List<CardDevice> cardDevices = new ArrayList<>();
+    List<CardDevice> cardDevices = new ArrayList<>();
 
+    private final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -45,7 +45,14 @@ public class CardDeviceService extends Service {
 
             switch (intent.getAction()) {
                 case ACTION_SCAN_FOR_DEVICES:
-                    handleActionScanForDevices();
+                    UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+                    for (UsbDevice usbDevice : usbManager.getDeviceList().values())
+                        handleActionDeviceAttached(usbDevice);
+                    return;
+
+                case UsbManager.ACTION_USB_DEVICE_ATTACHED:
+                    handleActionDeviceAttached(
+                            (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE));
                     return;
 
                 case UsbManager.ACTION_USB_DEVICE_DETACHED:
@@ -73,72 +80,70 @@ public class CardDeviceService extends Service {
             LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(opResult);
         }
 
-        private void handleActionScanForDevices() {
+        private void handleActionDeviceAttached(UsbDevice usbDevice) {
             UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
             Set<Class<?>> cs = new HashSet<>();
             cs.add(Proxmark3Device.class);
             cs.add(ChameleonMiniDevice.class);
 
-            for (UsbDevice usbDevice : usbManager.getDeviceList().values()) {
-                boolean alreadyCreated = false;
-                for (CardDevice cardDevice : cardDevices)
-                    if (cardDevice.getUsbDevice().equals(usbDevice)) {
-                        alreadyCreated = true;
-                        break;
-                    }
-                if (alreadyCreated)
+            boolean alreadyCreated = false;
+            for (CardDevice cardDevice : cardDevices)
+                if (cardDevice.getUsbDevice().equals(usbDevice)) {
+                    alreadyCreated = true;
+                    break;
+                }
+            if (alreadyCreated)
+                return;
+
+            for (Class<?> klass : cs
+                    /* TODO: fix and use
+                    new Reflections(BuildConfig.APPLICATION_ID)
+                            .getTypesAnnotatedWith(CardDevice.UsbCardDevice.class)*/
+                    ) {
+                Class<? extends CardDevice> cardDeviceKlass;
+                try {
+                    // TODO: how to handle unchecked cast?
+                    cardDeviceKlass = (Class<? extends CardDevice>) klass;
+                } catch (ClassCastException e) {
+                    // TODO: check this is actually catching and working
                     continue;
+                }
+                CardDevice.UsbCardDevice usbInfo = cardDeviceKlass.getAnnotation(
+                        CardDevice.UsbCardDevice.class);
+                for (CardDevice.UsbCardDevice.IDs ids : usbInfo.value()) {
+                    if (ids.vendorId() == usbDevice.getVendorId() &&
+                            ids.productId() == usbDevice.getProductId()) {
+                        UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(
+                                usbDevice);
 
-                for (Class<?> klass : cs
-                        /* TODO: fix and use
-                        new Reflections(BuildConfig.APPLICATION_ID)
-                                .getTypesAnnotatedWith(CardDevice.UsbCardDevice.class)*/
-                        ) {
-                    Class<? extends CardDevice> cardDeviceKlass;
-                    try {
-                        // TODO: how to handle unchecked cast?
-                        cardDeviceKlass = (Class<? extends CardDevice>) klass;
-                    } catch (ClassCastException e) {
-                        // TODO: check this is actually catching and working
-                        continue;
-                    }
-                    CardDevice.UsbCardDevice usbInfo = cardDeviceKlass.getAnnotation(
-                            CardDevice.UsbCardDevice.class);
-                    for (CardDevice.UsbCardDevice.IDs ids : usbInfo.value()) {
-                        if (ids.vendorId() == usbDevice.getVendorId() &&
-                                ids.productId() == usbDevice.getProductId()) {
-                            UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(
-                                    usbDevice);
-
-                            Constructor<? extends CardDevice> constructor;
-                            try {
-                                constructor = cardDeviceKlass.getConstructor(UsbDevice.class,
-                                        UsbDeviceConnection.class);
-                            } catch (NoSuchMethodException e) {
-                                continue;
-                            }
-
-                            CardDevice cardDevice;
-                            try {
-                                cardDevice = constructor.newInstance(usbDevice, usbDeviceConnection);
-                            } catch (InstantiationException e) {
-                                continue;
-                            } catch (IllegalAccessException e) {
-                                continue;
-                            } catch (InvocationTargetException e) {
-                                continue;
-                            }
-
-                            cardDevices.add(cardDevice);
-
-                            Intent intent = new Intent(ACTION_DEVICE_CHANGE);
-                            intent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
-                            intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
-                                    CardDevice.Metadata.class).name());
-                            LocalBroadcastManager.getInstance(CardDeviceService.this)
-                                    .sendBroadcast(intent);
+                        Constructor<? extends CardDevice> constructor;
+                        try {
+                            constructor = cardDeviceKlass.getConstructor(UsbDevice.class,
+                                    UsbDeviceConnection.class);
+                        } catch (NoSuchMethodException e) {
+                            continue;
                         }
+
+                        CardDevice cardDevice;
+                        try {
+                            cardDevice = constructor.newInstance(usbDevice, usbDeviceConnection);
+                        } catch (InstantiationException e) {
+                            continue;
+                        } catch (IllegalAccessException e) {
+                            continue;
+                        } catch (InvocationTargetException e) {
+                            continue;
+                        }
+
+                        cardDevices.add(cardDevice);
+
+                        Intent intent = new Intent(ACTION_DEVICE_CHANGE);
+                        intent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
+                        intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
+                                CardDevice.Metadata.class).name());
+                        LocalBroadcastManager.getInstance(CardDeviceService.this)
+                                .sendBroadcast(intent);
                     }
                 }
             }
@@ -211,16 +216,8 @@ public class CardDeviceService extends Service {
 
     BroadcastReceiver usbDeviceReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                    scanForDevices(context);
-                    break;
-
-                case UsbManager.ACTION_USB_DEVICE_DETACHED:
-                    intent.setClass(context, CardDeviceService.class);
-                    context.startService(intent);
-                    break;
-            }
+            intent.setClass(context, CardDeviceService.class);
+            context.startService(intent);
         }
     };
 
