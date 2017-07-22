@@ -22,6 +22,11 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@CardDevice.Metadata(
+        name = "Proxmark 3",
+        supportsRead = {HIDCardData.class},
+        supportsWrite = {HIDCardData.class}
+)
 @CardDevice.UsbCardDevice({
         @CardDevice.UsbCardDevice.IDs(vendorId = 11565, productId = 20557),
         @CardDevice.UsbCardDevice.IDs(vendorId = 39620, productId = 19343)
@@ -81,11 +86,6 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                 }
             }
         });
-    }
-
-    @Override
-    public String getName() {
-        return "Proxmark3";
     }
 
     private void sendCommand(Proxmark3Command command) {

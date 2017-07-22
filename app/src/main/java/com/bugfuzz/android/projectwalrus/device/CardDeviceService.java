@@ -13,7 +13,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Parcelable;
 import android.os.Process;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -135,7 +134,8 @@ public class CardDeviceService extends Service {
 
                             Intent intent = new Intent(ACTION_DEVICE_CHANGE);
                             intent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
-                            intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getName());
+                            intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
+                                    CardDevice.Metadata.class).name());
                             LocalBroadcastManager.getInstance(CardDeviceService.this)
                                     .sendBroadcast(intent);
                         }
@@ -153,7 +153,8 @@ public class CardDeviceService extends Service {
 
                     Intent intent = new Intent(ACTION_DEVICE_CHANGE);
                     intent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
-                    intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getName());
+                    intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
+                            CardDevice.Metadata.class).name());
                     LocalBroadcastManager.getInstance(CardDeviceService.this).sendBroadcast(intent);
                 }
             }

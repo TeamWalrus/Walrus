@@ -4,12 +4,18 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
 import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
 
+@CardDevice.Metadata(
+        name = "Chameleon Mini",
+        supportsRead = {ISO14443ACardData.class},
+        supportsWrite = {ISO14443ACardData.class}
+)
 @CardDevice.UsbCardDevice({@CardDevice.UsbCardDevice.IDs(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
@@ -25,11 +31,6 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         usbSerialDevice.setStopBits(UsbSerialInterface.STOP_BITS_1);
 
         usbSerialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
-    }
-
-    @Override
-    public String getName() {
-        return "Chameleon Mini";
     }
 
     // FIXME: Random data in buffer when readline() is called. Therefore when trying to use the identify command to read card data, the response does not match the case "101:OK WITH TEXT":
