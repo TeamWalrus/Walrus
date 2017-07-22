@@ -209,11 +209,17 @@ public class CardDeviceService extends Service {
         }
     }
 
-    BroadcastReceiver usbDetachedReceiver = new BroadcastReceiver() {
+    BroadcastReceiver usbDeviceReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED)) {
-                intent.setClass(context, CardDeviceService.class);
-                context.startService(intent);
+            switch (intent.getAction()) {
+                case UsbManager.ACTION_USB_DEVICE_ATTACHED:
+                    scanForDevices(context);
+                    break;
+
+                case UsbManager.ACTION_USB_DEVICE_DETACHED:
+                    intent.setClass(context, CardDeviceService.class);
+                    context.startService(intent);
+                    break;
             }
         }
     };
@@ -269,8 +275,9 @@ public class CardDeviceService extends Service {
     @Override
     public void onCreate() {
         IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         intentFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        registerReceiver(usbDetachedReceiver, intentFilter);
+        registerReceiver(usbDeviceReceiver, intentFilter);
 
         handlerThread = new HandlerThread("CardDeviceServiceHandlerThread",
                 Process.THREAD_PRIORITY_BACKGROUND);
@@ -297,6 +304,6 @@ public class CardDeviceService extends Service {
     public void onDestroy() {
         handlerThread.quitSafely();
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(usbDetachedReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(usbDeviceReceiver);
     }
 }
