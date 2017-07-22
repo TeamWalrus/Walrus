@@ -11,6 +11,8 @@ import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -44,7 +46,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         String line = readLine();
         if (line == null)
             throw new IOException("Couldn't read Config result");
-        if (!line.endsWith("100:OK"))
+        if (!line.equals("100:OK"))
             throw new IOException("Unexpected response to Config command: " + line);
 
         writeLine("IDENTIFY");
@@ -62,20 +64,32 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 throw new IOException("Unexpected response to IDENTIFY command: " + line);
         }
 
-        // Create string result to store response from chameleon mini
-        String result = "";
+        short atqa=0;
+        long uid=0;
+        byte sak=0x0;
         for (int i = 0; i < 4; i++) {
-            result += readLine() + "\n";
+            line = readLine();
+
+            switch (i) {
+                case 0:
+                    break;
+
+                case 1:
+                    String line_atqa[] = line.split(":");
+                    atqa = Short.reverseBytes((short)Integer.parseInt(line_atqa[1].trim(),16));
+                    break;
+                case 2:
+                    String line_uid[] = line.split(":");
+                    uid = (long)Integer.parseInt(line_uid[1].trim(),16);
+                    break;
+                case 3:
+                    String line_sak[] = line.split(":");
+                    sak = (byte)Integer.parseInt(line_sak[1].trim(),16);
+                    break;
+
+            }
         }
-
-        /*String[] result_line = result.split("\n");
-
-        // Create new cardData object and set type and result
-        CardData cd = new CardData();
-        cd.type = CardData.Type.MIFARE;
-        cd.data = result_line[2];
-        return cd;*/
-        return null;
+        return new ISO14443ACardData(uid,atqa,sak,null,null);
     }
 
     @Override

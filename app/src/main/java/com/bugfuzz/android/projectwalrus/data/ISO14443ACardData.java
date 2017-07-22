@@ -1,15 +1,21 @@
 package com.bugfuzz.android.projectwalrus.data;
 
+import org.parceler.Parcel;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 
+@Parcel
 public class ISO14443ACardData extends CardData {
 
     private long uid;
-    private short atqa;
+    private int atqa;
     private byte sak;
     private int[] ats;
     private byte[] data;
+
+    public ISO14443ACardData() {
+    }
 
     public ISO14443ACardData(long uid, short atqa, byte sak, int[] ats, byte[] data) {
         this.uid = uid;
