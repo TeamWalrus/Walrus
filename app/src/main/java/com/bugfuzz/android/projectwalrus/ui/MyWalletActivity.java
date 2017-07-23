@@ -140,10 +140,10 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
 
             holder._cardTitle.setText(card.name);
-            if (card.cardData != null) {
-                holder._cardUID.setText(card.cardData.getHumanReadableText());
-            } else
-                holder._cardUID.setText("");
+            //if (card.cardData != null) {
+            //    holder._cardUID.setText(card.cardData.getHumanReadableText());
+            //} else
+            //    holder._cardUID.setText("");
             holder.id = card.id;
             //holder._imgCard.setImageResource(cardimage[position]);
         }
@@ -170,7 +170,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 super(itemView);
                 _imgCard = (ImageView) itemView.findViewById(R.id.imgCard);
                 _cardTitle = (TextView) itemView.findViewById(R.id.txtCardTitle);
-                _cardUID = (TextView) itemView.findViewById(R.id.txtCardUID);
+                //_cardUID = (TextView) itemView.findViewById(R.id.txtCardUID);
             }
         }
     }

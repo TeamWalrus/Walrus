@@ -67,7 +67,8 @@
                 <EditText
                     android:id="@+id/editTxt_editCardView_CardName"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:maxLength="60"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
