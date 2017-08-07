@@ -1,12 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools">
 
     <!-- "Edit Card", should appear as action button if possible -->
     <item
         android:id="@+id/action_editCard"
         android:orderInCategory="1"
         android:icon="@android:drawable/ic_menu_edit"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"
+        tools:ignore="MenuTitle"/>
 
     <item
         android:id="@+id/action_deleteCard"
