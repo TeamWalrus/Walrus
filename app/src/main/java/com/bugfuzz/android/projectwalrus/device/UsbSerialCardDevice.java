@@ -5,7 +5,7 @@ import android.hardware.usb.UsbDeviceConnection;
 
 import com.felhr.usbserial.UsbSerialDevice;
 
-public abstract class UsbSerialCardDevice extends CardDevice {
+public abstract class UsbSerialCardDevice extends UsbCardDevice {
     protected UsbSerialDevice usbSerialDevice;
 
     public UsbSerialCardDevice(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {

@@ -6,6 +6,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -27,9 +28,9 @@ import java.util.regex.Pattern;
         supportsRead = {HIDCardData.class},
         supportsWrite = {HIDCardData.class}
 )
-@CardDevice.UsbCardDevice({
-        @CardDevice.UsbCardDevice.IDs(vendorId = 11565, productId = 20557),
-        @CardDevice.UsbCardDevice.IDs(vendorId = 39620, productId = 19343)
+@UsbCardDevice.UsbIDs({
+        @UsbCardDevice.UsbIDs.IDs(vendorId = 11565, productId = 20557),
+        @UsbCardDevice.UsbIDs.IDs(vendorId = 39620, productId = 19343)
 })
 public class Proxmark3Device extends UsbSerialCardDevice {
     private interface CommandHandler<R> {
@@ -135,7 +136,9 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     }
 
     @Override
-    public CardData readCardData() throws IOException {
+    public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
+        // TODO: use cardDataClass
+
         // TODO: only tune once
         Proxmark3Command command = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{1, 0, 0}),
@@ -171,7 +174,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     }
 
     @Override
-    public void writeCardData(CardData cardData) throws IOException {
+    public synchronized void writeCardData(CardData cardData) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

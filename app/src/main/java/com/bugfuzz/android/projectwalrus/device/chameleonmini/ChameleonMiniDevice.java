@@ -6,6 +6,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -16,7 +17,7 @@ import java.io.IOException;
         supportsRead = {ISO14443ACardData.class},
         supportsWrite = {ISO14443ACardData.class}
 )
-@CardDevice.UsbCardDevice({@CardDevice.UsbCardDevice.IDs(vendorId = 5840, productId = 1202)})
+@UsbCardDevice.UsbIDs({@UsbCardDevice.UsbIDs.IDs(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
     public ChameleonMiniDevice(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
@@ -36,7 +37,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     // FIXME: Random data in buffer when readline() is called. Therefore when trying to use the identify command to read card data, the response does not match the case "101:OK WITH TEXT":
     // Handled the same error for changing config by checking if the line ends with 100:OK instead of doing a string match
     @Override
-    public CardData readCardData() throws IOException {
+    public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
+        // TODO: use cardDataClass
+
         writeLine("Config=ISO14443A_READER");
         String line = readLine();
         if (line == null)
@@ -76,7 +79,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     }
 
     @Override
-    public void writeCardData(CardData cardData) throws IOException {
+    public synchronized void writeCardData(CardData cardData) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

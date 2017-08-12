@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
@@ -15,53 +16,18 @@ import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
+import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
-import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
+import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
-
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case CardDeviceService.ACTION_DEVICE_CHANGE: {
-                    String text = "Device " +
-                            intent.getStringExtra(CardDeviceService.EXTRA_DEVICE_NAME) + " " +
-                            (intent.getBooleanExtra(CardDeviceService.EXTRA_DEVICE_WAS_ADDED, false) ?
-                                    "connected" : "removed");
-                    Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-                    toast.show();
-                    break;
-                }
-
-                case CardDeviceService.ACTION_READ_CARD_DATA_RESULT: {
-                    if (intent.hasExtra(CardDeviceService.EXTRA_OPERATION_ERROR)) {
-                        Toast toast = Toast.makeText(context,
-                                "Failed to read card data: " + intent.getStringExtra(CardDeviceService.EXTRA_OPERATION_ERROR),
-                                Toast.LENGTH_SHORT);
-                        toast.show();
-                    } else {
-                        CardData cardData = Parcels.unwrap(
-                                intent.getParcelableExtra(CardDeviceService.EXTRA_CARD_DATA));
-
-                        String text = "Type: " + cardData.getTypeInfo();
-                        if (cardData.getTypeDetailInfo() != null)
-                            text += " (" + cardData.getTypeDetailInfo() + ")";
-                        text += "\n" + cardData.getHumanReadableText();
-
-                        ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
-                        card.cardData = cardData;
-                    }
-                    break;
-                }
-            }
-        }
-    };
-
     public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
     private Card card;
 
@@ -78,10 +44,6 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editcard);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(CardDeviceService.ACTION_DEVICE_CHANGE);
-        intentFilter.addAction(CardDeviceService.ACTION_READ_CARD_DATA_RESULT);
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
 
         // get intent
         Intent intent = getIntent();
@@ -117,12 +79,43 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     }
 
     public void onReadCardClick(View view) {
-        CardDeviceService.startCardDataRead(this);
+        (new AsyncTask<Void, Void, CardData>() {
+            @Override
+            protected CardData doInBackground(Void... params) {
+                List<CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
+
+                if (cardDevices.isEmpty()) {
+                    Toast.makeText(EditCardActivity.this, "No card devices found",
+                            Toast.LENGTH_LONG).show();
+                    return null;
+                }
+
+                try {
+                    return cardDevices.get(0).readCardData(HIDCardData.class);
+                } catch (IOException e) {
+                    Toast.makeText(EditCardActivity.this, "Error reading card: " + e,
+                            Toast.LENGTH_LONG).show();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(CardData cardData) {
+                if (cardData == null)
+                    return;
+
+                String text = "Type: " + cardData.getTypeInfo();
+                if (cardData.getTypeDetailInfo() != null)
+                    text += " (" + cardData.getTypeDetailInfo() + ")";
+                text += "\n" + cardData.getHumanReadableText();
+
+                ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
+                card.cardData = cardData;
+            }
+        }).execute();
     }
 
     public void onCancelClick(View view){
         finish();
     }
-
-
 }

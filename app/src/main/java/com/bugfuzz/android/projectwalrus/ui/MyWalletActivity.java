@@ -1,7 +1,6 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,8 +20,7 @@ import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
-import com.bugfuzz.android.projectwalrus.device.CardDeviceService;
-import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -56,7 +54,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         setContentView(R.layout.activity_mywallet);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-        CardDeviceService.scanForDevices(this);
+        CardDeviceManager.INSTANCE.scanForDevices(this);
 
         try {
             if (getHelper().getCardDao().countOf() == 0) {
