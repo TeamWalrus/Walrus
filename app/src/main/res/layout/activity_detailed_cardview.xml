@@ -31,8 +31,6 @@
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:background="@drawable/rounded_cardview"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -45,8 +43,7 @@
         android:id="@+id/txtView_DetailedViewCardTitle"
         android:layout_width="202dp"
         android:layout_height="110dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_weight="1"
@@ -149,6 +146,36 @@
         app:layout_constraintTop_toBottomOf="@+id/txtView_DateAcquired_title"/>
 
     <TextView
+        android:id="@+id/txtView_CardLocation_title"
+        android:layout_width="328dp"
+        android:layout_height="26dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/textView_title_cardLocation"
+        app:layout_constraintLeft_toLeftOf="@+id/card_body"
+        app:layout_constraintRight_toRightOf="@+id/card_body"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_DetailedCardView_CardAcquiredDate"
+        />
+
+    <TextView
+        android:id="@+id/txtView_DetailedCardView_CardLocation"
+        android:layout_width="309dp"
+        android:layout_height="23dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="7dp"
+        android:textSize="12sp"
+        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintLeft_toLeftOf="@+id/card_body"
+        app:layout_constraintRight_toRightOf="@+id/card_body"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_CardLocation_title"/>
+
+    <TextView
         android:id="@+id/txtView_CardNotes_title"
         android:layout_width="328dp"
         android:layout_height="26dp"
@@ -156,11 +183,11 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="@string/textView_title_cardNotes"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_DetailedCardView_CardAcquiredDate"/>
+        app:layout_constraintTop_toBottomOf="@+id/txtView_DetailedCardView_CardLocation"/>
 
     <TextView
         android:id="@+id/txtView_DetailedCardView_CardNotes"
@@ -170,7 +197,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="8dp"
         android:text="@string/hint_cardNotes"
         android:textSize="12sp"
         app:layout_constraintHorizontal_bias="0.511"
