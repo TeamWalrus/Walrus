@@ -48,7 +48,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         // get intent
         Intent intent = getIntent();
         // get id extra and store the id
-        card = (Card)Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD));
+        card = Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD));
         // query db with card
         // TODO: Add the rest of the UI elements
         // populate UI elements with id
@@ -79,19 +79,28 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     }
 
     public void onReadCardClick(View view) {
+        List<CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
+
+        if (cardDevices.isEmpty()) {
+            Toast.makeText(EditCardActivity.this, "No card devices found",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // TODO: if len cardDevices >= 2 then show dialog
+        final CardDevice cardDevice = cardDevices.get(0);
+
+        Class<? extends CardData> readableTypes[] = cardDevice.getClass()
+                .getAnnotation(CardDevice.Metadata.class).supportsRead();
+
+        // TODO: if len readabletypes >= 2 then pick a carddata class
+        final Class<? extends CardData> cardDataClass = readableTypes[0];
+
         (new AsyncTask<Void, Void, CardData>() {
             @Override
             protected CardData doInBackground(Void... params) {
-                List<CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
-
-                if (cardDevices.isEmpty()) {
-                    Toast.makeText(EditCardActivity.this, "No card devices found",
-                            Toast.LENGTH_LONG).show();
-                    return null;
-                }
-
                 try {
-                    return cardDevices.get(0).readCardData(HIDCardData.class);
+                    return cardDevice.readCardData(cardDataClass);
                 } catch (IOException e) {
                     Toast.makeText(EditCardActivity.this, "Error reading card: " + e,
                             Toast.LENGTH_LONG).show();
