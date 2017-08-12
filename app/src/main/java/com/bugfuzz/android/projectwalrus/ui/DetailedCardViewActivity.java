@@ -46,7 +46,9 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         ActionBar ab = getSupportActionBar();
 
         // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Get the Intent that started this activity and extract card details
         Intent intent = getIntent();
@@ -112,16 +114,15 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
                 alert.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
                         try {
-                            Card card = card = getHelper().getCardDao().queryForId(id);
+                            Card card = getHelper().getCardDao().queryForId(id);
                             if (card != null)
                                 getHelper().getCardDao().delete(card);
                             finish();
                         } catch (SQLException e) {
                             // Handle failure
                         }
+                        dialog.dismiss();
                     }
                 });
                 alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
