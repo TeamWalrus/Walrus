@@ -20,6 +20,7 @@ import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import org.parceler.Parcels;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
@@ -70,6 +71,7 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
         String cardTitle = card.name;
         String cardNotes = card.notes;
+        String cardAcquiredDate = new SimpleDateFormat("dd-MM-yyyy @ HH:mm:ss").format(card.created);
         if (card.cardData != null) {
             TextView uidTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
             uidTextView.setText(card.cardData.getHumanReadableText());
@@ -77,6 +79,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             cardNameTextView.setText(cardTitle);
             TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);
             cardNotesTextView.setText(cardNotes);
+            TextView cardCreatedTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardAcquiredDate);
+            cardCreatedTextView.setText(cardAcquiredDate);
         }
 
     }
