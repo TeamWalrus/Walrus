@@ -63,9 +63,9 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                         "Apple",
                         "Banana",
                         "Carrot",
-                        "Dan is awesome :3",
+                        "Some crazy long title for a card because why not",
                         "Elephant",
-                        "Fuckyou"
+                        "Walrus"
                 };
                 for (String name : names) {
                     Card card = new Card();
@@ -140,12 +140,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
 
             holder._cardTitle.setText(card.name);
-            //if (card.cardData != null) {
-            //    holder._cardUID.setText(card.cardData.getHumanReadableText());
-            //} else
-            //    holder._cardUID.setText("");
             holder.id = card.id;
-            //holder._imgCard.setImageResource(cardimage[position]);
         }
 
 
@@ -163,14 +158,12 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
             ImageView _imgCard;
             TextView _cardTitle;
-            TextView _cardUID;
             int id;
 
             public CardViewHolder(View itemView) {
                 super(itemView);
                 _imgCard = (ImageView) itemView.findViewById(R.id.imgCard);
                 _cardTitle = (TextView) itemView.findViewById(R.id.txtCardTitle);
-                //_cardUID = (TextView) itemView.findViewById(R.id.txtCardUID);
             }
         }
     }

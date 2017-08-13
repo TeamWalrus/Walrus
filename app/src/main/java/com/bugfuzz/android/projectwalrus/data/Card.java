@@ -26,6 +26,9 @@ public class Card {
     @DatabaseField
     public String details;
 
+    @DatabaseField
+    public String notes;
+
     public Card() {
     }
 }

@@ -69,12 +69,16 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         }
 
         String cardTitle = card.name;
+        String cardNotes = card.notes;
         if (card.cardData != null) {
-            TextView uidView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
-            uidView.setText(card.cardData.getHumanReadableText());
+            TextView uidTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
+            uidTextView.setText(card.cardData.getHumanReadableText());
+            TextView cardNameTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
+            cardNameTextView.setText(cardTitle);
+            TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);
+            cardNotesTextView.setText(cardNotes);
         }
-        TextView textView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
-        textView.setText(cardTitle);
+
     }
 
     @Override

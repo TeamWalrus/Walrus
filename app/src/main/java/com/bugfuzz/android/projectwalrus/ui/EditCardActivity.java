@@ -1,7 +1,9 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
@@ -52,8 +54,11 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         // query db with card
         // TODO: Add the rest of the UI elements
         // populate UI elements with id
-        EditText editText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
-        editText.setText(card.name);
+        EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
+        cardNameEditText.setText(card.name);
+        EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
+        cardNotesEditText.setText(card.notes);
+
 
         if (card.cardData != null) {
             String text = "Type: " + card.cardData.getTypeInfo();
@@ -68,8 +73,10 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     public void onEditCardSaveCardClick(View view){
         // TODO: Add the rest of the UI elements
-        EditText editText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
-        card.name = editText.getText().toString();
+        EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
+        card.name = cardNameEditText.getText().toString();
+        EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
+        card.notes = cardNotesEditText.getText().toString();
         try {
             getHelper().getCardDao().createOrUpdate(card);
         } catch (SQLException e) {
@@ -87,20 +94,38 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             return;
         }
 
-        // TODO: if len cardDevices >= 2 then show dialog
+        // if len of cardDevices >1 then we want to choose what type of card to read
         final CardDevice cardDevice = cardDevices.get(0);
 
-        Class<? extends CardData> readableTypes[] = cardDevice.getClass()
+        final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsRead();
 
-        // TODO: if len readabletypes >= 2 then pick a carddata class
-        final Class<? extends CardData> cardDataClass = readableTypes[0];
+        if (readableTypes.length > 1){
+            String[] names = new String[readableTypes.length];
+            for (int i = 0; i < names.length; ++i)
+                names[i] = readableTypes[i].getSimpleName();
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(EditCardActivity.this);
+            builder.setTitle("Pick a card type")
+                    .setItems(names, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    onChooseCardType(cardDevice, readableTypes[which]);
+                }
+            });
+            builder.create().show();
+        // if only one type of card is supported then use that
+        }
+        else {
+            onChooseCardType(cardDevice, readableTypes[0]);
+        }
+    }
+
+    private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass){
         (new AsyncTask<Void, Void, CardData>() {
             @Override
             protected CardData doInBackground(Void... params) {
                 try {
-                    return cardDevice.readCardData(cardDataClass);
+                    return device.readCardData(cardDataClass);
                 } catch (IOException e) {
                     Toast.makeText(EditCardActivity.this, "Error reading card: " + e,
                             Toast.LENGTH_LONG).show();
