@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="0dp"
+    android:fillViewport="true">
+
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     tools:context="com.bugfuzz.android.projectwalrus.ui.DetailedCardViewActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -137,7 +144,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="0dp"
         android:text="@string/hint_dateAcquired_format"
         android:textSize="12sp"
         app:layout_constraintHorizontal_bias="0.511"
@@ -168,7 +175,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="0dp"
         android:textSize="12sp"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
@@ -192,12 +199,12 @@
     <TextView
         android:id="@+id/txtView_DetailedCardView_CardNotes"
         android:layout_width="309dp"
-        android:layout_height="23dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="0dp"
         android:text="@string/hint_cardNotes"
         android:textSize="12sp"
         app:layout_constraintHorizontal_bias="0.511"
@@ -207,3 +214,4 @@
 
 
 </android.support.constraint.ConstraintLayout>
+</ScrollView>
