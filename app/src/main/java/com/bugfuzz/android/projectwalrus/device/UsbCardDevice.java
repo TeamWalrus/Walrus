@@ -10,7 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
-public abstract class UsbCardDevice implements CardDevice {
+public abstract class UsbCardDevice extends CardDevice {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface UsbIDs {
         @Retention(RetentionPolicy.RUNTIME)

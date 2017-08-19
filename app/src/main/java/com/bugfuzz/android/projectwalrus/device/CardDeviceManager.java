@@ -17,9 +17,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public enum CardDeviceManager {
@@ -29,7 +31,7 @@ public enum CardDeviceManager {
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.extra.DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.extra.DEVICE_NAME";
 
-    private List<CardDevice> cardDevices = new ArrayList<>();
+    private Map<Integer, CardDevice> cardDevices = new HashMap<>();
 
     public void scanForDevices(Context context) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -37,15 +39,15 @@ public enum CardDeviceManager {
             handleUsbDeviceAttached(context, usbDevice);
     }
 
-    public List<CardDevice> getCardDevices() {
-        return Collections.unmodifiableList(cardDevices);
+    public Map<Integer, CardDevice> getCardDevices() {
+        return Collections.unmodifiableMap(cardDevices);
     }
 
     private void handleUsbDeviceAttached(Context context, UsbDevice usbDevice) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         boolean alreadyCreated = false;
-        for (CardDevice cardDevice : cardDevices)
+        for (CardDevice cardDevice : cardDevices.values())
             if (cardDevice instanceof UsbCardDevice &&
                     ((UsbCardDevice) cardDevice).getUsbDevice().equals(usbDevice)) {
                 alreadyCreated = true;
@@ -87,7 +89,7 @@ public enum CardDeviceManager {
                         continue;
                     }
 
-                    cardDevices.add(cardDevice);
+                    cardDevices.put(cardDevice.getID(), cardDevice);
 
                     Intent intent = new Intent(ACTION_DEVICE_CHANGE);
                     intent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
@@ -101,9 +103,9 @@ public enum CardDeviceManager {
     }
 
     private void handleUsbDeviceDetached(Context context, UsbDevice usbDevice) {
-        Iterator<CardDevice> it = cardDevices.iterator();
+        Iterator<Map.Entry<Integer, CardDevice>> it = cardDevices.entrySet().iterator();
         while (it.hasNext()) {
-            CardDevice cardDevice = it.next();
+            CardDevice cardDevice = it.next().getValue();
             if (cardDevice instanceof UsbCardDevice &&
                     ((UsbCardDevice) cardDevice).getUsbDevice().equals(usbDevice)) {
                 it.remove();

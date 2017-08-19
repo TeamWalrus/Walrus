@@ -28,6 +28,7 @@ import org.parceler.Parcels;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
     public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
@@ -86,7 +87,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     }
 
     public void onReadCardClick(View view) {
-        List<CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
+        Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
 
         if (cardDevices.isEmpty()) {
             Toast.makeText(EditCardActivity.this, "No card devices found",
@@ -125,7 +126,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             @Override
             protected CardData doInBackground(Void... params) {
                 try {
-                    return device.readCardData(cardDataClass);
+                    return device.readCardData(HIDCardData.class);
                 } catch (IOException e) {
                     Toast.makeText(EditCardActivity.this, "Error reading card: " + e,
                             Toast.LENGTH_LONG).show();

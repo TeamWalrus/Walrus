@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference android:title="@string/tune">
+        <intent
+            android:targetClass="com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3TuneActivity"
+            android:targetPackage="com.bugfuzz.android.projectwalrus" />
+    </Preference>
+</PreferenceScreen>

@@ -1,6 +1,8 @@
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
@@ -180,7 +182,9 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     }
 
     @Override
-    public Activity getDeviceActivity() {
-        return null;
+    public Intent getDeviceActivityIntent(Context context) {
+        Intent intent = new Intent(context, Proxmark3Activity.class);
+        intent.putExtra(Proxmark3Activity.EXTRA_DEVICE, getID());
+        return intent;
     }
 }

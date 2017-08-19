@@ -21,4 +21,6 @@
     <string name="actionBar_Settings">Settings</string>
 
     <string name="dialog_write_chameleon">Write to Chameleon Mini card slot</string>
+
+    <string name="tune">Tune</string>
 </resources>

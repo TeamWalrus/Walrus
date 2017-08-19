@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.bugfuzz.android.projectwalrus">
 
-    <uses-feature android:name="android.hardware.usb.host"/>
+    <uses-feature android:name="android.hardware.usb.host" />
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -26,13 +26,11 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".ui.MyWalletActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".ui.MyWalletActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
@@ -45,15 +43,18 @@
         <activity
             android:name=".ui.DetailedCardViewActivity"
             android:label="Card Details"
-            android:parentActivityName=".ui.MyWalletActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:parentActivityName=".ui.MyWalletActivity" />
         <activity
             android:name=".ui.EditCardActivity"
             android:label="Edit Card"
-            android:parentActivityName=".ui.DetailedCardViewActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:parentActivityName=".ui.DetailedCardViewActivity" />
+        <activity
+            android:name=".device.proxmark3.Proxmark3Activity"
+            android:exported="true" />
+        <activity
+            android:name=".device.proxmark3.Proxmark3TuneActivity"
+            android:label="Tune"
+            android:parentActivityName=".device.proxmark3.Proxmark3Activity" />
         <activity android:name=".ui.SettingsActivity">
         </activity>
     </application>

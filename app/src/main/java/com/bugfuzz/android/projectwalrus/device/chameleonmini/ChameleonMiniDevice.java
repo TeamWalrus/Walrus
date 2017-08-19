@@ -97,9 +97,4 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     public synchronized void writeCardData(CardData cardData) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented");
     }
-
-    @Override
-    public Activity getDeviceActivity() {
-        return null;
-    }
 }
