@@ -1,5 +1,6 @@
 package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
+import android.app.Activity;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
@@ -95,5 +96,10 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     @Override
     public synchronized void writeCardData(CardData cardData) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public Activity getDeviceActivity() {
+        return null;
     }
 }

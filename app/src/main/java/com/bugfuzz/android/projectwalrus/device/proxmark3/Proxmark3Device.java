@@ -1,5 +1,6 @@
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
+import android.app.Activity;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
@@ -176,5 +177,10 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     @Override
     public synchronized void writeCardData(CardData cardData) throws IOException {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public Activity getDeviceActivity() {
+        return null;
     }
 }

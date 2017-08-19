@@ -1,5 +1,7 @@
 package com.bugfuzz.android.projectwalrus.device;
 
+import android.app.Activity;
+
 import com.bugfuzz.android.projectwalrus.data.CardData;
 
 import java.io.IOException;
@@ -16,4 +18,6 @@ public interface CardDevice {
 
     CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException;
     void writeCardData(CardData cardData) throws IOException;
+
+    Activity getDeviceActivity();
 }
