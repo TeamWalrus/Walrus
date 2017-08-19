@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Global Settings"
+        android:key="pref_key_global_settings">
+        <Preference
+            android:key="pref_key_global_blank1"
+            android:summary="Global Pref1"
+            android:title="Global Pref1"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Device Settings"
+        android:key="pref_key_device_settings">
+        <Preference
+            android:key="pref_key_device_blank1"
+            android:summary="Device Pref1"
+            android:title="Device Pref1"/>
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
