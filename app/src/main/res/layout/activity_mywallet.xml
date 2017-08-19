@@ -9,10 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
-        android:id="@+id/appBarLayout2">
+        android:id="@+id/settings_appBarLayout">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/myWallet_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -26,7 +26,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/background_dark"
         android:scrollbars="vertical"
-        android:layout_below="@+id/appBarLayout2"/>
+        android:layout_below="@+id/settings_appBarLayout"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

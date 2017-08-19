@@ -2,7 +2,6 @@
     <string name="app_name">Project Walrus</string>
     <string name="btn_save">Save</string>
     <string name="btn_cancel">Cancel</string>
-    <string name="btn_readCard">Read Card</string>
     <string name="btn_readNewCard">Read New Card</string>
     <string name="btn_writeCard">Write Card</string>
     <string name="btn_emulateCard">Emulate Card</string>

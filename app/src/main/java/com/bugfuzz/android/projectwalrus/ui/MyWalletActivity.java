@@ -53,8 +53,8 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mywallet);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        Toolbar myWallet_toolbar = (Toolbar) findViewById(R.id.myWallet_toolbar);
+        setSupportActionBar(myWallet_toolbar);
         CardDeviceManager.INSTANCE.scanForDevices(this);
 
         try {

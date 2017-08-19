@@ -16,6 +16,4 @@
             android:summary="Device Pref1"
             android:title="Device Pref1"/>
     </PreferenceCategory>
-
-
 </PreferenceScreen>

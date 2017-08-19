@@ -52,8 +52,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         mapFragment.getMapAsync(this);
 
         // Setup Toolbar
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        Toolbar detailedCardView_toolbar = (Toolbar) findViewById(R.id.detailedCardView_toolbar);
+        setSupportActionBar(detailedCardView_toolbar);
         ActionBar ab = getSupportActionBar();
 
         // Enable the Up button
