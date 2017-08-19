@@ -1,15 +1,21 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -18,13 +24,20 @@ import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import org.parceler.Parcels;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
     public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
+    private FusedLocationProviderClient mFusedLocationClient;
     private Card card;
 
     public static void startActivity(Context context, Card card) {
@@ -40,6 +53,8 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editcard);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // get intent
         Intent intent = getIntent();
@@ -63,13 +78,15 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
         }
 
+        getCardLocation();
+
     }
 
-    public void onEditCardSaveCardClick(View view){
+    public void onEditCardSaveCardClick(View view) {
         // TODO: Add the rest of the UI elements
         EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
         card.name = cardNameEditText.getText().toString();
-        if (card.name.isEmpty()){
+        if (card.name.isEmpty()) {
             Toast.makeText(EditCardActivity.this, "Card name is required!",
                     Toast.LENGTH_LONG).show();
             return;
@@ -82,6 +99,34 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             // Handle failure
         }
         finish();
+    }
+
+    public void getCardLocation() {
+        Logger.getAnonymousLogger().info("getCardLocation");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Logger.getAnonymousLogger().info("getCardLocation: no perms");
+            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        Logger.getAnonymousLogger().info("onSuccess: location = " + location);
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            card.cardLocationLat = location.getLatitude();
+                            card.cardLocationLng = location.getLongitude();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                getCardLocation();
     }
 
     public void onReadCardClick(View view) {
@@ -117,6 +162,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         else {
             onChooseCardType(cardDevice, readableTypes[0]);
         }
+
     }
 
     private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass){

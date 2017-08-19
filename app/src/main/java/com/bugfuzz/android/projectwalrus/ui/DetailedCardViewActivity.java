@@ -114,8 +114,17 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     }
 
     public void onMapReady(GoogleMap googleMap) {
-        // Add a marker and move toward it
-        LatLng cardLatLng = new LatLng(-41.2898021, 174.7744976);
+        Card card;
+        try {
+            card = getHelper().getCardDao().queryForId(id);
+            if (card == null) {
+                return;
+            }
+        } catch (SQLException e) {
+            return;
+        }
+
+        LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
         googleMap.addMarker(new MarkerOptions().position(cardLatLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(cardLatLng));
     }

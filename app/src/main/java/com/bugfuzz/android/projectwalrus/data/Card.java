@@ -24,11 +24,13 @@ public class Card {
     public Date cardDataAcquired;
 
     @DatabaseField
-    public String details;
-
-    @DatabaseField
     public String notes;
 
+    @DatabaseField
+    public double cardLocationLat;
+
+    @DatabaseField
+    public double cardLocationLng;
 
     public Card() {
     }
