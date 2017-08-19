@@ -16,16 +16,20 @@ import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.parceler.Parcels;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
-public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
+public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
 
-    public static final String EXTRA_CARD_TITLE = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD_TITLE";
-    public static final String EXTRA_UID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_UID";
     public static final String EXTRA_CARD_ID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD_ID";
 
     private static int id;
@@ -42,6 +46,12 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_cardview);
 
+        // Get handle to map fragment
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+        mapFragment.getMapAsync(this);
+
+        // Setup Toolbar
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         ActionBar ab = getSupportActionBar();
@@ -55,6 +65,7 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         Intent intent = getIntent();
         id = intent.getIntExtra(EXTRA_CARD_ID, 0);
 
+        // Update the UI
         updateUI();
     }
 
@@ -81,9 +92,21 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             cardNotesTextView.setText(cardNotes);
             TextView cardCreatedTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardAcquiredDate);
             cardCreatedTextView.setText(cardAcquiredDate);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+            mapFragment.getMapAsync(this);
         }
 
     }
+
+    public void onMapReady(GoogleMap googleMap) {
+        // Add a marker and move toward it
+        LatLng sydney = new LatLng(-33.852, 151.211);
+        googleMap.addMarker(new MarkerOptions().position(sydney)
+                .title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
 
     @Override
     protected void onResume() {
