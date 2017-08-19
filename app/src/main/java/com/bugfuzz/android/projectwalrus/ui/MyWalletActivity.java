@@ -71,7 +71,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 for (String name : names) {
                     Card card = new Card();
                     card.name = name;
-                    card.cardData = new HIDCardData(BigInteger.valueOf(123456789));
+                    card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
                     try {
                         getHelper().getCardDao().create(card);
                         // After this call, card.id is valid

@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.parceler.Parcels;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
@@ -80,31 +81,43 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             return;
         }
 
-        String cardTitle = card.name;
-        String cardNotes = card.notes;
-        String cardAcquiredDate = new SimpleDateFormat("dd-MM-yyyy @ HH:mm:ss").format(card.created);
+
+        if (card.name != null && !card.name.isEmpty()) {
+            String cardTitle = card.name;
+            TextView cardNameTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
+            cardNameTextView.setText(cardTitle);
+        }
+
+
+        if (card.notes != null && !card.notes.isEmpty()) {
+            String cardNotes = card.notes;
+            TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);
+            cardNotesTextView.setText(cardNotes);
+        }
+
+
         if (card.cardData != null) {
             TextView uidTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
             uidTextView.setText(card.cardData.getHumanReadableText());
-            TextView cardNameTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
-            cardNameTextView.setText(cardTitle);
-            TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);
-            cardNotesTextView.setText(cardNotes);
-            TextView cardCreatedTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardAcquiredDate);
-            cardCreatedTextView.setText(cardAcquiredDate);
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
-            mapFragment.getMapAsync(this);
         }
 
+
+        if (card.cardDataAcquired != null) {
+            String cardAcquiredDate = DateFormat.getDateTimeInstance().format(card.cardDataAcquired);
+            TextView cardCreatedTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardAcquiredDate);
+            cardCreatedTextView.setText(cardAcquiredDate);
+        }
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+        mapFragment.getMapAsync(this);
     }
 
     public void onMapReady(GoogleMap googleMap) {
         // Add a marker and move toward it
-        LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng cardLatLng = new LatLng(-41.2898021, 174.7744976);
+        googleMap.addMarker(new MarkerOptions().position(cardLatLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(cardLatLng));
     }
 
 

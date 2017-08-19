@@ -13,10 +13,10 @@
     <string name="textView_title_dateAcquired">Date Acquired</string>
     <string name="textView_title_cardLocation">Location</string>
     <string name="textView_titleUID">UID</string>
-    <string name="textView_dummyCardData">000000125555</string>
-    <string name="textView_detailedCard_Title">Office Card</string>
-    <string name="hint_dateAcquired_format">DD/MM/YYYY</string>
-    <string name="hint_cardNotes">Some handy notes</string>
+    <string name="textView_dummyCardData">None</string>
+    <string name="textView_dummyCardTitle">None</string>
+    <string name="textView_dummyCardDateAcquired">None</string>
+    <string name="textView_dummyCardNotes">None</string>
     <string name="actionBar_deleteCard">Delete Card</string>
     <string name="actionBar_Settings">Settings</string>
 

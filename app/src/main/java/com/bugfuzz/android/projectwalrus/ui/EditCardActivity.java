@@ -1,19 +1,15 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -22,12 +18,9 @@ import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-
 import org.parceler.Parcels;
-
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
@@ -76,6 +69,11 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         // TODO: Add the rest of the UI elements
         EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
         card.name = cardNameEditText.getText().toString();
+        if (card.name.isEmpty()){
+            Toast.makeText(EditCardActivity.this, "Card name is required!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
         EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
         card.notes = cardNotesEditText.getText().toString();
         try {
@@ -145,7 +143,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 text += "\n" + cardData.getHumanReadableText();
 
                 ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
-                card.cardData = cardData;
+                card.setCardData(cardData);
             }
         }).execute();
     }

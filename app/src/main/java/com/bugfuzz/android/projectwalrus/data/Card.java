@@ -21,7 +21,7 @@ public class Card {
     public CardData cardData;
 
     @DatabaseField
-    public Date created = new Date();
+    public Date cardDataAcquired;
 
     @DatabaseField
     public String details;
@@ -29,6 +29,14 @@ public class Card {
     @DatabaseField
     public String notes;
 
+
     public Card() {
     }
+
+    public void setCardData(CardData cardData){
+        this.cardData = cardData;
+        cardDataAcquired = new Date();
+    }
+
+
 }

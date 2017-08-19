@@ -12,7 +12,8 @@
 <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.bugfuzz.android.projectwalrus.ui.DetailedCardViewActivity">
+    tools:context="com.bugfuzz.android.projectwalrus.ui.DetailedCardViewActivity"
+    android:paddingBottom="8dp">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="0dp"
@@ -56,7 +57,7 @@
         android:layout_weight="1"
         android:maxLines="3"
         android:maxLength="60"
-        android:text="@string/textView_detailedCard_Title"
+        android:text="@string/textView_dummyCardTitle"
         android:textColor="@android:color/background_light"
         android:textSize="22sp"
         app:layout_constraintLeft_toLeftOf="@+id/card_header"
@@ -145,42 +146,27 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
-        android:text="@string/hint_dateAcquired_format"
+        android:text="@string/textView_dummyCardDateAcquired"
         android:textSize="12sp"
-        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
         app:layout_constraintTop_toBottomOf="@+id/txtView_DateAcquired_title"/>
 
     <TextView
-        android:id="@+id/txtView_CardLocation_title"
-        android:layout_width="328dp"
-        android:layout_height="26dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/textView_title_cardLocation"
-        app:layout_constraintLeft_toLeftOf="@+id/card_body"
-        app:layout_constraintRight_toRightOf="@+id/card_body"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_DetailedCardView_CardAcquiredDate"
-        />
-
-    <fragment
-        android:id="@+id/fragment_DetailedCardView_MapFragment"
-        class="com.google.android.gms.maps.SupportMapFragment"
+        android:id="@+id/txtView_DetailedCardView_CardNotes"
         android:layout_width="309dp"
-        android:layout_height="120dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
+        android:text="@string/textView_dummyCardNotes"
         android:textSize="12sp"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_CardLocation_title"/>
+        app:layout_constraintTop_toBottomOf="@+id/txtView_CardNotes_title"/>
 
     <TextView
         android:id="@+id/txtView_CardNotes_title"
@@ -192,24 +178,39 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/textView_title_cardNotes"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
         app:layout_constraintRight_toRightOf="@+id/card_body"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_DetailedCardView_MapFragment"/>
+        app:layout_constraintTop_toBottomOf="@+id/txtView_DetailedCardView_CardAcquiredDate"/>
 
     <TextView
-        android:id="@+id/txtView_DetailedCardView_CardNotes"
-        android:layout_width="309dp"
-        android:layout_height="0dp"
+        android:id="@+id/txtView_CardLocation_title"
+        android:layout_width="328dp"
+        android:layout_height="26dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/textView_title_cardLocation"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/card_body"
+        app:layout_constraintRight_toRightOf="@+id/card_body"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_DetailedCardView_CardNotes"/>
+
+    <fragment
+        android:id="@+id/fragment_DetailedCardView_MapFragment"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="308dp"
+        android:layout_height="200dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
-        android:text="@string/hint_cardNotes"
-        android:textSize="12sp"
         app:layout_constraintLeft_toLeftOf="@+id/card_body"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_CardNotes_title"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="@+id/card_body"/>
+        app:layout_constraintRight_toRightOf="@+id/card_body"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_CardLocation_title"/>
 
 
 </android.support.constraint.ConstraintLayout>
