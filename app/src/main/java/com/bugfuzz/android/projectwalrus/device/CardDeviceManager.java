@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 public enum CardDeviceManager {
-    INSTANCE, BuildConfig;
+    INSTANCE;
 
     public static final String ACTION_DEVICE_CHANGE = "com.bugfuzz.android.projectwalrus.action.DEVICE_CHANGE";
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.extra.DEVICE_WAS_ADDED";
