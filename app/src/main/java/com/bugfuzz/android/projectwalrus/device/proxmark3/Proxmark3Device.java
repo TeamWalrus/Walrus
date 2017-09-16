@@ -85,15 +85,12 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                             readQueue.put(command);
                         } catch (InterruptedException e) {
                         }
-                    else
-                        Logger.getLogger("proxmark").log(Level.INFO, "dropped: " + command.op);
                 }
             }
         });
     }
 
     private void sendCommand(Proxmark3Command command) {
-        Logger.getLogger("proxmark").log(Level.INFO, "sending: " + command.op);
         usbSerialDevice.write(command.toBytes()); /* TODO: "buffer" send */
     }
 
@@ -114,7 +111,6 @@ public class Proxmark3Device extends UsbSerialCardDevice {
             Proxmark3Command command;
             try {
                 command = readQueue.poll(thisTimeout, TimeUnit.MILLISECONDS);
-                Logger.getLogger("proxmark").log(Level.INFO, "got: " + command.op);
             } catch (InterruptedException e) {
                 break;
             }
@@ -154,9 +150,6 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                 v_134 = (command.args[0] >> 16) / 1000,
                 peak_f = 12000000 / ((command.args[2] & 0xffff) + 1),
                 peak_v = (command.args[2] >> 16) / 1000;
-
-        Logger.getLogger("proxmark").log(Level.INFO, "tuning: v125 = " + v_125 + "V, v_134 = " +
-                v_134 + "V, peak_f = " + (peak_f / 1000) + "kHz, peak_v = " + peak_v + "V");
 
         BigInteger data = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{1, 0, 0}),
