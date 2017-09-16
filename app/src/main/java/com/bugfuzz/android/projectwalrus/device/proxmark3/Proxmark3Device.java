@@ -166,11 +166,11 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         tuned |= arg;
 
         return new TuneResult(
-                (command.args[0] & 0xffff) / 1000,
-                (command.args[0] >> 16) / 1000,
-                12000000 / ((command.args[2] & 0xffff) + 1),
-                (command.args[2] >> 16) / 1000,
-                (command.args[1] & 0xffff) / 1000);
+                (command.args[0] & 0xffff) / 1000f,
+                (command.args[0] >> 16) / 1000f,
+                12000000f / ((command.args[2] & 0xffff) + 1),
+                (command.args[2] >> 16) / 1000f,
+                (command.args[1] & 0xffff) / 1000f);
     }
 
     public long tuned() {
