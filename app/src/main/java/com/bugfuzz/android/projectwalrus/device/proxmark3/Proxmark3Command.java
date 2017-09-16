@@ -33,6 +33,9 @@ class Proxmark3Command {
         }
     }
 
+    static long MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
+            MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
+
     Op op;
     long[] args;
     byte[] data;

@@ -53,14 +53,15 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     }
 
     public class TuneResult {
-        public TuneResult(float v_125, float v_134, float peak_f, float peak_v) {
+        public TuneResult(float v_125, float v_134, float peak_f, float peak_v, float v_HF) {
             this.v_125 = v_125;
             this.v_134 = v_134;
             this.peak_f = peak_f;
             this.peak_v = peak_v;
+            this.v_HF = v_HF;
         }
 
-        public float v_125, v_134, peak_f, peak_v;
+        public float v_125, v_134, peak_f, peak_v, v_HF;
     }
 
     private static final int DEFAULT_TIMEOUT = 20 * 1000;
@@ -145,16 +146,27 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         }
     }
 
-    public TuneResult tune() throws IOException {
+    public TuneResult tune(boolean lf, boolean hf) throws IOException {
+        long arg = 0;
+        if (lf)
+            arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF;
+        if (hf)
+            arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF;
+        if (arg == 0)
+            throw new IllegalArgumentException("Must tune LF or HF");
+
         Proxmark3Command command = sendReceiveCommand(
-                new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{1, 0, 0}),
+                new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
                 new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING), DEFAULT_TIMEOUT);
         if (command == null)
             throw new IOException("Failed to tune antenna");
 
-        return new TuneResult((command.args[0] & 0xffff) / 1000,
-                (command.args[0] >> 16) / 1000, 12000000 / ((command.args[2] & 0xffff) + 1),
-                (command.args[2] >> 16) / 1000);
+        return new TuneResult(
+                (command.args[0] & 0xffff) / 1000,
+                (command.args[0] >> 16) / 1000,
+                12000000 / ((command.args[2] & 0xffff) + 1),
+                (command.args[2] >> 16) / 1000,
+                (command.args[1] & 0xffff) / 1000);
     }
 
     @Override
