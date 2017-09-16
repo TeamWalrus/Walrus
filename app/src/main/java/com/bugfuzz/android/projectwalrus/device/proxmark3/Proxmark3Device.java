@@ -52,6 +52,17 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         }
     }
 
+    public class TuneResult {
+        public TuneResult(float v_125, float v_134, float peak_f, float peak_v) {
+            this.v_125 = v_125;
+            this.v_134 = v_134;
+            this.peak_f = peak_f;
+            this.peak_v = peak_v;
+        }
+
+        public float v_125, v_134, peak_f, peak_v;
+    }
+
     private static final int DEFAULT_TIMEOUT = 20 * 1000;
 
     private byte[] buffer = new byte[0]; /* todo: use better class */
@@ -134,23 +145,21 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         }
     }
 
-    @Override
-    public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
-        // TODO: use cardDataClass
-
-        // TODO: only tune once
+    public TuneResult tune() throws IOException {
         Proxmark3Command command = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{1, 0, 0}),
                 new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING), DEFAULT_TIMEOUT);
         if (command == null)
             throw new IOException("Failed to tune antenna");
 
-        // TODO: use tune result (in args), only continue when ready. give status, allow cancel
-        float v_125 = (command.args[0] & 0xffff) / 1000,
-                v_134 = (command.args[0] >> 16) / 1000,
-                peak_f = 12000000 / ((command.args[2] & 0xffff) + 1),
-                peak_v = (command.args[2] >> 16) / 1000;
+        return new TuneResult((command.args[0] & 0xffff) / 1000,
+                (command.args[0] >> 16) / 1000, 12000000 / ((command.args[2] & 0xffff) + 1),
+                (command.args[2] >> 16) / 1000);
+    }
 
+    @Override
+    public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
+        // TODO: use cardDataClass
         BigInteger data = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{1, 0, 0}),
                 new CommandHandler<BigInteger>() {
