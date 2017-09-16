@@ -11,7 +11,7 @@ import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 public class Proxmark3Activity extends AppCompatActivity {
-    public static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity";
+    public static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
 
     public static class SettingsFragment extends PreferenceFragment {
         @Override
@@ -44,8 +44,14 @@ public class Proxmark3Activity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.proxmark3_toolbar);
         setSupportActionBar(myToolbar);
 
+        SettingsFragment settingsFragment = new SettingsFragment();
+
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(android.R.id.content, settingsFragment)
                 .commit();
+        getFragmentManager().executePendingTransactions();
+
+        settingsFragment.findPreference("tune").getIntent().putExtra(
+                Proxmark3TuneActivity.EXTRA_DEVICE, proxmark3Device.getID());
     }
 }
