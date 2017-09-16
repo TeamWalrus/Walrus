@@ -126,7 +126,7 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
         LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
         googleMap.addMarker(new MarkerOptions().position(cardLatLng));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(cardLatLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng,15));
     }
 
 

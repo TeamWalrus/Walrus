@@ -25,7 +25,17 @@ import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.parceler.Parcels;
@@ -35,9 +45,15 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Logger;
 
+// TODO: Fix card location being updated every time a card is edited. boolean check if existing card or new card. if new card edit location, if not do not! else -> end up losing original card location data
+// TODO: Card location is best estimate https://developer.android.com/guide/topics/location/strategies.html#BestEstimate
+// TODO: Add pin to editCardActivity to show where current location is where card will be saved.
+
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
     public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
     private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private LocationRequest mLocationRequest;
     private Card card;
 
     public static void startActivity(Context context, Card card) {
@@ -78,8 +94,43 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
         }
 
-        getCardLocation();
+        // Get map updates
+        startLocationUpdates();
+    }
 
+    // Get location updates method
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Logger.getAnonymousLogger().info("getCardLocation: no perms");
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            return;
+        }
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        card.cardLocationLat = location.getLatitude();
+                        card.cardLocationLng = location.getLongitude();
+                    }
+
+                }
+            }
+        };
+
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback,
+                null /* Looper */);
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
     public void onEditCardSaveCardClick(View view) {
@@ -98,35 +149,8 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         } catch (SQLException e) {
             // Handle failure
         }
+        stopLocationUpdates();
         finish();
-    }
-
-    public void getCardLocation() {
-        Logger.getAnonymousLogger().info("getCardLocation");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Logger.getAnonymousLogger().info("getCardLocation: no perms");
-            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
-            return;
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        Logger.getAnonymousLogger().info("onSuccess: location = " + location);
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            card.cardLocationLat = location.getLatitude();
-                            card.cardLocationLng = location.getLongitude();
-                        }
-                    }
-                });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 0)
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                getCardLocation();
     }
 
     public void onReadCardClick(View view) {
@@ -195,6 +219,13 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     }
 
     public void onCancelClick(View view){
+        stopLocationUpdates();
         finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopLocationUpdates();
     }
 }
