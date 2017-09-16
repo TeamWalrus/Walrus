@@ -70,6 +70,8 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     private BlockingQueue<Proxmark3Command> readQueue = new LinkedBlockingQueue<>();
     private boolean reading = false;
 
+    private long tuned;
+
     public Proxmark3Device(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
         super(usbDevice, usbDeviceConnection);
 
@@ -161,6 +163,8 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         if (command == null)
             throw new IOException("Failed to tune antenna");
 
+        tuned |= arg;
+
         return new TuneResult(
                 (command.args[0] & 0xffff) / 1000,
                 (command.args[0] >> 16) / 1000,
@@ -169,8 +173,15 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                 (command.args[1] & 0xffff) / 1000);
     }
 
+    public long tuned() {
+        return tuned;
+    }
+
     @Override
     public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
+        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
+            throw new IllegalStateException("Not LF tuned");
+
         // TODO: use cardDataClass
         BigInteger data = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{1, 0, 0}),
