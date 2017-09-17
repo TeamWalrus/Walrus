@@ -180,6 +180,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     @Override
     public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
         if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
+            // TODO: how to handle generically?
             throw new IllegalStateException("Not LF tuned");
 
         // TODO: use cardDataClass
@@ -203,7 +204,29 @@ public class Proxmark3Device extends UsbSerialCardDevice {
 
     @Override
     public synchronized void writeCardData(CardData cardData) throws IOException {
-        throw new UnsupportedOperationException("Not yet implemented");
+        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
+            // TODO: how to handle generically?
+            throw new IllegalStateException("Not LF tuned");
+
+        // TODO: use cardDataClass
+        HIDCardData hidCardData = (HIDCardData)cardData;
+        // TODO: long format (data[0] != 0)
+        Boolean success = sendReceiveCommand(
+                new Proxmark3Command(Proxmark3Command.Op.HID_CLONE_TAG, new long[]{
+                        hidCardData.data.shiftRight(64).intValue(),
+                        hidCardData.data.shiftRight(32).intValue(),
+                        hidCardData.data.intValue()}),
+                new CommandHandler<Boolean>() {
+                    @Override
+                    public Boolean handle(Proxmark3Command command) {
+                        if (command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
+                            return null;
+                        return new String(command.data).equals("DONE!") ? true : null;
+                    }
+                }, DEFAULT_TIMEOUT);
+
+        if (Boolean.TRUE.equals(success))
+            throw new IOException("Failed to write card data before timeout");
     }
 
     @Override

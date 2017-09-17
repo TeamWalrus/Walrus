@@ -10,12 +10,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
+import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
+import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,8 +30,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Map;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
 
@@ -170,5 +178,40 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         }
     }
 
+    public void onWriteCardClick(View view) {
+        Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
 
+        if (cardDevices.isEmpty()) {
+            Toast.makeText(this, "No card devices found", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // TODO: if len of cardDevices >1 then we want to choose what type of card to read
+        final CardDevice cardDevice = cardDevices.get(0);
+
+        // TODO: doing this every time is stupid. why did we drop the member again?
+        Card card;
+        try {
+            card = getHelper().getCardDao().queryForId(id);
+            if (card == null) {
+                return;
+            }
+        } catch (SQLException e) {
+            return;
+        }
+
+        final Class<? extends CardData> writeableTypes[] = cardDevice.getClass()
+                .getAnnotation(CardDevice.Metadata.class).supportsWrite();
+
+        if (!Arrays.asList(writeableTypes).contains(card.cardData.getClass())) {
+            Toast.makeText(this, "This device doesn't support this type of card", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        try {
+            cardDevice.writeCardData(card.cardData);
+        } catch (IOException ex) {
+            Toast.makeText(this, "Failed to write card data", Toast.LENGTH_LONG).show();
+        }
+    }
 }

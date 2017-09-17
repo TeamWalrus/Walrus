@@ -11,6 +11,7 @@ class Proxmark3Command {
         DEBUG_PRINT_STRING(0x100),
 
         HID_DEMOD_FSK(0x20b),
+        HID_CLONE_TAG(0x210),
 
         MEASURE_ANTENNA_TUNING(0x400),
         MEASURED_ANTENNA_TUNING(0x410);

@@ -95,7 +95,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             return;
         }
 
-        // if len of cardDevices >1 then we want to choose what type of card to read
+        // TODO: if len of cardDevices >1 then we want to choose what type of card to read
         final CardDevice cardDevice = cardDevices.get(0);
 
         final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
@@ -114,9 +114,9 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 }
             });
             builder.create().show();
-        // if only one type of card is supported then use that
         }
         else {
+            // if only one type of card is supported then use that
             onChooseCardType(cardDevice, readableTypes[0]);
         }
     }
