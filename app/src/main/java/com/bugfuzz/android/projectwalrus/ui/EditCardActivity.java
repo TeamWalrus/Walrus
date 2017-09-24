@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.EditText;
@@ -95,7 +96,6 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             return;
         }
-
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(1000);
@@ -119,7 +119,17 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     // Stop location updates method
     private void stopLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            startLocationUpdates();
     }
 
     // Save Card method
@@ -201,10 +211,12 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 text += "\n" + cardData.getHumanReadableText();
                 ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
                 card.setCardData(cardData);
-                // Capture card location as well - remember we want the card location when the card is read and not
-                // to continue updating while/if you walk away without saving the card immediately
-                card.cardLocationLat = currentBestLocation.getLatitude();
-                card.cardLocationLng = currentBestLocation.getLongitude();
+                if (currentBestLocation != null) {
+                    // Capture card location as well - remember we want the card location when the card is read and not
+                    // to continue updating while/if you walk away without saving the card immediately
+                    card.cardLocationLat = currentBestLocation.getLatitude();
+                    card.cardLocationLng = currentBestLocation.getLongitude();
+                }
             }
         }).execute();
     }

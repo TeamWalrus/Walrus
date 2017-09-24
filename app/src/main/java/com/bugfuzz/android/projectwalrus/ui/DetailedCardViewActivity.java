@@ -116,13 +116,17 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         if (card == null) {
             return;
         }
-        // TODO: if card location is null need to draw a sad walrus or something.. .:?
-        if (card.cardLocationLat == null || card.cardLocationLng == null) {
-            Logger.getAnonymousLogger().info("onMapReady: one of the card location values is null");
+        // TODO: move this check above to the update UI method
+        if (card.cardLocationLat != null && card.cardLocationLng != null) {
+            LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
+            googleMap.addMarker(new MarkerOptions().position(cardLatLng));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
+        } else {
+            LatLng cardLatLng = new LatLng(0.0, 0.0);
+            googleMap.addMarker(new MarkerOptions().position(cardLatLng));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
         }
-        LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
-        googleMap.addMarker(new MarkerOptions().position(cardLatLng));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
+
     }
 
     @Override
