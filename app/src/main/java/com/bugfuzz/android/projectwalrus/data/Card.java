@@ -27,10 +27,10 @@ public class Card {
     public String notes;
 
     @DatabaseField
-    public double cardLocationLat;
+    public Double cardLocationLat;
 
     @DatabaseField
-    public double cardLocationLng;
+    public Double cardLocationLng;
 
     public Card() {
     }

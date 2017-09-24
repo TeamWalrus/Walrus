@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.EditText;
@@ -24,19 +23,12 @@ import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.util.GeoUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.parceler.Parcels;
 
@@ -45,9 +37,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Logger;
 
-// TODO: Fix card location being updated every time a card is edited. boolean check if existing card or new card. if new card edit location, if not do not! else -> end up losing original card location data
-// TODO: Card location is best estimate https://developer.android.com/guide/topics/location/strategies.html#BestEstimate
-// TODO: Add pin to editCardActivity to show where current location is where card will be saved.
+// TODO: Add pin to editCardActivity to show currentBestLocation
 
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
     public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
@@ -55,6 +45,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     private LocationCallback mLocationCallback;
     private LocationRequest mLocationRequest;
     private Card card;
+    private Location currentBestLocation;
 
     public static void startActivity(Context context, Card card) {
         // create intent
@@ -115,11 +106,9 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
-                    if (location != null) {
-                        card.cardLocationLat = location.getLatitude();
-                        card.cardLocationLng = location.getLongitude();
+                    if (GeoUtils.isBetterLocation(location, currentBestLocation)){
+                        currentBestLocation = location;
                     }
-
                 }
             }
         };
@@ -129,33 +118,40 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 null /* Looper */);
     }
 
+    // Stop location updates method
     private void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
+    // Save Card method
     public void onEditCardSaveCardClick(View view) {
         // TODO: Add the rest of the UI elements
+        // Set Card Name
         EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
         card.name = cardNameEditText.getText().toString();
+        // Do not save a Card if the Name field is blank
         if (card.name.isEmpty()) {
             Toast.makeText(EditCardActivity.this, "Card name is required!",
                     Toast.LENGTH_LONG).show();
             return;
         }
+        // Set Card Notes
         EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
         card.notes = cardNotesEditText.getText().toString();
+        // Save the Card object in the database
         try {
             getHelper().getCardDao().createOrUpdate(card);
         } catch (SQLException e) {
             // Handle failure
         }
+        // Stop location updates
         stopLocationUpdates();
         finish();
     }
 
+    // Read a Card method
     public void onReadCardClick(View view) {
         Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
-
         if (cardDevices.isEmpty()) {
             Toast.makeText(EditCardActivity.this, "No card devices found",
                     Toast.LENGTH_LONG).show();
@@ -206,14 +202,16 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             protected void onPostExecute(CardData cardData) {
                 if (cardData == null)
                     return;
-
                 String text = "Type: " + cardData.getTypeInfo();
                 if (cardData.getTypeDetailInfo() != null)
                     text += " (" + cardData.getTypeDetailInfo() + ")";
                 text += "\n" + cardData.getHumanReadableText();
-
                 ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
                 card.setCardData(cardData);
+                // Capture card location as well - remember we want the card location when the card is read and not
+                // to continue updating while/if you walk away without saving the card immediately
+                card.cardLocationLat = currentBestLocation.getLatitude();
+                card.cardLocationLng = currentBestLocation.getLongitude();
             }
         }).execute();
     }
@@ -228,4 +226,5 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         super.onStop();
         stopLocationUpdates();
     }
+
 }

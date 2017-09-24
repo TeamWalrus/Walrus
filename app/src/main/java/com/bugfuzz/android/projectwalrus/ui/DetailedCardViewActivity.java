@@ -28,6 +28,7 @@ import org.parceler.Parcels;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.logging.Logger;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
 
@@ -122,8 +123,12 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             }
         } catch (SQLException e) {
             return;
-        }
 
+        }
+        // TODO: if card location is null need to draw a sad walrus or something.. .:?
+        if (card.cardLocationLat == null || card.cardLocationLng == null){
+            Logger.getAnonymousLogger().info("onMapReady: one of the card location values is null");
+        }
         LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
         googleMap.addMarker(new MarkerOptions().position(cardLatLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng,15));
