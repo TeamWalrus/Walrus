@@ -78,13 +78,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     }
 
     private void updateUI() {
-        Card card;
-        try {
-            card = getHelper().getCardDao().queryForId(id);
-            if (card == null) {
-                return;
-            }
-        } catch (SQLException e) {
+        Card card = getHelper().getCardDao().queryForId(id);
+        if (card == null) {
             return;
         }
 
@@ -117,13 +112,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     }
 
     public void onMapReady(GoogleMap googleMap) {
-        Card card;
-        try {
-            card = getHelper().getCardDao().queryForId(id);
-            if (card == null) {
-                return;
-            }
-        } catch (SQLException e) {
+        Card card = getHelper().getCardDao().queryForId(id);
+        if (card == null) {
             return;
         }
         // TODO: if card location is null need to draw a sad walrus or something.. .:?
@@ -152,13 +142,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_editCard:
-                Card card;
-                try {
-                    card = getHelper().getCardDao().queryForId(id);
-                    if (card == null) {
-                        return true;
-                    }
-                } catch (SQLException e) {
+                Card card = getHelper().getCardDao().queryForId(id);
+                if (card == null) {
                     return true;
                 }
                 EditCardActivity.startActivity(this, card);
@@ -171,14 +156,10 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
                 alert.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Card card = getHelper().getCardDao().queryForId(id);
-                            if (card != null)
-                                getHelper().getCardDao().delete(card);
-                            finish();
-                        } catch (SQLException e) {
-                            // Handle failure
-                        }
+                        Card card = getHelper().getCardDao().queryForId(id);
+                        if (card != null)
+                            getHelper().getCardDao().delete(card);
+                        finish();
                         dialog.dismiss();
                     }
                 });
@@ -208,13 +189,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         final CardDevice cardDevice = cardDevices.get(0);
 
         // TODO: doing this every time is stupid. why did we drop the member again?
-        Card card;
-        try {
-            card = getHelper().getCardDao().queryForId(id);
-            if (card == null) {
-                return;
-            }
-        } catch (SQLException e) {
+        Card card = getHelper().getCardDao().queryForId(id);
+        if (card == null) {
             return;
         }
 

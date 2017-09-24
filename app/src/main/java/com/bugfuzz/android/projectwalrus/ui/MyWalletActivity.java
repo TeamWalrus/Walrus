@@ -25,7 +25,6 @@ import com.bugfuzz.android.projectwalrus.data.QueryUtils;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 import java.math.BigInteger;
-import java.sql.SQLException;
 
 public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
@@ -42,28 +41,22 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         CardDeviceManager.INSTANCE.scanForDevices(this);
 
         // TODO: remove in release
-        try {
-            if (getHelper().getCardDao().countOf() == 0) {
-                String[] names = {
-                        "Apple",
-                        "Banana",
-                        "Carrot",
-                        "Some crazy long title for a card because why not",
-                        "Elephant",
-                        "Walrus"
-                };
-                for (String name : names) {
-                    Card card = new Card();
-                    card.name = name;
-                    card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
+        if (getHelper().getCardDao().countOf() == 0) {
+            String[] names = {
+                    "Apple",
+                    "Banana",
+                    "Carrot",
+                    "Some crazy long title for a card because why not",
+                    "Elephant",
+                    "Walrus"
+            };
+            for (String name : names) {
+                Card card = new Card();
+                card.name = name;
+                card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
 
-                    try {
-                        getHelper().getCardDao().create(card);
-                    } catch (SQLException e) {
-                    }
-                }
+                getHelper().getCardDao().create(card);
             }
-        } catch (SQLException e) {
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);

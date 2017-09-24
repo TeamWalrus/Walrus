@@ -138,11 +138,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
         card.notes = cardNotesEditText.getText().toString();
         // Save the Card object in the database
-        try {
-            getHelper().getCardDao().createOrUpdate(card);
-        } catch (SQLException e) {
-            // Handle failure
-        }
+        getHelper().getCardDao().createOrUpdate(card);
         // Stop location updates
         stopLocationUpdates();
         finish();
