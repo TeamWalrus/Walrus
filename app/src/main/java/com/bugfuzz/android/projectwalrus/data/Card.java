@@ -21,14 +21,24 @@ public class Card {
     public CardData cardData;
 
     @DatabaseField
-    public Date created = new Date();
-
-    @DatabaseField
-    public String details;
+    public Date cardDataAcquired;
 
     @DatabaseField
     public String notes;
 
+    @DatabaseField
+    public Double cardLocationLat;
+
+    @DatabaseField
+    public Double cardLocationLng;
+
     public Card() {
     }
+
+    public void setCardData(CardData cardData){
+        this.cardData = cardData;
+        cardDataAcquired = new Date();
+    }
+
+
 }

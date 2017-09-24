@@ -97,23 +97,6 @@
                     android:onClick="onReadCardClick"
                     android:text="@string/btn_readNewCard"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp">
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/textView_title_cardLocation"/>
-
-                    <TextView
-                        android:id="@+id/textView_CardLocation"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -131,6 +114,28 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="5dp">
+
+                <fragment
+                    android:id="@+id/fragment_EditCardView_MapFragment"
+                    class="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="0dp"
+                    app:layout_constraintLeft_toLeftOf="@+id/card_body"
+                    app:layout_constraintRight_toRightOf="@+id/card_body"
+                    app:layout_constraintTop_toBottomOf="@+id/txtView_CardLocation_title"/>
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

@@ -1,14 +1,15 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
+import android.Manifest;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,17 +23,29 @@ import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.util.GeoUtils;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+
+// TODO: Add pin to editCardActivity to show currentBestLocation
 
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
     public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private LocationRequest mLocationRequest;
     private Card card;
+    private Location currentBestLocation;
 
     public static void startActivity(Context context, Card card) {
         // create intent
@@ -47,6 +60,8 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editcard);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // get intent
         Intent intent = getIntent();
@@ -70,25 +85,73 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
         }
 
+        // Get map updates
+        startLocationUpdates();
     }
 
-    public void onEditCardSaveCardClick(View view){
+    // Get location updates method
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Logger.getAnonymousLogger().info("getCardLocation: no perms");
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            return;
+        }
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+                    if (GeoUtils.isBetterLocation(location, currentBestLocation)){
+                        currentBestLocation = location;
+                    }
+                }
+            }
+        };
+
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback,
+                null /* Looper */);
+    }
+
+    // Stop location updates method
+    private void stopLocationUpdates() {
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    // Save Card method
+    public void onEditCardSaveCardClick(View view) {
         // TODO: Add the rest of the UI elements
+        // Set Card Name
         EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
         card.name = cardNameEditText.getText().toString();
+        // Do not save a Card if the Name field is blank
+        if (card.name.isEmpty()) {
+            Toast.makeText(EditCardActivity.this, "Card name is required!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        // Set Card Notes
         EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
         card.notes = cardNotesEditText.getText().toString();
+        // Save the Card object in the database
         try {
             getHelper().getCardDao().createOrUpdate(card);
         } catch (SQLException e) {
             // Handle failure
         }
+        // Stop location updates
+        stopLocationUpdates();
         finish();
     }
 
+    // Read a Card method
     public void onReadCardClick(View view) {
         Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
-
         if (cardDevices.isEmpty()) {
             Toast.makeText(EditCardActivity.this, "No card devices found",
                     Toast.LENGTH_LONG).show();
@@ -119,6 +182,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             // if only one type of card is supported then use that
             onChooseCardType(cardDevice, readableTypes[0]);
         }
+
     }
 
     private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass){
@@ -138,19 +202,29 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             protected void onPostExecute(CardData cardData) {
                 if (cardData == null)
                     return;
-
                 String text = "Type: " + cardData.getTypeInfo();
                 if (cardData.getTypeDetailInfo() != null)
                     text += " (" + cardData.getTypeDetailInfo() + ")";
                 text += "\n" + cardData.getHumanReadableText();
-
                 ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
-                card.cardData = cardData;
+                card.setCardData(cardData);
+                // Capture card location as well - remember we want the card location when the card is read and not
+                // to continue updating while/if you walk away without saving the card immediately
+                card.cardLocationLat = currentBestLocation.getLatitude();
+                card.cardLocationLng = currentBestLocation.getLongitude();
             }
         }).execute();
     }
 
     public void onCancelClick(View view){
+        stopLocationUpdates();
         finish();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopLocationUpdates();
+    }
+
 }
