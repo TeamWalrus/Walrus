@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Global Settings"
-        android:key="pref_key_global_settings">
+        android:key="pref_key_global_settings"
+        android:title="Global Settings">
         <Preference
             android:key="pref_key_global_blank1"
             android:summary="Global Pref1"

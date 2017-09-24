@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class QueryUtils {
 
-    public static <T>T getNthRow(Dao<T, ?> dao, long row) throws SQLException {
+    public static <T> T getNthRow(Dao<T, ?> dao, long row) throws SQLException {
         QueryBuilder<T, ?> queryBuilder = dao.queryBuilder();
         queryBuilder.limit(1L);
         queryBuilder.offset(row);

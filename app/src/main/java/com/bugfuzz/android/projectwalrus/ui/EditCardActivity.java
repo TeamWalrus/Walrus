@@ -75,7 +75,6 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
         cardNotesEditText.setText(card.notes);
 
-
         if (card.cardData != null) {
             String text = "Type: " + card.cardData.getTypeInfo();
             if (card.cardData.getTypeDetailInfo() != null)
@@ -106,7 +105,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
-                    if (GeoUtils.isBetterLocation(location, currentBestLocation)){
+                    if (GeoUtils.isBetterLocation(location, currentBestLocation)) {
                         currentBestLocation = location;
                     }
                 }
@@ -164,7 +163,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsRead();
 
-        if (readableTypes.length > 1){
+        if (readableTypes.length > 1) {
             String[] names = new String[readableTypes.length];
             for (int i = 0; i < names.length; ++i)
                 names[i] = readableTypes[i].getSimpleName();
@@ -172,20 +171,18 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             AlertDialog.Builder builder = new AlertDialog.Builder(EditCardActivity.this);
             builder.setTitle("Pick a card type")
                     .setItems(names, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    onChooseCardType(cardDevice, readableTypes[which]);
-                }
-            });
+                        public void onClick(DialogInterface dialog, int which) {
+                            onChooseCardType(cardDevice, readableTypes[which]);
+                        }
+                    });
             builder.create().show();
-        }
-        else {
+        } else {
             // if only one type of card is supported then use that
             onChooseCardType(cardDevice, readableTypes[0]);
         }
-
     }
 
-    private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass){
+    private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass) {
         (new AsyncTask<Void, Void, CardData>() {
             @Override
             protected CardData doInBackground(Void... params) {
@@ -216,7 +213,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         }).execute();
     }
 
-    public void onCancelClick(View view){
+    public void onCancelClick(View view) {
         stopLocationUpdates();
         finish();
     }
@@ -226,5 +223,4 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         super.onStop();
         stopLocationUpdates();
     }
-
 }

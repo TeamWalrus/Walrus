@@ -6,10 +6,10 @@
                 tools:context="com.bugfuzz.android.projectwalrus.ui.MyWalletActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/settings_appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        android:id="@+id/settings_appBarLayout">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/myWallet_toolbar"
@@ -24,9 +24,9 @@
         android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/settings_appBarLayout"
         android:background="@android:color/background_dark"
-        android:scrollbars="vertical"
-        android:layout_below="@+id/settings_appBarLayout"/>
+        android:scrollbars="vertical"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -35,10 +35,8 @@ public class Card {
     public Card() {
     }
 
-    public void setCardData(CardData cardData){
+    public void setCardData(CardData cardData) {
         this.cardData = cardData;
         cardDataAcquired = new Date();
     }
-
-
 }

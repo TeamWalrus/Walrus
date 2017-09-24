@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,12 +27,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.parceler.Parcels;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -44,7 +40,9 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
     private static int id;
 
-    /** Called when the user taps a card */
+    /**
+     * Called when the user taps a card
+     */
     public static void startActivity(Context context, int id) {
         Intent intent = new Intent(context, DetailedCardViewActivity.class);
         intent.putExtra(EXTRA_CARD_ID, id);
@@ -90,13 +88,11 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             return;
         }
 
-
         if (card.name != null && !card.name.isEmpty()) {
             String cardTitle = card.name;
             TextView cardNameTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
             cardNameTextView.setText(cardTitle);
         }
-
 
         if (card.notes != null && !card.notes.isEmpty()) {
             String cardNotes = card.notes;
@@ -104,12 +100,10 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             cardNotesTextView.setText(cardNotes);
         }
 
-
         if (card.cardData != null) {
             TextView uidTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
             uidTextView.setText(card.cardData.getHumanReadableText());
         }
-
 
         if (card.cardDataAcquired != null) {
             String cardAcquiredDate = DateFormat.getDateTimeInstance().format(card.cardDataAcquired);
@@ -131,17 +125,15 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             }
         } catch (SQLException e) {
             return;
-
         }
         // TODO: if card location is null need to draw a sad walrus or something.. .:?
-        if (card.cardLocationLat == null || card.cardLocationLng == null){
+        if (card.cardLocationLat == null || card.cardLocationLng == null) {
             Logger.getAnonymousLogger().info("onMapReady: one of the card location values is null");
         }
         LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
         googleMap.addMarker(new MarkerOptions().position(cardLatLng));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng,15));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
     }
-
 
     @Override
     protected void onResume() {
@@ -155,7 +147,6 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         getMenuInflater().inflate(R.menu.detailedcardview_menu, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -1,6 +1,5 @@
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
@@ -21,8 +20,6 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,40 +33,10 @@ import java.util.regex.Pattern;
         @UsbCardDevice.UsbIDs.IDs(vendorId = 39620, productId = 19343)
 })
 public class Proxmark3Device extends UsbSerialCardDevice {
-    private interface CommandHandler<R> {
-        R handle(Proxmark3Command command);
-    }
-
-    private class CommandWaiter implements CommandHandler<Proxmark3Command> {
-        private Proxmark3Command.Op op;
-
-        CommandWaiter(Proxmark3Command.Op op) {
-            this.op = op;
-        }
-
-        public Proxmark3Command handle(Proxmark3Command command) {
-            return command.op == op ? command : null;
-        }
-    }
-
-    public class TuneResult {
-        public TuneResult(float v_125, float v_134, float peak_f, float peak_v, float v_HF) {
-            this.v_125 = v_125;
-            this.v_134 = v_134;
-            this.peak_f = peak_f;
-            this.peak_v = peak_v;
-            this.v_HF = v_HF;
-        }
-
-        public float v_125, v_134, peak_f, peak_v, v_HF;
-    }
-
     private static final int DEFAULT_TIMEOUT = 20 * 1000;
-
     private byte[] buffer = new byte[0]; /* todo: use better class */
     private BlockingQueue<Proxmark3Command> readQueue = new LinkedBlockingQueue<>();
     private boolean reading = false;
-
     private long tuned;
 
     public Proxmark3Device(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
@@ -209,7 +176,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
             throw new IllegalStateException("Not LF tuned");
 
         // TODO: use cardDataClass
-        HIDCardData hidCardData = (HIDCardData)cardData;
+        HIDCardData hidCardData = (HIDCardData) cardData;
         // TODO: long format (data[0] != 0)
         Boolean success = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.HID_CLONE_TAG, new long[]{
@@ -234,5 +201,33 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         Intent intent = new Intent(context, Proxmark3Activity.class);
         intent.putExtra(Proxmark3Activity.EXTRA_DEVICE, getID());
         return intent;
+    }
+
+    private interface CommandHandler<R> {
+        R handle(Proxmark3Command command);
+    }
+
+    private class CommandWaiter implements CommandHandler<Proxmark3Command> {
+        private Proxmark3Command.Op op;
+
+        CommandWaiter(Proxmark3Command.Op op) {
+            this.op = op;
+        }
+
+        public Proxmark3Command handle(Proxmark3Command command) {
+            return command.op == op ? command : null;
+        }
+    }
+
+    public class TuneResult {
+        public float v_125, v_134, peak_f, peak_v, v_HF;
+
+        public TuneResult(float v_125, float v_134, float peak_f, float peak_v, float v_HF) {
+            this.v_125 = v_125;
+            this.v_134 = v_134;
+            this.peak_f = peak_f;
+            this.peak_v = peak_v;
+            this.v_HF = v_HF;
+        }
     }
 }

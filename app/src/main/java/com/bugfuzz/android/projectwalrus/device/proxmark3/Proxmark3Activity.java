@@ -1,6 +1,5 @@
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -12,16 +11,6 @@ import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 public class Proxmark3Activity extends AppCompatActivity {
     public static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
-
-    public static class SettingsFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            addPreferencesFromResource(R.xml.pref_proxmark3);
-        }
-    }
-
     private Proxmark3Device proxmark3Device;
 
     @Override
@@ -35,7 +24,7 @@ public class Proxmark3Activity extends AppCompatActivity {
             return;
         }
         try {
-            proxmark3Device = (Proxmark3Device)cardDevice;
+            proxmark3Device = (Proxmark3Device) cardDevice;
         } catch (ClassCastException e) {
             finish();
             return;
@@ -53,5 +42,14 @@ public class Proxmark3Activity extends AppCompatActivity {
 
         settingsFragment.findPreference("tune").getIntent().putExtra(
                 Proxmark3TuneActivity.EXTRA_DEVICE, proxmark3Device.getID());
+    }
+
+    public static class SettingsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            addPreferencesFromResource(R.xml.pref_proxmark3);
+        }
     }
 }

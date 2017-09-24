@@ -1,19 +1,16 @@
 package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
-import android.app.Activity;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
-import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
+import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -65,9 +62,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 throw new IOException("Unexpected response to IDENTIFY command: " + line);
         }
 
-        short atqa=0;
-        long uid=0;
-        byte sak=0x0;
+        short atqa = 0;
+        long uid = 0;
+        byte sak = 0x0;
         for (int i = 0; i < 4; i++) {
             line = readLine();
 
@@ -77,20 +74,19 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
                 case 1:
                     String line_atqa[] = line.split(":");
-                    atqa = Short.reverseBytes((short)Integer.parseInt(line_atqa[1].trim(),16));
+                    atqa = Short.reverseBytes((short) Integer.parseInt(line_atqa[1].trim(), 16));
                     break;
                 case 2:
                     String line_uid[] = line.split(":");
-                    uid = (long)Integer.parseInt(line_uid[1].trim(),16);
+                    uid = (long) Integer.parseInt(line_uid[1].trim(), 16);
                     break;
                 case 3:
                     String line_sak[] = line.split(":");
-                    sak = (byte)Integer.parseInt(line_sak[1].trim(),16);
+                    sak = (byte) Integer.parseInt(line_sak[1].trim(), 16);
                     break;
-
             }
         }
-        return new ISO14443ACardData(uid,atqa,sak,null,null);
+        return new ISO14443ACardData(uid, atqa, sak, null, null);
     }
 
     @Override

@@ -5,8 +5,6 @@ import android.hardware.usb.UsbDeviceConnection;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice {
     private String buffer = "";
@@ -24,7 +22,7 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice {
     protected String readLine() {
         final int BUFFERED_READ_LEN = 1024;
 
-        for (;;) {
+        for (; ; ) {
             int i = buffer.indexOf(delimiter);
             if (i != -1) {
                 String result = buffer.substring(0, i);

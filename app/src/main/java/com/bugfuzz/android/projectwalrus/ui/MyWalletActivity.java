@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
@@ -27,7 +28,6 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 
 public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
-
 
     private RecyclerView rview;
 
@@ -110,14 +110,14 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         private final LayoutInflater inflater;
 
-
-        public CardAdapter(Context context){
+        public CardAdapter(Context context) {
             inflater = LayoutInflater.from(context);
         }
+
         @Override
         public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View view = inflater.inflate(R.layout.activity_mywallet_card_row,parent,false);
+            View view = inflater.inflate(R.layout.activity_mywallet_card_row, parent, false);
             final CardViewHolder holder = new CardViewHolder(view);
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +136,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             Card card;
             try {
                 card = QueryUtils.getNthRow(getHelper().getCardDao(), position);
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 return;
             }
 
@@ -144,12 +144,11 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             holder.id = card.id;
         }
 
-
         // Get all cards from card database
         @Override
         public int getItemCount() {
             try {
-                return (int)getHelper().getCardDao().countOf();
+                return (int) getHelper().getCardDao().countOf();
             } catch (SQLException e) {
                 return 0;
             }

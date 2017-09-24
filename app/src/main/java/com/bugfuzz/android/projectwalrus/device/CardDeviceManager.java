@@ -11,16 +11,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
-import org.reflections.Reflections;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

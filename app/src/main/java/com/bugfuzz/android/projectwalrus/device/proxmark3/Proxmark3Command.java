@@ -7,39 +7,27 @@ import java.nio.ByteOrder;
 import java.util.EnumSet;
 
 class Proxmark3Command {
-    enum Op {
-        DEBUG_PRINT_STRING(0x100),
-
-        HID_DEMOD_FSK(0x20b),
-        HID_CLONE_TAG(0x210),
-
-        MEASURE_ANTENNA_TUNING(0x400),
-        MEASURED_ANTENNA_TUNING(0x410);
-
-        private static final LongSparseArray<Op> codes = new LongSparseArray<>();
-
-        static {
-            for (Op op : EnumSet.allOf(Op.class))
-                codes.put(op.code, op);
-        }
-
-        public static Op get(long code) {
-            return codes.get(code);
-        }
-
-        public final long code;
-
-        Op(long code) {
-            this.code = code;
-        }
-    }
-
     static long MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
             MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
-
     Op op;
     long[] args;
     byte[] data;
+
+    Proxmark3Command(Op op, long[] args, byte[] data) {
+        this.op = op;
+
+        if (args.length != 3)
+            throw new IllegalArgumentException("Invalid number of args");
+        this.args = args;
+
+        if (data.length != 512)
+            throw new IllegalArgumentException("Invalid data length");
+        this.data = data;
+    }
+
+    Proxmark3Command(Op op, long[] args) {
+        this(op, args, new byte[512]);
+    }
 
     static int getByteLength() {
         return 8 + 3 * 8 + 512;
@@ -61,22 +49,6 @@ class Proxmark3Command {
         return new Proxmark3Command(op, args, data);
     }
 
-    Proxmark3Command(Op op, long[] args, byte[] data) {
-        this.op = op;
-
-        if (args.length != 3)
-            throw new IllegalArgumentException("Invalid number of args");
-        this.args = args;
-
-        if (data.length != 512)
-            throw new IllegalArgumentException("Invalid data length");
-        this.data = data;
-    }
-
-    Proxmark3Command(Op op, long[] args) {
-        this(op, args, new byte[512]);
-    }
-
     byte[] toBytes() {
         ByteBuffer bb = ByteBuffer.allocate(getByteLength());
         bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -93,5 +65,32 @@ class Proxmark3Command {
         bb.get(bytes);
 
         return bytes;
+    }
+
+    enum Op {
+        DEBUG_PRINT_STRING(0x100),
+
+        HID_DEMOD_FSK(0x20b),
+        HID_CLONE_TAG(0x210),
+
+        MEASURE_ANTENNA_TUNING(0x400),
+        MEASURED_ANTENNA_TUNING(0x410);
+
+        private static final LongSparseArray<Op> codes = new LongSparseArray<>();
+
+        static {
+            for (Op op : EnumSet.allOf(Op.class))
+                codes.put(op.code, op);
+        }
+
+        public final long code;
+
+        Op(long code) {
+            this.code = code;
+        }
+
+        public static Op get(long code) {
+            return codes.get(code);
+        }
     }
 }

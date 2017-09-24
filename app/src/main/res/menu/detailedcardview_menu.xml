@@ -5,8 +5,8 @@
     <!-- "Edit Card", should appear as action button if possible -->
     <item
         android:id="@+id/action_editCard"
-        android:orderInCategory="1"
         android:icon="@android:drawable/ic_menu_edit"
+        android:orderInCategory="1"
         app:showAsAction="ifRoom"
         tools:ignore="MenuTitle"/>
 

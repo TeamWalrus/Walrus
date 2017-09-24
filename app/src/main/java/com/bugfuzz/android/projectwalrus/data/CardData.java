@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public abstract class CardData implements Serializable {
     public abstract String getTypeInfo();
+
     public String getTypeDetailInfo() {
         return null;
     }
