@@ -29,9 +29,65 @@ import java.sql.SQLException;
 
 public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
-    private RecyclerView rview;
+    private RecyclerView recyclerView;
 
-    // set out wallet menu
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_mywallet);
+
+        Toolbar myWallet_toolbar = (Toolbar) findViewById(R.id.myWallet_toolbar);
+        setSupportActionBar(myWallet_toolbar);
+
+        CardDeviceManager.INSTANCE.scanForDevices(this);
+
+        // TODO: remove in release
+        try {
+            if (getHelper().getCardDao().countOf() == 0) {
+                String[] names = {
+                        "Apple",
+                        "Banana",
+                        "Carrot",
+                        "Some crazy long title for a card because why not",
+                        "Elephant",
+                        "Walrus"
+                };
+                for (String name : names) {
+                    Card card = new Card();
+                    card.name = name;
+                    card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
+
+                    try {
+                        getHelper().getCardDao().create(card);
+                    } catch (SQLException e) {
+                    }
+                }
+            }
+        } catch (SQLException e) {
+        }
+
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(new CardAdapter(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MyWalletActivity.this));
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditCardActivity.startActivity(MyWalletActivity.this, new Card());
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        recyclerView.getAdapter().notifyDataSetChanged();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mywallet_menu, menu);
@@ -45,79 +101,24 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mywallet);
-        Toolbar myWallet_toolbar = (Toolbar) findViewById(R.id.myWallet_toolbar);
-        setSupportActionBar(myWallet_toolbar);
-        CardDeviceManager.INSTANCE.scanForDevices(this);
-
-        try {
-            if (getHelper().getCardDao().countOf() == 0) {
-                //add test card
-                String[] names = {
-                        "Apple",
-                        "Banana",
-                        "Carrot",
-                        "Some crazy long title for a card because why not",
-                        "Elephant",
-                        "Walrus"
-                };
-                for (String name : names) {
-                    Card card = new Card();
-                    card.name = name;
-                    card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
-                    try {
-                        getHelper().getCardDao().create(card);
-                        // After this call, card.id is valid
-                    } catch (SQLException e) {
-                        // Handle failure
-                    }
-                }
-            }
-        } catch (SQLException e) {
-
-        }
-
-        rview = (RecyclerView) findViewById(R.id.my_recycler_view);
-        rview.setItemAnimator(new DefaultItemAnimator());
-        rview.setAdapter(new CardAdapter(this));
-        rview.setHasFixedSize(true);
-        rview.setLayoutManager(new LinearLayoutManager(MyWalletActivity.this));
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Click action
-                EditCardActivity.startActivity(MyWalletActivity.this, new Card());
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        rview.getAdapter().notifyDataSetChanged();
-    }
-
     private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
-        private final LayoutInflater inflater;
+        private final LayoutInflater layoutInflater;
 
-        public CardAdapter(Context context) {
-            inflater = LayoutInflater.from(context);
+        CardAdapter(Context context) {
+            layoutInflater = LayoutInflater.from(context);
         }
 
         @Override
         public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = layoutInflater.inflate(R.layout.activity_mywallet_card_row, parent, false);
 
-            View view = inflater.inflate(R.layout.activity_mywallet_card_row, parent, false);
             final CardViewHolder holder = new CardViewHolder(view);
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -132,38 +133,27 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         @Override
         public void onBindViewHolder(CardViewHolder holder, int position) {
-            // get card object that matches card object at nth position
-            Card card;
-            try {
-                card = QueryUtils.getNthRow(getHelper().getCardDao(), position);
-            } catch (SQLException e) {
-                return;
-            }
-
-            holder._cardTitle.setText(card.name);
+            Card card = QueryUtils.getNthRow(getHelper().getCardDao(), position);
             holder.id = card.id;
+            holder.title.setText(card.name);
         }
 
-        // Get all cards from card database
         @Override
         public int getItemCount() {
-            try {
-                return (int) getHelper().getCardDao().countOf();
-            } catch (SQLException e) {
-                return 0;
-            }
+            return (int) getHelper().getCardDao().countOf();
         }
 
-        public class CardViewHolder extends RecyclerView.ViewHolder {
+        class CardViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView _imgCard;
-            TextView _cardTitle;
             int id;
+            TextView title;
+            ImageView logo;
 
-            public CardViewHolder(View itemView) {
+            CardViewHolder(View itemView) {
                 super(itemView);
-                _imgCard = (ImageView) itemView.findViewById(R.id.imgCard);
-                _cardTitle = (TextView) itemView.findViewById(R.id.txtCardTitle);
+
+                logo = (ImageView) itemView.findViewById(R.id.imgCard);
+                title = (TextView) itemView.findViewById(R.id.txtCardTitle);
             }
         }
     }
