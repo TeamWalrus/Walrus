@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,6 +90,11 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             String cardTitle = card.name;
             TextView cardNameTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
             cardNameTextView.setText(cardTitle);
+        }
+
+        if (card.cardData != null) {
+            ImageView cardIcon = (ImageView) findViewById(R.id.Img_DetailedCardView);
+            cardIcon.setImageDrawable(card.cardData.getCardIcon(this));
         }
 
         if (card.notes != null && !card.notes.isEmpty()) {

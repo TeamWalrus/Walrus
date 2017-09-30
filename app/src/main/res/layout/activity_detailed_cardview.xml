@@ -42,7 +42,7 @@
                 android:layout_height="200dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_cardview"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -86,10 +86,13 @@
                 android:layout_width="90dp"
                 android:layout_height="71dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginTop="16dp"
                 app:layout_constraintRight_toRightOf="@+id/card_header"
+                android:layout_marginRight="21dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/txtView_DetailedViewCardUID"
                 app:layout_constraintTop_toTopOf="@+id/card_header"
-                app:srcCompat="@drawable/hid"/>
+                android:layout_marginTop="0dp"
+                app:layout_constraintVertical_bias="0.202"/>
 
             <LinearLayout
                 android:id="@+id/linearLayout3"

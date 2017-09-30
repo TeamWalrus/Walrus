@@ -19,12 +19,10 @@ import android.widget.TextView;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
-import com.bugfuzz.android.projectwalrus.data.HIDCardData;
+import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-
-import java.math.BigInteger;
 
 public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
@@ -53,7 +51,8 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             for (String name : names) {
                 Card card = new Card();
                 card.name = name;
-                card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
+                //card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
+                card.setCardData(new ISO14443ACardData(123456789,(short)0x0004,(byte)0x09,null,null));
 
                 getHelper().getCardDao().create(card);
             }
@@ -145,7 +144,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             CardViewHolder(View itemView) {
                 super(itemView);
 
-                logo = (ImageView) itemView.findViewById(R.id.imgCard);
+                logo = (ImageView) itemView.findViewById(R.id.Img_MyWalletCardView);
                 title = (TextView) itemView.findViewById(R.id.txtCardTitle);
             }
         }

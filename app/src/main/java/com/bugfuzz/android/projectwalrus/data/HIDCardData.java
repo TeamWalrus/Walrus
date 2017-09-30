@@ -1,5 +1,10 @@
 package com.bugfuzz.android.projectwalrus.data;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+
+import com.bugfuzz.android.projectwalrus.R;
+
 import org.parceler.Parcel;
 
 import java.math.BigInteger;
@@ -29,5 +34,10 @@ public class HIDCardData extends CardData {
     @Override
     public String getHumanReadableText() {
         return data.toString(16);
+    }
+
+    @Override
+    public Drawable getCardIcon(Context context) {
+         return context.getResources().getDrawable(R.drawable.hid, context.getTheme());
     }
 }
