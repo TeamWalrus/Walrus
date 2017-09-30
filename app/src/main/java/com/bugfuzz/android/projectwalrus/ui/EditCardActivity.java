@@ -201,21 +201,26 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass) {
         (new AsyncTask<Void, Void, CardData>() {
+            Exception exception;
+
             @Override
             protected CardData doInBackground(Void... params) {
                 try {
                     return device.readCardData(HIDCardData.class);
                 } catch (IOException e) {
-                    Toast.makeText(EditCardActivity.this, "Error reading card: " + e,
-                            Toast.LENGTH_LONG).show();
+                    exception = e;
                     return null;
                 }
             }
 
             @Override
             protected void onPostExecute(CardData cardData) {
-                if (cardData == null)
+                if (cardData == null) {
+                    if (exception != null)
+                        Toast.makeText(EditCardActivity.this, "Error reading card: " + exception.getMessage(),
+                                Toast.LENGTH_LONG).show();
                     return;
+                }
                 String text = "Type: " + cardData.getTypeInfo();
                 if (cardData.getTypeDetailInfo() != null)
                     text += " (" + cardData.getTypeDetailInfo() + ")";
