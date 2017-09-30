@@ -112,7 +112,7 @@
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/textView_title_cardNotes"/>
+                    android:text="@string/notes"/>
 
                 <EditText
                     android:id="@+id/editTxt_editCardView_CardNotes"
