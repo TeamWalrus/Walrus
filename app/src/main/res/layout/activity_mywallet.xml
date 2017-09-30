@@ -20,7 +20,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         android:background="@android:color/background_light"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"

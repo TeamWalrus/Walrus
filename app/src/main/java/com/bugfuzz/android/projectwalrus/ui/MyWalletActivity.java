@@ -1,20 +1,15 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
@@ -57,10 +52,15 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(new CardAdapter(this));
+        recyclerView.setAdapter(new CardAdapter());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MyWalletActivity.this));
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets (Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                if (parent.getChildAdapterPosition(view) != 0)
+                    outRect.set(0, -500, 0, 0);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -101,33 +101,17 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
-        private final LayoutInflater layoutInflater;
-
-        CardAdapter(Context context) {
-            layoutInflater = LayoutInflater.from(context);
-        }
-
         @Override
         public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = layoutInflater.inflate(R.layout.activity_mywallet_card_row, parent, false);
-
-            final CardViewHolder holder = new CardViewHolder(view);
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DetailedCardViewActivity.startActivity(MyWalletActivity.this, holder.id);
-                }
-            });
-
-            return holder;
+            return new CardViewHolder(new WalrusCardView(parent.getContext()));
         }
 
         @Override
         public void onBindViewHolder(CardViewHolder holder, int position) {
             Card card = QueryUtils.getNthRow(getHelper().getCardDao(), position);
+
+            ((WalrusCardView) holder.itemView).setCard(card);
             holder.id = card.id;
-            holder.title.setText(card.name);
         }
 
         @Override
@@ -137,15 +121,17 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         class CardViewHolder extends RecyclerView.ViewHolder {
 
-            int id;
-            TextView title;
-            ImageView logo;
+            private int id;
 
             CardViewHolder(View itemView) {
                 super(itemView);
 
-                logo = (ImageView) itemView.findViewById(R.id.imgCard);
-                title = (TextView) itemView.findViewById(R.id.txtCardTitle);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DetailedCardViewActivity.startActivity(v.getContext(), id);
+                    }
+                });
             }
         }
     }

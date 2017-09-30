@@ -82,21 +82,12 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             return;
         }
 
-        if (card.name != null && !card.name.isEmpty()) {
-            String cardTitle = card.name;
-            TextView cardNameTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardTitle);
-            cardNameTextView.setText(cardTitle);
-        }
+        ((WalrusCardView) findViewById(R.id.walrusCardView)).setCard(card);
 
         if (card.notes != null && !card.notes.isEmpty()) {
             String cardNotes = card.notes;
             TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);
             cardNotesTextView.setText(cardNotes);
-        }
-
-        if (card.cardData != null) {
-            TextView uidTextView = (TextView) findViewById(R.id.txtView_DetailedViewCardUID);
-            uidTextView.setText(card.cardData.getHumanReadableText());
         }
 
         if (card.cardDataAcquired != null) {
