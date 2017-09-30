@@ -40,6 +40,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
     private static int id;
 
+    private LatLng cardLatLng;
+
     /**
      * Called when the user taps a card
      */
@@ -106,9 +108,17 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             cardCreatedTextView.setText(cardAcquiredDate);
         }
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
-        mapFragment.getMapAsync(this);
+        if (card.cardLocationLat != null && card.cardLocationLng != null) {
+            cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+            mapFragment.getMapAsync(this);
+        }else {
+            cardLatLng = new LatLng(0.0, 0.0);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+            getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
+        }
     }
 
     public void onMapReady(GoogleMap googleMap) {
@@ -116,17 +126,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         if (card == null) {
             return;
         }
-        // TODO: move this check above to the update UI method
-        if (card.cardLocationLat != null && card.cardLocationLng != null) {
-            LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
-            googleMap.addMarker(new MarkerOptions().position(cardLatLng));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
-        } else {
-            LatLng cardLatLng = new LatLng(0.0, 0.0);
-            googleMap.addMarker(new MarkerOptions().position(cardLatLng));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
-        }
-
+        googleMap.addMarker(new MarkerOptions().position(cardLatLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
     }
 
     @Override
