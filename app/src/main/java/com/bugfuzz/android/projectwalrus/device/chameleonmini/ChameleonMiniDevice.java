@@ -96,21 +96,30 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     @Override
     public synchronized void writeCardData(CardData cardData) throws IOException {
         ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
-/*
-        writeLine("Config=MF_CLASSIC_1K");
+
+      writeLine("Config=MF_CLASSIC_1K");
         String line = readLine();
+        Logger.getAnonymousLogger().info("issue:Config=MF_CLASSIC_1K returned " + line);
         if (line == null)
             throw new IOException("Couldn't read Config result");
         if (!line.equals("100:OK"))
-            throw new IOException("Unexpected response to Config command: " + line);*/
+            throw new IOException("Unexpected response to Config command: " + line);
 
-        String uid = String.valueOf(iso14443ACardData.uid);
-        Logger.getAnonymousLogger(uid);
-//        writeLine("UID="+iso14443ACardData.uid);
-//        String line = readLine();
-//        if (line == null)
-//            throw new IOException("Couldn't read Config result");
-//        if (!line.equals("100:OK"))
-//            throw new IOException("Unexpected response to Config command: " + line);
+        // String newUID = String.valueOf(iso14443ACardData.uid); not working
+        writeLine("uid=1234ABCD");
+        String lineUID = readLine();
+        Logger.getAnonymousLogger().info("issue:uid=1234ABCD returned " + lineUID);
+        if (lineUID == null)
+            throw new IOException("Couldn't read Config result");
+        if (!line.equals("100:OK"))
+            throw new IOException("Unexpected response to Config command: " + lineUID);
+
+        writeLine("uid?");
+        String lineUIDResult = readLine();
+        Logger.getAnonymousLogger().info("issue: uid? returned " + lineUIDResult);
+        if (lineUIDResult == null)
+            throw new IOException("Couldn't read Config result");
+        if (!line.equals("101:OK WITH TEXT"))
+            throw new IOException("Unexpected response to Config command: " + lineUIDResult);
     }
 }
