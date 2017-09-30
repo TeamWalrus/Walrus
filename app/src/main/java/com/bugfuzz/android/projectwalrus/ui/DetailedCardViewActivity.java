@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detailed_cardview);
+        setContentView(R.layout.activity_detailedcardview);
 
         // Get handle to map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

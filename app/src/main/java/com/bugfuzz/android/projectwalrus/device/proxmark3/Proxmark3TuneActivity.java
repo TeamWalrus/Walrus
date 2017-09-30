@@ -36,7 +36,7 @@ public class Proxmark3TuneActivity extends AppCompatActivity {
             return;
         }
 
-        setContentView(R.layout.activity_proxmark3_tune);
+        setContentView(R.layout.activity_proxmark3tune);
 
         updateTuneResult(null);
     }
