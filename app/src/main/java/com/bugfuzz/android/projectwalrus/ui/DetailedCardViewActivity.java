@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
 
@@ -40,11 +38,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
     private static int id;
 
-    private LatLng cardLatLng;
+    private SupportMapFragment mapFragment;
 
-    /**
-     * Called when the user taps a card
-     */
     public static void startActivity(Context context, int id) {
         Intent intent = new Intent(context, DetailedCardViewActivity.class);
         intent.putExtra(EXTRA_CARD_ID, id);
@@ -54,99 +49,78 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_detailedcardview);
 
-        // Get handle to map fragment
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
-        mapFragment.getMapAsync(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // Setup Toolbar
-        Toolbar detailedCardView_toolbar = (Toolbar) findViewById(R.id.detailedCardView_toolbar);
-        setSupportActionBar(detailedCardView_toolbar);
-        ActionBar ab = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // Enable the Up button
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+        id = getIntent().getIntExtra(EXTRA_CARD_ID, 0);
 
-        // Get the Intent that started this activity and extract card details
-        Intent intent = getIntent();
-        id = intent.getIntExtra(EXTRA_CARD_ID, 0);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
-        // Update the UI
         updateUI();
     }
 
     private void updateUI() {
         Card card = getHelper().getCardDao().queryForId(id);
-        if (card == null) {
+        if (card == null)
             return;
-        }
 
-        ((WalrusCardView) findViewById(R.id.walrusCardView)).setCard(card);
+        ((WalrusCardView) findViewById(R.id.card)).setCard(card);
 
-        if (card.notes != null && !card.notes.isEmpty()) {
-            String cardNotes = card.notes;
-            TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);
-            cardNotesTextView.setText(cardNotes);
-        }
+        ((TextView) findViewById(R.id.notes)).setText(card.notes);
 
         if (card.cardDataAcquired != null) {
-            String cardAcquiredDate = DateFormat.getDateTimeInstance().format(card.cardDataAcquired);
-            TextView cardCreatedTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardAcquiredDate);
-            cardCreatedTextView.setText(cardAcquiredDate);
+            String cardDataAcquired = DateFormat.getDateTimeInstance().format(card.cardDataAcquired);
+            ((TextView) findViewById(R.id.cardDataAcquired)).setText(cardDataAcquired);
         }
 
-        if (card.cardLocationLat != null && card.cardLocationLng != null) {
-            cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+        if (card.cardLocationLat != null && card.cardLocationLng != null)
             mapFragment.getMapAsync(this);
-        }else {
-            cardLatLng = new LatLng(0.0, 0.0);
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+        else
             getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
-        }
     }
 
     public void onMapReady(GoogleMap googleMap) {
         Card card = getHelper().getCardDao().queryForId(id);
-        if (card == null) {
+        if (card == null)
             return;
-        }
-        googleMap.addMarker(new MarkerOptions().position(cardLatLng));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
+
+        LatLng latLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
+        googleMap.addMarker(new MarkerOptions().position(latLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         updateUI();
     }
 
-    // set out detailed card menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.detailedcardview_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_detailedcardview, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_editCard:
+            case R.id.editCard:
                 Card card = getHelper().getCardDao().queryForId(id);
-                if (card == null) {
-                    return true;
-                }
-                EditCardActivity.startActivity(this, card);
+                if (card != null)
+                    EditCardActivity.startActivity(this, card);
+
                 return true;
-            case R.id.action_deleteCard:
-                AlertDialog.Builder alert = new AlertDialog.Builder(
-                        DetailedCardViewActivity.this);
+
+            case R.id.deleteCard:
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("Delete Confirmation");
                 alert.setMessage("This card entry will disappear from your device. Are you sure you want to continue?");
                 alert.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
@@ -162,12 +136,13 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
                 alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //dismiss dialogs for now
                         dialog.dismiss();
                     }
                 });
                 alert.show();
+
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -186,9 +161,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
         // TODO: doing this every time is stupid. why did we drop the member again?
         Card card = getHelper().getCardDao().queryForId(id);
-        if (card == null) {
+        if (card == null)
             return;
-        }
 
         final Class<? extends CardData> writeableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsWrite();
@@ -201,7 +175,7 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         try {
             cardDevice.writeCardData(card.cardData);
         } catch (IOException ex) {
-            Toast.makeText(this, "Failed to write card data", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Failed to write card data: " + ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }
