@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,8 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
     public static final String EXTRA_CARD_ID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD_ID";
 
     private static int id;
+
+    private LatLng cardLatLng;
 
     /**
      * Called when the user taps a card
@@ -84,6 +87,11 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
         ((WalrusCardView) findViewById(R.id.walrusCardView)).setCard(card);
 
+        if (card.cardData != null) {
+            ImageView cardIcon = (ImageView) findViewById(R.id.Img_DetailedCardView);
+            cardIcon.setImageDrawable(card.cardData.getCardIcon(this));
+        }
+
         if (card.notes != null && !card.notes.isEmpty()) {
             String cardNotes = card.notes;
             TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);
@@ -96,9 +104,17 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             cardCreatedTextView.setText(cardAcquiredDate);
         }
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
-        mapFragment.getMapAsync(this);
+        if (card.cardLocationLat != null && card.cardLocationLng != null) {
+            cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+            mapFragment.getMapAsync(this);
+        }else {
+            cardLatLng = new LatLng(0.0, 0.0);
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_DetailedCardView_MapFragment);
+            getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
+        }
     }
 
     public void onMapReady(GoogleMap googleMap) {
@@ -106,11 +122,6 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         if (card == null) {
             return;
         }
-        // TODO: if card location is null need to draw a sad walrus or something.. .:?
-        if (card.cardLocationLat == null || card.cardLocationLng == null) {
-            Logger.getAnonymousLogger().info("onMapReady: one of the card location values is null");
-        }
-        LatLng cardLatLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
         googleMap.addMarker(new MarkerOptions().position(cardLatLng));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cardLatLng, 15));
     }

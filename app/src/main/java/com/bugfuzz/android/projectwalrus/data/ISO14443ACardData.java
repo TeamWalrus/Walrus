@@ -1,5 +1,10 @@
 package com.bugfuzz.android.projectwalrus.data;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+
+import com.bugfuzz.android.projectwalrus.R;
+
 import org.parceler.Parcel;
 
 import java.util.Arrays;
@@ -89,5 +94,10 @@ public class ISO14443ACardData extends CardData {
                 return false;
             return true;
         }
+    }
+
+    @Override
+    public Drawable getCardIcon(Context context) {
+        return context.getResources().getDrawable(R.drawable.mifare, context.getTheme());
     }
 }
