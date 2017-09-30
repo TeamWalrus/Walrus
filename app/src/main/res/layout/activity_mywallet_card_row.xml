@@ -46,7 +46,7 @@
         android:paddingTop="10dp"
         android:text="@string/textView_title_cardName"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/clouds"
+        android:textColor="@color/primaryColor"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

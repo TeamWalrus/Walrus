@@ -35,10 +35,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         setContentView(R.layout.activity_mywallet);
 
-        Toolbar myWallet_toolbar = (Toolbar) findViewById(R.id.myWallet_toolbar);
-        setSupportActionBar(myWallet_toolbar);
-
-        CardDeviceManager.INSTANCE.scanForDevices(this);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         // TODO: remove in release
         if (getHelper().getCardDao().countOf() == 0) {
@@ -59,19 +56,21 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
         }
 
-        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(new CardAdapter(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(MyWalletActivity.this));
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floating_action_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditCardActivity.startActivity(MyWalletActivity.this, new Card());
             }
         });
+
+        CardDeviceManager.INSTANCE.scanForDevices(this);
     }
 
     @Override
