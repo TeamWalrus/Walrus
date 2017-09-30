@@ -65,7 +65,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             @Override
             public void getItemOffsets (Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 if (parent.getChildAdapterPosition(view) != 0)
-                    outRect.set(0, -500, 0, 0);
+                    outRect.set(0, -450, 0, 0);
             }
         });
 
