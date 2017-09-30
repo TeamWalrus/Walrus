@@ -32,8 +32,8 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        android:tint="@android:color/black"
-        app:backgroundTint="@color/secondaryColor"
+        android:tint="@color/primaryTextColor"
+        app:backgroundTint="@color/primaryColor"
         app:fabSize="normal"
         app:srcCompat="@android:drawable/ic_input_add"/>
 
