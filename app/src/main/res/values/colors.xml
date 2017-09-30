@@ -8,8 +8,8 @@
     <color name="secondaryDarkColor">#c41c00</color>
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
-    <color name="primaryCardTextColor">#212121</color>
-    <color name="primaryCardBackground">#9fa8da</color>
-    <color name="secondaryCardTextColor">#ffffff</color>
-    <color name="secondaryCardBackground">#505050</color>
+    <color name="primaryCardTextColor">#424242</color>
+    <color name="primaryCardBackground">#cfd8dc</color>
+    <color name="secondaryCardTextColor">#cfd8dc</color>
+    <color name="secondaryCardBackground">#424242</color>
 </resources>
