@@ -87,11 +87,6 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
         ((WalrusCardView) findViewById(R.id.walrusCardView)).setCard(card);
 
-        if (card.cardData != null) {
-            ImageView cardIcon = (ImageView) findViewById(R.id.Img_DetailedCardView);
-            cardIcon.setImageDrawable(card.cardData.getCardIcon(this));
-        }
-
         if (card.notes != null && !card.notes.isEmpty()) {
             String cardNotes = card.notes;
             TextView cardNotesTextView = (TextView) findViewById(R.id.txtView_DetailedCardView_CardNotes);

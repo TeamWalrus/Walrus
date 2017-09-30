@@ -57,7 +57,7 @@ public class WalrusCardView extends FrameLayout {
 
         nameView.setText(this.card.name);
         if (this.card.cardData != null) {
-            logoView.setImageDrawable(getContext().getResources().getDrawable(R.drawable.hid, getContext().getTheme()));
+            logoView.setImageDrawable(this.card.cardData.getCardIcon(logoView.getContext()));
             humanReadableTextView.setText(this.card.cardData.getHumanReadableText());
         }
 
