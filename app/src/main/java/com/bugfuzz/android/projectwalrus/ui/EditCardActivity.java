@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.EditText;
@@ -29,6 +30,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.parceler.Parcels;
 
@@ -39,13 +46,14 @@ import java.util.logging.Logger;
 
 // TODO: Add pin to editCardActivity to show currentBestLocation
 
-public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
+public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
     public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
     private LocationRequest mLocationRequest;
     private Card card;
     private Location currentBestLocation;
+    private GoogleMap mMap;
 
     public static void startActivity(Context context, Card card) {
         // create intent
@@ -84,6 +92,10 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
         }
 
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_EditCardView_MapFragment);
+        mapFragment.getMapAsync(this);
+
         // Get map updates
         startLocationUpdates();
     }
@@ -95,7 +107,6 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             return;
         }
-
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(1000);
@@ -119,7 +130,17 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     // Stop location updates method
     private void stopLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            startLocationUpdates();
     }
 
     // Save Card method
@@ -201,12 +222,33 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 text += "\n" + cardData.getHumanReadableText();
                 ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
                 card.setCardData(cardData);
-                // Capture card location as well - remember we want the card location when the card is read and not
-                // to continue updating while/if you walk away without saving the card immediately
-                card.cardLocationLat = currentBestLocation.getLatitude();
-                card.cardLocationLng = currentBestLocation.getLongitude();
+                // Set card location
+                if (currentBestLocation != null) {
+                    // Capture card location as well - remember we want the card location when the card is read and not
+                    // to continue updating while/if you walk away without saving the card immediately
+                    card.cardLocationLat = currentBestLocation.getLatitude();
+                    card.cardLocationLng = currentBestLocation.getLongitude();
+                }
             }
         }).execute();
+    }
+
+    public void onMapReady(GoogleMap map) {
+        mMap = map;
+        // TODO: Before enabling the My Location layer, you must request
+        // location permission from the user. This sample does not include
+        // a request for location permission.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
 
     public void onCancelClick(View view) {
