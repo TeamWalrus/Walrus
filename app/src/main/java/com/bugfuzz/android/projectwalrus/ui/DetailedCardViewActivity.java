@@ -66,6 +66,17 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         updateUI();
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Card card = getHelper().getCardDao().queryForId(id);
+        if (card == null)
+            return;
+
+        LatLng latLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
+        googleMap.addMarker(new MarkerOptions().position(latLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+    }
+
     private void updateUI() {
         Card card = getHelper().getCardDao().queryForId(id);
         if (card == null)
@@ -84,16 +95,6 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             mapFragment.getMapAsync(this);
         else
             getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
-    }
-
-    public void onMapReady(GoogleMap googleMap) {
-        Card card = getHelper().getCardDao().queryForId(id);
-        if (card == null)
-            return;
-
-        LatLng latLng = new LatLng(card.cardLocationLat, card.cardLocationLng);
-        googleMap.addMarker(new MarkerOptions().position(latLng));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
     @Override

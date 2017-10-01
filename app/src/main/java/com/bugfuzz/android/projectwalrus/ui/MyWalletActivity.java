@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -38,7 +37,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         if (getHelper().getCardDao().countOf() == 0) {
             String[] names = {
                     "Apple",
-                    "Banana",
+                    "\uD83C\uDF4C",
                     "Carrot",
                     "Some crazy long title for a card because why not",
                     "Elephant",
@@ -51,7 +50,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 if (hid)
                     card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
                 else
-                    card.setCardData(new ISO14443ACardData(123456789,(short)0x0004,(byte)0x09,null,null));
+                    card.setCardData(new ISO14443ACardData(123456789, (short) 0x0004, (byte) 0x09, null, null));
 
                 hid = !hid;
 
@@ -64,7 +63,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void getItemOffsets (Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
                 if (parent.getChildAdapterPosition(view) != 0)
                     outRect.set(0, -455, 0, 0);
             }
@@ -85,6 +84,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     protected void onResume() {
         super.onResume();
 
+        // TODO: anims
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
