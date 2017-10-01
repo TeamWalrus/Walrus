@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
 
-    public static final String EXTRA_CARD_ID = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD_ID";
+    public static final String EXTRA_CARD_ID = "com.bugfuzz.android.projectwalrus.ui.DisplayDetailedCardViewActivity.EXTRA_CARD_ID";
 
     private static int id;
 
