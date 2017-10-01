@@ -264,18 +264,20 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         new AlertDialog.Builder(this)
                 .setMessage("Your changes have not been saved")
-                .setNeutralButton("Discard",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                finish();
-                            }
-                        })
                 .setPositiveButton("Save",
                         new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog,
                                                 int whichButton) {
                                 onSaveClick(null);
+                                finish();
+                            }
+                        })
+                .setNegativeButton("Discard",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
                                 finish();
                             }
                         }).show();
