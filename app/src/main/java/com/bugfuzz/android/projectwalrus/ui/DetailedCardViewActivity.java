@@ -93,10 +93,15 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
             ((TextView) findViewById(R.id.cardDataAcquired)).setText(cardDataAcquired);
         }
 
-        if (card.cardLocationLat != null && card.cardLocationLng != null)
+        if (card.cardLocationLat != null && card.cardLocationLng != null){
+            findViewById(R.id.locationTitle).setVisibility(View.VISIBLE);
             mapFragment.getMapAsync(this);
-        else
+        }
+
+        else {
+            findViewById(R.id.locationTitle).setVisibility(View.GONE);
             getSupportFragmentManager().beginTransaction().hide(mapFragment).commit();
+        }
     }
 
     @Override
