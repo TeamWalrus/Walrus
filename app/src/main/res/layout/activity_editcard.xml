@@ -1,146 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:focusableInTouchMode="true">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_weight="2"
         android:background="@color/primaryColor"
-        android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="8dp">
 
         <Button
-            android:id="@+id/button_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:onClick="onEditCardSaveCardClick"
-            android:text="@string/btn_save"/>
+            android:layout_weight="1"
+            android:onClick="onSaveClick"
+            android:text="@string/save"/>
 
         <Button
-            android:id="@+id/button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:onClick="onCancelClick"
-            android:text="@string/btn_cancel"/>
+            android:text="@string/cancel"/>
     </LinearLayout>
 
     <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="@id/buttons"
-        android:layout_below="@id/buttons"
-        android:layout_weight="1">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp">
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <com.bugfuzz.android.projectwalrus.ui.WalrusCardView
+                android:id="@+id/card"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="5dp">
+                app:editable="true"/>
 
-                <ImageView
-                    android:id="@+id/Img_NewCard"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginTop="16dp"
-                    app:srcCompat="@android:drawable/ic_menu_camera"/>
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/textView_title_cardName"/>
-
-                <EditText
-                    android:id="@+id/editTxt_editCardView_CardName"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLength="60"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <Button
+                android:id="@+id/readCard"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="5dp">
+                android:background="@color/primaryColor"
+                android:onClick="onReadCardClick"
+                android:text="@string/readCard"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/textView_title_cardData"/>
-
-                <TextView
-                    android:id="@+id/editTxt_editCardView_CardData"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:paddingTop="16dp"/>
-
-                <Button
-                    android:id="@+id/btn_editCardView_ReadCard"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onReadCardClick"
-                    android:text="@string/btn_readNewCard"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="5dp">
+                android:text="@string/location"
+                android:textColor="@color/secondaryDarkColor"
+                android:layout_marginTop="8dp"/>
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/notes"/>
-
-                <EditText
-                    android:id="@+id/editTxt_editCardView_CardNotes"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <fragment
+                android:id="@+id/map"
+                class="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"/>
+            
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="5dp">
+                android:text="@string/notes"
+                android:textColor="@color/secondaryDarkColor"
+                android:layout_marginTop="8dp"/>
 
-                <fragment
-                    android:id="@+id/fragment_EditCardView_MapFragment"
-                    class="com.google.android.gms.maps.SupportMapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="0dp"
-                    app:layout_constraintLeft_toLeftOf="@+id/card_body"
-                    app:layout_constraintRight_toRightOf="@+id/card_body"
-                    app:layout_constraintTop_toBottomOf="@+id/txtView_CardLocation_title"/>
-            </LinearLayout>
+            <EditText
+                android:id="@+id/notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/black"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="20dp"/>
 
         </LinearLayout>
+
     </ScrollView>
-</RelativeLayout>
+
+</LinearLayout>

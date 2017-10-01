@@ -47,7 +47,8 @@
         <activity
             android:name=".ui.EditCardActivity"
             android:label="Edit Card"
-            android:parentActivityName=".ui.DetailedCardViewActivity"/>
+            android:parentActivityName=".ui.DetailedCardViewActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".device.proxmark3.Proxmark3Activity"
             android:exported="true"/>
@@ -55,7 +56,7 @@
             android:name=".device.proxmark3.Proxmark3TuneActivity"
             android:label="Tune"
             android:parentActivityName=".device.proxmark3.Proxmark3Activity"/>
-        <activity android:name=".ui.SettingsActivity"></activity>
+        <activity android:name=".ui.SettingsActivity"/>
     </application>
 
 </manifest>

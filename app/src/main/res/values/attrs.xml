@@ -1,4 +1,5 @@
 <resources>
     <declare-styleable name="WalrusCardView">
+        <attr name="editable" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -11,16 +11,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
-import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
@@ -40,101 +40,102 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map;
-import java.util.logging.Logger;
-
-// TODO: Add pin to editCardActivity to show currentBestLocation
 
 public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
-    public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.DisplayDetailedCardviewActivity.EXTRA_CARD";
-    private FusedLocationProviderClient mFusedLocationClient;
-    private LocationCallback mLocationCallback;
-    private LocationRequest mLocationRequest;
+
+    public static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.ui.EditCardActivity.EXTRA_CARD";
+
     private Card card;
+
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationCallback locationCallback;
     private Location currentBestLocation;
-    private GoogleMap mMap;
+
+    private WalrusCardView walrusCardView;
+    private EditText notesView;
+    private GoogleMap googleMap;
+
+    private boolean edited;
 
     public static void startActivity(Context context, Card card) {
-        // create intent
         Intent intent = new Intent(context, EditCardActivity.class);
-        // add card as extra
         intent.putExtra(EXTRA_CARD, Parcels.wrap(card));
-        // startActivity(intent)
         context.startActivity(intent);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_editcard);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        // get intent
         Intent intent = getIntent();
-        // get id extra and store the id
         card = Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD));
-        // query db with card
-        // TODO: Add the rest of the UI elements
-        // populate UI elements with id
-        EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
-        cardNameEditText.setText(card.name);
-        EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
-        cardNotesEditText.setText(card.notes);
 
-        if (card.cardData != null) {
-            String text = "Type: " + card.cardData.getTypeInfo();
-            if (card.cardData.getTypeDetailInfo() != null)
-                text += " (" + card.cardData.getTypeDetailInfo() + ")";
-            text += "\n" + card.cardData.getHumanReadableText();
+        TextWatcher textChangeWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                edited = true;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        walrusCardView = (WalrusCardView) findViewById(R.id.card);
+        walrusCardView.setCard(card);
+        walrusCardView.editableNameView.addTextChangedListener(textChangeWatcher);
+
+        notesView = (EditText) findViewById(R.id.notes);
+        notesView.addTextChangedListener(textChangeWatcher);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+
+        if (card.cardLocationLat != null && card.cardLocationLng != null) {
+            currentBestLocation = new Location("");
+            currentBestLocation.setLatitude(card.cardLocationLat);
+            currentBestLocation.setLongitude(card.cardLocationLng);
         }
-
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_EditCardView_MapFragment);
-        mapFragment.getMapAsync(this);
-
-        // Get map updates
         startLocationUpdates();
     }
 
-    // Get location updates method
     private void startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Logger.getAnonymousLogger().info("getCardLocation: no perms");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             return;
         }
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(5000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        mLocationCallback = new LocationCallback() {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
                     if (GeoUtils.isBetterLocation(location, currentBestLocation)) {
                         currentBestLocation = location;
+
+                        if (googleMap != null)
+                            updateMap();
                     }
                 }
             }
         };
 
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                mLocationCallback,
-                null /* Looper */);
-    }
-
-    // Stop location updates method
-    private void stopLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     @Override
@@ -143,44 +144,41 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             startLocationUpdates();
     }
 
-    // Save Card method
-    public void onEditCardSaveCardClick(View view) {
-        // TODO: Add the rest of the UI elements
-        // Set Card Name
-        EditText cardNameEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardName);
-        card.name = cardNameEditText.getText().toString();
-        // Do not save a Card if the Name field is blank
-        if (card.name.isEmpty()) {
-            Toast.makeText(EditCardActivity.this, "Card name is required!",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-        // Set Card Notes
-        EditText cardNotesEditText = (EditText) findViewById(R.id.editTxt_editCardView_CardNotes);
-        card.notes = cardNotesEditText.getText().toString();
-        // Save the Card object in the database
-        getHelper().getCardDao().createOrUpdate(card);
-        // Stop location updates
-        stopLocationUpdates();
-        finish();
+    private void stopLocationUpdates() {
+        if (locationCallback != null)
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
-    // Read a Card method
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+
+        if (currentBestLocation != null)
+            updateMap();
+    }
+
+    private void updateMap() {
+        LatLng latLng = new LatLng(currentBestLocation.getLatitude(), currentBestLocation.getLongitude());
+        googleMap.clear();
+        googleMap.addMarker(new MarkerOptions().position(latLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+    }
+
     public void onReadCardClick(View view) {
         Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
         if (cardDevices.isEmpty()) {
-            Toast.makeText(EditCardActivity.this, "No card devices found",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(EditCardActivity.this, "No card devices found", Toast.LENGTH_LONG).show();
             return;
         }
 
-        // TODO: if len of cardDevices >1 then we want to choose what type of card to read
+        // TODO: if len of cardDevices >1 then we want to choose what device
         final CardDevice cardDevice = cardDevices.get(0);
 
         final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsRead();
 
         if (readableTypes.length > 1) {
+            // Multiple card types readable by device, ask which type to read
             String[] names = new String[readableTypes.length];
             for (int i = 0; i < names.length; ++i)
                 names[i] = readableTypes[i].getSimpleName();
@@ -194,7 +192,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                     });
             builder.create().show();
         } else {
-            // if only one type of card is supported then use that
+            // Only one card type readable by device, use it
             onChooseCardType(cardDevice, readableTypes[0]);
         }
     }
@@ -204,7 +202,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             @Override
             protected CardData doInBackground(Void... params) {
                 try {
-                    return device.readCardData(HIDCardData.class);
+                    return device.readCardData(cardDataClass);
                 } catch (IOException e) {
                     Toast.makeText(EditCardActivity.this, "Error reading card: " + e,
                             Toast.LENGTH_LONG).show();
@@ -216,49 +214,71 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             protected void onPostExecute(CardData cardData) {
                 if (cardData == null)
                     return;
-                String text = "Type: " + cardData.getTypeInfo();
-                if (cardData.getTypeDetailInfo() != null)
-                    text += " (" + cardData.getTypeDetailInfo() + ")";
-                text += "\n" + cardData.getHumanReadableText();
-                ((TextView) findViewById(R.id.editTxt_editCardView_CardData)).setText(text);
                 card.setCardData(cardData);
-                // Set card location
+                walrusCardView.setCard(card); // TODO ugh
+
                 if (currentBestLocation != null) {
-                    // Capture card location as well - remember we want the card location when the card is read and not
-                    // to continue updating while/if you walk away without saving the card immediately
+                    // Capture card location. Remember we want the card location when the card is read and not
+                    // to continue updating if you walk away without saving the card immediately
                     card.cardLocationLat = currentBestLocation.getLatitude();
                     card.cardLocationLng = currentBestLocation.getLongitude();
                 }
+
+                edited = true;
             }
         }).execute();
     }
 
-    public void onMapReady(GoogleMap map) {
-        mMap = map;
-        // TODO: Before enabling the My Location layer, you must request
-        // location permission from the user. This sample does not include
-        // a request for location permission.
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+    public void onSaveClick(View view) {
+        // TODO: integrate with WalrusCardView properly
+        card.name = walrusCardView.editableNameView.getText().toString();
+        // Do not save a Card if the Name field is blank
+        if (card.name.isEmpty()) {
+            Toast.makeText(EditCardActivity.this, "Card name is required", Toast.LENGTH_LONG).show();
             return;
         }
-        mMap.setMyLocationEnabled(true);
+
+        card.notes = notesView.getText().toString();
+
+        getHelper().getCardDao().createOrUpdate(card);
+
+        finish();
     }
 
     public void onCancelClick(View view) {
-        stopLocationUpdates();
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!edited) {
+            super.onBackPressed();
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setMessage("Your changes have not been saved")
+                .setNeutralButton("Discard",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                finish();
+                            }
+                        })
+                .setPositiveButton("Save",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int whichButton) {
+                                onSaveClick(null);
+                                finish();
+                            }
+                        }).show();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
         stopLocationUpdates();
     }
 }

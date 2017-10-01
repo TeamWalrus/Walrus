@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Project Walrus</string>
-    <string name="btn_save">Save</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="btn_readNewCard">Read New Card</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="readCard">Read Card</string>
     <string name="writeCard">Write Card</string>
     <string name="emulateCard">Emulate Card</string>
     <string name="btn_sendTerminalCmd">Send</string>

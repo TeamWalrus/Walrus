@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     app:cardBackgroundColor="@color/primaryCardBackground"
-    app:cardCornerRadius="15dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="8dp"
     app:cardUseCompatPadding="true">
 
@@ -20,15 +20,29 @@
             android:layout_weight="1"
             android:minHeight="150dp">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="18dp"
-                android:paddingStart="20dp"
-                android:paddingTop="18dp"
-                android:textColor="@color/primaryCardTextColor"
-                android:textSize="20sp"/>
+            <FrameLayout>
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="18dp"
+                    android:paddingStart="20dp"
+                    android:paddingTop="18dp"
+                    android:textColor="@color/primaryCardTextColor"
+                    android:textSize="20sp"/>
+
+                <EditText
+                    android:id="@+id/editableName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="18dp"
+                    android:paddingStart="20dp"
+                    android:paddingTop="18dp"
+                    android:textColor="@color/primaryCardTextColor"
+                    android:textSize="20sp"/>
+
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/logo"
