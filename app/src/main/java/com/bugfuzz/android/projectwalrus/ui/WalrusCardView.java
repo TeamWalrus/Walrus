@@ -50,8 +50,8 @@ public class WalrusCardView extends FrameLayout {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WalrusCardView, defStyle, 0);
 
         boolean editable = a.getBoolean(R.styleable.WalrusCardView_editable, false);
-        nameView.setVisibility(editable ? INVISIBLE : VISIBLE);
-        editableNameView.setVisibility(editable ? VISIBLE : INVISIBLE);
+        nameView.setVisibility(editable ? GONE : VISIBLE);
+        editableNameView.setVisibility(editable ? VISIBLE : GONE);
 
         a.recycle();
     }
