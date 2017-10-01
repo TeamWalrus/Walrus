@@ -252,7 +252,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     }
 
     public void onCancelClick(View view) {
-        finish();
+        onBackPressed();
     }
 
     @Override
