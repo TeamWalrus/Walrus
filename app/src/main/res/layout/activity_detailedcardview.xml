@@ -70,8 +70,7 @@
             <TextView
                 android:id="@+id/cardDataAcquired"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -84,8 +83,7 @@
                 android:id="@+id/map"
                 class="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginTop="8dp"/>
+                android:layout_height="120dp"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -97,8 +95,7 @@
             <TextView
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
+                android:layout_height="wrap_content"/>
 
             <Space
                 android:layout_width="match_parent"
