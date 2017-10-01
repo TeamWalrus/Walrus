@@ -199,21 +199,27 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass) {
         (new AsyncTask<Void, Void, CardData>() {
+            Exception exception;
+
             @Override
             protected CardData doInBackground(Void... params) {
                 try {
                     return device.readCardData(cardDataClass);
                 } catch (IOException e) {
-                    Toast.makeText(EditCardActivity.this, "Error reading card: " + e,
-                            Toast.LENGTH_LONG).show();
+                    exception = e;
                     return null;
                 }
             }
 
             @Override
             protected void onPostExecute(CardData cardData) {
-                if (cardData == null)
+                if (cardData == null) {
+                    Toast.makeText(EditCardActivity.this,
+                            "Error reading card" + (exception != null ? ": " + exception.getMessage() : ""),
+                            Toast.LENGTH_LONG).show();
                     return;
+                }
+
                 card.setCardData(cardData);
                 walrusCardView.setCard(card); // TODO ugh
 

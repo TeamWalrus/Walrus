@@ -35,11 +35,11 @@ public class ISO14443ACardData extends CardData {
         };
     }
 
-    private long uid;
-    private int atqa;
-    private byte sak;
-    private int[] ats;
-    private byte[] data;
+    public long uid;
+    public int atqa;
+    public byte sak;
+    public int[] ats;
+    public byte[] data;
 
     public ISO14443ACardData() {
     }

@@ -5,6 +5,7 @@ import android.hardware.usb.UsbDeviceConnection;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice {
     private String buffer = "";
@@ -27,6 +28,7 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice {
             if (i != -1) {
                 String result = buffer.substring(0, i);
                 buffer = buffer.substring(i + delimiter.length(), buffer.length());
+                Logger.getAnonymousLogger().info("read line: " + result);
                 return result;
             }
 
@@ -58,6 +60,8 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice {
                 return false;
             sent += r;
         }
+
+        Logger.getAnonymousLogger().info("wrote line: " + line);
         return true;
     }
 }

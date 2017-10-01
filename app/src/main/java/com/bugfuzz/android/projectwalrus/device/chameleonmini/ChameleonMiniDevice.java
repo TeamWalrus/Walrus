@@ -3,14 +3,18 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
+import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
+import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -91,6 +95,20 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
     @Override
     public synchronized void writeCardData(CardData cardData) throws IOException {
-        throw new UnsupportedOperationException("Not yet implemented");
+        ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
+
+        writeLine("Config=MF_CLASSIC_1K");
+        String line = readLine();
+        if (line == null)
+            throw new IOException("Couldn't read config result");
+        if (!line.equals("100:OK"))
+            throw new IOException("Unexpected response to config command: " + line);
+
+        writeLine("uid=" + String.format("%08x", iso14443ACardData.uid));
+        line = readLine();
+        if (line == null)
+            throw new IOException("Couldn't read write result");
+        if (!line.equals("100:OK"))
+            throw new IOException("Unexpected response to write command: " + line);
     }
 }
