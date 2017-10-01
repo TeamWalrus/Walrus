@@ -16,14 +16,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onSaveClick"
-            android:text="@string/save"/>
+            android:text="@string/save"
+            android:textColor="@android:color/black"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onCancelClick"
-            android:text="@string/cancel"/>
+            android:text="@string/cancel"
+            android:textColor="@android:color/black"/>
     </LinearLayout>
 
     <ScrollView
@@ -54,9 +56,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/location"
-                android:textColor="@color/secondaryDarkColor"
-                android:layout_marginTop="8dp"/>
+                android:textColor="@color/secondaryDarkColor"/>
 
             <fragment
                 android:id="@+id/map"
@@ -64,13 +66,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"/>
-            
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/notes"
-                android:textColor="@color/secondaryDarkColor"
-                android:layout_marginTop="8dp"/>
+                android:textColor="@color/secondaryDarkColor"/>
 
             <EditText
                 android:id="@+id/notes"
