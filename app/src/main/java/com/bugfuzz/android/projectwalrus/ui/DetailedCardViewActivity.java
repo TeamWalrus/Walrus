@@ -87,15 +87,15 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         ((WalrusCardView) findViewById(R.id.card)).setCard(card);
 
         ((TextView) findViewById(R.id.notes)).setText(card.notes);
-        if (!card.notes.isEmpty()) {
-            findViewById(R.id.notesTitle).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.notesTitle).setVisibility(View.GONE);
-        }
+        findViewById(R.id.notesTitle).setVisibility(card.notes.isEmpty() ? View.GONE : View.VISIBLE);
+
 
         if (card.cardDataAcquired != null) {
             String cardDataAcquired = DateFormat.getDateTimeInstance().format(card.cardDataAcquired);
             ((TextView) findViewById(R.id.cardDataAcquired)).setText(cardDataAcquired);
+            findViewById(R.id.dateAcquiredTitle).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.dateAcquiredTitle).setVisibility(View.GONE);
         }
 
         if (card.cardLocationLat != null && card.cardLocationLng != null) {

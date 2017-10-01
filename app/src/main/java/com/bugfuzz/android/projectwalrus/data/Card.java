@@ -15,7 +15,7 @@ public class Card {
     public int id;
 
     @DatabaseField
-    public String name;
+    public String name = "Unnamed Card";
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     public CardData cardData;
@@ -24,7 +24,7 @@ public class Card {
     public Date cardDataAcquired;
 
     @DatabaseField
-    public String notes;
+    public String notes = "";
 
     @DatabaseField
     public Double cardLocationLat;
