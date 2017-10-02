@@ -54,8 +54,7 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
 
         setContentView(R.layout.activity_detailedcardview);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
