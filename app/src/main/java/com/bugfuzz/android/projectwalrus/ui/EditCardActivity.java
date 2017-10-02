@@ -11,8 +11,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -73,6 +78,14 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         Intent intent = getIntent();
         card = Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD));
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(getDrawable(android.R.drawable.ic_menu_close_clear_cancel));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         TextWatcher textChangeWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -107,6 +120,13 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             currentBestLocation.setLongitude(card.cardLocationLng);
         }
         startLocationUpdates();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_editcard, menu);
+        return true;
     }
 
     private void startLocationUpdates() {
@@ -235,9 +255,23 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         }).execute();
     }
 
-    public void onSaveClick(View view) {
-        // TODO: integrate with WalrusCardView properly
-        card.name = walrusCardView.editableNameView.getText().toString();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.save:
+                save();
+                finish();
+                break;
+
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+
+        return true;
+    }
+
+    private void save() {
         // Do not save a Card if the Name field is blank
         if (card.name.isEmpty()) {
             Toast.makeText(EditCardActivity.this, "Card name is required", Toast.LENGTH_LONG).show();
@@ -247,18 +281,12 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         card.notes = notesView.getText().toString();
 
         getHelper().getCardDao().createOrUpdate(card);
-
-        finish();
-    }
-
-    public void onCancelClick(View view) {
-        onBackPressed();
     }
 
     @Override
     public void onBackPressed() {
         if (!edited) {
-            super.onBackPressed();
+            finish();
             return;
         }
 
@@ -269,7 +297,7 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int whichButton) {
-                                onSaveClick(null);
+                                save();
                                 finish();
                             }
                         })
