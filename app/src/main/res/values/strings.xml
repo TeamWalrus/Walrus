@@ -17,7 +17,7 @@
     <string name="textView_dummyCardTitle">None</string>
     <string name="textView_dummyCardDateAcquired">None</string>
     <string name="textView_dummyCardNotes">None</string>
-    <string name="actionBar_deleteCard">Delete Card</string>
+    <string name="actionBar_deleteCard">Delete</string>
     <string name="actionBar_Settings">Settings</string>
 
     <string name="dialog_write_chameleon">Write to Chameleon Mini card slot</string>
