@@ -51,7 +51,8 @@
             android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".device.proxmark3.Proxmark3Activity"
-            android:exported="true"/>
+            android:exported="true"
+            android:parentActivityName=".ui.SettingsActivity"/>
         <activity
             android:name=".device.proxmark3.Proxmark3TuneActivity"
             android:label="Tune"
