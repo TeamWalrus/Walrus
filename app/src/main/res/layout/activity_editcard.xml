@@ -5,14 +5,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/AppTheme.PopupOverlay"/>
+    <include layout="@layout/layout_toolbar"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -35,7 +28,6 @@
                 android:id="@+id/readCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/primaryColor"
                 android:onClick="onReadCardClick"
                 android:text="@string/readCard"/>
 
@@ -62,8 +54,7 @@
             <EditText
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"/>
+                android:layout_height="wrap_content"/>
 
             <Space
                 android:layout_width="match_parent"

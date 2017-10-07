@@ -21,9 +21,13 @@ public abstract class CardDevice {
         return id;
     }
 
-    abstract public CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException;
+    public String getStatusText() {
+        return null;
+    }
 
-    abstract public void writeCardData(CardData cardData) throws IOException;
+    public abstract CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException;
+
+    public abstract void writeCardData(CardData cardData) throws IOException;
 
     public Intent getDeviceActivityIntent(Context context) {
         return null;
@@ -32,6 +36,8 @@ public abstract class CardDevice {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
         String name();
+
+        int icon();
 
         Class<? extends CardData>[] supportsRead();
 

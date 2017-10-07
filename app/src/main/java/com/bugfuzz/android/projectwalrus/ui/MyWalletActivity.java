@@ -90,17 +90,24 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mywallet_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_mywallet, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_Settings:
+            case R.id.devices: {
+                Intent intent = new Intent(this, DevicesActivity.class);
+                startActivity(intent);
+                return true;
+            }
+
+            case R.id.settings: {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
+            }
 
             default:
                 return super.onOptionsItemSelected(item);

@@ -5,14 +5,7 @@
                 android:layout_height="match_parent"
                 tools:context="com.bugfuzz.android.projectwalrus.ui.MyWalletActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/AppTheme.PopupOverlay"/>
+    <include layout="@layout/layout_toolbar"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -32,8 +25,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        android:tint="@color/primaryTextColor"
-        app:backgroundTint="@color/primaryColor"
+        app:backgroundTint="@android:color/white"
         app:fabSize="normal"
         app:srcCompat="@android:drawable/ic_input_add"/>
 
