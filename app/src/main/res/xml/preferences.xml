@@ -3,10 +3,5 @@
     <PreferenceCategory
         android:key="pref_key_global_settings"
         android:title="Global Settings">
-        <Preference
-            android:key="default_chameleon_cardslot"
-            android:title="Default Chameleon Card Slot"
-            android:summary="Default Chameleon Mini card slot to be used when writing cards to Chameleon Mini."
-            android:defaultValue="1"/>
     </PreferenceCategory>
 </PreferenceScreen>

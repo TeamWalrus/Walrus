@@ -1,5 +1,7 @@
 package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
@@ -9,6 +11,7 @@ import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
+import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
@@ -116,5 +119,12 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             throw new IOException("Couldn't read write result");
         if (!line.equals("100:OK"))
             throw new IOException("Unexpected response to write command: " + line);
+    }
+
+    @Override
+    public Intent getDeviceActivityIntent(Context context) {
+        Intent intent = new Intent(context, ChameleonMiniActivity.class);
+        intent.putExtra(ChameleonMiniActivity.EXTRA_DEVICE, getID());
+        return intent;
     }
 }
