@@ -18,9 +18,15 @@
     <string name="textView_dummyCardDateAcquired">None</string>
     <string name="textView_dummyCardNotes">None</string>
     <string name="actionBar_deleteCard">Delete</string>
-    <string name="actionBar_Settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="devices">Devices</string>
+    <string name="settings">Settings</string>
 
     <string name="dialog_write_chameleon">Write to Chameleon Mini card slot</string>
 
     <string name="tune">Tune</string>
+
+    <string name="proxmark3">Proxmark 3</string>
+    <string name="tuning">Tuning</string>
+    <string name="version">Version Information</string>
 </resources>

@@ -3,6 +3,7 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
+import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
+        icon = R.drawable.chameleon_mini,
         supportsRead = {ISO14443ACardData.class},
         supportsWrite = {ISO14443ACardData.class}
 )

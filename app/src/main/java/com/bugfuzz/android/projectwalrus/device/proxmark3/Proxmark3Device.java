@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
+import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
@@ -13,10 +14,13 @@ import com.bugfuzz.android.projectwalrus.device.UsbSerialCardDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +29,7 @@ import java.util.regex.Pattern;
 
 @CardDevice.Metadata(
         name = "Proxmark 3",
+        icon = R.drawable.proxmark3,
         supportsRead = {HIDCardData.class},
         supportsWrite = {HIDCardData.class}
 )
@@ -140,8 +145,17 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                 (command.args[1] & 0xffff) / 1000f);
     }
 
-    public long tuned() {
-        return tuned;
+    @Override
+    public String getStatusText() {
+        List<String> statuses = new ArrayList<>();
+        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) != 0)
+            statuses.add("LF tuned");
+        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF) != 0)
+            statuses.add("HF tuned");
+        if (statuses.isEmpty())
+            statuses.add("Untuned");
+
+        return StringUtils.join(statuses, ", ");
     }
 
     @Override
@@ -201,6 +215,23 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         Intent intent = new Intent(context, Proxmark3Activity.class);
         intent.putExtra(Proxmark3Activity.EXTRA_DEVICE, getID());
         return intent;
+    }
+
+    public synchronized String getVersion() throws IOException {
+        String version = sendReceiveCommand(
+                new Proxmark3Command(Proxmark3Command.Op.VERSION),
+                new CommandHandler<String>() {
+                    @Override
+                    public String handle(Proxmark3Command command) {
+                        if (command.op != Proxmark3Command.Op.ACK)
+                            return null;
+                        return new String(command.data);
+                    }
+                }, DEFAULT_TIMEOUT);
+        if (version == null)
+            throw new IOException("Failed to get device version before timeout");
+
+        return version;
     }
 
     private interface CommandHandler<R> {

@@ -9,6 +9,7 @@ import java.util.EnumSet;
 class Proxmark3Command {
     static long MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
             MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
+
     Op op;
     long[] args;
     byte[] data;
@@ -27,6 +28,10 @@ class Proxmark3Command {
 
     Proxmark3Command(Op op, long[] args) {
         this(op, args, new byte[512]);
+    }
+
+    Proxmark3Command(Op op) {
+        this(op, new long[3]);
     }
 
     static int getByteLength() {
@@ -68,7 +73,11 @@ class Proxmark3Command {
     }
 
     enum Op {
+        ACK(0xff),
+
         DEBUG_PRINT_STRING(0x100),
+
+        VERSION(0x107),
 
         HID_DEMOD_FSK(0x20b),
         HID_CLONE_TAG(0x210),
