@@ -19,7 +19,6 @@
     <string name="textView_dummyCardDateAcquired">None</string>
     <string name="textView_dummyCardNotes">None</string>
     <string name="actionBar_deleteCard">Delete</string>
-    <string name="search">Search</string>
     <string name="devices">Devices</string>
     <string name="settings">Settings</string>
 

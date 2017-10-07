@@ -126,7 +126,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 return true;
             }
 
-            case R.id.action_searchCard:
+            case R.id.search:
                 sv.setVisibility(View.VISIBLE);
                 sv.requestFocus();
                 return true;
