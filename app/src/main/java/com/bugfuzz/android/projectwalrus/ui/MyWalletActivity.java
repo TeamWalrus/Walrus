@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
+import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,10 +22,12 @@ import com.bugfuzz.android.projectwalrus.data.QueryUtils;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
     private RecyclerView recyclerView;
+    private SearchView sv;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,20 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         setContentView(R.layout.activity_mywallet);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        sv = (SearchView) findViewById(R.id.searchView);
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+                return false;
+            }
+        });
 
         // TODO: remove in release
         if (getHelper().getCardDao().countOf() == 0) {
@@ -102,10 +119,27 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 startActivity(intent);
                 return true;
 
+            case R.id.action_searchCard:
+                sv.setVisibility(View.VISIBLE);
+                sv.requestFocus();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (!sv.isIconified()) {
+            sv.setIconified(true);
+            sv.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
 
     private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
@@ -116,7 +150,15 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         @Override
         public void onBindViewHolder(CardViewHolder holder, int position) {
-            Card card = QueryUtils.getNthRow(getHelper().getCardDao(), position);
+            Card card;
+            String filter = sv.getQuery().toString();
+            if (!filter.isEmpty()){
+                List<Card> cards = QueryUtils.filterCards(getHelper().getCardDao(), filter);
+                card = cards.get(position);
+
+            } else {
+                card = QueryUtils.getNthRow(getHelper().getCardDao(), position);
+            }
 
             ((WalrusCardView) holder.itemView).setCard(card);
             holder.id = card.id;
@@ -124,7 +166,14 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         @Override
         public int getItemCount() {
-            return (int) getHelper().getCardDao().countOf();
+            String filter = sv.getQuery().toString();
+            if (!filter.isEmpty()){
+                List<Card> cards = QueryUtils.filterCards(getHelper().getCardDao(), filter);
+                return cards.size();
+
+            } else {
+                return (int) getHelper().getCardDao().countOf();
+            }
         }
 
         class CardViewHolder extends RecyclerView.ViewHolder {
