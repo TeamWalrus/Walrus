@@ -37,7 +37,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         if (getHelper().getCardDao().countOf() == 0) {
             String[] names = {
                     "Apple",
-                    "\uD83C\uDF4C",
+                    "\uD83c\uDf46",
                     "Carrot",
                     "Some crazy long title for a card because why not",
                     "Elephant",
