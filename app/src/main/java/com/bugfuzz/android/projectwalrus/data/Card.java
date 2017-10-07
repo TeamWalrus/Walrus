@@ -11,10 +11,12 @@ import java.util.Date;
 @DatabaseTable()
 @Parcel
 public class Card {
+    public static final String NAME_FIELD_NAME = "name";
+
     @DatabaseField(generatedId = true)
     public int id;
 
-    @DatabaseField
+    @DatabaseField(columnName = NAME_FIELD_NAME)
     public String name = "Unnamed Card";
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)

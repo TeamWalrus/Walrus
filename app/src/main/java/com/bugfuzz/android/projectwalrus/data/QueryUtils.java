@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class QueryUtils {
 
@@ -13,6 +14,16 @@ public class QueryUtils {
             queryBuilder.limit(1L);
             queryBuilder.offset(row);
             return queryBuilder.query().get(0);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Card> filterCards(Dao<Card, ?> dao, String searchParameter) {
+        try {
+            QueryBuilder<Card, ?> queryBuilder = dao.queryBuilder();
+            queryBuilder.where().like(Card.NAME_FIELD_NAME, "%" + searchParameter + "%");
+            return queryBuilder.query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
