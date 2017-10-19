@@ -10,4 +10,5 @@ The app is intended to make the card cloning process smooth and effortless durin
 
 ### Future Supported Devices: ###
 * Tastic RFID Thief (https://www.bishopfox.com/resources/tools/rfid-hacking/attack-tools/)
+* BLEKey (http://hackerwarehouse.com/product/blekey/)
 * MagSpoof v2 (https://store.ryscc.com/collections/all/products/magspoof)
