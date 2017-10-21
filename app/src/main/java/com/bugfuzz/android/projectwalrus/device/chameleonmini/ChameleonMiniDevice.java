@@ -1,5 +1,7 @@
 package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
@@ -9,6 +11,7 @@ import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
+import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
@@ -116,5 +119,33 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             throw new IOException("Couldn't read write result");
         if (!line.equals("100:OK"))
             throw new IOException("Unexpected response to write command: " + line);
+    }
+
+    @Override
+    public Intent getDeviceActivityIntent(Context context) {
+        Intent intent = new Intent(context, ChameleonMiniActivity.class);
+        intent.putExtra(ChameleonMiniActivity.EXTRA_DEVICE, getID());
+        return intent;
+    }
+
+    public synchronized String getVersion() throws IOException {
+        writeLine("VERSION?");
+        String line = readLine();
+        String version = readLine();
+        if (line == null)
+            throw new IOException("Couldn't read version result");
+        switch (line) {
+            case "101:OK WITH TEXT":
+                break;
+
+            case "203:TIMEOUT":
+                throw new IOException("Timed out retrieving chameleon mini version");
+
+            default:
+                throw new IOException("Failed to get device version before timeout: " + line);
+        }
+        if (version == null)
+            throw new IOException("Failed to get the chameleon mini version information");
+        return version;
     }
 }
