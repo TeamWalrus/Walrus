@@ -2,6 +2,7 @@ package com.bugfuzz.android.projectwalrus.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -219,7 +220,16 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     private void onChooseCardType(final CardDevice device, final Class<? extends CardData> cardDataClass) {
         (new AsyncTask<Void, Void, CardData>() {
-            Exception exception;
+            private ProgressDialog progressDialog = new ProgressDialog(EditCardActivity.this);
+            private Exception exception;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog.setMessage("Reading...");
+                progressDialog.show();
+            }
 
             @Override
             protected CardData doInBackground(Void... params) {
@@ -233,24 +243,28 @@ public class EditCardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
             @Override
             protected void onPostExecute(CardData cardData) {
-                if (cardData == null) {
+                super.onPostExecute(cardData);
+
+                if (cardData != null) {
+                    card.setCardData(cardData);
+                    walrusCardView.setCard(card); // TODO ugh
+
+                    if (currentBestLocation != null) {
+                        // Capture card location. Remember we want the card location when the card is read and not
+                        // to continue updating if you walk away without saving the card immediately
+                        card.cardLocationLat = currentBestLocation.getLatitude();
+                        card.cardLocationLng = currentBestLocation.getLongitude();
+                    }
+
+                    edited = true;
+
+                    Toast.makeText(EditCardActivity.this, "Card read!", Toast.LENGTH_SHORT).show();
+                } else
                     Toast.makeText(EditCardActivity.this,
                             "Error reading card" + (exception != null ? ": " + exception.getMessage() : ""),
                             Toast.LENGTH_LONG).show();
-                    return;
-                }
 
-                card.setCardData(cardData);
-                walrusCardView.setCard(card); // TODO ugh
-
-                if (currentBestLocation != null) {
-                    // Capture card location. Remember we want the card location when the card is read and not
-                    // to continue updating if you walk away without saving the card immediately
-                    card.cardLocationLat = currentBestLocation.getLatitude();
-                    card.cardLocationLng = currentBestLocation.getLongitude();
-                }
-
-                edited = true;
+                progressDialog.dismiss();
             }
         }).execute();
     }

@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,11 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.ui.DetailedCardViewActivity;
-import com.bugfuzz.android.projectwalrus.ui.EditCardActivity;
 
 import java.io.IOException;
 
