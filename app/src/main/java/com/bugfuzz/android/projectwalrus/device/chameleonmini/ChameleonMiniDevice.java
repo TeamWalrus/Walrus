@@ -127,4 +127,25 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         intent.putExtra(ChameleonMiniActivity.EXTRA_DEVICE, getID());
         return intent;
     }
+
+    public synchronized String getVersion() throws IOException {
+        writeLine("VERSION?");
+        String line = readLine();
+        String version = readLine();
+        if (line == null)
+            throw new IOException("Couldn't read version result");
+        switch (line) {
+            case "101:OK WITH TEXT":
+                break;
+
+            case "203:TIMEOUT":
+                throw new IOException("Timed out retrieving chameleon mini version");
+
+            default:
+                throw new IOException("Failed to get device version before timeout: " + line);
+        }
+        if (version == null)
+            throw new IOException("Failed to get the chameleon mini version information");
+        return version;
+    }
 }
