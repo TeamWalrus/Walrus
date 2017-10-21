@@ -23,7 +23,7 @@ public class Card {
     public CardData cardData;
 
     @DatabaseField
-    public Date cardDataAcquired;
+    public Date cardCreated = new Date(), cardDataAcquired;
 
     @DatabaseField
     public String notes = "";
@@ -40,5 +40,6 @@ public class Card {
     public void setCardData(CardData cardData) {
         this.cardData = cardData;
         cardDataAcquired = new Date();
+        // TODO: include location
     }
 }

@@ -3,10 +3,10 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/save"
-        android:icon="@android:drawable/ic_menu_save"
+        android:id="@+id/start"
+        android:icon="@android:drawable/ic_media_play"
         android:orderInCategory="1"
         app:showAsAction="always"
-        android:title="Save"/>
+        android:title="Start"/>
 
 </menu>

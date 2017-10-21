@@ -13,8 +13,10 @@ import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
+import com.bugfuzz.android.projectwalrus.data.CardData;
 
 public class WalrusCardView extends FrameLayout {
+
     private Card card;
 
     private TextView nameView, humanReadableTextView;
@@ -67,29 +69,28 @@ public class WalrusCardView extends FrameLayout {
         });
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WalrusCardView, defStyle, 0);
-
-        boolean editable = a.getBoolean(R.styleable.WalrusCardView_editable, false);
-        nameView.setVisibility(editable ? GONE : VISIBLE);
-        editableNameView.setVisibility(editable ? VISIBLE : GONE);
-
+        setEditable(a.getBoolean(R.styleable.WalrusCardView_editable, false));
         a.recycle();
     }
 
-    public Card isCard() {
-        return card;
-    }
+    public void setCard(Card newCard) {
+        card = newCard;
 
-    public void setCard(Card card) {
-        this.card = card;
-
-        nameView.setText(this.card.name);
-        editableNameView.setText(this.card.name);
-        if (this.card.cardData != null) {
-            logoView.setImageDrawable(this.card.cardData.getCardIcon(logoView.getContext()));
-            humanReadableTextView.setText(this.card.cardData.getHumanReadableText());
+        nameView.setText(card.name);
+        editableNameView.setText(card.name);
+        if (card.cardData != null) {
+            logoView.setImageDrawable(getResources().getDrawable(
+                    card.cardData.getClass().getAnnotation(CardData.Metadata.class).icon(),
+                    getContext().getTheme()));
+            humanReadableTextView.setText(card.cardData.getHumanReadableText());
         }
 
         invalidate();
         requestLayout();
+    }
+
+    public void setEditable(boolean editable) {
+        nameView.setVisibility(editable ? GONE : VISIBLE);
+        editableNameView.setVisibility(editable ? VISIBLE : GONE);
     }
 }

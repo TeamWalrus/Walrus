@@ -1,5 +1,6 @@
-<!--?xml version="1.0" encoding="UTF-8"?-->
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="primaryColor">#1976d2</color>
     <color name="primaryLightColor">#63a4ff</color>
     <color name="primaryDarkColor">#004ba0</color>
@@ -12,4 +13,5 @@
     <color name="primaryCardBackground">#e0e0e0</color>
     <color name="secondaryCardTextColor">#e0e0e0</color>
     <color name="secondaryCardBackground">#424242</color>
+
 </resources>

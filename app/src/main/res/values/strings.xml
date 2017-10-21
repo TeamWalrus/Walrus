@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Project Walrus</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
@@ -30,4 +32,8 @@
     <string name="proxmark3">Proxmark 3</string>
     <string name="tuning">Tuning</string>
     <string name="version">Version Information</string>
+    <string name="ready">Ready</string>
+    <string name="stop">Stop</string>
+    <string name="unknown">Unknown</string>
+
 </resources>

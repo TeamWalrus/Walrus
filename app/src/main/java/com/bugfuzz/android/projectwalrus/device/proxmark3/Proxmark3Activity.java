@@ -64,7 +64,7 @@ public class Proxmark3Activity extends AppCompatActivity {
     }
 
     private void tune(boolean lf) {
-        new TuneTask(this, lf).execute();
+        new Proxmark3Activity.TuneTask(this, lf).execute();
     }
 
     private static class FindVersionTask extends AsyncTask<Void, Void, Pair<String, IOException>> {
