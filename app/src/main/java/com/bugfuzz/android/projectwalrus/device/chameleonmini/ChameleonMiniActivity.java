@@ -9,7 +9,6 @@ import android.support.v7.widget.Toolbar;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.ui.SettingsActivity;
 
 public class ChameleonMiniActivity extends AppCompatActivity {
     public static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity.EXTRA_DEVICE";
@@ -49,8 +48,8 @@ public class ChameleonMiniActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
             addPreferencesFromResource(R.xml.preferences_chameleon_mini);
         }
     }
+
 }
