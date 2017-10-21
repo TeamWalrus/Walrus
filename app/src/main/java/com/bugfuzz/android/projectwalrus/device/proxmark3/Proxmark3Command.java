@@ -2,8 +2,11 @@ package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
 import android.util.LongSparseArray;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.EnumSet;
 
 class Proxmark3Command {
@@ -70,6 +73,15 @@ class Proxmark3Command {
         bb.get(bytes);
 
         return bytes;
+    }
+
+    @Override
+    public String toString() {
+        return "<Proxmark3Command " + op.name() + ", args " + Arrays.toString(args) + ", data " + Arrays.toString(data) + ">";
+    }
+
+    public String dataAsString() {
+        return new String(ArrayUtils.subarray(data, 0, (int)args[0]));
     }
 
     enum Op {

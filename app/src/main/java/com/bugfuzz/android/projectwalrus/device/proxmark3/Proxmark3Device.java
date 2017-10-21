@@ -100,6 +100,8 @@ public class Proxmark3Device extends UsbSerialCardDevice {
             } catch (InterruptedException e) {
                 break;
             }
+            if (command == null)
+                break;
 
             handled = handler.handle(command);
             if (handled != null)
@@ -162,7 +164,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
         if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
             // TODO: how to handle generically?
-            throw new IllegalStateException("Not LF tuned");
+            throw new IOException("Not LF tuned");
 
         // TODO: use cardDataClass
         BigInteger data = sendReceiveCommand(
@@ -173,7 +175,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                         if (command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
                             return null;
                         Matcher matcher = Pattern.compile("TAG ID: ([0-9a-fA-F]+)")
-                                .matcher(new String(command.data));
+                                .matcher(command.dataAsString());
                         return matcher.find() ? new BigInteger(matcher.group(1), 16) : null;
                     }
                 }, DEFAULT_TIMEOUT);
@@ -187,7 +189,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     public synchronized void writeCardData(CardData cardData) throws IOException {
         if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
             // TODO: how to handle generically?
-            throw new IllegalStateException("Not LF tuned");
+            throw new IOException("Not LF tuned");
 
         // TODO: use cardDataClass
         HIDCardData hidCardData = (HIDCardData) cardData;
@@ -202,11 +204,11 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                     public Boolean handle(Proxmark3Command command) {
                         if (command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
                             return null;
-                        return new String(command.data).equals("DONE!") ? true : null;
+                        return command.dataAsString().equals("DONE!") ? true : null;
                     }
                 }, DEFAULT_TIMEOUT);
 
-        if (Boolean.TRUE.equals(success))
+        if (!Boolean.TRUE.equals(success))
             throw new IOException("Failed to write card data before timeout");
     }
 
@@ -225,7 +227,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                     public String handle(Proxmark3Command command) {
                         if (command.op != Proxmark3Command.Op.ACK)
                             return null;
-                        return new String(command.data);
+                        return command.dataAsString();
                     }
                 }, DEFAULT_TIMEOUT);
         if (version == null)
