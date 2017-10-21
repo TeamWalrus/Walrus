@@ -18,6 +18,7 @@ import com.bugfuzz.android.projectwalrus.ui.SettingsActivity;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -86,7 +87,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                     break;
                 case 2:
                     String line_uid[] = line.split(":");
-                    uid = (long) Integer.parseInt(line_uid[1].trim(), 16);
+                    uid = Long.parseLong(line_uid[1].trim(), 16);
                     break;
                 case 3:
                     String line_sak[] = line.split(":");
@@ -109,7 +110,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             throw new IOException("Unexpected response to config command: " + line);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        String chameleonMiniSlot = sharedPref.getString(ChameleonMiniActivity.DEFAULT_SLOT_KEY, "");
+        int chameleonMiniSlot = sharedPref.getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
         writeLine("setting="+chameleonMiniSlot);
         line = readLine();
         if (line == null)
