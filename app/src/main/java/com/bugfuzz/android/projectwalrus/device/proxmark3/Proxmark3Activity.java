@@ -16,6 +16,7 @@ import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.ui.DetailedCardViewActivity;
 import com.bugfuzz.android.projectwalrus.ui.EditCardActivity;
 
 import java.io.IOException;
@@ -125,13 +126,11 @@ public class Proxmark3Activity extends AppCompatActivity {
     private class TuneTask extends AsyncTask<Void, Void, Proxmark3Device.TuneResult> {
         private Proxmark3Activity activity;
         private boolean lf;
-        private ProgressDialog progressDialog;
+        private ProgressDialog progressDialog = new ProgressDialog(Proxmark3Activity.this);
 
         public TuneTask(Proxmark3Activity activity, boolean lf) {
             this.activity = activity;
             this.lf = lf;
-
-            progressDialog = new ProgressDialog(activity);
         }
 
         @Override
@@ -156,6 +155,8 @@ public class Proxmark3Activity extends AppCompatActivity {
             super.onPostExecute(tuneResult);
 
             activity.updateTuneResult(tuneResult);
+
+            Toast.makeText(Proxmark3Activity.this, "Proxmark3 tuned!", Toast.LENGTH_SHORT).show();
 
             progressDialog.dismiss();
         }

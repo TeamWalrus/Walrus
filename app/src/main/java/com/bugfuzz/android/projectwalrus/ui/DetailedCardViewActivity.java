@@ -1,13 +1,14 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
 
@@ -170,22 +170,53 @@ public class DetailedCardViewActivity extends OrmLiteBaseAppCompatActivity<Datab
         final CardDevice cardDevice = cardDevices.get(0);
 
         // TODO: doing this every time is stupid. why did we drop the member again?
-        Card card = getHelper().getCardDao().queryForId(id);
+        final Card card = getHelper().getCardDao().queryForId(id);
         if (card == null)
             return;
 
-        final Class<? extends CardData> writeableTypes[] = cardDevice.getClass()
+        final Class<? extends CardData> writableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsWrite();
 
-        if (!Arrays.asList(writeableTypes).contains(card.cardData.getClass())) {
+        if (!Arrays.asList(writableTypes).contains(card.cardData.getClass())) {
             Toast.makeText(this, "This device doesn't support this type of card", Toast.LENGTH_LONG).show();
             return;
         }
 
-        try {
-            cardDevice.writeCardData(card.cardData);
-        } catch (IOException ex) {
-            Toast.makeText(this, "Failed to write card data: " + ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        (new AsyncTask<Void, Void, Void>() {
+            private ProgressDialog progressDialog = new ProgressDialog(DetailedCardViewActivity.this);
+            private Exception exception;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                progressDialog.setMessage("Writing...");
+                progressDialog.show();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    cardDevice.writeCardData(card.cardData);
+                } catch (IOException e) {
+                    exception = e;
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+
+                if (exception == null)
+                    Toast.makeText(DetailedCardViewActivity.this, "Card written!", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(DetailedCardViewActivity.this,
+                            "Error writing card: " + exception.getMessage(), Toast.LENGTH_LONG).show();
+
+                progressDialog.dismiss();
+            }
+        }).execute();
     }
 }
