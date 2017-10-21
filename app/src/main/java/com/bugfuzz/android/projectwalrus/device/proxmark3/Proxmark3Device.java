@@ -44,8 +44,8 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     private boolean reading = false;
     private long tuned;
 
-    public Proxmark3Device(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
-        super(usbDevice, usbDeviceConnection);
+    public Proxmark3Device(Context context, UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
+        super(context, usbDevice, usbDeviceConnection);
 
         usbSerialDevice.open(); // TODO: check result
 

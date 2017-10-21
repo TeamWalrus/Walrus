@@ -68,7 +68,7 @@ public enum CardDeviceManager {
 
                     Constructor<? extends UsbCardDevice> constructor;
                     try {
-                        constructor = klass.getConstructor(UsbDevice.class,
+                        constructor = klass.getConstructor(Context.class, UsbDevice.class,
                                 UsbDeviceConnection.class);
                     } catch (NoSuchMethodException e) {
                         continue;
@@ -76,7 +76,7 @@ public enum CardDeviceManager {
 
                     UsbCardDevice cardDevice;
                     try {
-                        cardDevice = constructor.newInstance(usbDevice, usbDeviceConnection);
+                        cardDevice = constructor.newInstance(context, usbDevice, usbDeviceConnection);
                     } catch (InstantiationException e) {
                         continue;
                     } catch (IllegalAccessException e) {

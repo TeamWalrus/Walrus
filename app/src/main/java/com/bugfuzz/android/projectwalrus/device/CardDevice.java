@@ -11,9 +11,11 @@ import java.lang.annotation.RetentionPolicy;
 
 public abstract class CardDevice {
     static private int nextID;
+    protected Context context;
     private int id;
 
-    public CardDevice() {
+    public CardDevice(Context context) {
+        this.context = context;
         this.id = nextID++;
     }
 

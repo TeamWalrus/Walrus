@@ -1,5 +1,6 @@
 package com.bugfuzz.android.projectwalrus.device;
 
+import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
@@ -11,10 +12,10 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice {
     private String buffer = "";
     private String delimiter, charsetName;
 
-    public LineBasedUsbSerialCardDevice(UsbDevice usbDevice,
+    public LineBasedUsbSerialCardDevice(Context context, UsbDevice usbDevice,
                                         UsbDeviceConnection usbDeviceConnection,
                                         String delimiter, String charsetName) {
-        super(usbDevice, usbDeviceConnection);
+        super(context, usbDevice, usbDeviceConnection);
 
         this.delimiter = delimiter;
         this.charsetName = charsetName;

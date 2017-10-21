@@ -25,8 +25,8 @@ import java.io.IOException;
 @UsbCardDevice.UsbIDs({@UsbCardDevice.UsbIDs.IDs(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
-    public ChameleonMiniDevice(UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
-        super(usbDevice, usbDeviceConnection, "\r\n", "ISO-8859-1");
+    public ChameleonMiniDevice(Context context, UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
+        super(context, usbDevice, usbDeviceConnection, "\r\n", "ISO-8859-1");
 
         usbSerialDevice.syncOpen();
 
