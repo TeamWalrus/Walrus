@@ -164,7 +164,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
         if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
             // TODO: how to handle generically?
-            throw new IllegalStateException("Not LF tuned");
+            throw new IOException("Not LF tuned");
 
         // TODO: use cardDataClass
         BigInteger data = sendReceiveCommand(
@@ -189,7 +189,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     public synchronized void writeCardData(CardData cardData) throws IOException {
         if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
             // TODO: how to handle generically?
-            throw new IllegalStateException("Not LF tuned");
+            throw new IOException("Not LF tuned");
 
         // TODO: use cardDataClass
         HIDCardData hidCardData = (HIDCardData) cardData;
