@@ -7,8 +7,7 @@ layout: home
 
 Walrus is an Android Application that simplifies using several existing contactless card cloning devices during red team engagements and physical security assessments. Walrus helps penetration testers make better use of card cloning devices such as the [Proxmark 3](http://hackerwarehouse.com/product/proxmark3-kit/), [Chameleon Mini](https://shop.kasper.it/chameleonmini/), [Tastic RFID Thief](https://www.bishopfox.com/resources/tools/rfid-hacking/attack-tools/), and more to come! Access cards can be cloned from supported devices and stored in a common database, to be used later in the field. The cloned card can be  written to a new blank card or emulated on another device such as the Proxmark, instantly granting the attacker privileged access to restricted areas.
 
-<iframe allowFullScreen frameborder="0" height="360" mozallowfullscreen src="https://player.vimeo.com/video/247914436" webkitAllowFullScreen width="640"></iframe>
-
+<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style><div class='embed-container'><iframe src='https://player.vimeo.com/video/247914436' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
 ---
 
 # Features
