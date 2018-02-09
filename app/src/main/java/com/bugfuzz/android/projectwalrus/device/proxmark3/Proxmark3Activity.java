@@ -152,7 +152,7 @@ public class Proxmark3Activity extends AppCompatActivity {
 
             activity.updateTuneResult(tuneResult);
 
-            Toast.makeText(Proxmark3Activity.this, "Proxmark3 tuned!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Proxmark3Activity.this, "Tune attempt completed", Toast.LENGTH_SHORT).show();
 
             progressDialog.dismiss();
         }
