@@ -74,6 +74,8 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                 }
             }
         });
+
+        sendCommand(new Proxmark3Command(Proxmark3Command.Op.VERSION));
     }
 
     private void sendCommand(Proxmark3Command command) {
