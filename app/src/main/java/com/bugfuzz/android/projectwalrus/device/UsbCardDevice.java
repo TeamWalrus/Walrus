@@ -8,8 +8,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public abstract class UsbCardDevice extends CardDevice {
-    protected UsbDevice usbDevice;
-    protected UsbDeviceConnection usbDeviceConnection;
+    protected final UsbDevice usbDevice;
+    protected final UsbDeviceConnection usbDeviceConnection;
 
     public UsbCardDevice(Context context, UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
         super(context);

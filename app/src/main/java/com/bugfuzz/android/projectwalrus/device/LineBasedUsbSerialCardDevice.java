@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice {
     private String buffer = "";
-    private String delimiter, charsetName;
+    private final String delimiter, charsetName;
 
     public LineBasedUsbSerialCardDevice(Context context, UsbDevice usbDevice,
                                         UsbDeviceConnection usbDeviceConnection,

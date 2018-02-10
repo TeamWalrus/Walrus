@@ -38,9 +38,11 @@ import java.util.regex.Pattern;
         @UsbCardDevice.UsbIDs.IDs(vendorId = 39620, productId = 19343)
 })
 public class Proxmark3Device extends UsbSerialCardDevice {
+
     private static final int DEFAULT_TIMEOUT = 20 * 1000;
+
     private byte[] buffer = new byte[0]; /* todo: use better class */
-    private BlockingQueue<Proxmark3Command> readQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Proxmark3Command> readQueue = new LinkedBlockingQueue<>();
     private boolean reading = false;
     private long tuned;
 

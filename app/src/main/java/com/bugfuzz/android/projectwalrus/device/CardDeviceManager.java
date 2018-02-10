@@ -27,7 +27,7 @@ public enum CardDeviceManager {
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.extra.DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.extra.DEVICE_NAME";
 
-    private Map<Integer, CardDevice> cardDevices = new HashMap<>();
+    private final Map<Integer, CardDevice> cardDevices = new HashMap<>();
 
     public void scanForDevices(Context context) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
