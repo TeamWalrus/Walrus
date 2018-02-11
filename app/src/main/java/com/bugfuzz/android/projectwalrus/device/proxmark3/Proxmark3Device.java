@@ -44,7 +44,6 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     private byte[] buffer = new byte[0]; /* todo: use better class */
     private final BlockingQueue<Proxmark3Command> readQueue = new LinkedBlockingQueue<>();
     private boolean reading = false;
-    private long tuned;
 
     public Proxmark3Device(Context context, UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
         super(context, usbDevice, usbDeviceConnection);
@@ -141,8 +140,6 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         if (command == null)
             throw new IOException("Failed to tune antenna");
 
-        tuned |= arg;
-
         return new TuneResult(
                 (command.args[0] & 0xffff) / 1000f,
                 (command.args[0] >> 16) / 1000f,
@@ -153,23 +150,11 @@ public class Proxmark3Device extends UsbSerialCardDevice {
 
     @Override
     public String getStatusText() {
-        List<String> statuses = new ArrayList<>();
-        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) != 0)
-            statuses.add("LF tuned");
-        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF) != 0)
-            statuses.add("HF tuned");
-        if (statuses.isEmpty())
-            statuses.add("Untuned");
-
-        return StringUtils.join(statuses, ", ");
+        return "";
     }
 
     @Override
     public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
-        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
-            // TODO: how to handle generically?
-            throw new IOException("Not LF tuned");
-
         // TODO: use cardDataClass
         BigInteger data = sendReceiveCommand(
                 new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{1, 0, 0}),
@@ -191,10 +176,6 @@ public class Proxmark3Device extends UsbSerialCardDevice {
 
     @Override
     public synchronized void writeCardData(CardData cardData) throws IOException {
-        if ((tuned & Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF) == 0)
-            // TODO: how to handle generically?
-            throw new IOException("Not LF tuned");
-
         // TODO: use cardDataClass
         HIDCardData hidCardData = (HIDCardData) cardData;
         // TODO: long format (data[0] != 0)
