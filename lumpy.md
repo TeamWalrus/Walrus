@@ -8,6 +8,7 @@ permalink: /lumpy/
 
 We will use the existing Arduino board on the Tastic RFID Thief to send data via a cheap Bluetooth module.
 
+![lumpy]({{ "/assets/lumpy_hc06.png" }})
 ---
 ## Equipment Needed
 You will need a wireless serial Bluetooth RF transceiver. The HC06 is a very cheap solution that does the trick. I picked up one from [ebay](https://www.ebay.com/itm/Wireless-Serial-4-Pin-Bluetooth-RF-Transceiver-Module-HC-06-RS232-With-backplane-/200924726178) for $3.47 USD:
@@ -18,6 +19,8 @@ First change the operating board rate of the HC06. This will vary on the equipme
 
 The operating baud rate of the HC06 module needs to be set to `57600` to correctly receive data from the Tastic RFID Thief Arduino board.
 
+The baud rate was found the source code for the Arduino board used in the Bishop fox Tastic RFID Thief project still available for download [here](http://www.bishopfox.com/download/814/). The relevant section of code is shown below:
+
 ```csharp
 // Set up function from Tastic_RFID_Adrudion
 void setup()
@@ -26,7 +29,7 @@ void setup()
   pinMode(2, INPUT);     // DATA0 (INT0)
   pinMode(3, INPUT);     // DATA1 (INT1)
   
-  Serial.begin(57600);   // This is the baud rate we need to configure the HC06 bluetooth module to receive data
+  Serial.begin(57600);   // This is the baud rate we need to configure the HC06 bluetooth module to 
   Serial.println("RFID Readers");
   ...
 ```
