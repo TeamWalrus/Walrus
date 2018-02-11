@@ -16,7 +16,20 @@ You will need a wireless serial Bluetooth RF transceiver. The HC06 is a very che
 ## Change the Baud rate of HC06
 First change the operating board rate of the HC06. This will vary on the equipment you have, but there are a few instructions and guides on how to change the default settings of the HC06 using AT commands. Commands vary on the board so here are instructions used for both [HC05](http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-module/) and [HC06](http://www.instructables.com/id/How-to-Change-the-Name-of-HC-06-Bluetooth-Module/) modules. I found that HC05 commands worked when changing the baud rate of my HC06 board -  ¯\\\_(ツ)\_/¯. So don't be afraid to experiment...
 
-The operating baud rate of the HC06 module needs to be set to #### to correctly receive data from the Tastic RFID Thief Arduino board.
+The operating baud rate of the HC06 module needs to be set to `57600` to correctly receive data from the Tastic RFID Thief Arduino board.
+
+```csharp
+// Set up function from Tastic_RFID_Adrudion
+void setup()
+{
+  pinMode(13, OUTPUT);  // LED
+  pinMode(2, INPUT);     // DATA0 (INT0)
+  pinMode(3, INPUT);     // DATA1 (INT1)
+  
+  Serial.begin(57600);   // This is the baud rate we need to configure the HC06 bluetooth module to receive data
+  Serial.println("RFID Readers");
+  ...
+```
 
 ## RX to TX
 Simply connect the TX (pin X) of the Tastic RFID Thief Arduino board to the RX of the HC06 Bluetooth module. You can now connect the Tastic RFID Thief to Walrus via Bluetooth and clone cards from roughly half a meter.
