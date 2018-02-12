@@ -14,6 +14,7 @@ Lumpy is based on the previous work done by Fran Brown and the awesome team who 
 ## Equipment Needed
 You will need a wireless serial Bluetooth RF transceiver. The HC06 is a very cheap solution that does the trick. I picked up one from [ebay](https://www.ebay.com/itm/Wireless-Serial-4-Pin-Bluetooth-RF-Transceiver-Module-HC-06-RS232-With-backplane-/200924726178) for $3.47 USD:
 
+![lumpy]({{ "/assets/HC06.png" }})
 
 ## Change the Baud rate of HC06
 First change the operating board rate of the HC06. This will vary on the equipment you have, but there are a few instructions and guides on how to change the default settings of the HC06 using AT commands. Commands vary on the board so here are instructions used for both [HC05](http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-module/) and [HC06](http://www.instructables.com/id/How-to-Change-the-Name-of-HC-06-Bluetooth-Module/) modules. I found that HC05 commands worked when changing the baud rate of my HC06 board -  ¯\\\_(ツ)\_/¯. So don't be afraid to experiment...
