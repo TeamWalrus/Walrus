@@ -52,21 +52,7 @@ public class Proxmark3Activity extends AppCompatActivity {
 
         ((TextView) findViewById(R.id.version)).setText("Retrieving...");
 
-        (new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                try {
-                    return proxmark3Device.getVersion();
-                } catch (IOException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(String version) {
-                ((TextView) findViewById(R.id.version)).setText(version != null ? version : "(Unable to determine)");
-            }
-        }).execute();
+        new FindVersionTask(this).execute();
     }
 
     public void onTuneLFClick(View view) {
@@ -81,8 +67,44 @@ public class Proxmark3Activity extends AppCompatActivity {
         new TuneTask(this, lf).execute();
     }
 
-    private static class TuneTask extends AsyncTask<Void, Void,
-            Pair<Proxmark3Device.TuneResult, IOException>> {
+    private static class FindVersionTask extends AsyncTask<Void, Void, Pair<String, IOException>> {
+
+        private WeakReference<Proxmark3Activity> activity;
+
+        FindVersionTask(Proxmark3Activity activity) {
+            this.activity = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected Pair<String, IOException> doInBackground(Void... params) {
+            Proxmark3Activity proxmark3Activity = activity.get();
+            if (proxmark3Activity == null)
+                return null;
+
+            try {
+                return new Pair<>(proxmark3Activity.proxmark3Device.getVersion(), null);
+            } catch (IOException exception) {
+                return new Pair<>(null, exception);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Pair<String, IOException> result) {
+            if (result == null)
+                return;
+
+            Proxmark3Activity proxmark3Activity = activity.get();
+            if (proxmark3Activity == null)
+                return;
+
+            ((TextView) proxmark3Activity.findViewById(R.id.version)).setText(result.first != null ?
+                    result.first :
+                    "Failed to get version: " + result.second.getMessage());
+        }
+    }
+
+    private static class TuneTask extends
+            AsyncTask<Void, Void, Pair<Proxmark3Device.TuneResult, IOException>> {
 
         private WeakReference<Proxmark3Activity> activity;
 
