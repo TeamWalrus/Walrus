@@ -166,19 +166,7 @@ public class Proxmark3Activity extends AppCompatActivity {
                 return;
             }
 
-            Proxmark3TuneResultView tuneResultsView = new Proxmark3TuneResultView(proxmark3Activity);
-            tuneResultsView.setTuneResults(tuneResult);
-            tuneResultsView.setPadding(70, 30, 70, 30);
-
-            new AlertDialog.Builder(proxmark3Activity)
-                    .setTitle("Tune Results")
-                    .setView(tuneResultsView)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
+            Proxmark3TuneResultActivity.startActivity(proxmark3Activity, tuneResult);
         }
     }
 }

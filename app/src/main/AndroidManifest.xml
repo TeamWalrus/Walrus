@@ -49,6 +49,10 @@
             android:label="Proxmark 3"
             android:parentActivityName=".ui.DevicesActivity"/>
         <activity
+            android:name=".device.proxmark3.Proxmark3TuneResultActivity"
+            android:label="Proxmark 3 - Tune Results"
+            android:parentActivityName=".device.proxmark3.Proxmark3Activity"/>
+        <activity
             android:name=".ui.SettingsActivity"
             android:parentActivityName=".ui.MyWalletActivity"/>
         <activity

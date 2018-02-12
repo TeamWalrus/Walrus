@@ -45,4 +45,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:11.0.4'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'org.parceler:parceler:1.1.6'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 }

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,14 +139,20 @@ public class Proxmark3Device extends UsbSerialCardDevice {
                 new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
                 new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING), DEFAULT_TIMEOUT);
         if (command == null)
-            throw new IOException("Failed to tune antenna");
+            throw new IOException("Failed to perform tuning");
+
+        float[] v_LF = new float[256];
+        for (int i = 0; i < 256; ++i)
+            v_LF[i] = ((command.data[i] & 0xff) << 8) / 1e3f;
 
         return new TuneResult(
-                (command.args[0] & 0xffff) / 1000f,
-                (command.args[0] >> 16) / 1000f,
-                12000000f / ((command.args[2] & 0xffff) + 1),
-                (command.args[2] >> 16) / 1000f,
-                (command.args[1] & 0xffff) / 1000f);
+                lf, hf,
+                lf ? v_LF : null,
+                lf ? (command.args[0] & 0xffff) / 1e3f : null,
+                lf ? (command.args[0] >> 16) / 1e3f : null,
+                lf ? 12e6f / ((command.args[2] & 0xffff) + 1) : null,
+                lf ? (command.args[2] >> 16) / 1e3f : null,
+                hf ? (command.args[1] & 0xffff) / 1e3f : null);
     }
 
     @Override
@@ -225,7 +232,8 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         R handle(Proxmark3Command command);
     }
 
-    private class CommandWaiter implements CommandHandler<Proxmark3Command> {
+    private static class CommandWaiter implements CommandHandler<Proxmark3Command> {
+
         private Proxmark3Command.Op op;
 
         CommandWaiter(Proxmark3Command.Op op) {
@@ -235,17 +243,29 @@ public class Proxmark3Device extends UsbSerialCardDevice {
         public Proxmark3Command handle(Proxmark3Command command) {
             return command.op == op ? command : null;
         }
+
     }
 
-    public class TuneResult {
-        public float v_125, v_134, peak_f, peak_v, v_HF;
+    static class TuneResult implements Serializable {
 
-        public TuneResult(float v_125, float v_134, float peak_f, float peak_v, float v_HF) {
+        boolean lf, hf;
+
+        Float v_125, v_134, peak_f, peak_v, v_HF;
+        float[] v_LF;
+
+        TuneResult(boolean lf, boolean hf, float[] v_LF, Float v_125, Float v_134, Float peak_f,
+                   Float peak_v, Float v_HF) {
+            this.lf = lf;
+            this.hf = hf;
+
+            this.v_LF = v_LF;
             this.v_125 = v_125;
             this.v_134 = v_134;
             this.peak_f = peak_f;
             this.peak_v = peak_v;
+
             this.v_HF = v_HF;
         }
+
     }
 }
