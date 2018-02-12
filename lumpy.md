@@ -35,7 +35,9 @@ void setup()
 ```
 
 ## RX to TX
-Simply connect the TX (pin X) of the Tastic RFID Thief Arduino board to the RX of the HC06 Bluetooth module. You can now connect the Tastic RFID Thief to Walrus via Bluetooth and clone cards from roughly half a meter.
+Simply connect the D1/TX from the Tastic RFID Thief Arduino board to the RX of the HC06 Bluetooth module. The breadboard layout below should give an idea of how the HC06 module should be connected:
+
+![Tastic-modifications-breadboard-layout]({{ "/assets/Tastic-Custom_RFID_Stealer_PCB_du_2018.png" }})
 
 ## Power
 You also need to steal some power from somewhere. Again the Tastic RFID Thief Arduino board has a spare 5v line which will do. However, you will find that this will draw too much electricity from the Arduino. To solve this problem, provide external power to the Arduino module. Either use a power bank or siphon some juice from the battery pack added by bishop fox (We have also upgraded this battery pack solution - instead of AAA batteries we use Lithium Ion batteries).
