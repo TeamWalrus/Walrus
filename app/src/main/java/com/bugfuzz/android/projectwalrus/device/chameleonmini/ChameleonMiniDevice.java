@@ -2,8 +2,10 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
+import android.preference.PreferenceManager;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -12,9 +14,11 @@ import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity;
+import com.bugfuzz.android.projectwalrus.ui.SettingsActivity;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -83,7 +87,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                     break;
                 case 2:
                     String line_uid[] = line.split(":");
-                    uid = (long) Integer.parseInt(line_uid[1].trim(), 16);
+                    uid = Long.parseLong(line_uid[1].trim(), 16);
                     break;
                 case 3:
                     String line_sak[] = line.split(":");
@@ -105,13 +109,14 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         if (!line.equals("100:OK"))
             throw new IOException("Unexpected response to config command: " + line);
 
-/*        int defaultChameleonCardslot = 1;
-        writeLine("setting="+defaultChameleonCardslot);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        int chameleonMiniSlot = sharedPref.getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
+        writeLine("setting="+chameleonMiniSlot);
         line = readLine();
         if (line == null)
             throw new IOException("Couldn't read setting result");
         if (!line.equals("100:OK"))
-            throw new IOException("Unexpected response to setting command: " + line);*/
+            throw new IOException("Unexpected response to setting command: " + line);
 
         writeLine("uid=" + String.format("%08x", iso14443ACardData.uid));
         line = readLine();

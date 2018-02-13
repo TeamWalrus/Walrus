@@ -1,11 +1,20 @@
 package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.preference.DialogPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
@@ -16,6 +25,8 @@ import java.io.IOException;
 
 public class ChameleonMiniActivity extends AppCompatActivity {
     public static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity.EXTRA_DEVICE";
+
+    public static final String DEFAULT_SLOT_KEY = "default_chameleon_cardslot";
 
     private ChameleonMiniDevice chameleonMiniDevice;
 
@@ -65,7 +76,6 @@ public class ChameleonMiniActivity extends AppCompatActivity {
                 ((TextView) findViewById(R.id.version)).setText(version != null ? version : "(Unable to determine)");
             }
         }).execute();
-
     }
 
     public static class SettingsFragment extends PreferenceFragment {
