@@ -46,9 +46,6 @@ public class Proxmark3Activity extends AppCompatActivity {
         }
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
 
         ((TextView) findViewById(R.id.version)).setText("Retrieving...");
 

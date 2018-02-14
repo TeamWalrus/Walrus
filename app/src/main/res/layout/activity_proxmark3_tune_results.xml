@@ -50,7 +50,7 @@
                 android:id="@+id/lf125"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"/>
+                android:paddingLeft="16dp"/>
 
         </TableRow>
 
@@ -67,7 +67,7 @@
                 android:id="@+id/lf134"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"/>
+                android:paddingLeft="16dp"/>
 
         </TableRow>
 
@@ -84,7 +84,7 @@
                 android:id="@+id/lfOptimal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"/>
+                android:paddingLeft="16dp"/>
 
         </TableRow>
 
@@ -168,7 +168,7 @@
                 android:id="@+id/hfV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"/>
+                android:paddingLeft="16dp"/>
 
         </TableRow>
 
