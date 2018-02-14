@@ -36,10 +36,12 @@ void setup()
   ...
 ```
 
-## RX to TX
-Simply connect the D1/TX from the Tastic RFID Thief Arduino board to the RX of the HC06 Bluetooth module. The breadboard layout below should give an idea of how the HC06 module should be connected:
+## Design Overview and Changes
+The PCB (originally designed by Bishop Fox) was modified and bluetooth support added, enabling cloned access card information to be sent directly to the Walrus Android app. The PCB should still be able to fit into the same commercial RFID readers as before, and cloned badges are still written to the CARDS.txt file on the external microSD card.  
+
+![Walrus-and-lumpy-overview]({{ "/assets/walrus_overview.png" }})
+
+## Breadboard Layout
+To get the cloned card read from the Tastic RFID Thief Arduino microcontroller, simply connect the D1/TX pin from the Arduino microcontroller to the RX of the HC06 Bluetooth module. The breadboard layout below should give an idea of how the HC06 module should be connected:
 
 ![Tastic-modifications-breadboard-layout]({{ "/assets/Tastic-Custom_RFID_Stealer_PCB_du_2018.png" }})
-
-## Power
-You also need to steal some power from somewhere. Again the Tastic RFID Thief Arduino board has a spare 5v line which will do. However, you will find that this will draw too much electricity from the Arduino. To solve this problem, provide external power to the Arduino module. Either use a power bank or siphon some juice from the battery pack added by bishop fox (We have also upgraded this battery pack solution - instead of AAA batteries we use Lithium Ion batteries).
