@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Project Walrus</string>
+    <string name="app_name">Walrus</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="readCard">Read Card</string>
