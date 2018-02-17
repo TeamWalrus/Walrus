@@ -305,7 +305,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         }
 
         // TODO: if len of cardDevices >1 then we want to choose what device
-        final CardDevice cardDevice = cardDevices.get(0);
+        final CardDevice cardDevice = cardDevices.entrySet().iterator().next().getValue();
 
         final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsRead();
