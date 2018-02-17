@@ -66,6 +66,8 @@ public enum CardDeviceManager {
                         ids.productId() == usbDevice.getProductId()) {
                     UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(
                             usbDevice);
+                    if (usbDeviceConnection == null)
+                        return;
 
                     Constructor<? extends UsbCardDevice> constructor;
                     try {
