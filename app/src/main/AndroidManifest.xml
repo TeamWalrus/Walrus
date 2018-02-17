@@ -27,6 +27,11 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".device.CardDeviceManager$UsbPermissionReceiver">
+            <intent-filter>
+                <action android:name=".device.CardDeviceManager.ACTION_USB_PERMISSION"/>
+            </intent-filter>
+        </receiver>
         <receiver android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver">
             <intent-filter>
                 <action android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP"/>
