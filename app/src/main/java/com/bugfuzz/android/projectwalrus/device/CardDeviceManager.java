@@ -24,10 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum CardDeviceManager {
     INSTANCE;
 
-    public static final String ACTION_DEVICE_CHANGE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.DEVICE_CHANGE";
+    public static final String ACTION_DEVICE_CHANGE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_DEVICE_CHANGE";
 
-    public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.DEVICE_WAS_ADDED";
-    public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.DEVICE_NAME";
+    public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
+    public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
+    public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
 
     private final Map<Integer, CardDevice> cardDevices = new ConcurrentHashMap<>();
 
@@ -98,7 +99,7 @@ public enum CardDeviceManager {
 
                     Intent intent = new Intent(ACTION_DEVICE_CHANGE);
                     intent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
-                    intent.putExtra(EXTRA_DEVICE_NAME, name);
+                    intent.putExtra(EXTRA_DEVICE_ID, cardDevice.getID());
                     LocalBroadcastManager.getInstance(context)
                             .sendBroadcast(intent);
                 }
