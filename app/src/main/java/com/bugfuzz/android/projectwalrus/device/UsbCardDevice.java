@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public abstract class UsbCardDevice extends CardDevice {
     protected final UsbDevice usbDevice;
-    protected final UsbDeviceConnection usbDeviceConnection;
+    protected UsbDeviceConnection usbDeviceConnection;
 
     public UsbCardDevice(Context context, UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
         super(context);
@@ -23,6 +23,13 @@ public abstract class UsbCardDevice extends CardDevice {
     }
 
     public UsbDeviceConnection getUsbDeviceConnection() { return usbDeviceConnection; }
+
+    public void close() {
+        usbDeviceConnection.close();
+        usbDeviceConnection = null;
+
+        super.close();
+    }
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface UsbIDs {

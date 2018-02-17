@@ -77,6 +77,7 @@ public enum CardDeviceManager {
         Iterator<Map.Entry<Integer, CardDevice>> it = cardDevices.entrySet().iterator();
         while (it.hasNext()) {
             CardDevice cardDevice = it.next().getValue();
+
             if (!(cardDevice instanceof UsbCardDevice))
                 continue;
 
@@ -87,10 +88,11 @@ public enum CardDeviceManager {
 
             it.remove();
 
-            usbCardDevice.getUsbDeviceConnection().close();
+            usbCardDevice.close();
 
             String name = cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name();
 
+            Looper.prepare();
             Toast.makeText(context, name + " disconnected", Toast.LENGTH_LONG).show();
 
             Intent intent = new Intent(ACTION_DEVICE_CHANGE);

@@ -7,12 +7,19 @@ import android.hardware.usb.UsbDeviceConnection;
 import com.felhr.usbserial.UsbSerialDevice;
 
 public abstract class UsbSerialCardDevice extends UsbCardDevice {
-    protected final UsbSerialDevice usbSerialDevice;
+    protected UsbSerialDevice usbSerialDevice;
 
     public UsbSerialCardDevice(Context context, UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
         super(context, usbDevice, usbDeviceConnection);
 
         usbSerialDevice = UsbSerialDevice.createUsbSerialDevice(this.usbDevice,
                 this.usbDeviceConnection);
+    }
+
+    public void close() {
+        usbSerialDevice.close();
+        usbSerialDevice = null;
+
+        super.close();
     }
 }

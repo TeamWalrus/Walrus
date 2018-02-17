@@ -36,6 +36,9 @@ public abstract class CardDevice {
         return null;
     }
 
+    public void close() {
+    }
+
     public interface CardDataSink {
         void onCardData(CardData cardData);
         boolean wantsMore();
