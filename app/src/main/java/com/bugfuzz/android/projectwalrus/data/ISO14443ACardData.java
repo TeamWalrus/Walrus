@@ -10,6 +10,10 @@ import org.parceler.Parcel;
 import java.util.Arrays;
 
 @Parcel
+@CardData.Metadata(
+        name = "ISO 14443A",
+        icon = R.drawable.mifare
+)
 public class ISO14443ACardData extends CardData {
 
     private static KnownISO14333AType[] CARD_TYPES;
@@ -53,11 +57,6 @@ public class ISO14443ACardData extends CardData {
     }
 
     @Override
-    public String getTypeInfo() {
-        return "ISO14333A";
-    }
-
-    @Override
     public String getTypeDetailInfo() {
         for (KnownISO14333AType type : CARD_TYPES)
             if (type.matches(this))
@@ -97,7 +96,26 @@ public class ISO14443ACardData extends CardData {
     }
 
     @Override
-    public Drawable getCardIcon(Context context) {
-        return context.getResources().getDrawable(R.drawable.mifare, context.getTheme());
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        ISO14443ACardData that = (ISO14443ACardData)o;
+
+        return uid == that.uid &&
+                atqa == that.atqa &&
+                sak == that.sak &&
+                Arrays.equals(ats, that.ats) &&
+                Arrays.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (uid ^ (uid >>> 32));
+        result = 31 * result + atqa;
+        result = 31 * result + (int) sak;
+        result = 31 * result + Arrays.hashCode(ats);
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
     }
 }

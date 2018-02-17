@@ -1,9 +1,13 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -24,10 +28,16 @@ import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import java.math.BigInteger;
 import java.util.List;
 
+import io.github.yavski.fabspeeddial.FabSpeedDial;
+import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
+
 public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
     private RecyclerView recyclerView;
     private SearchView sv;
+
+    private WalletUpdateBroadcastReceiver walletUpdateBroadcastReceiver =
+            new WalletUpdateBroadcastReceiver();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,13 +96,28 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.floatingActionButton);
+        fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
-            public void onClick(View view) {
-                EditCardActivity.startActivity(MyWalletActivity.this, new Card());
+            public boolean onMenuItemSelected(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.add_new_card:
+                        CardActivity.startActivity(MyWalletActivity.this,
+                                CardActivity.Mode.EDIT, null);
+                        return true;
+
+                    case R.id.bulk_read_cards:
+                        CardActivity.startActivity(MyWalletActivity.this,
+                                CardActivity.Mode.EDIT_BULK_READ_CARD_TEMPLATE, null);
+                        return true;
+                }
+
+                return false;
             }
         });
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(walletUpdateBroadcastReceiver,
+                new IntentFilter(QueryUtils.ACTION_WALLET_UPDATE));
 
         CardDeviceManager.INSTANCE.scanForDevices(this);
     }
@@ -115,14 +140,12 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.devices: {
-                Intent intent = new Intent(this, DevicesActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, DevicesActivity.class));
                 return true;
             }
 
             case R.id.settings: {
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
 
@@ -138,15 +161,19 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
     @Override
     public void onBackPressed() {
-        if (!sv.isIconified()) {
+        if (sv.getVisibility() != View.GONE) {
             sv.setIconified(true);
             sv.setVisibility(View.GONE);
-        } else {
+        } else
             super.onBackPressed();
-        }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(walletUpdateBroadcastReceiver);
+    }
 
     private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
@@ -193,10 +220,19 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DetailedCardViewActivity.startActivity(v.getContext(), id);
+                        CardActivity.startActivity(v.getContext(), CardActivity.Mode.READ,
+                                getHelper().getCardDao().queryForId(id));
                     }
                 });
             }
+        }
+    }
+
+    private class WalletUpdateBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            recyclerView.getAdapter().notifyDataSetChanged();
         }
     }
 }

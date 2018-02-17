@@ -4,15 +4,20 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import java.io.Serializable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public abstract class CardData implements Serializable {
-    public abstract String getTypeInfo();
-
     public String getTypeDetailInfo() {
         return null;
     }
 
     public abstract String getHumanReadableText();
 
-    public abstract Drawable getCardIcon(Context context);
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Metadata {
+        String name();
+
+        int icon();
+    }
 }

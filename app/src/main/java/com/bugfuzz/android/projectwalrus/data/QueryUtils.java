@@ -8,6 +8,8 @@ import java.util.List;
 
 public class QueryUtils {
 
+    public static final String ACTION_WALLET_UPDATE = "com.bugfuzz.android.projectwalrus.db.QueryUtils.ACTION_WALLET_UPDATE";
+
     public static <T> T getNthRow(Dao<T, ?> dao, long row) {
         try {
             QueryBuilder<T, ?> queryBuilder = dao.queryBuilder();

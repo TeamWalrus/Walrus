@@ -46,7 +46,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     // FIXME: Random data in buffer when readline() is called. Therefore when trying to use the identify command to read card data, the response does not match the case "101:OK WITH TEXT":
     // Handled the same error for changing config by checking if the line ends with 100:OK instead of doing a string match
     @Override
-    public synchronized CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException {
+    public synchronized void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException {
         // TODO: use cardDataClass
 
         writeLine("Config=ISO14443A_READER");
@@ -95,7 +95,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                     break;
             }
         }
-        return new ISO14443ACardData(uid, atqa, sak, null, null);
+        // TODO: do properly
+        cardDataSink.onCardData(new ISO14443ACardData(uid, atqa, sak, null, null));
     }
 
     @Override

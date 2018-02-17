@@ -28,12 +28,17 @@ public abstract class CardDevice {
         return null;
     }
 
-    public abstract CardData readCardData(Class<? extends CardData> cardDataClass) throws IOException;
+    public abstract void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException;
 
     public abstract void writeCardData(CardData cardData) throws IOException;
 
     public Intent getDeviceActivityIntent(Context context) {
         return null;
+    }
+
+    public interface CardDataSink {
+        void onCardData(CardData cardData);
+        boolean wantsMore();
     }
 
     @Retention(RetentionPolicy.RUNTIME)

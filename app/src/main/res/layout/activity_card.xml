@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context="com.bugfuzz.android.projectwalrus.ui.DetailedCardViewActivity">
+              android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar"/>
 
@@ -17,7 +15,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingEnd="8dp"
-            android:paddingStart="8dp">
+            android:paddingStart="8dp"
+            android:paddingBottom="20dp">
 
             <com.bugfuzz.android.projectwalrus.ui.WalrusCardView
                 android:id="@+id/card"
@@ -25,9 +24,9 @@
                 android:layout_height="wrap_content"/>
 
             <LinearLayout
+                android:id="@+id/viewButtons"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
                 <Button
                     android:id="@+id/writeCard"
@@ -50,6 +49,21 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/editButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/readCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onReadCardClick"
+                    android:text="@string/readCard"/>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/dateAcquiredTitle"
                 android:layout_width="match_parent"
@@ -59,7 +73,7 @@
                 android:textColor="@color/secondaryDarkColor"/>
 
             <TextView
-                android:id="@+id/cardDataAcquired"
+                android:id="@+id/dateAcquired"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -71,11 +85,28 @@
                 android:text="@string/location"
                 android:textColor="@color/secondaryDarkColor"/>
 
-            <fragment
-                android:id="@+id/map"
-                class="com.google.android.gms.maps.SupportMapFragment"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="120dp"/>
+                android:layout_height="150dp"
+                android:layout_marginTop="4dp">
+
+                <fragment
+                    android:id="@+id/locationMap"
+                    class="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <TextView
+                    android:id="@+id/locationUnknown"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:background="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
+                    android:text="@string/unknown"/>
+
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/notesTitle"
@@ -90,9 +121,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <Space
+            <EditText
+                android:id="@+id/notesEditor"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"/>
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 

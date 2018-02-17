@@ -10,6 +10,10 @@ import org.parceler.Parcel;
 import java.math.BigInteger;
 
 @Parcel
+@CardData.Metadata(
+        name = "HID",
+        icon = R.drawable.hid
+)
 public class HIDCardData extends CardData {
 
     public BigInteger data;
@@ -19,11 +23,6 @@ public class HIDCardData extends CardData {
 
     public HIDCardData(BigInteger data) {
         this.data = data;
-    }
-
-    @Override
-    public String getTypeInfo() {
-        return "HID";
     }
 
     @Override
@@ -37,7 +36,17 @@ public class HIDCardData extends CardData {
     }
 
     @Override
-    public Drawable getCardIcon(Context context) {
-         return context.getResources().getDrawable(R.drawable.hid, context.getTheme());
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        HIDCardData that = (HIDCardData) o;
+
+        return data.equals(that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return data.hashCode();
     }
 }

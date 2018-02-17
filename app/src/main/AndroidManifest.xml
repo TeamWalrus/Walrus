@@ -5,6 +5,7 @@
     <uses-feature android:name="android.hardware.usb.host"/>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:name=".ProjectWalrusApplication"
@@ -26,6 +27,13 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver">
+            <intent-filter>
+                <action android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".ProjectWalrusApplication$CancelNotificationsService" />
 
         <activity android:name=".ui.MyWalletActivity">
             <intent-filter>
@@ -41,6 +49,7 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter"/>
         </activity>
+        <activity android:name=".ui.CardActivity"/>
         <activity
             android:name=".ui.DevicesActivity"
             android:label="Devices"
@@ -54,21 +63,9 @@
             android:label="Proxmark 3 - Tune Results"
             android:parentActivityName=".device.proxmark3.Proxmark3Activity"/>
         <activity
-            android:name=".ui.SettingsActivity"
-            android:parentActivityName=".ui.MyWalletActivity"/>
-        <activity
-            android:name=".ui.DetailedCardViewActivity"
-            android:label="Card Details"
-            android:parentActivityName=".ui.MyWalletActivity"/>
-        <activity
-            android:name=".ui.EditCardActivity"
-            android:label="Edit Card"
-            android:parentActivityName=".ui.DetailedCardViewActivity"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".device.chameleonmini.ChameleonMiniActivity"
-                  android:label="Chameleon Mini Rev.G"
-                  android:parentActivityName=".ui.DevicesActivity">
-        </activity>
+            android:name=".device.chameleonmini.ChameleonMiniActivity"
+            android:label="Chameleon Mini Rev.G"
+            android:parentActivityName=".ui.DevicesActivity"/>
     </application>
 
 </manifest>
