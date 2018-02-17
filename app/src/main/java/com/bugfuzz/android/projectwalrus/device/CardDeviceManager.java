@@ -7,6 +7,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
@@ -90,10 +91,14 @@ public enum CardDeviceManager {
 
                     cardDevices.put(cardDevice.getID(), cardDevice);
 
+                    String name = cardDevice.getClass().getAnnotation(
+                            UsbCardDevice.Metadata.class).name();
+
+                    Toast.makeText(context, name + " connected", Toast.LENGTH_LONG).show();
+
                     Intent intent = new Intent(ACTION_DEVICE_CHANGE);
                     intent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
-                    intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
-                            UsbCardDevice.Metadata.class).name());
+                    intent.putExtra(EXTRA_DEVICE_NAME, name);
                     LocalBroadcastManager.getInstance(context)
                             .sendBroadcast(intent);
                 }
@@ -117,10 +122,13 @@ public enum CardDeviceManager {
 
             usbCardDevice.getUsbDeviceConnection().close();
 
+            String name = cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name();
+
+            Toast.makeText(context, name + " disconnected", Toast.LENGTH_LONG).show();
+
             Intent intent = new Intent(ACTION_DEVICE_CHANGE);
             intent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
-            intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
-                    UsbCardDevice.Metadata.class).name());
+            intent.putExtra(EXTRA_DEVICE_NAME, name);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }
