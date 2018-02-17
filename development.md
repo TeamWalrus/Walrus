@@ -4,7 +4,7 @@ title: Development
 permalink: /development/
 ---
 
-Project Walrus is an open source Android Application developed by Daniel Underhay and Matthew Daley and is currently in beta.
+Walrus is an open source Android Application developed by Daniel Underhay and Matthew Daley and is released under The GNU General Public License v3.0. 
 
 ---
 # Device Support
