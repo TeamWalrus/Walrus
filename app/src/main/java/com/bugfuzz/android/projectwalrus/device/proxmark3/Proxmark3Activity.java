@@ -2,7 +2,9 @@ package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -14,17 +16,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.ui.CardActivity;
+
+import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public class Proxmark3Activity extends AppCompatActivity {
 
-    public static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
+    private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
 
     private Proxmark3Device proxmark3Device;
+
+    public static Intent getStartActivityIntent(Context context, Proxmark3Device device) {
+        Intent intent = new Intent(context, Proxmark3Activity.class);
+
+        intent.putExtra(EXTRA_DEVICE, device.getID());
+
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

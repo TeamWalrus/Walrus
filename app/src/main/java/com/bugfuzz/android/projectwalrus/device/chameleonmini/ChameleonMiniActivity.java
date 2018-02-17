@@ -1,6 +1,7 @@
 package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.preference.DialogPreference;
 import android.preference.Preference;
@@ -20,15 +21,25 @@ import android.widget.TextView;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity;
+import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
 import java.io.IOException;
 
 public class ChameleonMiniActivity extends AppCompatActivity {
-    public static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity.EXTRA_DEVICE";
+    private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity.EXTRA_DEVICE";
 
     public static final String DEFAULT_SLOT_KEY = "default_chameleon_cardslot";
 
     private ChameleonMiniDevice chameleonMiniDevice;
+
+    public static Intent getStartActivityIntent(Context context, ChameleonMiniDevice device) {
+        Intent intent = new Intent(context, ChameleonMiniActivity.class);
+
+        intent.putExtra(EXTRA_DEVICE, device.getID());
+
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -22,7 +22,7 @@ import java.util.List;
 
 public class Proxmark3TuneResultActivity extends AppCompatActivity {
 
-    public static final String EXTRA_TUNE_RESULT = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3TuneResultActivity.TUNE_RESULT";
+    private static final String EXTRA_TUNE_RESULT = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3TuneResultActivity.TUNE_RESULT";
 
     public static void startActivity(Context context, Proxmark3Device.TuneResult tuneResult) {
         Intent intent = new Intent(context, Proxmark3TuneResultActivity.class);

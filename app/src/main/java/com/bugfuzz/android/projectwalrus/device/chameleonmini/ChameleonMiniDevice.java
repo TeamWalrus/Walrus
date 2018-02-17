@@ -129,9 +129,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
     @Override
     public Intent getDeviceActivityIntent(Context context) {
-        Intent intent = new Intent(context, ChameleonMiniActivity.class);
-        intent.putExtra(ChameleonMiniActivity.EXTRA_DEVICE, getID());
-        return intent;
+        return ChameleonMiniActivity.getStartActivityIntent(context, this);
     }
 
     public synchronized String getVersion() throws IOException {

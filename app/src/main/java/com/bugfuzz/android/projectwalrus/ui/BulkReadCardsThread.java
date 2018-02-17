@@ -197,9 +197,9 @@ public class BulkReadCardsThread extends Thread {
 
     public static class StopBroadcastReceiver extends BroadcastReceiver {
 
-        public static final String ACTION_STOP = "com.bugfuzz.android.projectwalrus.ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP";
+        private static final String ACTION_STOP = "com.bugfuzz.android.projectwalrus.ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP";
 
-        public static final String EXTRA_ID = "com.bugfuzz.android.projectwalrus.ui.BulkReadCardsThread$StopBroadcastReceiver.EXTRA_ID";
+        private static final String EXTRA_ID = "com.bugfuzz.android.projectwalrus.ui.BulkReadCardsThread$StopBroadcastReceiver.EXTRA_ID";
 
         @Override
         public void onReceive(Context context, Intent intent) {
