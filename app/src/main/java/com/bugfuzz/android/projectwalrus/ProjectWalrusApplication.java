@@ -23,7 +23,12 @@ public class ProjectWalrusApplication extends Application {
 
         startService(new Intent(this, CancelNotificationsService.class));
 
-        CardDeviceManager.INSTANCE.scanForDevices(this);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                CardDeviceManager.INSTANCE.scanForDevices(ProjectWalrusApplication.this);
+            }
+        }).start();
     }
 
     public static class CancelNotificationsService extends Service {

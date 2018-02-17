@@ -14,11 +14,11 @@ import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum CardDeviceManager {
     INSTANCE;
@@ -28,7 +28,7 @@ public enum CardDeviceManager {
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.DEVICE_NAME";
 
-    private final Map<Integer, CardDevice> cardDevices = new HashMap<>();
+    private final Map<Integer, CardDevice> cardDevices = new ConcurrentHashMap<>();
 
     public void scanForDevices(Context context) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -119,16 +119,21 @@ public enum CardDeviceManager {
     }
 
     public static class UsbBroadcastReceiver extends BroadcastReceiver {
-        public void onReceive(Context context, Intent intent) {
-            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-
+        public void onReceive(final Context context, final Intent intent) {
             switch (intent.getAction()) {
                 case UsbManager.ACTION_USB_DEVICE_ATTACHED:
-                    CardDeviceManager.INSTANCE.handleUsbDeviceAttached(context, usbDevice);
-                    break;
-
                 case UsbManager.ACTION_USB_DEVICE_DETACHED:
-                    CardDeviceManager.INSTANCE.handleUsbDeviceDetached(context, usbDevice);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+                            if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED))
+                                CardDeviceManager.INSTANCE.handleUsbDeviceAttached(context, usbDevice);
+                            else
+                                CardDeviceManager.INSTANCE.handleUsbDeviceDetached(context, usbDevice);
+                        }
+                    }).start();
                     break;
             }
         }
