@@ -105,16 +105,23 @@ public enum CardDeviceManager {
         Iterator<Map.Entry<Integer, CardDevice>> it = cardDevices.entrySet().iterator();
         while (it.hasNext()) {
             CardDevice cardDevice = it.next().getValue();
-            if (cardDevice instanceof UsbCardDevice &&
-                    ((UsbCardDevice) cardDevice).getUsbDevice().equals(usbDevice)) {
-                it.remove();
+            if (!(cardDevice instanceof UsbCardDevice))
+                continue;
 
-                Intent intent = new Intent(ACTION_DEVICE_CHANGE);
-                intent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
-                intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
-                        UsbCardDevice.Metadata.class).name());
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-            }
+            UsbCardDevice usbCardDevice = (UsbCardDevice) cardDevice;
+
+            if (!usbCardDevice.getUsbDevice().equals(usbDevice))
+                continue;
+
+            it.remove();
+
+            usbCardDevice.getUsbDeviceConnection().close();
+
+            Intent intent = new Intent(ACTION_DEVICE_CHANGE);
+            intent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
+            intent.putExtra(EXTRA_DEVICE_NAME, cardDevice.getClass().getAnnotation(
+                    UsbCardDevice.Metadata.class).name());
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }
 

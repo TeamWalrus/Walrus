@@ -22,6 +22,8 @@ public abstract class UsbCardDevice extends CardDevice {
         return usbDevice;
     }
 
+    public UsbDeviceConnection getUsbDeviceConnection() { return usbDeviceConnection; }
+
     @Retention(RetentionPolicy.RUNTIME)
     public @interface UsbIDs {
         IDs[] value();
