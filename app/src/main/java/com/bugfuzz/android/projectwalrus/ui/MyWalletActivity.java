@@ -118,8 +118,6 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         LocalBroadcastManager.getInstance(this).registerReceiver(walletUpdateBroadcastReceiver,
                 new IntentFilter(QueryUtils.ACTION_WALLET_UPDATE));
-
-        CardDeviceManager.INSTANCE.scanForDevices(this);
     }
 
     @Override

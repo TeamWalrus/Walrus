@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 public class ProjectWalrusApplication extends Application {
     @Override
@@ -21,6 +22,8 @@ public class ProjectWalrusApplication extends Application {
         PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini, false);
 
         startService(new Intent(this, CancelNotificationsService.class));
+
+        CardDeviceManager.INSTANCE.scanForDevices(this);
     }
 
     public static class CancelNotificationsService extends Service {
