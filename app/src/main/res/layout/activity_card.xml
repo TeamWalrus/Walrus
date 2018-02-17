@@ -36,14 +36,12 @@
                     android:onClick="onWriteCardClick"
                     android:text="@string/writeCard"/>
 
-                <Space
-                    android:layout_width="8dp"
-                    android:layout_height="match_parent"/>
 
                 <Button
                     android:id="@+id/emulateCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text="@string/emulateCard"/>
 

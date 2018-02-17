@@ -17,34 +17,25 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"/>
 
-        <Space
-            android:layout_width="15dp"
-            android:layout_height="match_parent"/>
-
         <ImageView
             android:id="@+id/direction"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
             android:adjustViewBounds="true"/>
-
-        <Space
-            android:layout_width="15dp"
-            android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/type"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
             android:adjustViewBounds="true"/>
 
     </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="20dp"/>
-
     <ProgressBar
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>
