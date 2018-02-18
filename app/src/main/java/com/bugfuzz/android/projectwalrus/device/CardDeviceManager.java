@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
-import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
@@ -90,15 +88,11 @@ public enum CardDeviceManager {
 
             usbCardDevice.close();
 
-            String name = cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name();
-
-            Looper.prepare();
-            Toast.makeText(context, name + " disconnected", Toast.LENGTH_LONG).show();
-
-            Intent intent = new Intent(ACTION_DEVICE_CHANGE);
-            intent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
-            intent.putExtra(EXTRA_DEVICE_NAME, name);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            Intent broadcastIntent = new Intent(ACTION_DEVICE_CHANGE);
+            broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
+            broadcastIntent.putExtra(EXTRA_DEVICE_NAME,
+                    cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
+            LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent);
         }
     }
 
@@ -169,12 +163,6 @@ public enum CardDeviceManager {
 
                                 CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getID(), cardDevice);
 
-                                String name = cardDevice.getClass().getAnnotation(
-                                        UsbCardDevice.Metadata.class).name();
-
-                                Looper.prepare();
-                                Toast.makeText(context, name + " connected", Toast.LENGTH_LONG).show();
-
                                 Intent broadcastIntent = new Intent(ACTION_DEVICE_CHANGE);
                                 broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
                                 broadcastIntent.putExtra(EXTRA_DEVICE_ID, cardDevice.getID());
@@ -186,4 +174,5 @@ public enum CardDeviceManager {
                 }
             }).start();
         }
-    }}
+    }
+}
