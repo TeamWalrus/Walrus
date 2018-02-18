@@ -64,6 +64,10 @@
             android:name=".device.chameleonmini.ChameleonMiniActivity"
             android:label="Chameleon Mini Rev.G"
             android:parentActivityName=".ui.DevicesActivity"/>
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="Settings"
+            android:parentActivityName=".ui.MyWalletActivity"/>
     </application>
 
 </manifest>
