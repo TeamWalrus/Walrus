@@ -24,6 +24,7 @@ public abstract class UsbCardDevice extends CardDevice {
 
     public UsbDeviceConnection getUsbDeviceConnection() { return usbDeviceConnection; }
 
+    @Override
     public void close() {
         usbDeviceConnection.close();
         usbDeviceConnection = null;

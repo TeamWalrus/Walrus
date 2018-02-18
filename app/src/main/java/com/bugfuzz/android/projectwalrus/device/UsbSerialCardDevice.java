@@ -16,6 +16,7 @@ public abstract class UsbSerialCardDevice extends UsbCardDevice {
                 this.usbDeviceConnection);
     }
 
+    @Override
     public void close() {
         usbSerialDevice.close();
         usbSerialDevice = null;

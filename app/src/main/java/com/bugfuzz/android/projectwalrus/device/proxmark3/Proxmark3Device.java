@@ -276,6 +276,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
             this.op = op;
         }
 
+        @Override
         public Proxmark3Command handle(Proxmark3Command command) {
             return command.op == op ? command : null;
         }

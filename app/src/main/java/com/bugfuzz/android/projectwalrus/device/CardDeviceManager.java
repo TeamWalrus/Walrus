@@ -97,6 +97,8 @@ public enum CardDeviceManager {
     }
 
     public static class UsbBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
         public void onReceive(final Context context, final Intent intent) {
             switch (intent.getAction()) {
                 case UsbManager.ACTION_USB_DEVICE_ATTACHED:
@@ -115,6 +117,7 @@ public enum CardDeviceManager {
                     break;
             }
         }
+
     }
 
     public static class UsbPermissionReceiver extends BroadcastReceiver {
