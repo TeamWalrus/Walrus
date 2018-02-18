@@ -300,7 +300,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     private void pickCardDataIOSetup() {
         Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
         if (cardDevices.isEmpty()) {
-            Toast.makeText(this, "No card devices found", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No card devices connected", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -539,7 +539,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                     return;
 
                 if (exception != null) {
-                    Toast.makeText(activity, "Error reading card: " + exception.getMessage(),
+                    Toast.makeText(activity, "Failed to read card: " + exception.getMessage(),
                             Toast.LENGTH_LONG).show();
                     return;
                 }
