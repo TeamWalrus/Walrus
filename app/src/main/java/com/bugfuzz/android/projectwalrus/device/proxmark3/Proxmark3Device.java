@@ -120,6 +120,7 @@ public class Proxmark3Device extends UsbSerialCardDevice {
     private <R> R sendThenHandleCommands(Proxmark3Command command, CommandHandler<R> handler, long timeout) {
         readQueue.clear();
         reading = true;
+
         try {
             sendCommand(command);
             return handleCommands(handler, timeout);
@@ -175,12 +176,13 @@ public class Proxmark3Device extends UsbSerialCardDevice {
             throw new IOException("Device is busy");
 
         try {
-            // TODO: use cardDataClass
-            sendCommand(new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{0, 0, 0}));
-
             readQueue.clear();
             reading = true;
+
             try {
+                // TODO: use cardDataClass
+                sendCommand(new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{0, 0, 0}));
+
                 while (cardDataSink.wantsMore()) {
                     Proxmark3Command command = receiveCommand(250);
                     if (command == null || command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
