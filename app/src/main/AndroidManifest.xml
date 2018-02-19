@@ -38,12 +38,11 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".ProjectWalrusApplication$CancelNotificationsService" />
+        <service android:name=".ProjectWalrusApplication$CancelNotificationsService"/>
 
         <activity android:name=".ui.MyWalletActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -68,6 +67,13 @@
             android:name=".ui.SettingsActivity"
             android:label="Settings"
             android:parentActivityName=".ui.MyWalletActivity"/>
+        <activity
+            android:name=".ui.WebViewActivity">
+            <intent-filter>
+                <action android:name=".ui.WebViewActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

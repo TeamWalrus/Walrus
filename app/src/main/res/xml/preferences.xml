@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
     <PreferenceCategory
         android:key="pref_key_global_settings"
         android:title="Global Settings">
     </PreferenceCategory>
+
+    <Preference android:title="Open Source">
+        <intent android:action=".ui.WebViewActivity">
+            <extra
+                android:name="com.bugfuzz.android.projectwalrus.ui.WebViewActivity.EXTRA_URL"
+                android:value="file:///android_asset/open_source.html"/>
+        </intent>
+    </Preference>
+
 </PreferenceScreen>
