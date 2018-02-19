@@ -13,7 +13,7 @@ Walrus is an Android Application that simplifies using several existing contactl
 # Features
 
 ## Device Agnostic
-Walrus is device agnostic, meaning you can use a wide range of card cloning devices. Walrus currently supports the Proxmark3 and Chameleon Mini Rev.G and partial support for the Tastic RFID Thief. However, we are still developing the tool and plan on adding support for new devices such as the [BLE-Key](http://hackerwarehouse.com/product/blekey/), [MagSpoof v2](https://store.ryscc.com/collections/all/products/magspoof) and [RFID-Tool](https://github.com/rfidtool/ESP-RFID-Tool/blob/master/README.md#esp-rfid-tool).
+Walrus is device agnostic, meaning you can use a wide range of card cloning devices. Walrus currently supports the Proxmark3 and Chameleon Mini Rev.G and partial support for the Tastic RFID Thief. We are further developing Walrus to add support for new devices such as the [BLE-Key](http://hackerwarehouse.com/product/blekey/), [MagSpoof v2](https://store.ryscc.com/collections/all/products/magspoof) and [RFID-Tool](https://github.com/rfidtool/ESP-RFID-Tool/blob/master/README.md#esp-rfid-tool).
 
 ## 'Walk by' Cloning
 Walrus can tap into the power of the Tastic RFID Thief long range card reader and allows for 'walk by' cloning of a victim's access card in a matter of seconds. The cloned card can then be emulated or written to a new blank card via an attached Proxmark. Instructions on adding Bluetooth support to your Tastic RFID Thief for $3.47 can be found [here](/lumpy/).
