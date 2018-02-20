@@ -15,6 +15,7 @@ import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity;
 import com.bugfuzz.android.projectwalrus.ui.SettingsActivity;
+import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
@@ -29,11 +30,12 @@ import java.util.logging.Logger;
 @UsbCardDevice.UsbIDs({@UsbCardDevice.UsbIDs.IDs(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
-    public ChameleonMiniDevice(Context context, UsbDevice usbDevice, UsbDeviceConnection usbDeviceConnection) {
-        super(context, usbDevice, usbDeviceConnection, "\r\n", "ISO-8859-1");
+    public ChameleonMiniDevice(Context context, UsbDevice usbDevice) throws IOException {
+        super(context, usbDevice, "\r\n", "ISO-8859-1");
+    }
 
-        usbSerialDevice.syncOpen();
-
+    @Override
+    protected void setupSerialParams(UsbSerialDevice usbSerialDevice) {
         usbSerialDevice.setBaudRate(115200);
 
         usbSerialDevice.setDataBits(UsbSerialInterface.DATA_BITS_8);
@@ -49,15 +51,17 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     public synchronized void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException {
         // TODO: use cardDataClass
 
-        writeLine("Config=ISO14443A_READER");
-        String line = readLine();
+        setReceiving(true);
+
+        send("Config=ISO14443A_READER");
+        String line = receive(250);
         if (line == null)
             throw new IOException("Couldn't read Config result");
         if (!line.equals("100:OK"))
             throw new IOException("Unexpected response to Config command: " + line);
 
-        writeLine("IDENTIFY");
-        line = readLine();
+        send("IDENTIFY");
+        line = receive(250);
         if (line == null)
             throw new IOException("Couldn't read IDENTIFY result");
         switch (line) {
@@ -75,7 +79,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         long uid = 0;
         byte sak = 0x0;
         for (int i = 0; i < 4; i++) {
-            line = readLine();
+            line = receive(250);
 
             switch (i) {
                 case 0:
@@ -103,8 +107,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     public synchronized void writeCardData(CardData cardData) throws IOException {
         ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
 
-        writeLine("Config=MF_CLASSIC_1K");
-        String line = readLine();
+        send("Config=MF_CLASSIC_1K");
+        String line = receive(250);
         if (line == null)
             throw new IOException("Couldn't read config result");
         if (!line.equals("100:OK"))
@@ -112,15 +116,15 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         int chameleonMiniSlot = sharedPref.getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
-        writeLine("setting="+chameleonMiniSlot);
-        line = readLine();
+        send("setting="+chameleonMiniSlot);
+        line = receive(250);
         if (line == null)
             throw new IOException("Couldn't read setting result");
         if (!line.equals("100:OK"))
             throw new IOException("Unexpected response to setting command: " + line);
 
-        writeLine("uid=" + String.format("%08x", iso14443ACardData.uid));
-        line = readLine();
+        send("uid=" + String.format("%08x", iso14443ACardData.uid));
+        line = receive(250);
         if (line == null)
             throw new IOException("Couldn't read write result");
         if (!line.equals("100:OK"))
@@ -133,9 +137,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     }
 
     public synchronized String getVersion() throws IOException {
-        writeLine("VERSION?");
-        String line = readLine();
-        String version = readLine();
+        send("VERSION?");
+        String line = receive(250);
+        String version = receive(250);
         if (line == null)
             throw new IOException("Couldn't read version result");
         switch (line) {

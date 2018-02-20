@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -62,6 +63,7 @@ public enum CardDeviceManager {
             for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value())
                 if (ids.vendorId() == usbDevice.getVendorId() &&
                         ids.productId() == usbDevice.getProductId()) {
+                    // TODO: if have permission, don't ask again
                     Intent permissionIntent = new Intent(ACTION_USB_PERMISSION);
                     permissionIntent.setClass(context, UsbPermissionReceiver.class);
                     usbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(
@@ -140,11 +142,6 @@ public enum CardDeviceManager {
                         for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value()) {
                             if (ids.vendorId() == usbDevice.getVendorId() &&
                                     ids.productId() == usbDevice.getProductId()) {
-                                UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(
-                                        usbDevice);
-                                if (usbDeviceConnection == null)
-                                    return;
-
                                 Constructor<? extends UsbCardDevice> constructor;
                                 try {
                                     constructor = klass.getConstructor(Context.class, UsbDevice.class,
@@ -155,7 +152,7 @@ public enum CardDeviceManager {
 
                                 UsbCardDevice cardDevice;
                                 try {
-                                    cardDevice = constructor.newInstance(context, usbDevice, usbDeviceConnection);
+                                    cardDevice = constructor.newInstance(context, usbDevice);
                                 } catch (InstantiationException e) {
                                     continue;
                                 } catch (IllegalAccessException e) {

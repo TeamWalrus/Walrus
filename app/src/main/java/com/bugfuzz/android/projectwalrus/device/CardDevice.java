@@ -10,6 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public abstract class CardDevice {
+
     static private int nextID;
 
     protected final Context context;
@@ -17,7 +18,8 @@ public abstract class CardDevice {
 
     public CardDevice(Context context) {
         this.context = context;
-        this.id = nextID++;
+
+        id = nextID++;
     }
 
     public int getID() {
@@ -41,6 +43,7 @@ public abstract class CardDevice {
 
     public interface CardDataSink {
         void onCardData(CardData cardData);
+
         boolean wantsMore();
     }
 
