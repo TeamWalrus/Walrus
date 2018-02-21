@@ -48,6 +48,7 @@ import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.Map;
 
 public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
@@ -333,11 +334,34 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     private void onChooseCardType(final CardDevice cardDevice,
                                   final Class<? extends CardData> cardDataClass) {
         if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
-            new CardActivity.ReadCardDataTask(this, cardDevice, cardDataClass).execute();
+            new ReadCardDataTask(this, cardDevice, cardDataClass).execute();
         else {
             new BulkReadCardsThread(this, cardDevice, cardDataClass, card).start();
             finish();
         }
+    }
+
+
+    public void onWriteCardClick(View view) {
+        Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
+
+        if (cardDevices.isEmpty()) {
+            Toast.makeText(this, "No card devices found", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // TODO: if len of cardDevices >1 then we want to choose what type of card to read
+        final CardDevice cardDevice = cardDevices.get(0);
+
+        final Class<? extends CardData> writableTypes[] = cardDevice.getClass()
+                .getAnnotation(CardDevice.Metadata.class).supportsWrite();
+
+        if (!Arrays.asList(writableTypes).contains(card.cardData.getClass())) {
+            Toast.makeText(this, "This device doesn't support this type of card", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        new WriteCardDataTask(this, cardDevice, card.cardData).execute();
     }
 
     @Override
@@ -389,36 +413,6 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         } else
             finish();
     }
-
-/*
-    public void onWriteCardClick(View view) {
-        Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
-
-        if (cardDevices.isEmpty()) {
-            Toast.makeText(this, "No card devices found", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        // TODO: if len of cardDevices >1 then we want to choose what type of card to read
-        final CardDevice cardDevice = cardDevices.get(0);
-
-        // TODO: doing this every time is stupid. why did we drop the member again?
-        final Card card = getHelper().getCardDao().queryForId(id);
-        if (card == null)
-            return;
-
-        final Class<? extends CardData> writableTypes[] = cardDevice.getClass()
-                .getAnnotation(CardDevice.Metadata.class).supportsWrite();
-
-        if (!Arrays.asList(writableTypes).contains(card.cardData.getClass())) {
-            Toast.makeText(this, "This device doesn't support this type of card", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        startActivityForResult(CardDataIOActivity.getStartIntent(this,
-                CardDataIOActivity.Mode.WRITE,
-                null, null, card.cardData, cardDevice), 0);
-    }*/
 
     public enum Mode {
         READ,
@@ -504,7 +498,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
                         }
-                    }).show();
+                    })
+                    .show();
         }
 
         @Override
@@ -572,6 +567,73 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                 fusedLocationProviderClient.removeLocationUpdates(locationCallback);
 
             dialog.cancel();
+        }
+    }
+
+    private static class WriteCardDataTask extends AsyncTask<Void, Void, IOException> {
+
+        private final WeakReference<Context> context;
+
+        private final CardDevice cardDevice;
+        private final CardData cardData;
+
+        private Dialog dialog;
+
+        WriteCardDataTask(Context context, CardDevice cardDevice, CardData cardData) {
+            this.context = new WeakReference<>(context);
+
+            this.cardDevice = cardDevice;
+            this.cardData = cardData;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            Context context = this.context.get();
+            if (context == null) {
+                cancel(false);
+                return;
+            }
+
+            CardDataIOView cardDataIOView = new CardDataIOView(context);
+            cardDataIOView.setDevice(cardDevice.getClass());
+            cardDataIOView.setDirection(false);
+            cardDataIOView.setType(cardData.getClass());
+            cardDataIOView.setPadding(0, 60, 0, 60);
+
+            dialog = new AlertDialog.Builder(context)
+                    .setTitle("Writing card")
+                    .setView(cardDataIOView)
+                    .show();
+        }
+
+        @Override
+        protected IOException doInBackground(Void... params) {
+            try {
+                cardDevice.writeCardData(cardData);
+            } catch (IOException exception) {
+                return exception;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(IOException exception) {
+            super.onPostExecute(exception);
+
+            try {
+                Context context = this.context.get();
+                if (context == null)
+                    return;
+
+                if (exception != null)
+                    Toast.makeText(context, "Failed to write card: " + exception.getMessage(),
+                            Toast.LENGTH_LONG).show();
+            } finally {
+                dialog.dismiss();
+            }
         }
     }
 }
