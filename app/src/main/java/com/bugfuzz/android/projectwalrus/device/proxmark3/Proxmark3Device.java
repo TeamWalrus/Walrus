@@ -117,7 +117,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
                 lf ? (result.args[2] >> 16) / 1e3f : null,
                 hf ? (result.args[1] & 0xffff) / 1e3f : null);
     }
-    
+
     @Override
     public void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException {
         if (!semaphore.tryAcquire())

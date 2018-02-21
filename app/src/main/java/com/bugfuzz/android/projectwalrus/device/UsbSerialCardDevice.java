@@ -96,11 +96,11 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         usbSerialDevice.write(bytes);
     }
 
-    protected <R> R receive(ReceiveSink<T, R> receiveSink, long timeout) {
+    protected <R> R receive(ReceiveSink<T, R> receiveSink, long timeout) throws IOException {
         return receive(receiveSink, timeout, DEFAULT_INTERNAL_TIMEOUT);
     }
 
-    protected <R> R receive(ReceiveSink<T, R> receiveSink, long timeout, long internalTimeout) {
+    protected <R> R receive(ReceiveSink<T, R> receiveSink, long timeout, long internalTimeout) throws IOException {
         long start = System.currentTimeMillis();
 
         while (receiveSink.wantsMore()) {
@@ -126,7 +126,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     }
 
     protected abstract static class ReceiveSink<T, R> {
-        public abstract R onReceived(T in);
+        public abstract R onReceived(T in) throws IOException;
 
         public boolean wantsMore() {
             return true;
