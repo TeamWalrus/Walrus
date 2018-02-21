@@ -119,7 +119,6 @@ public enum CardDeviceManager {
                     break;
             }
         }
-
     }
 
     public static class UsbPermissionReceiver extends BroadcastReceiver {
@@ -144,8 +143,7 @@ public enum CardDeviceManager {
                                     ids.productId() == usbDevice.getProductId()) {
                                 Constructor<? extends UsbCardDevice> constructor;
                                 try {
-                                    constructor = klass.getConstructor(Context.class, UsbDevice.class,
-                                            UsbDeviceConnection.class);
+                                    constructor = klass.getConstructor(Context.class, UsbDevice.class);
                                 } catch (NoSuchMethodException e) {
                                     continue;
                                 }
