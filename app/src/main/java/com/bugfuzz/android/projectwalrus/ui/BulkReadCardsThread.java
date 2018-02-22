@@ -104,7 +104,7 @@ public class BulkReadCardsThread extends Thread {
                         .setCategory(Notification.CATEGORY_SERVICE)
                         .setOngoing(true)
                         .setProgress(0, 0, true)
-                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Stop",
+                        .addAction(R.drawable.ic_close_white_24px, "Stop",
                                 PendingIntent.getBroadcast(context, id, stopIntent, 0));
 
         notificationManager.notify(BASE_NOTIFICATION_ID + id, builder.build());

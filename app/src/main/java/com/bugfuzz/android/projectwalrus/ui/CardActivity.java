@@ -102,8 +102,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             if (mode != Mode.READ)
-                actionBar.setHomeAsUpIndicator(getDrawable(
-                        android.R.drawable.ic_menu_close_clear_cancel));
+                actionBar.setHomeAsUpIndicator(getDrawable(R.drawable.ic_close_white_24px));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 

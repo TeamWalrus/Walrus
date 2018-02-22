@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/add_new_card"
-        android:icon="@drawable/ic_add_white_24dp"
+        android:icon="@drawable/ic_add_box_white_24px"
         android:title="Add New Card" />
 
     <item
         android:id="@+id/bulk_read_cards"
-        android:icon="@drawable/ic_view_module_black_24dp"
+        android:icon="@drawable/ic_library_add_white_24px"
         android:title="Bulk Read Cards"/>
 
 </menu>
