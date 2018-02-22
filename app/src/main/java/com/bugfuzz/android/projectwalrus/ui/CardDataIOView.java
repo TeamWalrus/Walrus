@@ -1,20 +1,13 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 
@@ -44,22 +37,21 @@ public class CardDataIOView extends FrameLayout {
     }
 
     public void setDevice(Class<? extends CardDevice> cardDeviceClass) {
-        ((ImageView) findViewById(R.id.device)).setImageDrawable(getResources().getDrawable(
-                cardDeviceClass.getAnnotation(CardDevice.Metadata.class).icon(),
-                getContext().getTheme()));
+        ((ImageView) findViewById(R.id.device)).setImageDrawable(
+                ContextCompat.getDrawable(getContext(),
+                        cardDeviceClass.getAnnotation(CardDevice.Metadata.class).icon()));
     }
 
     public void setDirection(boolean reading) {
-        ImageView directionImage = (ImageView) findViewById(R.id.direction);
+        ImageView directionImage = findViewById(R.id.direction);
         directionImage.setImageDrawable(
-                getResources().getDrawable(R.drawable.card_data_io_direction,
-                        getContext().getTheme()));
+                ContextCompat.getDrawable(getContext(), R.drawable.card_data_io_direction));
         directionImage.setRotation(90 + (reading ? 180 : 0));
     }
 
     public void setType(Class<? extends CardData> cardDataClass) {
-        ((ImageView) findViewById(R.id.type)).setImageDrawable(getResources().getDrawable(
-                cardDataClass.getAnnotation(CardData.Metadata.class).icon(),
-                getContext().getTheme()));
+        ((ImageView) findViewById(R.id.type)).setImageDrawable(
+                ContextCompat.getDrawable(getContext(),
+                        cardDataClass.getAnnotation(CardData.Metadata.class).icon()));
     }
 }

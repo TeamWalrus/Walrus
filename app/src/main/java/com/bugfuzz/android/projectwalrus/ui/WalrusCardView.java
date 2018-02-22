@@ -2,6 +2,7 @@ package com.bugfuzz.android.projectwalrus.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -46,10 +47,10 @@ public class WalrusCardView extends FrameLayout {
         View view = inflate(getContext(), R.layout.view_walruscard, null);
         addView(view);
 
-        nameView = (TextView) view.findViewById(R.id.name);
-        editableNameView = (EditText) view.findViewById(R.id.editableName);
-        logoView = (ImageView) view.findViewById(R.id.logo);
-        humanReadableTextView = (TextView) view.findViewById(R.id.humanReadableText);
+        nameView = view.findViewById(R.id.name);
+        editableNameView = view.findViewById(R.id.editableName);
+        logoView = view.findViewById(R.id.logo);
+        humanReadableTextView = view.findViewById(R.id.humanReadableText);
 
         editableNameView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -79,9 +80,8 @@ public class WalrusCardView extends FrameLayout {
         nameView.setText(card.name);
         editableNameView.setText(card.name);
         if (card.cardData != null) {
-            logoView.setImageDrawable(getResources().getDrawable(
-                    card.cardData.getClass().getAnnotation(CardData.Metadata.class).icon(),
-                    getContext().getTheme()));
+            logoView.setImageDrawable(ContextCompat.getDrawable(getContext(),
+                    card.cardData.getClass().getAnnotation(CardData.Metadata.class).icon()));
             humanReadableTextView.setText(card.cardData.getHumanReadableText());
         }
 

@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
-    private final long DEFAULT_INTERNAL_TIMEOUT = 250;
-
     private final BlockingQueue<T> receiveQueue = new LinkedBlockingQueue<>();
     private UsbSerialDevice usbSerialDevice;
     private volatile boolean receiving;
@@ -48,7 +46,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
                     if (receiving)
                         try {
                             receiveQueue.put(sliced.first);
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException ignored) {
                         }
                 }
             }
@@ -96,17 +94,17 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         usbSerialDevice.write(bytes);
     }
 
-    protected <R> R receive(ReceiveSink<T, R> receiveSink) throws IOException {
-        return receive(receiveSink, DEFAULT_INTERNAL_TIMEOUT);
+    protected <O> O receive(ReceiveSink<T, O> receiveSink) throws IOException {
+        return receive(receiveSink, 250);
     }
 
-    protected <R> R receive(ReceiveSink<T, R> receiveSink, long internalTimeout) throws IOException {
+    protected <O> O receive(ReceiveSink<T, O> receiveSink, long internalTimeout) throws IOException {
         while (receiveSink.wantsMore()) {
             T in = receive(internalTimeout);
             if (in == null)
                 continue;
 
-            R result = receiveSink.onReceived(in);
+            O result = receiveSink.onReceived(in);
             if (result != null)
                 return result;
         }
@@ -114,15 +112,15 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         return null;
     }
 
-    protected abstract static class ReceiveSink<T, R> {
-        public abstract R onReceived(T in) throws IOException;
+    protected abstract static class ReceiveSink<T, O> {
+        public abstract O onReceived(T in) throws IOException;
 
         public boolean wantsMore() {
             return true;
         }
     }
 
-    protected abstract static class WatchdogReceiveSink<T, R> extends ReceiveSink<T, R> {
+    protected abstract static class WatchdogReceiveSink<T, O> extends ReceiveSink<T, O> {
 
         private final long timeout;
         private long lastWatchdogReset;

@@ -27,12 +27,16 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".device.CardDeviceManager$UsbPermissionReceiver">
+        <receiver
+            android:name=".device.CardDeviceManager$UsbPermissionReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name=".device.CardDeviceManager.ACTION_USB_PERMISSION"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver">
+        <receiver
+            android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP"/>
             </intent-filter>
@@ -68,7 +72,8 @@
             android:label="Settings"
             android:parentActivityName=".ui.MyWalletActivity"/>
         <activity
-            android:name=".ui.WebViewActivity">
+            android:name=".ui.WebViewActivity"
+            android:exported="false">
             <intent-filter>
                 <action android:name=".ui.WebViewActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>

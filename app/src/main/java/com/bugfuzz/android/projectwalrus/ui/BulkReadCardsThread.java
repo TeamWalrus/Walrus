@@ -4,19 +4,16 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Build;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
@@ -34,17 +31,16 @@ import com.google.android.gms.location.LocationServices;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static android.content.Context.VIBRATOR_SERVICE;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
 public class BulkReadCardsThread extends Thread {
 
     private static final String NOTIFICATION_CHANNEL_ID = "bulk_read_cards";
     private static final int BASE_NOTIFICATION_ID = 0;
 
-    private static Map<Integer, BulkReadCardsThread> runningInstances = new HashMap<>();
+    private static final SparseArray<BulkReadCardsThread> runningInstances = new SparseArray<>();
     private static int nextID;
 
     private final Context context;
@@ -99,11 +95,12 @@ public class BulkReadCardsThread extends Thread {
                 .setContentTitle("Bulk reading " +
                         cardDevice.getClass().getAnnotation(CardDevice.Metadata.class).name())
                 .setContentText("No cards read")
-                .setCategory(Notification.CATEGORY_SERVICE)
                 .setOngoing(true)
                 .setProgress(0, 0, true)
                 .addAction(R.drawable.ic_close_white_24px, "Stop",
                         PendingIntent.getBroadcast(context, id, stopIntent, 0));
+        if (android.os.Build.VERSION.SDK_INT >= LOLLIPOP)
+            notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
 
         notificationManager.notify(BASE_NOTIFICATION_ID + id, notificationBuilder.build());
 

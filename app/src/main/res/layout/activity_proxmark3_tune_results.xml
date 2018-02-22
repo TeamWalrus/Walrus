@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LF"
+                android:text="@string/lf"
                 android:textStyle="bold"/>
 
             <Space
@@ -44,13 +44,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="125kHz"/>
+                android:text="@string/_125khz"/>
 
             <TextView
                 android:id="@+id/lf125"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"/>
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
 
         </TableRow>
 
@@ -61,13 +62,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="134kHz"/>
+                android:text="@string/_134khz"/>
 
             <TextView
                 android:id="@+id/lf134"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"/>
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
 
         </TableRow>
 
@@ -78,13 +80,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Optimal"/>
+                android:text="@string/optimal"/>
 
             <TextView
                 android:id="@+id/lfOptimal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"/>
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
 
         </TableRow>
 
@@ -92,7 +95,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
-            android:layout_span="3"
             android:orientation="vertical">
 
             <LinearLayout
@@ -105,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:rotation="-90"
-                    android:text="V"/>
+                    android:text="@string/v"/>
 
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/lfChart"
@@ -118,7 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:text="kHz"/>
+                android:text="@string/khz"/>
 
         </LinearLayout>
 
@@ -140,7 +142,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="HF"
+                android:text="@string/hf"
                 android:textStyle="bold"/>
 
             <Space
@@ -162,13 +164,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="13.56MHz"/>
+                android:text="@string/_13_56mhz"/>
 
             <TextView
                 android:id="@+id/hfV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"/>
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
 
         </TableRow>
 

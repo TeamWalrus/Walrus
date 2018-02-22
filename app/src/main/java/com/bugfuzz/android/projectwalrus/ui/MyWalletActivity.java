@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.SearchView;
@@ -23,7 +22,6 @@ import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
-import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -36,7 +34,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     private RecyclerView recyclerView;
     private SearchView sv;
 
-    private WalletUpdateBroadcastReceiver walletUpdateBroadcastReceiver =
+    private final WalletUpdateBroadcastReceiver walletUpdateBroadcastReceiver =
             new WalletUpdateBroadcastReceiver();
 
     public MyWalletActivity() {
@@ -51,7 +49,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        sv = (SearchView) findViewById(R.id.searchView);
+        sv = findViewById(R.id.searchView);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -90,7 +88,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
         }
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setAdapter(new CardAdapter());
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -101,7 +99,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
         });
 
-        FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.floatingActionButton);
+        FabSpeedDial fabSpeedDial = findViewById(R.id.floatingActionButton);
         fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
             public boolean onMenuItemSelected(MenuItem menuItem) {

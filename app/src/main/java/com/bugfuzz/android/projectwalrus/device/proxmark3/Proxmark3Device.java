@@ -3,7 +3,6 @@ package com.bugfuzz.android.projectwalrus.device.proxmark3;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
 import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.R;
@@ -35,9 +34,9 @@ import java.util.regex.Pattern;
 public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
     private static final long DEFAULT_TIMEOUT = 20 * 1000;
-    private static Pattern TAG_ID_PATTERN = Pattern.compile("TAG ID: ([0-9a-fA-F]+)");
+    private static final Pattern TAG_ID_PATTERN = Pattern.compile("TAG ID: ([0-9a-fA-F]+)");
 
-    private Semaphore semaphore = new Semaphore(1);
+    private final Semaphore semaphore = new Semaphore(1);
 
     public Proxmark3Device(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice);
@@ -69,8 +68,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
         return out.toBytes();
     }
 
-    private <R> R sendThenReceiveCommands(Proxmark3Command out,
-                                          ReceiveSink<Proxmark3Command, R> receiveSink) throws IOException {
+    private <O> O sendThenReceiveCommands(Proxmark3Command out,
+                                          ReceiveSink<Proxmark3Command, O> receiveSink) throws IOException {
         if (!semaphore.tryAcquire())
             throw new IOException("Device is busy");
 
@@ -201,7 +200,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
     private static class CommandWaiter extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
 
-        private Proxmark3Command.Op op;
+        private final Proxmark3Command.Op op;
 
         CommandWaiter(Proxmark3Command.Op op, long timeout) {
             super(timeout);
@@ -217,10 +216,10 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
     static class TuneResult implements Serializable {
 
-        boolean lf, hf;
+        final boolean lf, hf;
 
-        Float v_125, v_134, peak_f, peak_v, v_HF;
-        float[] v_LF;
+        final Float v_125, v_134, peak_f, peak_v, v_HF;
+        final float[] v_LF;
 
         TuneResult(boolean lf, boolean hf, float[] v_LF, Float v_125, Float v_134, Float peak_f,
                    Float peak_v, Float v_HF) {

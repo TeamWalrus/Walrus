@@ -1,13 +1,10 @@
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
@@ -16,12 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.ui.CardActivity;
-
-import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -61,7 +54,7 @@ public class Proxmark3Activity extends AppCompatActivity {
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        ((TextView) findViewById(R.id.version)).setText("Retrieving...");
+        ((TextView) findViewById(R.id.version)).setText(R.string.retrieving);
 
         new FindVersionTask(this).execute();
     }
@@ -80,7 +73,7 @@ public class Proxmark3Activity extends AppCompatActivity {
 
     private static class FindVersionTask extends AsyncTask<Void, Void, Pair<String, IOException>> {
 
-        private WeakReference<Proxmark3Activity> activity;
+        private final WeakReference<Proxmark3Activity> activity;
 
         FindVersionTask(Proxmark3Activity activity) {
             this.activity = new WeakReference<>(activity);
@@ -117,9 +110,9 @@ public class Proxmark3Activity extends AppCompatActivity {
     private static class TuneTask extends
             AsyncTask<Void, Void, Pair<Proxmark3Device.TuneResult, IOException>> {
 
-        private WeakReference<Proxmark3Activity> activity;
+        private final WeakReference<Proxmark3Activity> activity;
 
-        private boolean lf;
+        private final boolean lf;
 
         private ProgressDialog progressDialog;
 

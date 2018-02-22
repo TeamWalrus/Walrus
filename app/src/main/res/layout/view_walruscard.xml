@@ -40,7 +40,8 @@
                     android:paddingStart="20dp"
                     android:paddingTop="18dp"
                     android:textColor="@color/primaryCardTextColor"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:inputType="text"/>
 
             </FrameLayout>
 

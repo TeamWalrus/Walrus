@@ -1,8 +1,5 @@
 package com.bugfuzz.android.projectwalrus.data;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-
 import com.bugfuzz.android.projectwalrus.R;
 
 import org.parceler.Parcel;
@@ -16,7 +13,7 @@ import java.util.Arrays;
 )
 public class ISO14443ACardData extends CardData {
 
-    private static KnownISO14333AType[] CARD_TYPES;
+    private static final KnownISO14333AType[] CARD_TYPES;
 
     static {
         CARD_TYPES = new KnownISO14333AType[]{
@@ -71,10 +68,11 @@ public class ISO14443ACardData extends CardData {
     }
 
     static private class KnownISO14333AType {
-        String manufacturer, type;
-        private Short atqa;
-        private Byte sak;
-        private int[] ats;
+        final String manufacturer;
+        final String type;
+        private final Short atqa;
+        private final Byte sak;
+        private final int[] ats;
 
         KnownISO14333AType(Short atqa, Byte sak, int[] ats, String manufacturer, String type) {
             this.atqa = atqa;
@@ -85,13 +83,10 @@ public class ISO14443ACardData extends CardData {
         }
 
         boolean matches(ISO14443ACardData cardData) {
-            if (atqa != null && atqa != cardData.atqa)
-                return false;
-            if (sak != null && sak != cardData.sak)
-                return false;
-            if (ats != null && !Arrays.equals(ats, cardData.ats))
-                return false;
-            return true;
+            return
+                    !(atqa != null && atqa != cardData.atqa) &&
+                    !(sak != null && sak != cardData.sak) &&
+                    !(ats != null && !Arrays.equals(ats, cardData.ats));
         }
     }
 

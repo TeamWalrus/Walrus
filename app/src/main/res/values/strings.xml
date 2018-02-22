@@ -3,37 +3,35 @@
 
     <string name="app_name">Walrus</string>
     <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
     <string name="readCard">Read Card</string>
     <string name="writeCard">Write Card</string>
     <string name="emulateCard">Emulate Card</string>
     <string name="search">Search cards</string>
-    <string name="btn_sendTerminalCmd">Send</string>
-    <string name="btn_scanFD">ScanFD</string>
-    <string name="textView_title_cardName">Name</string>
-    <string name="textView_title_cardData">Data</string>
     <string name="notes">Notes</string>
     <string name="dateAcquired">Date Acquired</string>
     <string name="location">Location</string>
-    <string name="textView_titleUID">UID</string>
-    <string name="textView_dummyCardData">None</string>
-    <string name="textView_dummyCardTitle">None</string>
-    <string name="textView_dummyCardDateAcquired">None</string>
-    <string name="textView_dummyCardNotes">None</string>
     <string name="actionBar_deleteCard">Delete</string>
     <string name="devices">Devices</string>
     <string name="settings">Settings</string>
-
     <string name="chameleonMiniRevG">Chameleon Mini Rev.G</string>
-    <string name="dialog_write_chameleon">Write to Chameleon Mini card slot</string>
-
-    <string name="tune">Tune</string>
-
     <string name="proxmark3">Proxmark 3</string>
     <string name="tuning">Tuning</string>
     <string name="version">Version Information</string>
-    <string name="ready">Ready</string>
-    <string name="stop">Stop</string>
     <string name="unknown">Unknown</string>
+    <string name="tune_lf">Tune LF</string>
+    <string name="tune_hf">Tune HF</string>
+    <string name="lf">LF</string>
+    <string name="_125khz">125kHz</string>
+    <string name="_134khz">134kHz</string>
+    <string name="optimal">Optimal</string>
+    <string name="v">V</string>
+    <string name="khz">kHz</string>
+    <string name="hf">HF</string>
+    <string name="_13_56mhz">13.56MHz</string>
+    <string name="start">Start</string>
+    <string name="add_new_card">Add New Card</string>
+    <string name="bulk_read_cards">Bulk Read Cards</string>
+    <string name="retrieving">Retrieving…</string>
+    <string name="unable_to_determine">(Unable to determine)</string>
 
 </resources>

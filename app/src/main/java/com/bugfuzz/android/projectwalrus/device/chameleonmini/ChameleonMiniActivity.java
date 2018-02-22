@@ -3,26 +3,16 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.preference.DialogPreference;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity;
-import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
 import java.io.IOException;
 
@@ -70,7 +60,7 @@ public class ChameleonMiniActivity extends AppCompatActivity {
                 .commit();
 
 
-        ((TextView) findViewById(R.id.version)).setText("Retrieving...");
+        ((TextView) findViewById(R.id.version)).setText(R.string.retrieving);
 
         (new AsyncTask<Void, Void, String>() {
             @Override
@@ -84,7 +74,7 @@ public class ChameleonMiniActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(String version) {
-                ((TextView) findViewById(R.id.version)).setText(version != null ? version : "(Unable to determine)");
+                ((TextView) findViewById(R.id.version)).setText(version != null ? version : getString(R.string.unable_to_determine));
             }
         }).execute();
     }

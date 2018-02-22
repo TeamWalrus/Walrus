@@ -2,10 +2,7 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
-import android.preference.PreferenceManager;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -13,14 +10,11 @@ import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
-import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity;
-import com.bugfuzz.android.projectwalrus.ui.SettingsActivity;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Logger;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -31,7 +25,7 @@ import java.util.logging.Logger;
 @UsbCardDevice.UsbIDs({@UsbCardDevice.UsbIDs.IDs(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
-    private Semaphore semaphore = new Semaphore(1);
+    private final Semaphore semaphore = new Semaphore(1);
 
     public ChameleonMiniDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice, "\r\n", "ISO-8859-1");

@@ -62,7 +62,7 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.lfOptimal)).setText("" + tuneResult.peak_v + "V at " +
                     (tuneResult.peak_f / 1000) + "kHz");
 
-            LineChart lfChart = (LineChart) findViewById(R.id.lfChart);
+            LineChart lfChart = findViewById(R.id.lfChart);
             if (tuneResult.v_LF != null) {
                 List<Entry> entries = new ArrayList<>();
                 for (int i = 255; i >= 19; --i)

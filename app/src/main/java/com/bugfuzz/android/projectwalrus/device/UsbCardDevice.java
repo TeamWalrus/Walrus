@@ -43,7 +43,7 @@ public abstract class UsbCardDevice extends CardDevice {
         IDs[] value();
 
         @Retention(RetentionPolicy.RUNTIME)
-        public @interface IDs {
+        @interface IDs {
             int vendorId();
 
             int productId();

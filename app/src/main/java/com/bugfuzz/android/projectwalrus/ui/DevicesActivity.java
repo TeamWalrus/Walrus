@@ -3,6 +3,7 @@ package com.bugfuzz.android.projectwalrus.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,7 +38,7 @@ public class DevicesActivity extends AppCompatActivity {
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-        devicesView = (ListView) findViewById(R.id.devices);
+        devicesView = findViewById(R.id.devices);
         devicesView.setAdapter(new DeviceAdapter(CardDeviceManager.INSTANCE.getCardDevices()));
     }
 
@@ -50,7 +51,7 @@ public class DevicesActivity extends AppCompatActivity {
 
     private class DeviceAdapter extends BaseAdapter {
 
-        private List<Map.Entry<Integer, CardDevice>> devices;
+        private final List<Map.Entry<Integer, CardDevice>> devices;
 
         DeviceAdapter(Map<Integer, CardDevice> devices) {
             this.devices = new ArrayList<>(devices.entrySet());
@@ -83,7 +84,7 @@ public class DevicesActivity extends AppCompatActivity {
             CardDevice.Metadata metadata = device.getClass().getAnnotation(CardDevice.Metadata.class);
 
             ((ImageView) view.findViewById(R.id.image)).setImageDrawable(
-                    activity.getResources().getDrawable(metadata.icon(), activity.getTheme()));
+                    ContextCompat.getDrawable(DevicesActivity.this, metadata.icon()));
             ((TextView) view.findViewById(R.id.name)).setText(metadata.name());
             String status = device.getStatusText();
             ((TextView) view.findViewById(R.id.status)).setText(status != null ? status : "");

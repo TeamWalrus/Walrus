@@ -10,7 +10,8 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 class Proxmark3Command {
-    static long MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
+    static final long
+            MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
             MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
 
     final Op op;

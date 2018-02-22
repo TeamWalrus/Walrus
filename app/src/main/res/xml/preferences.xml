@@ -8,6 +8,7 @@
 
     <Preference android:title="Open Source">
         <intent android:action=".ui.WebViewActivity">
+            <!--suppress AndroidElementNotAllowed -->
             <extra
                 android:name="com.bugfuzz.android.projectwalrus.ui.WebViewActivity.EXTRA_URL"
                 android:value="file:///android_asset/open_source.html"/>

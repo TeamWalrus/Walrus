@@ -49,14 +49,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="onTuneLFClick"
-                android:text="Tune LF"/>
+                android:text="@string/tune_lf"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="onTuneHFClick"
-                android:text="Tune HF"/>
+                android:text="@string/tune_hf"/>
 
         </LinearLayout>
 

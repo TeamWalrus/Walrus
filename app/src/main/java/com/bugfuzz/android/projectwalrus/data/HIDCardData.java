@@ -1,8 +1,5 @@
 package com.bugfuzz.android.projectwalrus.data;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-
 import com.bugfuzz.android.projectwalrus.R;
 
 import org.parceler.Parcel;

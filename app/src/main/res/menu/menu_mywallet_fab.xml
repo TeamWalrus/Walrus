@@ -4,11 +4,11 @@
     <item
         android:id="@+id/add_new_card"
         android:icon="@drawable/ic_add_box_white_24px"
-        android:title="Add New Card" />
+        android:title="@string/add_new_card" />
 
     <item
         android:id="@+id/bulk_read_cards"
         android:icon="@drawable/ic_library_add_white_24px"
-        android:title="Bulk Read Cards"/>
+        android:title="@string/bulk_read_cards"/>
 
 </menu>

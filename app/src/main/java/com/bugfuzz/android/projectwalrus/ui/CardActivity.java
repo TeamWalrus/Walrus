@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -102,13 +103,14 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             if (mode != Mode.READ)
-                actionBar.setHomeAsUpIndicator(getDrawable(R.drawable.ic_close_white_24px));
+                actionBar.setHomeAsUpIndicator(
+                        ContextCompat.getDrawable(this, R.drawable.ic_close_white_24px));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        walrusCardView = (WalrusCardView) findViewById(R.id.card);
-        notes = (TextView) findViewById(R.id.notes);
-        notesEditor = (EditText) findViewById(R.id.notesEditor);
+        walrusCardView = findViewById(R.id.card);
+        notes = findViewById(R.id.notes);
+        notesEditor = findViewById(R.id.notesEditor);
 
         TextWatcher textChangeWatcher = new TextWatcher() {
             @Override
@@ -156,7 +158,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED)
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
     }
 
     @Override
@@ -192,7 +195,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
 
             SupportMapFragment locationMap =
                     (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.locationMap);
-            TextView locationUnknown = (TextView) findViewById(R.id.locationUnknown);
+            TextView locationUnknown = findViewById(R.id.locationUnknown);
             if (card.cardLocationLat != null && card.cardLocationLng != null) {
                 getSupportFragmentManager().beginTransaction().show(locationMap).commit();
                 locationMap.getMapAsync(this);
