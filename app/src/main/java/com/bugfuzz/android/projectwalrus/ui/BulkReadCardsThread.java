@@ -57,6 +57,8 @@ public class BulkReadCardsThread extends Thread {
 
     private boolean stop;
 
+    private NotificationCompat.Builder notificationBuilder;
+
     private DatabaseHelper databaseHelper;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -87,27 +89,23 @@ public class BulkReadCardsThread extends Thread {
             notificationManager.createNotificationChannel(channel);
         }
 
-        CardDevice.Metadata deviceMetadata =
-                cardDevice.getClass().getAnnotation(CardDevice.Metadata.class);
-
         Intent stopIntent = new Intent(context, StopBroadcastReceiver.class);
         stopIntent.setAction(StopBroadcastReceiver.ACTION_STOP);
         stopIntent.putExtra(StopBroadcastReceiver.EXTRA_ID, id);
 
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.ic_launcher) // TODO: icon
-                        .setContentTitle("Bulk reading cards")
-                        .setContentText("From " + deviceMetadata.name())
-                        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                                deviceMetadata.icon()))
-                        .setCategory(Notification.CATEGORY_SERVICE)
-                        .setOngoing(true)
-                        .setProgress(0, 0, true)
-                        .addAction(R.drawable.ic_close_white_24px, "Stop",
-                                PendingIntent.getBroadcast(context, id, stopIntent, 0));
+        notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
+        notificationBuilder
+                .setSmallIcon(R.mipmap.ic_launcher) // TODO: icon
+                .setContentTitle("Bulk reading " +
+                        cardDevice.getClass().getAnnotation(CardDevice.Metadata.class).name())
+                .setContentText("No cards read")
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .setOngoing(true)
+                .setProgress(0, 0, true)
+                .addAction(R.drawable.ic_close_white_24px, "Stop",
+                        PendingIntent.getBroadcast(context, id, stopIntent, 0));
 
-        notificationManager.notify(BASE_NOTIFICATION_ID + id, builder.build());
+        notificationManager.notify(BASE_NOTIFICATION_ID + id, notificationBuilder.build());
 
         // TODO: fix in OrmLiteBaseAppCompatActivity too (use class ver)
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
@@ -182,6 +180,14 @@ public class BulkReadCardsThread extends Thread {
                             new Intent(QueryUtils.ACTION_WALLET_UPDATE));
 
                     cardTemplate.name = origName;
+
+                    NotificationManager notificationManager =
+                            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    notificationBuilder.setContentText(numRead + " card" +
+                            (numRead != 1 ? "s" : "") + " read");
+
+                    notificationManager.notify(BASE_NOTIFICATION_ID + id, notificationBuilder.build());
                 }
 
                 @Override
