@@ -23,9 +23,12 @@ public class QueryUtils {
 
     public static List<Card> filterCards(Dao<Card, ?> dao, String searchParameter) {
         try {
-            QueryBuilder<Card, ?> queryBuilder = dao.queryBuilder();
-            queryBuilder.where().like(Card.NAME_FIELD_NAME, "%" + searchParameter + "%");
-            return queryBuilder.query();
+            return dao.queryBuilder()
+                    .where()
+                    .raw(Card.NAME_FIELD_NAME + " LIKE '%" +
+                            searchParameter.replaceAll("[\\\\%_]", "\\\\$0").replace("'", "''") +
+                            "%' ESCAPE '\\'")
+                    .query();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
