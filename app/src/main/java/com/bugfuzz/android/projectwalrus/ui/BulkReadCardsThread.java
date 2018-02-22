@@ -95,7 +95,7 @@ public class BulkReadCardsThread extends Thread {
 
         notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
         notificationBuilder
-                .setSmallIcon(R.mipmap.ic_launcher) // TODO: icon
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle("Bulk reading " +
                         cardDevice.getClass().getAnnotation(CardDevice.Metadata.class).name())
                 .setContentText("No cards read")
