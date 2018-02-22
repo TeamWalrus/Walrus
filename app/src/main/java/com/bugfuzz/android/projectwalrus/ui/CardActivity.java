@@ -73,6 +73,10 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         context.startActivity(intent);
     }
 
+    public CardActivity() {
+        super(DatabaseHelper.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

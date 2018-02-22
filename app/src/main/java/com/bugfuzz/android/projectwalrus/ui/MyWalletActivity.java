@@ -39,6 +39,10 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     private WalletUpdateBroadcastReceiver walletUpdateBroadcastReceiver =
             new WalletUpdateBroadcastReceiver();
 
+    public MyWalletActivity() {
+        super(DatabaseHelper.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
