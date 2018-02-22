@@ -70,8 +70,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     }
 
     private <R> R sendThenReceiveCommands(Proxmark3Command out,
-                                          ReceiveSink<Proxmark3Command, R> receiveSink,
-                                          long timeout) throws IOException {
+                                          ReceiveSink<Proxmark3Command, R> receiveSink) throws IOException {
         if (!semaphore.tryAcquire())
             throw new IOException("Device is busy");
 
@@ -80,7 +79,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
             try {
                 send(out);
-                return receive(receiveSink, timeout);
+                return receive(receiveSink);
             } finally {
                 setReceiving(false);
             }
@@ -100,7 +99,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
         Proxmark3Command result = sendThenReceiveCommands(
                 new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
-                new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING), DEFAULT_TIMEOUT);
+                new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT));
         if (result == null)
             throw new IOException("Failed to tune antenna before timeout");
 
@@ -165,13 +164,13 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
                         hidCardData.data.shiftRight(64).intValue(),
                         hidCardData.data.shiftRight(32).intValue(),
                         hidCardData.data.intValue()}),
-                new ReceiveSink<Proxmark3Command, Boolean>() {
+                new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
                     @Override
                     public Boolean onReceived(Proxmark3Command in) {
                         return in.op == Proxmark3Command.Op.DEBUG_PRINT_STRING &&
                                 in.dataAsString().equals("DONE!") ? true : null;
                     }
-                }, DEFAULT_TIMEOUT))
+                }))
             throw new IOException("Failed to write card data before timeout");
     }
 
@@ -183,18 +182,20 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     public String getVersion() throws IOException {
         Proxmark3Command version = sendThenReceiveCommands(
                 new Proxmark3Command(Proxmark3Command.Op.VERSION),
-                new CommandWaiter(Proxmark3Command.Op.ACK), DEFAULT_TIMEOUT);
+                new CommandWaiter(Proxmark3Command.Op.ACK, DEFAULT_TIMEOUT));
         if (version == null)
             throw new IOException("Failed to get device version before timeout");
 
         return version.dataAsString();
     }
 
-    private static class CommandWaiter extends ReceiveSink<Proxmark3Command, Proxmark3Command> {
+    private static class CommandWaiter extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
 
         private Proxmark3Command.Op op;
 
-        CommandWaiter(Proxmark3Command.Op op) {
+        CommandWaiter(Proxmark3Command.Op op, long timeout) {
+            super(timeout);
+
             this.op = op;
         }
 

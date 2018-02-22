@@ -96,24 +96,13 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         usbSerialDevice.write(bytes);
     }
 
-    protected <R> R receive(ReceiveSink<T, R> receiveSink, long timeout) throws IOException {
-        return receive(receiveSink, timeout, DEFAULT_INTERNAL_TIMEOUT);
+    protected <R> R receive(ReceiveSink<T, R> receiveSink) throws IOException {
+        return receive(receiveSink, DEFAULT_INTERNAL_TIMEOUT);
     }
 
-    protected <R> R receive(ReceiveSink<T, R> receiveSink, long timeout, long internalTimeout) throws IOException {
-        long start = System.currentTimeMillis();
-
+    protected <R> R receive(ReceiveSink<T, R> receiveSink, long internalTimeout) throws IOException {
         while (receiveSink.wantsMore()) {
-            long thisTimeout;
-            if (timeout == 0)
-                thisTimeout = internalTimeout;
-            else {
-                thisTimeout = Math.min(timeout - (System.currentTimeMillis() - start), internalTimeout);
-                if (thisTimeout <= 0)
-                    break;
-            }
-
-            T in = receive(thisTimeout);
+            T in = receive(internalTimeout);
             if (in == null)
                 continue;
 
@@ -130,6 +119,26 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
         public boolean wantsMore() {
             return true;
+        }
+    }
+
+    protected abstract static class WatchdogReceiveSink<T, R> extends ReceiveSink<T, R> {
+
+        private final long timeout;
+        private long lastWatchdogReset;
+
+        public WatchdogReceiveSink(long timeout) {
+            this.timeout = timeout;
+
+            resetWatchdog();
+        }
+
+        protected void resetWatchdog() {
+            lastWatchdogReset = System.currentTimeMillis();
+        }
+
+        public boolean wantsMore() {
+            return System.currentTimeMillis() < lastWatchdogReset + timeout;
         }
     }
 }
