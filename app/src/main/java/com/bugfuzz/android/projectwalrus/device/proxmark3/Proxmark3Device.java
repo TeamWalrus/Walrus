@@ -118,7 +118,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     }
 
     @Override
-    public void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException {
+    public void readCardData(Class<? extends CardData> cardDataClass, final CardDataSink cardDataSink) throws IOException {
         if (!semaphore.tryAcquire())
             throw new IOException("Device is busy");
 
@@ -129,20 +129,30 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
                 // TODO: use cardDataClass
                 send(new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{0, 0, 0}));
 
-                while (cardDataSink.wantsMore()) {
-                    Proxmark3Command command = receive(250);
-                    if (command == null || command.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
-                        continue;
+                // TODO: do periodic VERSION-based device-aliveness checking like Chameleon Mini will/does
+                receive(new ReceiveSink<Proxmark3Command, Boolean>() {
+                    @Override
+                    public Boolean onReceived(Proxmark3Command in) throws IOException {
+                        if (in.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
+                            return null;
 
-                    String dataAsString = command.dataAsString();
+                        String dataAsString = in.dataAsString();
 
-                    if (dataAsString.equals("Stopped"))
-                        break;
+                        if (dataAsString.equals("Stopped"))
+                            return true;
 
-                    Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
-                    if (matcher.find())
-                        cardDataSink.onCardData(new HIDCardData(new BigInteger(matcher.group(1), 16)));
-                }
+                        Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
+                        if (matcher.find())
+                            cardDataSink.onCardData(new HIDCardData(new BigInteger(matcher.group(1), 16)));
+
+                        return null;
+                    }
+
+                    @Override
+                    public boolean wantsMore() {
+                        return cardDataSink.wantsMore();
+                    }
+                });
             } finally {
                 setReceiving(false);
             }
