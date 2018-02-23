@@ -357,7 +357,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         }
 
         // TODO: if len of cardDevices >1 then we want to choose what type of card to read
-        final CardDevice cardDevice = cardDevices.get(0);
+        final CardDevice cardDevice = cardDevices.entrySet().iterator().next().getValue();
 
         final Class<? extends CardData> writableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsWrite();

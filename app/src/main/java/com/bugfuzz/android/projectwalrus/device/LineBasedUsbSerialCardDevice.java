@@ -33,7 +33,7 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
         if (index == -1)
             return null;
 
-        return new Pair<>(string.substring(0, index), index);
+        return new Pair<>(string.substring(0, index), index + delimiter.length());
     }
 
     @Override
