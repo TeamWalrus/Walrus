@@ -1,4 +1,4 @@
-package com.bugfuzz.android.projectwalrus.ui;
+package com.bugfuzz.android.projectwalrus.device;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -21,7 +21,6 @@ import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
-import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.util.GeoUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -190,9 +189,9 @@ public class BulkReadCardsThread extends Thread {
 
     public static class StopBroadcastReceiver extends BroadcastReceiver {
 
-        private static final String ACTION_STOP = "com.bugfuzz.android.projectwalrus.ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP";
+        private static final String ACTION_STOP = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP";
 
-        private static final String EXTRA_ID = "com.bugfuzz.android.projectwalrus.ui.BulkReadCardsThread$StopBroadcastReceiver.EXTRA_ID";
+        private static final String EXTRA_ID = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsThread$StopBroadcastReceiver.EXTRA_ID";
 
         @Override
         public void onReceive(Context context, Intent intent) {

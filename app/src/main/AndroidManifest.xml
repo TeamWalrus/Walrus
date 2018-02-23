@@ -35,7 +35,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver"
+            android:name=".device.BulkReadCardsThread$StopBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP"/>

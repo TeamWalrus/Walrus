@@ -30,6 +30,7 @@ import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
+import com.bugfuzz.android.projectwalrus.device.BulkReadCardsThread;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import com.bugfuzz.android.projectwalrus.util.GeoUtils;
