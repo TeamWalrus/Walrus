@@ -19,7 +19,6 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     private final BlockingQueue<T> receiveQueue = new LinkedBlockingQueue<>();
     private UsbSerialDevice usbSerialDevice;
     private volatile boolean receiving;
-    // TODO: better buffer type?
     private byte[] buffer = new byte[0];
 
     public UsbSerialCardDevice(Context context, UsbDevice usbDevice) throws IOException {

@@ -175,6 +175,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             setReceiving(true);
 
             try {
+                // TODO: use cardData.getClass()
                 send("CONFIG=MF_CLASSIC_1K");
 
                 receive(new ReceiveSink<String, Boolean>() {

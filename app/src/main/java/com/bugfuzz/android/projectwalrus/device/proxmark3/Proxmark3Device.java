@@ -167,12 +167,15 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
         // TODO: use cardDataClass
         HIDCardData hidCardData = (HIDCardData) cardData;
 
-        // TODO: long format (data[0] != 0)
-        if(!sendThenReceiveCommands(
-                new Proxmark3Command(Proxmark3Command.Op.HID_CLONE_TAG, new long[]{
-                        hidCardData.data.shiftRight(64).intValue(),
-                        hidCardData.data.shiftRight(32).intValue(),
-                        hidCardData.data.intValue()}),
+        if (!sendThenReceiveCommands(
+                new Proxmark3Command(
+                        Proxmark3Command.Op.HID_CLONE_TAG,
+                        new long[]{
+                                hidCardData.data.shiftRight(64).intValue(),
+                                hidCardData.data.shiftRight(32).intValue(),
+                                hidCardData.data.intValue()
+                        },
+                        new byte[]{hidCardData.data.bitLength() > 44 ? (byte) 1 : 0}),
                 new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
                     @Override
                     public Boolean onReceived(Proxmark3Command in) {

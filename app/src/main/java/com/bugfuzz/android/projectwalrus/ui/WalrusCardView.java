@@ -21,7 +21,6 @@ public class WalrusCardView extends FrameLayout {
     private Card card;
 
     private TextView nameView, humanReadableTextView;
-    // TODO: unhack
     public EditText editableNameView;
     private ImageView logoView;
 

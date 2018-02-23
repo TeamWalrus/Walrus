@@ -88,7 +88,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         mode = (Mode) intent.getSerializableExtra(EXTRA_MODE);
         card = Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD));
 
-        if (mode == Mode.READ)
+        if (mode == Mode.VIEW)
             setTitle("View Card");
         else if (mode == Mode.EDIT)
             setTitle(card == null ? "New Card" : "Edit Card");
@@ -102,7 +102,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            if (mode != Mode.READ)
+            if (mode != Mode.VIEW)
                 actionBar.setHomeAsUpIndicator(
                         ContextCompat.getDrawable(this, R.drawable.ic_close_white_24px));
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -133,11 +133,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         notesEditor.addTextChangedListener(textChangeWatcher);
 
         walrusCardView.setCard(card);
-        walrusCardView.setEditable(mode != Mode.READ);
+        walrusCardView.setEditable(mode != Mode.VIEW);
         walrusCardView.editableNameView.addTextChangedListener(textChangeWatcher);
 
         switch (mode) {
-            case READ:
+            case VIEW:
                 findViewById(R.id.editButtons).setVisibility(View.GONE);
                 findViewById(R.id.notesEditor).setVisibility(View.GONE);
                 break;
@@ -166,13 +166,12 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     public boolean onCreateOptionsMenu(Menu menu) {
         int id = 0;
         switch (mode) {
-            case READ:
-                // TODO rename IDs
-                id = R.menu.menu_detailedcardview;
+            case VIEW:
+                id = R.menu.menu_view_card;
                 break;
 
             case EDIT:
-                id = R.menu.menu_editcard;
+                id = R.menu.menu_edit_card;
                 break;
 
             case EDIT_BULK_READ_CARD_TEMPLATE:
@@ -421,7 +420,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     }
 
     public enum Mode {
-        READ,
+        VIEW,
         EDIT,
         EDIT_BULK_READ_CARD_TEMPLATE
     }
@@ -546,15 +545,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                 }
 
                 if (cardData != null) {
-                    activity.card.setCardData(cardData);
-                    if (location != null) {
-                        activity.card.cardLocationLng = location.getLongitude();
-                        activity.card.cardLocationLat = location.getLatitude();
-                    } else
-                        activity.card.cardLocationLng = activity.card.cardLocationLat = null;
-
+                    activity.card.setCardData(cardData, location);
                     activity.dirty = true;
-
                     activity.updateUI();
                 }
             } finally {

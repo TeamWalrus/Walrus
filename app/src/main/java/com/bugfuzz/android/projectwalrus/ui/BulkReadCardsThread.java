@@ -104,7 +104,6 @@ public class BulkReadCardsThread extends Thread {
 
         notificationManager.notify(BASE_NOTIFICATION_ID + id, notificationBuilder.build());
 
-        // TODO: fix in OrmLiteBaseAppCompatActivity too (use class ver)
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
 
         try {
@@ -161,22 +160,13 @@ public class BulkReadCardsThread extends Thread {
                     if (vibrator != null)
                         vibrator.vibrate(300);
 
-                    // TODO: clone the template instead of modifying
-                    String origName = cardTemplate.name;
+                    Card card = Card.copyOf(cardTemplate);
+                    card.name += " (" + ++numRead + ")";
+                    card.setCardData(cardData, currentBestLocation);
 
-                    cardTemplate.setCardData(cardData);
-                    if (currentBestLocation != null) {
-                        cardTemplate.cardLocationLat = currentBestLocation.getLatitude();
-                        cardTemplate.cardLocationLng = currentBestLocation.getLongitude();
-                    } else
-                        cardTemplate.cardLocationLat = cardTemplate.cardLocationLng = null;
-                    cardTemplate.name = origName + " (" + ++numRead + ")";
-
-                    databaseHelper.getCardDao().create(cardTemplate);
+                    databaseHelper.getCardDao().create(card);
                     LocalBroadcastManager.getInstance(context).sendBroadcast(
                             new Intent(QueryUtils.ACTION_WALLET_UPDATE));
-
-                    cardTemplate.name = origName;
 
                     NotificationManager notificationManager =
                             (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

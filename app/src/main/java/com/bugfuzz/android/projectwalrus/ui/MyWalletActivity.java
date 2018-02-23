@@ -63,31 +63,6 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             }
         });
 
-        // TODO: remove in release
-        if (getHelper().getCardDao().countOf() == 0) {
-            String[] names = {
-                    "Apple",
-                    "Orange",
-                    "\uD83D\uDC23con",
-                    "\uD83D\uDC1Dsides",
-                    "Banana",
-                    "Walrus"
-            };
-            boolean hid = true;
-            for (String name : names) {
-                Card card = new Card();
-                card.name = name;
-                if (hid)
-                    card.setCardData(new HIDCardData(BigInteger.valueOf(123456789)));
-                else
-                    card.setCardData(new ISO14443ACardData(123456789, (short) 0x0004, (byte) 0x09, null, null));
-
-                hid = !hid;
-
-                getHelper().getCardDao().create(card);
-            }
-        }
-
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setAdapter(new CardAdapter());
         recyclerView.setHasFixedSize(true);
@@ -221,7 +196,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CardActivity.startActivity(v.getContext(), CardActivity.Mode.READ,
+                        CardActivity.startActivity(v.getContext(), CardActivity.Mode.VIEW,
                                 getHelper().getCardDao().queryForId(id));
                     }
                 });

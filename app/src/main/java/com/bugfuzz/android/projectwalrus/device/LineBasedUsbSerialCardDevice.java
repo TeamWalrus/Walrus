@@ -21,7 +21,6 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
 
     @Override
     protected Pair<String, Integer> sliceIncoming(byte[] in) {
-        // TODO: improve
         String string;
         try {
             string = new String(in, charsetName);

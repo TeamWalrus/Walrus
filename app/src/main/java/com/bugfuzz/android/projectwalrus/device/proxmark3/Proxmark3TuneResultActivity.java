@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
@@ -45,18 +46,7 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
 
         if (tuneResult.lf) {
-            String lf_ok = "OK";
-            int lf_ok_color = Color.rgb(0, 0x80, 0);
-            if (tuneResult.peak_v < 2.948) {
-                lf_ok = "Unusable";
-                lf_ok_color = Color.rgb(0xff, 0, 0);
-            } else if (tuneResult.peak_v < 14.730) {
-                lf_ok = "Marginal";
-                lf_ok_color = Color.rgb(0x80, 0x80, 0);
-            }
-            ((TextView) findViewById(R.id.lfOk)).setText(lf_ok);
-            ((TextView) findViewById(R.id.lfOk)).setTextColor(lf_ok_color);
-
+            setResultInfo(tuneResult.peak_v, 2.948f, 14.730f, R.id.lfOk);
             ((TextView) findViewById(R.id.lf125)).setText("" + tuneResult.v_125 + "V");
             ((TextView) findViewById(R.id.lf134)).setText("" + tuneResult.v_134 + "V");
             ((TextView) findViewById(R.id.lfOptimal)).setText("" + tuneResult.peak_v + "V at " +
@@ -86,21 +76,29 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
             findViewById(R.id.lf).setVisibility(View.GONE);
 
         if (tuneResult.hf) {
-            /* TODO: don't duplicate code */
-            String hf_ok = "OK";
-            int hf_ok_color = Color.rgb(0, 0x80, 0);
-            if (tuneResult.v_HF < 3.167) {
-                hf_ok = "Unusable";
-                hf_ok_color = Color.rgb(0xff, 0, 0);
-            } else if (tuneResult.v_HF < 7.917) {
-                hf_ok = "Marginal";
-                hf_ok_color = Color.rgb(0x80, 0x80, 0);
-            }
-            ((TextView) findViewById(R.id.hfOk)).setText(hf_ok);
-            ((TextView) findViewById(R.id.hfOk)).setTextColor(hf_ok_color);
-
+            setResultInfo(tuneResult.v_HF, 3.167f, 7.917f, R.id.hfOk);
             ((TextView) findViewById(R.id.hfV)).setText("" + tuneResult.v_HF + "V");
         } else
             findViewById(R.id.hf).setVisibility(View.GONE);
+    }
+
+    private void setResultInfo(float value, float marginal, float ok, int id) {
+        String text;
+        int color;
+
+        if (value >= ok){
+            text = "OK";
+            color = Color.rgb(0, 0x80, 0);
+        } else if (value >= marginal) {
+            text = "Marginal";
+            color = Color.rgb(0x80, 0x80, 0);
+        } else {
+            text = "Unusable";
+            color = Color.rgb(0xff, 0, 0);
+        }
+
+        TextView textView = findViewById(id);
+        textView.setText(text);
+        textView.setTextColor(color);
     }
 }

@@ -13,6 +13,7 @@ import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,6 +30,11 @@ public enum CardDeviceManager {
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
+
+    private static final Set<Class<? extends UsbCardDevice>> usbCardDeviceClasses =
+            new HashSet<Class<? extends UsbCardDevice>>(Arrays.asList(
+                    Proxmark3Device.class,
+                    ChameleonMiniDevice.class));
 
     private final Map<Integer, CardDevice> cardDevices = new ConcurrentHashMap<>();
 
@@ -50,22 +56,21 @@ public enum CardDeviceManager {
                     ((UsbCardDevice) cardDevice).getUsbDevice().equals(usbDevice))
                 return;
 
-        Set<Class<? extends UsbCardDevice>> cs = new HashSet<>();
-        cs.add(Proxmark3Device.class);
-        cs.add(ChameleonMiniDevice.class);
-
-        for (Class<? extends UsbCardDevice> klass : /* TODO new Reflections(context.getPackageName())
-                .getSubTypesOf(UsbCardDevice.class) */cs) {
+        for (Class<? extends UsbCardDevice> klass : usbCardDeviceClasses) {
             UsbCardDevice.UsbIDs usbIDs = klass.getAnnotation(
                     UsbCardDevice.UsbIDs.class);
             for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value())
                 if (ids.vendorId() == usbDevice.getVendorId() &&
                         ids.productId() == usbDevice.getProductId()) {
-                    // TODO: if have permission, don't ask again
-                    Intent permissionIntent = new Intent(ACTION_USB_PERMISSION);
-                    permissionIntent.setClass(context, UsbPermissionReceiver.class);
-                    usbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(
-                            context, 0, permissionIntent, 0));
+                    if (usbManager.hasPermission(usbDevice))
+                        new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
+                    else {
+                        Intent permissionIntent = new Intent(ACTION_USB_PERMISSION);
+                        permissionIntent.setClass(context, UsbPermissionReceiver.class);
+                        usbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(
+                                context, 0, permissionIntent, 0));
+                    }
+
                     break;
                 }
         }
@@ -124,54 +129,58 @@ public enum CardDeviceManager {
 
     public static class UsbPermissionReceiver extends BroadcastReceiver {
         public void onReceive(final Context context, final Intent intent) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false))
+                new Thread(new CreateUsbDeviceRunnable(context,
+                        (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))).start();
+        }
+    }
 
-                    UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+    private static class CreateUsbDeviceRunnable implements Runnable {
 
-                    Set<Class<? extends UsbCardDevice>> cs = new HashSet<>();
-                    cs.add(Proxmark3Device.class);
-                    cs.add(ChameleonMiniDevice.class);
+        private final Context context;
+        private final UsbDevice usbDevice;
 
-                    for (Class<? extends UsbCardDevice> klass : /* TODO new Reflections(context.getPackageName())
-                .getSubTypesOf(UsbCardDevice.class) */cs) {
-                        UsbCardDevice.UsbIDs usbIDs = klass.getAnnotation(
-                                UsbCardDevice.UsbIDs.class);
-                        for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value()) {
-                            if (ids.vendorId() == usbDevice.getVendorId() &&
-                                    ids.productId() == usbDevice.getProductId()) {
-                                Constructor<? extends UsbCardDevice> constructor;
-                                try {
-                                    constructor = klass.getConstructor(Context.class, UsbDevice.class);
-                                } catch (NoSuchMethodException e) {
-                                    continue;
-                                }
+        CreateUsbDeviceRunnable(Context context, UsbDevice usbDevice) {
+            this.context = context;
+            this.usbDevice = usbDevice;
+        }
 
-                                UsbCardDevice cardDevice;
-                                try {
-                                    cardDevice = constructor.newInstance(context, usbDevice);
-                                } catch (InstantiationException e) {
-                                    continue;
-                                } catch (IllegalAccessException e) {
-                                    continue;
-                                } catch (InvocationTargetException e) {
-                                    continue;
-                                }
-
-                                CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getID(), cardDevice);
-
-                                Intent broadcastIntent = new Intent(ACTION_DEVICE_CHANGE);
-                                broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
-                                broadcastIntent.putExtra(EXTRA_DEVICE_ID, cardDevice.getID());
-                                LocalBroadcastManager.getInstance(context)
-                                        .sendBroadcast(broadcastIntent);
-                            }
+        @Override
+        public void run() {
+            for (Class<? extends UsbCardDevice> klass : usbCardDeviceClasses) {
+                UsbCardDevice.UsbIDs usbIDs = klass.getAnnotation(
+                        UsbCardDevice.UsbIDs.class);
+                for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value()) {
+                    if (ids.vendorId() == usbDevice.getVendorId() &&
+                            ids.productId() == usbDevice.getProductId()) {
+                        Constructor<? extends UsbCardDevice> constructor;
+                        try {
+                            constructor = klass.getConstructor(Context.class, UsbDevice.class);
+                        } catch (NoSuchMethodException e) {
+                            continue;
                         }
+
+                        UsbCardDevice cardDevice;
+                        try {
+                            cardDevice = constructor.newInstance(context, usbDevice);
+                        } catch (InstantiationException e) {
+                            continue;
+                        } catch (IllegalAccessException e) {
+                            continue;
+                        } catch (InvocationTargetException e) {
+                            continue;
+                        }
+
+                        CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getID(), cardDevice);
+
+                        Intent broadcastIntent = new Intent(ACTION_DEVICE_CHANGE);
+                        broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
+                        broadcastIntent.putExtra(EXTRA_DEVICE_ID, cardDevice.getID());
+                        LocalBroadcastManager.getInstance(context)
+                                .sendBroadcast(broadcastIntent);
                     }
                 }
-            }).start();
+            }
         }
     }
 }
