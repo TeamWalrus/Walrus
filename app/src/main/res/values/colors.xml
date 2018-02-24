@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <color name="primaryColor">#679295</color>
-    <color name="primaryLightColor" tools:ignore="UnusedResources">#80cbc4</color>
-    <color name="primaryDarkColor">#78909c</color>
-    <color name="secondaryColor">#f4511e</color>
-    <color name="secondaryLightColor">#ff6e40</color>
-    <color name="secondaryDarkColor">#d84315</color>
+    <color name="primaryDarkColor">#435f61</color>
+
+    <color name="secondaryColor">#2c8d94</color>
+
     <color name="primaryCardTextColor">#424242</color>
     <color name="primaryCardBackground">#e0e0e0</color>
     <color name="secondaryCardTextColor">#e0e0e0</color>

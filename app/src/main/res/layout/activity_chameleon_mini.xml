@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/version"
-            android:textColor="@color/secondaryDarkColor"/>
+            android:textColor="@color/secondaryColor"/>
 
         <TextView
             android:id="@+id/version"

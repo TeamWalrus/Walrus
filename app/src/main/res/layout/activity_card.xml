@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/dateAcquired"
-                android:textColor="@color/secondaryDarkColor"/>
+                android:textColor="@color/secondaryColor"/>
 
             <TextView
                 android:id="@+id/dateAcquired"
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/location"
-                android:textColor="@color/secondaryDarkColor"/>
+                android:textColor="@color/secondaryColor"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/notes"
-                android:textColor="@color/secondaryDarkColor"/>
+                android:textColor="@color/secondaryColor"/>
 
             <TextView
                 android:id="@+id/notes"
