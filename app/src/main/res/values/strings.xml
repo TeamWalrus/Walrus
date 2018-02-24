@@ -36,5 +36,6 @@
     <string name="unable_to_determine">(Unable to determine)</string>
     <string name="stop">STOP</string>
     <string name="back">BACK</string>
+    <string name="delete">DELETE</string>
 
 </resources>

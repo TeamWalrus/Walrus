@@ -82,6 +82,9 @@ public class WalrusCardView extends FrameLayout {
             logoView.setImageDrawable(ContextCompat.getDrawable(getContext(),
                     card.cardData.getClass().getAnnotation(CardData.Metadata.class).icon()));
             humanReadableTextView.setText(card.cardData.getHumanReadableText());
+        } else {
+            logoView.setImageDrawable(null);
+            humanReadableTextView.setText("");
         }
 
         invalidate();

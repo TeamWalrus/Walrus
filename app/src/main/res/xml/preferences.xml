@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:key="pref_key_global_settings"
-        android:title="Global Settings">
-    </PreferenceCategory>
+    <com.bugfuzz.android.projectwalrus.ui.DeleteAllCardsPreference android:title="Delete All Cards"/>
 
     <Preference android:title="Open Source">
         <intent android:action=".ui.WebViewActivity">
