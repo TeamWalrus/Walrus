@@ -1,9 +1,13 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,12 +23,16 @@ import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class DevicesActivity extends AppCompatActivity {
 
     private ListView devicesView;
+    private BroadcastReceiver deviceChangeBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ((BaseAdapter) devicesView.getAdapter()).notifyDataSetChanged();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,27 +47,24 @@ public class DevicesActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
 
         devicesView = findViewById(R.id.devices);
-        devicesView.setAdapter(new DeviceAdapter(CardDeviceManager.INSTANCE.getCardDevices()));
+        devicesView.setAdapter(new DeviceAdapter());
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(deviceChangeBroadcastReceiver,
+                new IntentFilter(CardDeviceManager.ACTION_DEVICE_CHANGE));
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onDestroy() {
+        super.onDestroy();
 
-        ((BaseAdapter)devicesView.getAdapter()).notifyDataSetChanged();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(deviceChangeBroadcastReceiver);
     }
 
     private class DeviceAdapter extends BaseAdapter {
 
-        private final List<Map.Entry<Integer, CardDevice>> devices;
-
-        DeviceAdapter(Map<Integer, CardDevice> devices) {
-            this.devices = new ArrayList<>(devices.entrySet());
-        }
-
         @Override
         public int getCount() {
-            return devices.size();
+            return CardDeviceManager.INSTANCE.getCardDevices().size();
         }
 
         @Override
@@ -80,7 +85,9 @@ public class DevicesActivity extends AppCompatActivity {
                     activity.getLayoutInflater().inflate(R.layout.view_device, parent, false) :
                     convertView;
 
-            final CardDevice device = devices.get(position).getValue();
+            final CardDevice device =
+                    new ArrayList<>(CardDeviceManager.INSTANCE.getCardDevices().values())
+                            .get(position);
             CardDevice.Metadata metadata = device.getClass().getAnnotation(CardDevice.Metadata.class);
 
             ((ImageView) view.findViewById(R.id.image)).setImageDrawable(
