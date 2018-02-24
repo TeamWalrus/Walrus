@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -48,6 +49,15 @@ public class DevicesActivity extends AppCompatActivity {
 
         devicesView = findViewById(R.id.devices);
         devicesView.setAdapter(new DeviceAdapter());
+        devicesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                CardDevice device = (CardDevice) adapterView.getItemAtPosition(i);
+                Intent intent = device.getDeviceActivityIntent(DevicesActivity.this);
+                if (intent != null)
+                    DevicesActivity.this.startActivity(intent);
+            }
+        });
 
         LocalBroadcastManager.getInstance(this).registerReceiver(deviceChangeBroadcastReceiver,
                 new IntentFilter(CardDeviceManager.ACTION_DEVICE_CHANGE));
@@ -68,26 +78,23 @@ public class DevicesActivity extends AppCompatActivity {
         }
 
         @Override
-        public Object getItem(int position) {
-            return null;
+        public CardDevice getItem(int position) {
+            return new ArrayList<>(CardDeviceManager.INSTANCE.getCardDevices().values())
+                    .get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return getItem(position).getID();
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final Activity activity = DevicesActivity.this;
-
             View view = convertView == null ?
-                    activity.getLayoutInflater().inflate(R.layout.view_device, parent, false) :
+                    getLayoutInflater().inflate(R.layout.view_device, parent, false) :
                     convertView;
 
-            final CardDevice device =
-                    new ArrayList<>(CardDeviceManager.INSTANCE.getCardDevices().values())
-                            .get(position);
+            CardDevice device = getItem(position);
             CardDevice.Metadata metadata = device.getClass().getAnnotation(CardDevice.Metadata.class);
 
             ((ImageView) view.findViewById(R.id.image)).setImageDrawable(
@@ -95,15 +102,6 @@ public class DevicesActivity extends AppCompatActivity {
             ((TextView) view.findViewById(R.id.name)).setText(metadata.name());
             String status = device.getStatusText();
             ((TextView) view.findViewById(R.id.status)).setText(status != null ? status : "");
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = device.getDeviceActivityIntent(activity);
-                    if (intent != null)
-                        activity.startActivity(intent);
-                }
-            });
 
             return view;
         }
