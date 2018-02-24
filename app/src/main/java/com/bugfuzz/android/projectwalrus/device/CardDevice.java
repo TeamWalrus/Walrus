@@ -45,6 +45,8 @@ public abstract class CardDevice {
         void onCardData(CardData cardData);
 
         boolean wantsMore();
+
+        // TODO: error handling so toasting can happen in proper thread
     }
 
     @Retention(RetentionPolicy.RUNTIME)

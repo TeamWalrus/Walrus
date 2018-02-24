@@ -14,6 +14,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
@@ -27,22 +28,11 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".device.CardDeviceManager$UsbPermissionReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name=".device.CardDeviceManager.ACTION_USB_PERMISSION"/>
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".device.BulkReadCardsThread$StopBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name=".ui.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP"/>
-            </intent-filter>
-        </receiver>
 
-        <service android:name=".ProjectWalrusApplication$CancelNotificationsService"/>
+        <service
+            android:name=".device.BulkReadCardsService"
+            android:exported="false">
+        </service>
 
         <activity android:name=".ui.MyWalletActivity">
             <intent-filter>
@@ -50,27 +40,39 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity android:name=".ui.CardActivity"/>
+
+        <activity
+            android:name=".ui.BulkReadCardsActivity"
+            android:label="Ongoing Bulk Card Reads"
+            android:parentActivityName=".ui.MyWalletActivity"/>
+
         <activity
             android:name=".ui.DevicesActivity"
             android:label="Devices"
             android:parentActivityName=".ui.MyWalletActivity"/>
+
         <activity
             android:name=".device.proxmark3.Proxmark3Activity"
             android:label="Proxmark 3"
             android:parentActivityName=".ui.DevicesActivity"/>
+
         <activity
             android:name=".device.proxmark3.Proxmark3TuneResultActivity"
             android:label="Proxmark 3 - Tune Results"
             android:parentActivityName=".device.proxmark3.Proxmark3Activity"/>
+
         <activity
             android:name=".device.chameleonmini.ChameleonMiniActivity"
             android:label="Chameleon Mini Rev.G"
             android:parentActivityName=".ui.DevicesActivity"/>
+
         <activity
             android:name=".ui.SettingsActivity"
             android:label="Settings"
             android:parentActivityName=".ui.MyWalletActivity"/>
+
         <activity
             android:name=".ui.WebViewActivity"
             android:exported="false">
@@ -79,6 +81,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

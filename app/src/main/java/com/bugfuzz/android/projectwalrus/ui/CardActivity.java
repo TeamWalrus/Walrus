@@ -30,7 +30,7 @@ import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
-import com.bugfuzz.android.projectwalrus.device.BulkReadCardsThread;
+import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import com.bugfuzz.android.projectwalrus.util.GeoUtils;
@@ -345,12 +345,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         }
     }
 
-    private void onChooseCardType(final CardDevice cardDevice,
-                                  final Class<? extends CardData> cardDataClass) {
+    private void onChooseCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
         if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
             new ReadCardDataTask(this, cardDevice, cardDataClass).execute();
         else {
-            new BulkReadCardsThread(this, cardDevice, cardDataClass, card).start();
+            BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
             finish();
         }
     }
@@ -491,9 +490,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
             }
 
             CardDataIOView cardDataIOView = new CardDataIOView(activity);
-            cardDataIOView.setDevice(cardDevice.getClass());
+            cardDataIOView.setCardDeviceClass(cardDevice.getClass());
             cardDataIOView.setDirection(true);
-            cardDataIOView.setType(cardDataClass);
+            cardDataIOView.setCardDataClass(cardDataClass);
             cardDataIOView.setPadding(0, 60, 0, 10);
 
             dialog = new AlertDialog.Builder(activity)
@@ -603,9 +602,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
             }
 
             CardDataIOView cardDataIOView = new CardDataIOView(context);
-            cardDataIOView.setDevice(cardDevice.getClass());
+            cardDataIOView.setCardDeviceClass(cardDevice.getClass());
             cardDataIOView.setDirection(false);
-            cardDataIOView.setType(cardData.getClass());
+            cardDataIOView.setCardDataClass(cardData.getClass());
             cardDataIOView.setPadding(0, 60, 0, 60);
 
             dialog = new AlertDialog.Builder(context)

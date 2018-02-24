@@ -34,8 +34,12 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     private RecyclerView recyclerView;
     private SearchView sv;
 
-    private final WalletUpdateBroadcastReceiver walletUpdateBroadcastReceiver =
-            new WalletUpdateBroadcastReceiver();
+    private final BroadcastReceiver walletUpdateBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
+    };
 
     public MyWalletActivity() {
         super(DatabaseHelper.class);
@@ -99,14 +103,6 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        // TODO: anims
-        recyclerView.getAdapter().notifyDataSetChanged();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_mywallet, menu);
         return true;
@@ -115,19 +111,21 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.devices: {
-                startActivity(new Intent(this, DevicesActivity.class));
-                return true;
-            }
-
-            case R.id.settings: {
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            }
-
             case R.id.search:
                 sv.setVisibility(View.VISIBLE);
                 sv.requestFocus();
+                return true;
+
+            case R.id.bulk_read_cards:
+                startActivity(new Intent(this, BulkReadCardsActivity.class));
+                return true;
+
+            case R.id.devices:
+                startActivity(new Intent(this, DevicesActivity.class));
+                return true;
+
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             default:
@@ -201,14 +199,6 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                     }
                 });
             }
-        }
-    }
-
-    private class WalletUpdateBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            recyclerView.getAdapter().notifyDataSetChanged();
         }
     }
 }

@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -36,7 +37,7 @@ public class CardDataIOView extends FrameLayout {
         addView(view);
     }
 
-    public void setDevice(Class<? extends CardDevice> cardDeviceClass) {
+    public void setCardDeviceClass(Class<? extends CardDevice> cardDeviceClass) {
         ((ImageView) findViewById(R.id.device)).setImageDrawable(
                 ContextCompat.getDrawable(getContext(),
                         cardDeviceClass.getAnnotation(CardDevice.Metadata.class).icon()));
@@ -49,9 +50,13 @@ public class CardDataIOView extends FrameLayout {
         directionImage.setRotation(90 + (reading ? 180 : 0));
     }
 
-    public void setType(Class<? extends CardData> cardDataClass) {
+    public void setCardDataClass(Class<? extends CardData> cardDataClass) {
         ((ImageView) findViewById(R.id.type)).setImageDrawable(
                 ContextCompat.getDrawable(getContext(),
                         cardDataClass.getAnnotation(CardData.Metadata.class).icon()));
+    }
+
+    public void setStatus(String status) {
+        ((TextView) findViewById(R.id.status)).setText(status);
     }
 }

@@ -60,7 +60,7 @@ public class DevicesActivity extends AppCompatActivity {
         });
 
         LocalBroadcastManager.getInstance(this).registerReceiver(deviceChangeBroadcastReceiver,
-                new IntentFilter(CardDeviceManager.ACTION_DEVICE_CHANGE));
+                new IntentFilter(CardDeviceManager.ACTION_DEVICE_UPDATE));
     }
 
     @Override

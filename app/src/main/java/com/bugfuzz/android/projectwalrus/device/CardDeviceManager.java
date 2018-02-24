@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum CardDeviceManager {
     INSTANCE;
 
-    public static final String ACTION_DEVICE_CHANGE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_DEVICE_CHANGE";
-    private static final String ACTION_USB_PERMISSION = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_USB_PERMISSION";
+    public static final String ACTION_DEVICE_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_DEVICE_UPDATE";
+    private static final String ACTION_USB_PERMISSION_RESULT = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_USB_PERMISSION_RESULT";
 
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
@@ -36,7 +37,8 @@ public enum CardDeviceManager {
                     Proxmark3Device.class,
                     ChameleonMiniDevice.class));
 
-    private final Map<Integer, CardDevice> cardDevices = new ConcurrentHashMap<>();
+    private final Map<Integer, CardDevice> cardDevices =
+            Collections.synchronizedMap(new LinkedHashMap<Integer, CardDevice>());
 
     public void scanForDevices(Context context) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -65,7 +67,7 @@ public enum CardDeviceManager {
                     if (usbManager.hasPermission(usbDevice))
                         new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
                     else {
-                        Intent permissionIntent = new Intent(ACTION_USB_PERMISSION);
+                        Intent permissionIntent = new Intent(ACTION_USB_PERMISSION_RESULT);
                         permissionIntent.setClass(context, UsbPermissionReceiver.class);
                         usbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(
                                 context, 0, permissionIntent, 0));
@@ -93,7 +95,7 @@ public enum CardDeviceManager {
 
             usbCardDevice.close();
 
-            Intent broadcastIntent = new Intent(ACTION_DEVICE_CHANGE);
+            Intent broadcastIntent = new Intent(ACTION_DEVICE_UPDATE);
             broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
             broadcastIntent.putExtra(EXTRA_DEVICE_NAME,
                     cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
@@ -173,7 +175,7 @@ public enum CardDeviceManager {
 
                         CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getID(), cardDevice);
 
-                        Intent broadcastIntent = new Intent(ACTION_DEVICE_CHANGE);
+                        Intent broadcastIntent = new Intent(ACTION_DEVICE_UPDATE);
                         broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
                         broadcastIntent.putExtra(EXTRA_DEVICE_ID, cardDevice.getID());
                         LocalBroadcastManager.getInstance(context)

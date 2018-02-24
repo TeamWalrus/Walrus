@@ -1,22 +1,13 @@
 package com.bugfuzz.android.projectwalrus.device;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.os.Build;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.SparseArray;
 import android.widget.Toast;
 
-import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
@@ -32,15 +23,8 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import java.io.IOException;
 
 import static android.content.Context.VIBRATOR_SERVICE;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
 public class BulkReadCardsThread extends Thread {
-
-    private static final String NOTIFICATION_CHANNEL_ID = "bulk_read_cards";
-    private static final int BASE_NOTIFICATION_ID = 0;
-
-    private static final SparseArray<BulkReadCardsThread> runningInstances = new SparseArray<>();
-    private static int nextID;
 
     private final Context context;
 
@@ -48,11 +32,8 @@ public class BulkReadCardsThread extends Thread {
     private final Class<? extends CardData> cardDataClass;
     private final Card cardTemplate;
 
-    private final int id;
-
-    private boolean stop;
-
-    private NotificationCompat.Builder notificationBuilder;
+    private volatile boolean stop;
+    private final StopSink stopSink;
 
     private DatabaseHelper databaseHelper;
 
@@ -60,49 +41,20 @@ public class BulkReadCardsThread extends Thread {
     private LocationCallback locationCallback;
     private Location currentBestLocation;
 
+    private volatile int numberOfCardsRead;
+
     public BulkReadCardsThread(Context context, CardDevice cardDevice,
-                               Class<? extends CardData> cardDataClass, Card cardTemplate) {
+                               Class<? extends CardData> cardDataClass, Card cardTemplate,
+                               StopSink stopSink) {
         this.context = context;
         this.cardDevice = cardDevice;
         this.cardDataClass = cardDataClass;
         this.cardTemplate = cardTemplate;
-
-        id = nextID++;
+        this.stopSink = stopSink;
     }
 
     @Override
     public void run() {
-        runningInstances.put(id, this);
-
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    "Bulk Read Cards", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Background bulk reading operations");
-            notificationManager.createNotificationChannel(channel);
-        }
-
-        Intent stopIntent = new Intent(context, StopBroadcastReceiver.class);
-        stopIntent.setAction(StopBroadcastReceiver.ACTION_STOP);
-        stopIntent.putExtra(StopBroadcastReceiver.EXTRA_ID, id);
-
-        notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
-        notificationBuilder
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Bulk reading " +
-                        cardDevice.getClass().getAnnotation(CardDevice.Metadata.class).name())
-                .setContentText("No cards read")
-                .setOngoing(true)
-                .setProgress(0, 0, true)
-                .addAction(R.drawable.ic_close_white_24px, "Stop",
-                        PendingIntent.getBroadcast(context, id, stopIntent, 0));
-        if (android.os.Build.VERSION.SDK_INT >= LOLLIPOP)
-            notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
-
-        notificationManager.notify(BASE_NOTIFICATION_ID + id, notificationBuilder.build());
-
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
 
         try {
@@ -137,16 +89,17 @@ public class BulkReadCardsThread extends Thread {
 
             OpenHelperManager.releaseHelper();
 
-            notificationManager.cancel(BASE_NOTIFICATION_ID + id);
-
-            runningInstances.remove(id);
+            stopSink.onStop(this);
         }
+    }
+
+    public void stopReading() {
+        stop = true;
     }
 
     private void readCards() {
         try {
             cardDevice.readCardData(cardDataClass, new CardDevice.CardDataSink() {
-                private int numRead = 0;
                 private CardData lastCardData;
 
                 @Override
@@ -160,20 +113,14 @@ public class BulkReadCardsThread extends Thread {
                         vibrator.vibrate(300);
 
                     Card card = Card.copyOf(cardTemplate);
-                    card.name += " (" + ++numRead + ")";
+                    card.name += " (" + ++numberOfCardsRead + ")";
                     card.setCardData(cardData, currentBestLocation);
 
                     databaseHelper.getCardDao().create(card);
                     LocalBroadcastManager.getInstance(context).sendBroadcast(
                             new Intent(QueryUtils.ACTION_WALLET_UPDATE));
-
-                    NotificationManager notificationManager =
-                            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-                    notificationBuilder.setContentText(numRead + " card" +
-                            (numRead != 1 ? "s" : "") + " read");
-
-                    notificationManager.notify(BASE_NOTIFICATION_ID + id, notificationBuilder.build());
+                    LocalBroadcastManager.getInstance(context)
+                            .sendBroadcast(new Intent(BulkReadCardsService.ACTION_BULK_READ_UPDATE));
                 }
 
                 @Override
@@ -187,17 +134,19 @@ public class BulkReadCardsThread extends Thread {
         }
     }
 
-    public static class StopBroadcastReceiver extends BroadcastReceiver {
+    public CardDevice getCardDevice() {
+        return cardDevice;
+    }
 
-        private static final String ACTION_STOP = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsThread$StopBroadcastReceiver.ACTION_STOP";
+    public Class<? extends CardData> getCardDataClass() {
+        return cardDataClass;
+    }
 
-        private static final String EXTRA_ID = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsThread$StopBroadcastReceiver.EXTRA_ID";
+    public int getNumberOfCardsRead() {
+        return numberOfCardsRead;
+    }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            BulkReadCardsThread thread = runningInstances.get(intent.getIntExtra(EXTRA_ID, -1));
-            if (thread != null)
-                thread.stop = true;
-        }
+    public interface StopSink {
+        void onStop(BulkReadCardsThread thread);
     }
 }
