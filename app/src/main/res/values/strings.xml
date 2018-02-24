@@ -11,6 +11,7 @@
     <string name="dateAcquired">Date Acquired</string>
     <string name="location">Location</string>
     <string name="actionBar_deleteCard">Delete</string>
+    <string name="actionBar_duplicateCard">Duplicate</string>
     <string name="devices">Devices</string>
     <string name="settings">Settings</string>
     <string name="chameleonMiniRevG">Chameleon Mini Rev.G</string>

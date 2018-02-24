@@ -12,8 +12,14 @@
         tools:ignore="MenuTitle"/>
 
     <item
-        android:id="@+id/deleteCard"
+        android:id="@+id/duplicateCard"
         android:orderInCategory="2"
+        android:title="@string/actionBar_duplicateCard"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/deleteCard"
+        android:orderInCategory="3"
         android:title="@string/actionBar_deleteCard"
         app:showAsAction="never"/>
 

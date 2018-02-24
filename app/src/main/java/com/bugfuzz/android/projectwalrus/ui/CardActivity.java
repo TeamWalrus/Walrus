@@ -89,15 +89,17 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         mode = (Mode) intent.getSerializableExtra(EXTRA_MODE);
         card = Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD));
 
+        if (card == null)
+            card = new Card();
+        else if (card.id == 0)
+            dirty = true;
+
         if (mode == Mode.VIEW)
             setTitle("View Card");
         else if (mode == Mode.EDIT)
-            setTitle(card == null ? "New Card" : "Edit Card");
+            setTitle(dirty ? "New Card" : "Edit Card");
         else
             setTitle("Set Template");
-
-        if (card == null)
-            card = new Card();
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
@@ -259,6 +261,12 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                 CardActivity.startActivity(this, Mode.EDIT, card);
                 return true;
 
+            case R.id.duplicateCard:
+                Card duplicatedCard = Card.copyOf(card);
+                duplicatedCard.name = "Copy of " + duplicatedCard.name;
+                CardActivity.startActivity(this, Mode.EDIT, duplicatedCard);
+                return true;
+
             case R.id.deleteCard:
                 new AlertDialog.Builder(this)
                         .setTitle("Delete Confirmation")
@@ -346,7 +354,6 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
             finish();
         }
     }
-
 
     public void onWriteCardClick(View view) {
         Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
