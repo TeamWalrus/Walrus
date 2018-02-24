@@ -29,6 +29,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".device.CardDeviceManager$UsbPermissionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name=".device.CardDeviceManager.ACTION_USB_PERMISSION_RESULT"/>
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".device.BulkReadCardsService"
             android:exported="false">
