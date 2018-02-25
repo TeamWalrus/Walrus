@@ -50,6 +50,7 @@ import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -66,6 +67,10 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     private TextView notes;
     private EditText notesEditor;
 
+    public CardActivity() {
+        super(DatabaseHelper.class);
+    }
+
     public static void startActivity(Context context, Mode mode, Card card) {
         Intent intent = new Intent(context, CardActivity.class);
 
@@ -73,10 +78,6 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         intent.putExtra(EXTRA_CARD, Parcels.wrap(card));
 
         context.startActivity(intent);
-    }
-
-    public CardActivity() {
-        super(DatabaseHelper.class);
     }
 
     @Override
@@ -296,7 +297,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                 return true;
 
             case R.id.start:
-                pickCardDataIOSetup();
+                startReadCardSetup();
                 return true;
 
             case android.R.id.home:
@@ -309,40 +310,55 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     }
 
     public void onReadCardClick(View view) {
-        pickCardDataIOSetup();
+        startReadCardSetup();
     }
 
-    private void pickCardDataIOSetup() {
-        Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
+    private void startReadCardSetup() {
+        final ArrayList<CardDevice> cardDevices =
+                new ArrayList<>(CardDeviceManager.INSTANCE.getCardDevices().values());
+
         if (cardDevices.isEmpty()) {
             Toast.makeText(this, "No card devices connected", Toast.LENGTH_LONG).show();
             return;
         }
 
-        // TODO: if len of cardDevices >1 then we want to choose what device
-        final CardDevice cardDevice = cardDevices.entrySet().iterator().next().getValue();
+        if (cardDevices.size() > 1) {
+            String[] names = new String[cardDevices.size()];
+            for (int i = 0; i < cardDevices.size(); ++i)
+                names[i] = cardDevices.get(i).getClass().getAnnotation(CardDevice.Metadata.class)
+                        .name();
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Choose device")
+                    .setItems(names, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            onChooseCardDevice(cardDevices.get(which));
+                        }
+                    })
+                    .create().show();
+        } else
+            onChooseCardDevice(cardDevices.get(0));
+    }
+
+    private void onChooseCardDevice(final CardDevice cardDevice) {
         final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsRead();
 
         if (readableTypes.length > 1) {
-            // Multiple card types readable by device, ask which type to read
             String[] names = new String[readableTypes.length];
             for (int i = 0; i < names.length; ++i)
                 names[i] = readableTypes[i].getSimpleName();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Pick a card type")
+            builder.setTitle("Choose card type")
                     .setItems(names, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             onChooseCardType(cardDevice, readableTypes[which]);
                         }
-                    });
-            builder.create().show();
-        } else {
-            // Only one card type readable by device, use it
+                    })
+                    .create().show();
+        } else
             onChooseCardType(cardDevice, readableTypes[0]);
-        }
     }
 
     private void onChooseCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
@@ -355,6 +371,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     }
 
     public void onWriteCardClick(View view) {
+        // TODO: re-use onChooseXXX...?
         Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
 
         if (cardDevices.isEmpty()) {
