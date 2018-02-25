@@ -22,11 +22,7 @@ public class DeleteAllCardsPreference extends DialogPreference {
     public DeleteAllCardsPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setTitle("Delete All Cards");
-        setDialogMessage(
-                "WARNING!\n" +
-                        "All cards will be deleted from your device. " +
-                        "This action cannot be undone. Are you sure you want to continue?");
+        setDialogLayoutResource(R.layout.dialog_delete_all_cards);
         setPositiveButtonText(R.string.delete);
         setNegativeButtonText(android.R.string.cancel);
     }

@@ -37,5 +37,7 @@
     <string name="stop">STOP</string>
     <string name="back">BACK</string>
     <string name="delete">DELETE</string>
+    <string name="dialog_delete_all_cards_warning">Warning!</string>
+    <string name="dialog_delete_all_cards_message">All cards will be deleted from your device. This action cannot be undone. Are you sure you want to continue?</string>
 
 </resources>
