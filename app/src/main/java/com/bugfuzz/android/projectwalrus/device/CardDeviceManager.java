@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public enum CardDeviceManager {
     INSTANCE;
@@ -40,8 +39,13 @@ public enum CardDeviceManager {
     private final Map<Integer, CardDevice> cardDevices =
             Collections.synchronizedMap(new LinkedHashMap<Integer, CardDevice>());
 
+    private final Set<UsbDevice> seenUsbDevices =
+            Collections.synchronizedSet(new HashSet<UsbDevice>());
+    private boolean askingForUsbPermission;
+
     public void scanForDevices(Context context) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+
         for (UsbDevice usbDevice : usbManager.getDeviceList().values())
             handleUsbDeviceAttached(context, usbDevice);
     }
@@ -50,13 +54,11 @@ public enum CardDeviceManager {
         return Collections.unmodifiableMap(cardDevices);
     }
 
-    private void handleUsbDeviceAttached(Context context, UsbDevice usbDevice) {
-        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+    private synchronized void handleUsbDeviceAttached(Context context, UsbDevice usbDevice) {
+        if (askingForUsbPermission || seenUsbDevices.contains(usbDevice))
+            return;
 
-        for (CardDevice cardDevice : cardDevices.values())
-            if (cardDevice instanceof UsbCardDevice &&
-                    ((UsbCardDevice) cardDevice).getUsbDevice().equals(usbDevice))
-                return;
+        seenUsbDevices.add(usbDevice);
 
         for (Class<? extends UsbCardDevice> klass : usbCardDeviceClasses) {
             UsbCardDevice.UsbIDs usbIDs = klass.getAnnotation(
@@ -64,6 +66,8 @@ public enum CardDeviceManager {
             for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value())
                 if (ids.vendorId() == usbDevice.getVendorId() &&
                         ids.productId() == usbDevice.getProductId()) {
+                    UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+
                     if (usbManager.hasPermission(usbDevice))
                         new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
                     else {
@@ -71,6 +75,8 @@ public enum CardDeviceManager {
                         permissionIntent.setClass(context, UsbPermissionReceiver.class);
                         usbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(
                                 context, 0, permissionIntent, 0));
+
+                        askingForUsbPermission = true;
                     }
 
                     break;
@@ -101,6 +107,8 @@ public enum CardDeviceManager {
                     cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
             LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent);
         }
+
+        seenUsbDevices.remove(usbDevice);
     }
 
     public static class UsbBroadcastReceiver extends BroadcastReceiver {
@@ -131,9 +139,14 @@ public enum CardDeviceManager {
 
     public static class UsbPermissionReceiver extends BroadcastReceiver {
         public void onReceive(final Context context, final Intent intent) {
+            CardDeviceManager.INSTANCE.askingForUsbPermission = false;
+
+            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
             if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false))
-                new Thread(new CreateUsbDeviceRunnable(context,
-                        (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE))).start();
+                new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
+            else
+                CardDeviceManager.INSTANCE.scanForDevices(context);
         }
     }
 
@@ -183,6 +196,8 @@ public enum CardDeviceManager {
                     }
                 }
             }
+
+            CardDeviceManager.INSTANCE.scanForDevices(context);
         }
     }
 }
