@@ -46,13 +46,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
 
@@ -329,18 +329,18 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                         .name();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Choose device")
+            builder.setTitle("Choose device to read from")
                     .setItems(names, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            onChooseCardDevice(cardDevices.get(which));
+                            onChooseReadCardDevice(cardDevices.get(which));
                         }
                     })
                     .create().show();
         } else
-            onChooseCardDevice(cardDevices.get(0));
+            onChooseReadCardDevice(cardDevices.get(0));
     }
 
-    private void onChooseCardDevice(final CardDevice cardDevice) {
+    private void onChooseReadCardDevice(final CardDevice cardDevice) {
         final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
                 .getAnnotation(CardDevice.Metadata.class).supportsRead();
 
@@ -350,18 +350,18 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
                 names[i] = readableTypes[i].getSimpleName();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Choose card type")
+            builder.setTitle("Choose card type to read")
                     .setItems(names, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            onChooseCardType(cardDevice, readableTypes[which]);
+                            onChooseReadCardType(cardDevice, readableTypes[which]);
                         }
                     })
                     .create().show();
         } else
-            onChooseCardType(cardDevice, readableTypes[0]);
+            onChooseReadCardType(cardDevice, readableTypes[0]);
     }
 
-    private void onChooseCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
+    private void onChooseReadCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
         if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
             new ReadCardDataTask(this, cardDevice, cardDataClass).execute();
         else {
@@ -371,25 +371,43 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     }
 
     public void onWriteCardClick(View view) {
-        // TODO: re-use onChooseXXX...?
-        Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
+        if (CardDeviceManager.INSTANCE.getCardDevices().isEmpty()) {
+            Toast.makeText(this, "No card devices connected", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        final List<CardDevice> cardDevices = new ArrayList<>();
+        for (CardDevice cardDevice : CardDeviceManager.INSTANCE.getCardDevices().values())
+            if (ArrayUtils.contains(
+                    cardDevice.getClass().getAnnotation(CardDevice.Metadata.class).supportsRead(),
+                    card.cardData.getClass()))
+                cardDevices.add(cardDevice);
 
         if (cardDevices.isEmpty()) {
-            Toast.makeText(this, "No card devices found", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No connected card device can write this kind of card",
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
-        // TODO: if len of cardDevices >1 then we want to choose what type of card to read
-        final CardDevice cardDevice = cardDevices.entrySet().iterator().next().getValue();
+        if (cardDevices.size() > 1) {
+            String[] names = new String[cardDevices.size()];
+            for (int i = 0; i < cardDevices.size(); ++i)
+                names[i] = cardDevices.get(i).getClass().getAnnotation(CardDevice.Metadata.class)
+                        .name();
 
-        final Class<? extends CardData> writableTypes[] = cardDevice.getClass()
-                .getAnnotation(CardDevice.Metadata.class).supportsWrite();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Choose device to write to")
+                    .setItems(names, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            onChooseWriteCardDevice(cardDevices.get(which));
+                        }
+                    })
+                    .create().show();
+        } else
+            onChooseWriteCardDevice(cardDevices.get(0));
+    }
 
-        if (!Arrays.asList(writableTypes).contains(card.cardData.getClass())) {
-            Toast.makeText(this, "This device doesn't support this type of card", Toast.LENGTH_LONG).show();
-            return;
-        }
-
+    private void onChooseWriteCardDevice(CardDevice cardDevice) {
         new WriteCardDataTask(this, cardDevice, card.cardData).execute();
     }
 
