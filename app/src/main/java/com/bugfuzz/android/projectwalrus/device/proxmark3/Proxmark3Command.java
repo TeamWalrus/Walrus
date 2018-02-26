@@ -14,11 +14,11 @@ class Proxmark3Command {
             MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
             MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
 
-    final Op op;
+    final long op;
     final long[] args;
     final byte[] data;
 
-    Proxmark3Command(Op op, long[] args, byte[] data) {
+    Proxmark3Command(long op, long[] args, byte[] data) {
         this.op = op;
 
         if (args.length != 3)
@@ -30,11 +30,11 @@ class Proxmark3Command {
         this.data = Arrays.copyOf(data, 512);
     }
 
-    Proxmark3Command(Op op, long[] args) {
+    Proxmark3Command(long op, long[] args) {
         this(op, args, new byte[0]);
     }
 
-    Proxmark3Command(Op op) {
+    Proxmark3Command(long op) {
         this(op, new long[3]);
     }
 
@@ -46,7 +46,7 @@ class Proxmark3Command {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         bb.order(ByteOrder.LITTLE_ENDIAN);
 
-        Op op = Op.get(bb.getLong());
+        long op = bb.getLong();
 
         long[] args = new long[3];
         for (int i = 0; i < 3; ++i)
@@ -62,7 +62,7 @@ class Proxmark3Command {
         ByteBuffer bb = ByteBuffer.allocate(getByteLength());
         bb.order(ByteOrder.LITTLE_ENDIAN);
 
-        bb.putLong(op.code);
+        bb.putLong(op);
 
         for (long arg : args)
             bb.putLong(arg);
@@ -78,41 +78,22 @@ class Proxmark3Command {
 
     @Override
     public String toString() {
-        return "<Proxmark3Command " + op.name() + ", args " + Arrays.toString(args) + ", data " + Arrays.toString(data) + ">";
+        return "<Proxmark3Command " + op + ", args " + Arrays.toString(args) + ", data " + Arrays.toString(data) + ">";
     }
 
     public String dataAsString() {
         return new String(ArrayUtils.subarray(data, 0, (int)args[0]));
     }
 
-    enum Op {
-        ACK(0xff),
+        public static final long ACK = 0xff;
 
-        DEBUG_PRINT_STRING(0x100),
+        public static final long DEBUG_PRINT_STRING = 0x100;
 
-        VERSION(0x107),
+        public static final long VERSION = 0x107;
 
-        HID_DEMOD_FSK(0x20b),
-        HID_CLONE_TAG(0x210),
+        public static final long HID_DEMOD_FSK = 0x20b;
+        public static final long HID_CLONE_TAG = 0x210;
 
-        MEASURE_ANTENNA_TUNING(0x400),
-        MEASURED_ANTENNA_TUNING(0x410);
-
-        private static final LongSparseArray<Op> codes = new LongSparseArray<>();
-
-        static {
-            for (Op op : EnumSet.allOf(Op.class))
-                codes.put(op.code, op);
-        }
-
-        public final long code;
-
-        Op(long code) {
-            this.code = code;
-        }
-
-        public static Op get(long code) {
-            return codes.get(code);
-        }
-    }
+        public static final long MEASURE_ANTENNA_TUNING = 0x400;
+        public static final long MEASURED_ANTENNA_TUNING = 0x410;
 }

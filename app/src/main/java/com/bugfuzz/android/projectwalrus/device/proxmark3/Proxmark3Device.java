@@ -41,7 +41,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     public Proxmark3Device(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice);
 
-        send(new Proxmark3Command(Proxmark3Command.Op.VERSION));
+        send(new Proxmark3Command(Proxmark3Command.VERSION));
     }
 
     @Override
@@ -97,8 +97,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
             throw new IllegalArgumentException("Must tune LF or HF");
 
         Proxmark3Command result = sendThenReceiveCommands(
-                new Proxmark3Command(Proxmark3Command.Op.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
-                new CommandWaiter(Proxmark3Command.Op.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT));
+                new Proxmark3Command(Proxmark3Command.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
+                new CommandWaiter(Proxmark3Command.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT));
         if (result == null)
             throw new IOException("Failed to tune antenna before timeout");
 
@@ -126,13 +126,13 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
             try {
                 // TODO: use cardDataClass
-                send(new Proxmark3Command(Proxmark3Command.Op.HID_DEMOD_FSK, new long[]{0, 0, 0}));
+                send(new Proxmark3Command(Proxmark3Command.HID_DEMOD_FSK, new long[]{0, 0, 0}));
 
                 // TODO: do periodic VERSION-based device-aliveness checking like Chameleon Mini will/does
                 receive(new ReceiveSink<Proxmark3Command, Boolean>() {
                     @Override
                     public Boolean onReceived(Proxmark3Command in) throws IOException {
-                        if (in.op != Proxmark3Command.Op.DEBUG_PRINT_STRING)
+                        if (in.op != Proxmark3Command.DEBUG_PRINT_STRING)
                             return null;
 
                         String dataAsString = in.dataAsString();
@@ -156,7 +156,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
                 setReceiving(false);
             }
 
-            send(new Proxmark3Command(Proxmark3Command.Op.VERSION));
+            send(new Proxmark3Command(Proxmark3Command.VERSION));
         } finally {
             semaphore.release();
         }
@@ -169,7 +169,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
         if (!sendThenReceiveCommands(
                 new Proxmark3Command(
-                        Proxmark3Command.Op.HID_CLONE_TAG,
+                        Proxmark3Command.HID_CLONE_TAG,
                         new long[]{
                                 hidCardData.data.shiftRight(64).intValue(),
                                 hidCardData.data.shiftRight(32).intValue(),
@@ -179,7 +179,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
                 new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
                     @Override
                     public Boolean onReceived(Proxmark3Command in) {
-                        return in.op == Proxmark3Command.Op.DEBUG_PRINT_STRING &&
+                        return in.op == Proxmark3Command.DEBUG_PRINT_STRING &&
                                 in.dataAsString().equals("DONE!") ? true : null;
                     }
                 }))
@@ -193,8 +193,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
     public String getVersion() throws IOException {
         Proxmark3Command version = sendThenReceiveCommands(
-                new Proxmark3Command(Proxmark3Command.Op.VERSION),
-                new CommandWaiter(Proxmark3Command.Op.ACK, DEFAULT_TIMEOUT));
+                new Proxmark3Command(Proxmark3Command.VERSION),
+                new CommandWaiter(Proxmark3Command.ACK, DEFAULT_TIMEOUT));
         if (version == null)
             throw new IOException("Failed to get device version before timeout");
 
@@ -203,9 +203,9 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
     private static class CommandWaiter extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
 
-        private final Proxmark3Command.Op op;
+        private final long op;
 
-        CommandWaiter(Proxmark3Command.Op op, long timeout) {
+        CommandWaiter(long op, long timeout) {
             super(timeout);
 
             this.op = op;
