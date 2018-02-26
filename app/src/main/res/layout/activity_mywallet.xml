@@ -5,18 +5,18 @@
                 android:layout_height="match_parent">
 
     <include
-        layout="@layout/layout_toolbar"
-        android:id="@+id/toolbar"/>
+        android:id="@+id/toolbar"
+        layout="@layout/layout_toolbar"/>
 
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_below="@+id/toolbar"
         android:layout_alignParentEnd="true"
+        android:layout_below="@+id/toolbar"
         android:layout_marginEnd="7dp"
-        android:queryHint="@string/search"
         android:iconifiedByDefault="false"
+        android:queryHint="@string/search"
         android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
@@ -25,6 +25,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/searchView"
         android:background="@android:color/background_light"
+        android:paddingTop="6dp"
         android:scrollbars="vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
@@ -38,9 +39,9 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         app:elevation="8dp"
+        app:fabBackgroundTint="@color/primaryColor"
         app:fabGravity="bottom_end"
         app:fabMenu="@menu/menu_mywallet_fab"
-        app:fabBackgroundTint="@color/primaryColor"
         app:miniFabBackgroundTint="@android:color/white"/>
 
 </RelativeLayout>

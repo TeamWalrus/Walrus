@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -18,10 +19,9 @@ import com.bugfuzz.android.projectwalrus.data.CardData;
 
 public class WalrusCardView extends FrameLayout {
 
-    private Card card;
-
-    private TextView nameView, humanReadableTextView;
     public EditText editableNameView;
+    private Card card;
+    private TextView nameView, humanReadableTextView;
     private ImageView logoView;
 
     public WalrusCardView(Context context, AttributeSet attrs, int defStyle) {
@@ -71,6 +71,57 @@ public class WalrusCardView extends FrameLayout {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WalrusCardView, defStyle, 0);
         setEditable(a.getBoolean(R.styleable.WalrusCardView_editable, false));
         a.recycle();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // Raw dimensions from ISO/IEC 7810 card size ID 1
+        final int
+                scale = 4,
+                maxWidth = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 85.6f * scale,
+                        getResources().getDisplayMetrics()),
+                maxHeight = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 53.98f * scale,
+                        getResources().getDisplayMetrics());
+
+        Integer width = null, height = null;
+
+        switch (MeasureSpec.getMode(widthMeasureSpec)) {
+            case MeasureSpec.UNSPECIFIED:
+                width = maxWidth;
+                break;
+
+            case MeasureSpec.EXACTLY:
+                break;
+
+            case MeasureSpec.AT_MOST:
+                width = Math.min(Math.max(maxWidth, getSuggestedMinimumWidth()),
+                        MeasureSpec.getSize(widthMeasureSpec));
+                break;
+        }
+
+        switch (MeasureSpec.getMode(heightMeasureSpec)) {
+            case MeasureSpec.UNSPECIFIED:
+                height = maxHeight;
+                break;
+
+            case MeasureSpec.EXACTLY:
+                break;
+
+            case MeasureSpec.AT_MOST:
+                height = Math.min(Math.max(maxHeight, getSuggestedMinimumHeight()),
+                        MeasureSpec.getSize(heightMeasureSpec));
+                break;
+        }
+
+        if (width != null)
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+
+        if (height != null)
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     public void setCard(Card newCard) {

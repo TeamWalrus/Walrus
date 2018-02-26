@@ -8,22 +8,21 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.SearchView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
-import com.bugfuzz.android.projectwalrus.data.HIDCardData;
-import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.data.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.data.QueryUtils;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
@@ -32,14 +31,13 @@ import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
     private RecyclerView recyclerView;
-    private SearchView sv;
-
     private final BroadcastReceiver walletUpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             recyclerView.getAdapter().notifyDataSetChanged();
         }
     };
+    private SearchView sv;
 
     public MyWalletActivity() {
         super(DatabaseHelper.class);
@@ -153,32 +151,41 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
         @Override
         public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new CardViewHolder(new WalrusCardView(parent.getContext()));
+            FrameLayout frameLayout = new FrameLayout(parent.getContext());
+            frameLayout.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            View walrusCardView = new WalrusCardView(parent.getContext());
+            walrusCardView.setLayoutParams(new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.CENTER_HORIZONTAL));
+
+            frameLayout.addView(walrusCardView);
+
+            return new CardViewHolder(frameLayout);
         }
 
         @Override
         public void onBindViewHolder(CardViewHolder holder, int position) {
             Card card;
             String filter = sv.getQuery().toString();
-            if (!filter.isEmpty()){
+            if (!filter.isEmpty()) {
                 List<Card> cards = QueryUtils.filterCards(getHelper().getCardDao(), filter);
                 card = cards.get(position);
-
             } else {
                 card = QueryUtils.getNthRow(getHelper().getCardDao(), position);
             }
 
-            ((WalrusCardView) holder.itemView).setCard(card);
+            ((WalrusCardView) ((FrameLayout) holder.itemView).getChildAt(0)).setCard(card);
             holder.id = card.id;
         }
 
         @Override
         public int getItemCount() {
             String filter = sv.getQuery().toString();
-            if (!filter.isEmpty()){
+            if (!filter.isEmpty()) {
                 List<Card> cards = QueryUtils.filterCards(getHelper().getCardDao(), filter);
                 return cards.size();
-
             } else {
                 return (int) getHelper().getCardDao().countOf();
             }
