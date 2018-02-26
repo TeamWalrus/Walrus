@@ -25,13 +25,13 @@ class Proxmark3Command {
             throw new IllegalArgumentException("Invalid number of args");
         this.args = args;
 
-        if (data.length != 512)
-            throw new IllegalArgumentException("Invalid data length");
-        this.data = data;
+        if (data.length > 512)
+            throw new IllegalArgumentException("Data too long");
+        this.data = Arrays.copyOf(data, 512);
     }
 
     Proxmark3Command(Op op, long[] args) {
-        this(op, args, new byte[512]);
+        this(op, args, new byte[0]);
     }
 
     Proxmark3Command(Op op) {
