@@ -226,6 +226,20 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean("dirty", dirty);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        dirty = savedInstanceState.getBoolean("dirty");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
