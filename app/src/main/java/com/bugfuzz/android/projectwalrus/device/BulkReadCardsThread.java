@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Looper;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import java.io.IOException;
 
 import static android.content.Context.VIBRATOR_SERVICE;
+import static android.os.Build.VERSION_CODES.O;
 
 public class BulkReadCardsThread extends Thread {
 
@@ -109,8 +111,12 @@ public class BulkReadCardsThread extends Thread {
                     lastCardData = cardData;
 
                     Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
-                    if (vibrator != null)
-                        vibrator.vibrate(300);
+                    if (vibrator != null) {
+                        if (android.os.Build.VERSION.SDK_INT >= O)
+                            vibrator.vibrate(VibrationEffect.createOneShot(300, 255));
+                        else
+                            vibrator.vibrate(300);
+                    }
 
                     Card card = Card.copyOf(cardTemplate);
                     card.name += " (" + ++numberOfCardsRead + ")";
