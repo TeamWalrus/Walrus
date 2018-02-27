@@ -77,7 +77,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             try {
                 send("CONFIG=ISO14443A_READER");
 
-                receive(new ReceiveSink<String, Void>() {
+                receive(new WatchdogReceiveSink<String, Void>(3000) {
                     private int state;
 
                     private short atqa;
@@ -110,6 +110,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                                         break;
 
                                     case "203:TIMEOUT":
+                                        resetWatchdog();
                                         send("IDENTIFY");
                                         break;
 
@@ -143,6 +144,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                                 if (!cardDataSink.wantsMore())
                                     break;
 
+                                resetWatchdog();
+
                                 // Start again :)
                                 send("IDENTIFY");
                                 // State 2 because config and timeout already configured
@@ -156,7 +159,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                     public boolean wantsMore() {
                         return cardDataSink.wantsMore();
                     }
-                }, 0);
+                });
             } finally {
                 setReceiving(false);
             }
@@ -178,7 +181,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 // TODO: use cardData.getClass()
                 send("CONFIG=MF_CLASSIC_1K");
 
-                receive(new ReceiveSink<String, Boolean>() {
+                receive(new WatchdogReceiveSink<String, Boolean>(3000) {
                     private int state;
 
                     @Override
@@ -217,7 +220,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                         }
                         return null;
                     }
-                }, 1000);
+                });
             } finally {
                 setReceiving(false);
             }
@@ -241,7 +244,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             try {
                 send("VERSION?");
 
-                return receive(new ReceiveSink<String, String>() {
+                return receive(new WatchdogReceiveSink<String, String>(3000) {
                     private int state;
 
                     @Override
@@ -258,7 +261,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                         }
                         return null;
                     }
-                }, 1000);
+                });
             } finally {
                 setReceiving(false);
             }
