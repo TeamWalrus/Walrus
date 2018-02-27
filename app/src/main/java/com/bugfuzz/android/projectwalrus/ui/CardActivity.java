@@ -427,51 +427,29 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
 
     @Override
     public void onBackPressed() {
-        if (dirty) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-            if (mode == Mode.EDIT)
-                builder.setMessage("Your changes have not been saved")
-                        .setPositiveButton("Save",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        save();
-                                        finish();
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setNegativeButton("Discard",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        finish();
-                                        dialog.dismiss();
-                                    }
-                                });
-            else
-                builder.setMessage("Discard bulk read card template?")
-                        .setPositiveButton("Discard",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        finish();
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setNegativeButton("Back",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        dialog.dismiss();
-                                    }
-                                });
-            builder.show();
-        } else
+        if (dirty)
+            new AlertDialog.Builder(this).setMessage(mode == Mode.EDIT ?
+                    "Discard changes?" : "Discard bulk read card template changes?")
+                    .setCancelable(true)
+                    .setPositiveButton("Discard",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    finish();
+                                    dialog.dismiss();
+                                }
+                            })
+                    .setNegativeButton("Back",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int whichButton) {
+                                    dialog.dismiss();
+                                }
+                            })
+                    .show();
+        else
             finish();
     }
 
