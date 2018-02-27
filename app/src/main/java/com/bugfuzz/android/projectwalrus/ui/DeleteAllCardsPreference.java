@@ -35,7 +35,8 @@ public class DeleteAllCardsPreference extends DialogPreference {
                             OpenHelperManager.getHelper(getContext(), DatabaseHelper.class)
                                     .getConnectionSource(),
                             Card.class);
-                } catch (SQLException ignored) {
+                } catch (SQLException e) {
+                    return;
                 }
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(
                         new Intent(QueryUtils.ACTION_WALLET_UPDATE));

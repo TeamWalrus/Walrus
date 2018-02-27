@@ -8,8 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="22dp"
         android:layout_marginRight="22dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginTop="14dp"
         android:text="@string/dialog_delete_all_cards_warning"
         android:textAlignment="center"
         android:textAllCaps="true"
@@ -21,8 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="22dp"
         android:layout_marginRight="22dp"
-        android:layout_marginTop="6dp"
-        android:text="@string/dialog_delete_all_cards_message"
-        android:textSize="18sp"/>
+        android:layout_marginTop="12dp"
+        android:text="@string/dialog_delete_all_cards_message"/>
 
 </LinearLayout>
