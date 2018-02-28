@@ -35,7 +35,7 @@ public class BulkReadCardsThread extends Thread {
     private final Card cardTemplate;
 
     private volatile boolean stop;
-    private final StopSink stopSink;
+    private final OnStopCallback onStopCallback;
 
     private DatabaseHelper databaseHelper;
 
@@ -47,12 +47,12 @@ public class BulkReadCardsThread extends Thread {
 
     public BulkReadCardsThread(Context context, CardDevice cardDevice,
                                Class<? extends CardData> cardDataClass, Card cardTemplate,
-                               StopSink stopSink) {
+                               OnStopCallback onStopCallback) {
         this.context = context;
         this.cardDevice = cardDevice;
         this.cardDataClass = cardDataClass;
         this.cardTemplate = cardTemplate;
-        this.stopSink = stopSink;
+        this.onStopCallback = onStopCallback;
     }
 
     @Override
@@ -91,7 +91,7 @@ public class BulkReadCardsThread extends Thread {
 
             OpenHelperManager.releaseHelper();
 
-            stopSink.onStop(this);
+            onStopCallback.onStop(this);
         }
     }
 
@@ -152,7 +152,7 @@ public class BulkReadCardsThread extends Thread {
         return numberOfCardsRead;
     }
 
-    public interface StopSink {
+    public interface OnStopCallback {
         void onStop(BulkReadCardsThread thread);
     }
 }

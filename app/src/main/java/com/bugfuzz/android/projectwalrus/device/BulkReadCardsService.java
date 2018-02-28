@@ -73,7 +73,7 @@ public class BulkReadCardsService extends Service {
                 cardDevice,
                 (Class<? extends CardData>) intent.getSerializableExtra(EXTRA_CARD_DATA_CLASS),
                 (Card) Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD_TEMPLATE)),
-                new BulkReadCardsThread.StopSink() {
+                new BulkReadCardsThread.OnStopCallback() {
                     @Override
                     public void onStop(BulkReadCardsThread thread) {
                         // TODO: do in service thread
