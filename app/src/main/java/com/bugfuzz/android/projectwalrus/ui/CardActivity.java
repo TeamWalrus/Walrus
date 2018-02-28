@@ -53,8 +53,10 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> implements OnMapReadyCallback {
+public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
+        implements OnMapReadyCallback, CardDeviceListFragment.OnCardDeviceClickCallback {
 
     private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_MODE";
     private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_CARD";
@@ -250,6 +252,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private void save() {
         card.name = walrusCardView.editableNameView.getText().toString();
 
@@ -328,8 +335,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
     }
 
     private void startReadCardSetup() {
-        final ArrayList<CardDevice> cardDevices =
-                new ArrayList<>(CardDeviceManager.INSTANCE.getCardDevices().values());
+        Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
 
         if (cardDevices.isEmpty()) {
             Toast.makeText(this, "No card devices connected", Toast.LENGTH_LONG).show();
@@ -337,51 +343,16 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         }
 
         if (cardDevices.size() > 1) {
-            String[] names = new String[cardDevices.size()];
-            for (int i = 0; i < cardDevices.size(); ++i)
-                names[i] = cardDevices.get(i).getClass().getAnnotation(CardDevice.Metadata.class)
-                        .name();
+            PickCardDeviceDialogFragment pickCardDeviceDialogFragment =
+                    new PickCardDeviceDialogFragment();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Choose device to read from")
-                    .setItems(names, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            onChooseReadCardDevice(cardDevices.get(which));
-                        }
-                    })
-                    .create().show();
+            Bundle args = new Bundle();
+            args.putInt("callback_id", 0);
+            pickCardDeviceDialogFragment.setArguments(args);
+
+            pickCardDeviceDialogFragment.show(getFragmentManager(), "pick_card_device_dialog");
         } else
-            onChooseReadCardDevice(cardDevices.get(0));
-    }
-
-    private void onChooseReadCardDevice(final CardDevice cardDevice) {
-        final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
-                .getAnnotation(CardDevice.Metadata.class).supportsRead();
-
-        if (readableTypes.length > 1) {
-            String[] names = new String[readableTypes.length];
-            for (int i = 0; i < names.length; ++i)
-                names[i] = readableTypes[i].getSimpleName();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Choose card type to read")
-                    .setItems(names, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            onChooseReadCardType(cardDevice, readableTypes[which]);
-                        }
-                    })
-                    .create().show();
-        } else
-            onChooseReadCardType(cardDevice, readableTypes[0]);
-    }
-
-    private void onChooseReadCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
-        if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
-            new ReadCardDataTask(this, cardDevice, cardDataClass).execute();
-        else {
-            BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
-            finish();
-        }
+            onCardDeviceClick(cardDevices.get(0), 0);
     }
 
     public void onWriteCardClick(View view) {
@@ -404,25 +375,56 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> i
         }
 
         if (cardDevices.size() > 1) {
-            String[] names = new String[cardDevices.size()];
-            for (int i = 0; i < cardDevices.size(); ++i)
-                names[i] = cardDevices.get(i).getClass().getAnnotation(CardDevice.Metadata.class)
-                        .name();
+            PickCardDeviceDialogFragment pickCardDeviceDialogFragment =
+                    new PickCardDeviceDialogFragment();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Choose device to write to")
-                    .setItems(names, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            onChooseWriteCardDevice(cardDevices.get(which));
-                        }
-                    })
-                    .create().show();
+            Bundle args = new Bundle();
+            args.putInt("callback_id", 1);
+            pickCardDeviceDialogFragment.setArguments(args);
+
+            pickCardDeviceDialogFragment.show(getFragmentManager(), "pick_card_device_dialog");
         } else
-            onChooseWriteCardDevice(cardDevices.get(0));
+            onCardDeviceClick(cardDevices.get(0), 1);
     }
 
-    private void onChooseWriteCardDevice(CardDevice cardDevice) {
-        new WriteCardDataTask(this, cardDevice, card.cardData).execute();
+    @Override
+    public void onCardDeviceClick(final CardDevice cardDevice, int callbackId) {
+        switch (callbackId) {
+            case 0: {
+                final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
+                        .getAnnotation(CardDevice.Metadata.class).supportsRead();
+
+                if (readableTypes.length > 1) {
+                    String[] names = new String[readableTypes.length];
+                    for (int i = 0; i < names.length; ++i)
+                        names[i] = readableTypes[i].getSimpleName();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Choose card type to read")
+                            .setItems(names, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    onChooseReadCardType(cardDevice, readableTypes[which]);
+                                }
+                            })
+                            .create().show();
+                } else
+                    onChooseReadCardType(cardDevice, readableTypes[0]);
+                break;
+            }
+
+            case 1:
+                new WriteCardDataTask(this, cardDevice, card.cardData).execute();
+                break;
+        }
+    }
+
+    private void onChooseReadCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
+        if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
+            new ReadCardDataTask(this, cardDevice, cardDataClass).execute();
+        else {
+            BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
+            finish();
+        }
     }
 
     @Override

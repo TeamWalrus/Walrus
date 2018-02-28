@@ -2,6 +2,7 @@ package com.bugfuzz.android.projectwalrus.device;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.bugfuzz.android.projectwalrus.data.CardData;
 
@@ -11,10 +12,16 @@ import java.lang.annotation.RetentionPolicy;
 
 public abstract class CardDevice {
 
+    public static final String ACTION_STATUS_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDevice.ACTION_STATUS_UPDATE";
+
+    public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_DEVICE_ID";
+    public static final String EXTRA_STATUS = "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_STATUS";
+
     static private int nextID;
 
     protected final Context context;
     private final int id;
+    private String status;
 
     public CardDevice(Context context) {
         this.context = context;
@@ -26,8 +33,17 @@ public abstract class CardDevice {
         return id;
     }
 
+    protected void setStatus(String status) {
+        this.status = status;
+
+        Intent broadcastIntent = new Intent(ACTION_STATUS_UPDATE);
+        broadcastIntent.putExtra(EXTRA_DEVICE_ID, getID());
+        broadcastIntent.putExtra(EXTRA_STATUS, status);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent);
+    }
+
     public String getStatusText() {
-        return null;
+        return status;
     }
 
     public abstract void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException;

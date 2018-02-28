@@ -35,7 +35,7 @@ public class BulkReadCardsActivity extends AppCompatActivity {
     private ListView threadsView;
 
     private BulkReadCardsService.ServiceBinder bulkReadCardsServiceBinder;
-    private ServiceConnection bulkReadCardsServiceConnection = new ServiceConnection() {
+    private final ServiceConnection bulkReadCardsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             bulkReadCardsServiceBinder = (BulkReadCardsService.ServiceBinder) iBinder;
@@ -49,7 +49,7 @@ public class BulkReadCardsActivity extends AppCompatActivity {
         }
     };
 
-    private BroadcastReceiver bulkReadChangeBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver bulkReadChangeBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ((BaseAdapter) threadsView.getAdapter()).notifyDataSetChanged();

@@ -6,8 +6,9 @@
 
     <include layout="@layout/layout_toolbar"/>
 
-    <ListView
-        android:id="@+id/devices"
+    <fragment
+        android:id="@+id/card_device_list"
+        android:name="com.bugfuzz.android.projectwalrus.ui.CardDeviceListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
