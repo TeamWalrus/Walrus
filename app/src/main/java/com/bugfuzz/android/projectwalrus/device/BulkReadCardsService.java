@@ -8,6 +8,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,8 +37,7 @@ public class BulkReadCardsService extends Service {
 
     private final Binder binder = new ServiceBinder();
 
-    private List<BulkReadCardsThread> threads = Collections.synchronizedList(
-            new ArrayList<BulkReadCardsThread>());
+    private List<BulkReadCardsThread> threads = new ArrayList<>();
 
     private NotificationCompat.Builder notificationBuilder =
             new NotificationCompat.Builder(this, "bulk_read_cards");
@@ -75,16 +75,20 @@ public class BulkReadCardsService extends Service {
                 (Card) Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD_TEMPLATE)),
                 new BulkReadCardsThread.OnStopCallback() {
                     @Override
-                    public void onStop(BulkReadCardsThread thread) {
-                        // TODO: do in service thread
-                        threads.remove(thread);
-                        LocalBroadcastManager.getInstance(BulkReadCardsService.this)
-                                .sendBroadcast(new Intent(ACTION_BULK_READ_UPDATE));
+                    public void onStop(final BulkReadCardsThread thread) {
+                        new Handler(getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                threads.remove(thread);
+                                LocalBroadcastManager.getInstance(BulkReadCardsService.this)
+                                        .sendBroadcast(new Intent(ACTION_BULK_READ_UPDATE));
 
-                        if (!threads.isEmpty())
-                            notificationManager.notify(NOTIFICATION_ID, getNotification());
-                        else
-                            stopSelf();
+                                if (!threads.isEmpty())
+                                    notificationManager.notify(NOTIFICATION_ID, getNotification());
+                                else
+                                    stopSelf();
+                            }
+                        });
                     }
                 });
         thread.start();
