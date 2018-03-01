@@ -87,7 +87,6 @@ public class CardDeviceListFragment extends ListFragment {
 
         @Override
         public int getCount() {
-            // TODO: this can get out of sync with getItem etc. due to background threads fiddling with device list
             return CardDeviceManager.INSTANCE.getCardDevices().size();
         }
 

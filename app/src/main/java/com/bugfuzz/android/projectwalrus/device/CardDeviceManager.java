@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
@@ -25,19 +26,18 @@ public enum CardDeviceManager {
     INSTANCE;
 
     public static final String ACTION_DEVICE_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_DEVICE_UPDATE";
-    private static final String ACTION_USB_PERMISSION_RESULT = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_USB_PERMISSION_RESULT";
-
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
+
+    private static final String ACTION_USB_PERMISSION_RESULT = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_USB_PERMISSION_RESULT";
 
     private static final Set<Class<? extends UsbCardDevice>> usbCardDeviceClasses =
             new HashSet<Class<? extends UsbCardDevice>>(Arrays.asList(
                     Proxmark3Device.class,
                     ChameleonMiniDevice.class));
 
-    private final Map<Integer, CardDevice> cardDevices =
-            Collections.synchronizedMap(new LinkedHashMap<Integer, CardDevice>());
+    private final Map<Integer, CardDevice> cardDevices = new LinkedHashMap<>();
 
     private final Set<UsbDevice> seenUsbDevices =
             Collections.synchronizedSet(new HashSet<UsbDevice>());
@@ -48,10 +48,6 @@ public enum CardDeviceManager {
 
         for (UsbDevice usbDevice : usbManager.getDeviceList().values())
             handleUsbDeviceAttached(context, usbDevice);
-    }
-
-    public Map<Integer, CardDevice> getCardDevices() {
-        return Collections.unmodifiableMap(cardDevices);
     }
 
     private synchronized void handleUsbDeviceAttached(Context context, UsbDevice usbDevice) {
@@ -87,7 +83,7 @@ public enum CardDeviceManager {
     private void handleUsbDeviceDetached(Context context, UsbDevice usbDevice) {
         Iterator<Map.Entry<Integer, CardDevice>> it = cardDevices.entrySet().iterator();
         while (it.hasNext()) {
-            CardDevice cardDevice = it.next().getValue();
+            final CardDevice cardDevice = it.next().getValue();
 
             if (!(cardDevice instanceof UsbCardDevice))
                 continue;
@@ -106,9 +102,23 @@ public enum CardDeviceManager {
             broadcastIntent.putExtra(EXTRA_DEVICE_NAME,
                     cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
             LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent);
+
+            new Handler(context.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    // noinspection StatementWithEmptyBody
+                    while (cardDevices.values().remove(cardDevice)) ;
+                }
+            });
+
+            break;
         }
 
         seenUsbDevices.remove(usbDevice);
+    }
+
+    public Map<Integer, CardDevice> getCardDevices() {
+        return Collections.unmodifiableMap(cardDevices);
     }
 
     public static class UsbBroadcastReceiver extends BroadcastReceiver {
@@ -175,7 +185,7 @@ public enum CardDeviceManager {
                             continue;
                         }
 
-                        UsbCardDevice cardDevice;
+                        final UsbCardDevice cardDevice;
                         try {
                             cardDevice = constructor.newInstance(context, usbDevice);
                         } catch (InstantiationException e) {
@@ -186,7 +196,13 @@ public enum CardDeviceManager {
                             continue;
                         }
 
-                        CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getID(), cardDevice);
+                        new Handler(context.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getID(),
+                                        cardDevice);
+                            }
+                        });
 
                         Intent broadcastIntent = new Intent(ACTION_DEVICE_UPDATE);
                         broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
