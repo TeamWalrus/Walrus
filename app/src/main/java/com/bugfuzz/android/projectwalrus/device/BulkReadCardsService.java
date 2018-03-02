@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
@@ -20,6 +21,7 @@ import com.bugfuzz.android.projectwalrus.ui.BulkReadCardsActivity;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +30,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
 public class BulkReadCardsService extends Service {
 
-    public static final String ACTION_BULK_READ_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.ACTION_BULK_READ_UPDATE";
+    public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.ACTION_UPDATE";
     private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_DEVICE";
     private static final String EXTRA_CARD_DATA_CLASS = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_DATA_CLASS";
     private static final String EXTRA_CARD_TEMPLATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_TEMPLATE";
@@ -37,7 +39,7 @@ public class BulkReadCardsService extends Service {
 
     private final Binder binder = new ServiceBinder();
 
-    private List<BulkReadCardsThread> threads = new ArrayList<>();
+    private List<BulkReadCardDataSink> sinks = new ArrayList<>();
 
     private NotificationCompat.Builder notificationBuilder =
             new NotificationCompat.Builder(this, "bulk_read_cards");
@@ -55,35 +57,43 @@ public class BulkReadCardsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        handleStartCommand(intent);
+
+        if (sinks.isEmpty())
+            stopSelf(startId);
+
+        return START_NOT_STICKY;
+    }
+
+    private void handleStartCommand(Intent intent) {
         final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(
                 intent.getIntExtra(EXTRA_DEVICE, -1));
-        if (cardDevice == null) {
-            if (threads.isEmpty())
-                stopSelf(startId);
-
-            return START_NOT_STICKY;
-        }
+        if (cardDevice == null)
+            return;
 
         // noinspection unchecked
-        BulkReadCardsThread thread = new BulkReadCardsThread(
+        Class<? extends CardData> cardDataClass =
+                (Class<? extends CardData>) intent.getSerializableExtra(EXTRA_CARD_DATA_CLASS);
+
+        BulkReadCardDataSink cardDataSink = new BulkReadCardDataSink(
                 this,
                 cardDevice,
-                (Class<? extends CardData>) intent.getSerializableExtra(EXTRA_CARD_DATA_CLASS),
+                cardDataClass,
                 (Card) Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD_TEMPLATE)),
-                new BulkReadCardsThread.OnStopCallback() {
+                new BulkReadCardDataSink.OnStopCallback() {
                     @Override
-                    public void onStop(final BulkReadCardsThread thread) {
+                    public void onStop(final BulkReadCardDataSink sink) {
                         new Handler(getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                threads.remove(thread);
+                                sinks.remove(sink);
                                 LocalBroadcastManager.getInstance(BulkReadCardsService.this)
-                                        .sendBroadcast(new Intent(ACTION_BULK_READ_UPDATE));
+                                        .sendBroadcast(new Intent(ACTION_UPDATE));
 
-                                if (!threads.isEmpty())
+                                if (!sinks.isEmpty())
                                     notificationManager.notify(NOTIFICATION_ID, getNotification());
                                 else
                                     stopSelf();
@@ -91,21 +101,27 @@ public class BulkReadCardsService extends Service {
                         });
                     }
                 });
-        thread.start();
-        threads.add(thread);
+
+        try {
+            cardDevice.readCardData(cardDataClass, cardDataSink);
+        } catch (IOException exception) {
+            Toast.makeText(this, "Failed to start reading cards: " + exception.getMessage(),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        sinks.add(cardDataSink);
         LocalBroadcastManager.getInstance(BulkReadCardsService.this)
-                .sendBroadcast(new Intent(ACTION_BULK_READ_UPDATE));
+                .sendBroadcast(new Intent(ACTION_UPDATE));
 
         startForeground(NOTIFICATION_ID, getNotification());
-
-        return START_NOT_STICKY;
     }
 
     private Notification getNotification() {
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Bulk reading cards from " + threads.size() + " device" +
-                        (threads.size() != 1 ? "s" : ""))
+                .setContentTitle("Bulk reading cards from " + sinks.size() + " device" +
+                        (sinks.size() != 1 ? "s" : ""))
                 .setOngoing(true)
                 .setProgress(0, 0, true)
                 .setContentIntent(TaskStackBuilder.create(this)
@@ -123,8 +139,8 @@ public class BulkReadCardsService extends Service {
     }
 
     public class ServiceBinder extends Binder {
-        public List<BulkReadCardsThread> getThreads() {
-            return Collections.unmodifiableList(threads);
+        public List<BulkReadCardDataSink> getSinks() {
+            return Collections.unmodifiableList(sinks);
         }
     }
 }

@@ -25,7 +25,7 @@ import java.util.Set;
 public enum CardDeviceManager {
     INSTANCE;
 
-    public static final String ACTION_DEVICE_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_DEVICE_UPDATE";
+    public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_UPDATE";
     public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
     public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
     public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
@@ -97,7 +97,7 @@ public enum CardDeviceManager {
 
             usbCardDevice.close();
 
-            Intent broadcastIntent = new Intent(ACTION_DEVICE_UPDATE);
+            Intent broadcastIntent = new Intent(ACTION_UPDATE);
             broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, false);
             broadcastIntent.putExtra(EXTRA_DEVICE_NAME,
                     cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
@@ -209,7 +209,7 @@ public enum CardDeviceManager {
                             }
                         });
 
-                        Intent broadcastIntent = new Intent(ACTION_DEVICE_UPDATE);
+                        Intent broadcastIntent = new Intent(ACTION_UPDATE);
                         broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
                         broadcastIntent.putExtra(EXTRA_DEVICE_ID, cardDevice.getID());
                         LocalBroadcastManager.getInstance(context)

@@ -2,6 +2,7 @@ package com.bugfuzz.android.projectwalrus.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,14 +27,19 @@ import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink;
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
-import com.bugfuzz.android.projectwalrus.device.BulkReadCardsThread;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 
 public class BulkReadCardsActivity extends AppCompatActivity {
 
     private ListView threadsView;
-
+    private final BroadcastReceiver bulkReadChangeBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ((BaseAdapter) threadsView.getAdapter()).notifyDataSetChanged();
+        }
+    };
     private BulkReadCardsService.ServiceBinder bulkReadCardsServiceBinder;
     private final ServiceConnection bulkReadCardsServiceConnection = new ServiceConnection() {
         @Override
@@ -45,13 +51,6 @@ public class BulkReadCardsActivity extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             bulkReadCardsServiceBinder = null;
-            ((BaseAdapter) threadsView.getAdapter()).notifyDataSetChanged();
-        }
-    };
-
-    private final BroadcastReceiver bulkReadChangeBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
             ((BaseAdapter) threadsView.getAdapter()).notifyDataSetChanged();
         }
     };
@@ -73,50 +72,39 @@ public class BulkReadCardsActivity extends AppCompatActivity {
         threadsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final BulkReadCardsThread thread =
-                        (BulkReadCardsThread) adapterView.getItemAtPosition(i);
+                final BulkReadCardDataSink sink =
+                        (BulkReadCardDataSink) adapterView.getItemAtPosition(i);
 
                 final CardDataIOView cardDataIOView = new CardDataIOView(BulkReadCardsActivity.this);
-                cardDataIOView.setCardDeviceClass(thread.getCardDevice().getClass());
+                cardDataIOView.setCardDeviceClass(sink.getCardDevice().getClass());
                 cardDataIOView.setDirection(true);
-                cardDataIOView.setCardDataClass(thread.getCardDataClass());
-                cardDataIOView.setStatus(thread.getNumberOfCardsRead() + " card" +
-                        (thread.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
+                cardDataIOView.setCardDataClass(sink.getCardDataClass());
+                cardDataIOView.setStatus(sink.getNumberOfCardsRead() + " card" +
+                        (sink.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
                 cardDataIOView.setPadding(0, 60, 0, 10);
 
-                final BroadcastReceiver bulkReadChangeDialogBroadcastReceiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        cardDataIOView.setStatus(thread.getNumberOfCardsRead() + " card" +
-                                (thread.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
-                    }
-                };
-                LocalBroadcastManager.getInstance(BulkReadCardsActivity.this).registerReceiver(
-                        bulkReadChangeDialogBroadcastReceiver,
-                        new IntentFilter(BulkReadCardsService.ACTION_BULK_READ_UPDATE));
+                final LocalBroadcastManager localBroadcastManager =
+                        LocalBroadcastManager.getInstance(BulkReadCardsActivity.this);
 
-                new AlertDialog.Builder(BulkReadCardsActivity.this)
+                final BroadcastReceiver bulkReadCardDataSinkUpdateBroadcastReceiver =
+                        new BroadcastReceiver() {
+                            @Override
+                            public void onReceive(Context context, Intent intent) {
+                                cardDataIOView.setStatus(sink.getNumberOfCardsRead() + " card" +
+                                        (sink.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
+                            }
+                        };
+                localBroadcastManager.registerReceiver(bulkReadCardDataSinkUpdateBroadcastReceiver,
+                        new IntentFilter(BulkReadCardDataSink.ACTION_UPDATE));
+
+                final Dialog dialog = new AlertDialog.Builder(BulkReadCardsActivity.this)
                         .setTitle("Bulk reading cards")
                         .setView(cardDataIOView)
                         .setCancelable(true)
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                LocalBroadcastManager.getInstance(BulkReadCardsActivity.this)
-                                        .unregisterReceiver(bulkReadChangeDialogBroadcastReceiver);
-                            }
-                        })
-                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialogInterface) {
-                                LocalBroadcastManager.getInstance(BulkReadCardsActivity.this)
-                                        .unregisterReceiver(bulkReadChangeDialogBroadcastReceiver);
-                            }
-                        })
                         .setPositiveButton(R.string.stop, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                thread.stopReading();
+                                sink.stopReading();
                                 dialog.dismiss();
                             }
                         })
@@ -127,13 +115,48 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                             }
                         })
                         .show();
+
+                final BroadcastReceiver bulkReadCardsServiceUpdateNotificationHandler =
+                        new BroadcastReceiver() {
+                            @Override
+                            public void onReceive(Context context, Intent intent) {
+                                if (bulkReadCardsServiceBinder != null &&
+                                        !bulkReadCardsServiceBinder.getSinks().contains(
+                                                sink))
+                                    dialog.cancel();
+                            }
+                        };
+                localBroadcastManager.registerReceiver(
+                        bulkReadCardsServiceUpdateNotificationHandler,
+                        new IntentFilter(BulkReadCardsService.ACTION_UPDATE));
+
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        localBroadcastManager.unregisterReceiver(
+                                bulkReadCardsServiceUpdateNotificationHandler);
+                        localBroadcastManager.unregisterReceiver(
+                                bulkReadCardDataSinkUpdateBroadcastReceiver);
+                    }
+                });
+                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        localBroadcastManager.unregisterReceiver(
+                                bulkReadCardsServiceUpdateNotificationHandler);
+                        localBroadcastManager.unregisterReceiver(
+                                bulkReadCardDataSinkUpdateBroadcastReceiver);
+                    }
+                });
             }
         });
 
         bindService(new Intent(this, BulkReadCardsService.class), bulkReadCardsServiceConnection, 0);
 
+        IntentFilter intentFilter = new IntentFilter(BulkReadCardsService.ACTION_UPDATE);
+        intentFilter.addAction(BulkReadCardDataSink.ACTION_UPDATE);
         LocalBroadcastManager.getInstance(this).registerReceiver(bulkReadChangeBroadcastReceiver,
-                new IntentFilter(BulkReadCardsService.ACTION_BULK_READ_UPDATE));
+                intentFilter);
     }
 
     @Override
@@ -150,12 +173,12 @@ public class BulkReadCardsActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return bulkReadCardsServiceBinder != null ?
-                    bulkReadCardsServiceBinder.getThreads().size() : 0;
+                    bulkReadCardsServiceBinder.getSinks().size() : 0;
         }
 
         @Override
-        public BulkReadCardsThread getItem(int i) {
-            return bulkReadCardsServiceBinder.getThreads().get(i);
+        public BulkReadCardDataSink getItem(int i) {
+            return bulkReadCardsServiceBinder.getSinks().get(i);
         }
 
         @Override
@@ -172,10 +195,10 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                             R.layout.view_bulk_read_cards, parent, false) :
                     convertView;
 
-            BulkReadCardsThread thread = getItem(position);
-            CardDevice.Metadata cardDeviceMetadata = thread.getCardDevice().getClass()
+            BulkReadCardDataSink sink = getItem(position);
+            CardDevice.Metadata cardDeviceMetadata = sink.getCardDevice().getClass()
                     .getAnnotation(CardDevice.Metadata.class);
-            CardData.Metadata cardDataClassMetadata = thread.getCardDataClass()
+            CardData.Metadata cardDataClassMetadata = sink.getCardDataClass()
                     .getAnnotation(CardData.Metadata.class);
 
             ((ImageView) view.findViewById(R.id.device)).setImageDrawable(
@@ -185,8 +208,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
             ((TextView) view.findViewById(R.id.name)).setText(cardDataClassMetadata.name() +
                     " cards from " + cardDeviceMetadata.name());
             ((TextView) view.findViewById(R.id.status)).setText(
-                    thread.getNumberOfCardsRead() + " card" +
-                            (thread.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
+                    sink.getNumberOfCardsRead() + " card" +
+                            (sink.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
 
             return view;
         }

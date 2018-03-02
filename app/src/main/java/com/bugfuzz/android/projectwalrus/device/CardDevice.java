@@ -20,7 +20,9 @@ public abstract class CardDevice {
     static private int nextID;
 
     protected final Context context;
+
     private final int id;
+
     private String status;
 
     public CardDevice(Context context) {
@@ -31,6 +33,21 @@ public abstract class CardDevice {
 
     public int getID() {
         return id;
+    }
+
+    public void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink)
+            throws IOException {
+        throw new UnsupportedOperationException("Device does not support card reading");
+    }
+
+    public void writeCardData(CardData cardData, CardDataOperationCallbacks callbacks)
+            throws IOException {
+        throw new UnsupportedOperationException("Device does not support card writing");
+    }
+
+    public void emulateCardData(CardData cardData, CardDataOperationCallbacks callbacks)
+            throws IOException {
+        throw new UnsupportedOperationException("Device does not support card emulation");
     }
 
     protected void setStatus(String status) {
@@ -46,18 +63,6 @@ public abstract class CardDevice {
         return status;
     }
 
-    public void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException {
-        throw new UnsupportedOperationException("Device does not support card reading");
-    }
-
-    public void writeCardData(CardData cardData) throws IOException {
-        throw new UnsupportedOperationException("Device does not support card writing");
-    }
-
-    public void emulateCardData(CardData cardData) throws IOException {
-        throw new UnsupportedOperationException("Device does not support card emulation");
-    }
-
     public Intent getDeviceActivityIntent(Context context) {
         return null;
     }
@@ -65,24 +70,26 @@ public abstract class CardDevice {
     public void close() {
     }
 
-    public interface CardDataSink {
+    public interface CardDataOperationCallbacks {
+        void onStarting();
+
+        boolean shouldContinue();
+
+        void onError(String message);
+        void onFinish();
+    }
+
+    public interface CardDataSink extends CardDataOperationCallbacks {
         void onCardData(CardData cardData);
-
-        boolean wantsMore();
-
-        // TODO: error handling so toasting can happen in proper thread
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
         String name();
-
         int icon();
 
         Class<? extends CardData>[] supportsRead();
-
         Class<? extends CardData>[] supportsWrite();
-
         Class<? extends CardData>[] supportsEmulate();
     }
 }

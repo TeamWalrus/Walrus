@@ -48,7 +48,7 @@ public class CardDeviceListFragment extends ListFragment {
     public void onResume() {
         super.onResume();
 
-        IntentFilter intentFilter = new IntentFilter(CardDeviceManager.ACTION_DEVICE_UPDATE);
+        IntentFilter intentFilter = new IntentFilter(CardDeviceManager.ACTION_UPDATE);
         intentFilter.addAction(CardDevice.ACTION_STATUS_UPDATE);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
                 deviceUpdateBroadcastReceiver, intentFilter);

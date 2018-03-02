@@ -26,7 +26,7 @@ public class ProjectWalrusApplication extends Application {
         PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini, false);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(new DeviceChangedBroadcastHandler(),
-                new IntentFilter(CardDeviceManager.ACTION_DEVICE_UPDATE));
+                new IntentFilter(CardDeviceManager.ACTION_UPDATE));
 
         CardDeviceManager.INSTANCE.addDebugDevice(this);
 

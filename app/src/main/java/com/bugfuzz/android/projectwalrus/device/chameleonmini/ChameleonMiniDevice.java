@@ -2,11 +2,8 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
 import android.preference.PreferenceManager;
-import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -17,12 +14,8 @@ import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Logger;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -51,11 +44,12 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         usbSerialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
     }
 
-    private void tryAcquireAndSetStatus(String status) throws IOException {
+    private boolean tryAcquireAndSetStatus(String status) {
         if (!semaphore.tryAcquire())
-            throw new IOException("Device is busy");
+            return false;
 
         setStatus(status);
+        return true;
     }
 
     private void releaseAndSetStatus() {
@@ -64,174 +58,212 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     }
 
     @Override
-    public void readCardData(Class<? extends CardData> cardDataClass, final CardDataSink cardDataSink) throws IOException {
+    public void readCardData(Class<? extends CardData> cardDataClass,
+                             final CardDataSink cardDataSink) throws IOException {
         // TODO: use cardDataClass
 
-        tryAcquireAndSetStatus("Reading");
+        if (!tryAcquireAndSetStatus("Reading"))
+            throw new IOException("Device is busy");
 
-        try {
-            setReceiving(true);
+        cardDataSink.onStarting();
 
-            try {
-                send("CONFIG=ISO14443A_READER");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setReceiving(true);
 
-                receive(new WatchdogReceiveSink<String, Void>(3000) {
-                    private int state;
+                    try {
+                        send("CONFIG=ISO14443A_READER");
 
-                    private short atqa;
-                    private long uid;
-                    private byte sak;
+                        receive(new WatchdogReceiveSink<String, Void>(3000) {
+                            private int state;
 
-                    @Override
-                    public Void onReceived(String in) throws IOException {
-                        switch (state) {
-                            case 0:
-                                if (!in.equals("100:OK"))
-                                    throw new IOException(
-                                            "Unexpected response to CONFIG= command: " + in);
+                            private short atqa;
+                            private long uid;
+                            private byte sak;
 
-                                send("TIMEOUT=2");
+                            @Override
+                            public Void onReceived(String in) throws IOException {
+                                switch (state) {
+                                    case 0:
+                                        if (!in.equals("100:OK"))
+                                            throw new IOException(
+                                                    "Unexpected response to CONFIG= command: " +
+                                                            in);
 
-                                ++state;
-                                break;
+                                        send("TIMEOUT=2");
 
-                            case 1:
-                                if (!in.equals("100:OK"))
-                                    throw new IOException(
-                                            "Unexpected response to TIMEOUT= command: " + in);
-
-                                send("IDENTIFY");
-
-                                ++state;
-                                break;
-
-                            case 2:
-                                switch (in) {
-                                    case "101:OK WITH TEXT":
                                         ++state;
                                         break;
 
-                                    case "203:TIMEOUT":
-                                        resetWatchdog();
+                                    case 1:
+                                        if (!in.equals("100:OK"))
+                                            throw new IOException(
+                                                    "Unexpected response to TIMEOUT= command: " +
+                                                            in);
+
                                         send("IDENTIFY");
+
+                                        ++state;
                                         break;
 
-                                    default:
-                                        throw new IOException(
-                                                "Unexpected response to IDENTIFY command: " + in);
+                                    case 2:
+                                        switch (in) {
+                                            case "101:OK WITH TEXT":
+                                                ++state;
+                                                break;
+
+                                            case "203:TIMEOUT":
+                                                resetWatchdog();
+                                                send("IDENTIFY");
+                                                break;
+
+                                            default:
+                                                throw new IOException(
+                                                        "Unexpected response to IDENTIFY command: " +
+                                                                in);
+                                        }
+                                        break;
+
+                                    case 3:
+                                        ++state;
+                                        break;
+
+                                    case 4:
+                                        String line_atqa[] = in.split(":");
+                                        atqa = Short.reverseBytes(
+                                                (short) Integer.parseInt(line_atqa[1].trim(), 16));
+
+                                        ++state;
+                                        break;
+
+                                    case 5:
+                                        String line_uid[] = in.split(":");
+                                        uid = Long.parseLong(line_uid[1].trim(), 16);
+
+                                        ++state;
+                                        break;
+
+                                    case 6:
+                                        String line_sak[] = in.split(":");
+                                        sak = (byte) Integer.parseInt(line_sak[1].trim(), 16);
+
+                                        cardDataSink.onCardData(
+                                                new ISO14443ACardData(uid, atqa, sak, null, null));
+
+                                        if (!cardDataSink.shouldContinue())
+                                            break;
+
+                                        resetWatchdog();
+
+                                        send("IDENTIFY");
+
+                                        state = 2;
+                                        break;
                                 }
-                                break;
 
-                            case 3:
-                                ++state;
-                                break;
+                                return null;
+                            }
 
-                            case 4:
-                                String line_atqa[] = in.split(":");
-                                atqa = Short.reverseBytes(
-                                        (short) Integer.parseInt(line_atqa[1].trim(), 16));
-
-                                ++state;
-                                break;
-
-                            case 5:
-                                String line_uid[] = in.split(":");
-                                uid = Long.parseLong(line_uid[1].trim(), 16);
-
-                                ++state;
-                                break;
-
-                            case 6:
-                                String line_sak[] = in.split(":");
-                                sak = (byte) Integer.parseInt(line_sak[1].trim(), 16);
-
-                                cardDataSink.onCardData(
-                                        new ISO14443ACardData(uid, atqa, sak, null, null));
-
-                                if (!cardDataSink.wantsMore())
-                                    break;
-
-                                resetWatchdog();
-
-                                send("IDENTIFY");
-
-                                state = 2;
-                                break;
-                        }
-
-                        return null;
+                            @Override
+                            public boolean wantsMore() {
+                                return cardDataSink.shouldContinue();
+                            }
+                        });
+                    } catch (IOException exception) {
+                        cardDataSink.onError(exception.getMessage());
+                        return;
+                    } finally {
+                        setReceiving(false);
                     }
+                } finally {
+                    releaseAndSetStatus();
+                }
 
-                    @Override
-                    public boolean wantsMore() {
-                        return cardDataSink.wantsMore();
-                    }
-                });
-            } finally {
-                setReceiving(false);
+                cardDataSink.onFinish();
             }
-        } finally {
-            releaseAndSetStatus();
-        }
+        }).start();
     }
 
     @Override
-    public void emulateCardData(final CardData cardData) throws IOException {
-        tryAcquireAndSetStatus("Emulating");
+    public void emulateCardData(final CardData cardData, final CardDataOperationCallbacks callbacks)
+            throws IOException {
+        // TODO: ask what slot if not specified in settings here
 
-        try {
-            setReceiving(true);
+        if (!tryAcquireAndSetStatus("Emulating"))
+            throw new IOException("Device is busy");
 
-            try {
-                // TODO: use cardData.getClass()
-                send("CONFIG=MF_CLASSIC_1K");
+        callbacks.onStarting();
 
-                receive(new WatchdogReceiveSink<String, Boolean>(3000) {
-                    private int state;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setReceiving(true);
 
-                    @Override
-                    public Boolean onReceived(String in) throws IOException {
-                        switch (state) {
-                            case 0:
-                                if (!in.equals("100:OK"))
-                                    throw new IOException(
-                                            "Unexpected response to CONFIG= command: " + in);
+                    try {
+                        // TODO: use cardData.getClass()
+                        send("CONFIG=MF_CLASSIC_1K");
 
-                                int slot = PreferenceManager.getDefaultSharedPreferences(context)
-                                        .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
-                                send("SETTING=" + slot);
+                        receive(new WatchdogReceiveSink<String, Boolean>(3000) {
+                            private int state;
 
-                                ++state;
-                                break;
+                            @Override
+                            public Boolean onReceived(String in) throws IOException {
+                                switch (state) {
+                                    case 0:
+                                        if (!in.equals("100:OK"))
+                                            throw new IOException(
+                                                    "Unexpected response to CONFIG= command: " + in);
 
-                            case 1:
-                                if (!in.equals("100:OK"))
-                                    throw new IOException(
-                                            "Unexpected response to SETTING= command: " + in);
+                                        int slot = PreferenceManager.getDefaultSharedPreferences(context)
+                                                .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
+                                        send("SETTING=" + slot);
 
-                                ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
-                                send("UID=" + String.format("%08x", iso14443ACardData.uid));
+                                        ++state;
+                                        break;
 
-                                ++state;
-                                break;
+                                    case 1:
+                                        if (!in.equals("100:OK"))
+                                            throw new IOException(
+                                                    "Unexpected response to SETTING= command: " + in);
 
-                            case 2:
-                                if (!in.equals("100:OK"))
-                                    throw new IOException(
-                                            "Unexpected response to WRITE (UID=) command: " + in);
+                                        ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
+                                        send("UID=" + String.format("%08x", iso14443ACardData.uid));
 
-                                return true;
-                        }
+                                        ++state;
+                                        break;
 
-                        return null;
+                                    case 2:
+                                        if (!in.equals("100:OK"))
+                                            throw new IOException(
+                                                    "Unexpected response to WRITE (UID=) command: " + in);
+
+                                        return true;
+                                }
+
+                                return null;
+                            }
+
+                            @Override
+                            public boolean wantsMore() {
+                                return callbacks.shouldContinue();
+                            }
+                        });
+                    } catch (IOException exception) {
+                        callbacks.onError(exception.getMessage());
+                        return;
+                    } finally {
+                        setReceiving(false);
                     }
-                });
-            } finally {
-                setReceiving(false);
+                } finally {
+                    releaseAndSetStatus();
+                }
+
+                callbacks.onFinish();
             }
-        } finally {
-            releaseAndSetStatus();
-        }
+        }).start();
     }
 
     @Override
@@ -240,7 +272,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     }
 
     public String getVersion() throws IOException {
-        tryAcquireAndSetStatus("Getting version");
+        if (!tryAcquireAndSetStatus("Getting version"))
+            throw new IOException("Device is busy");
 
         try {
             setReceiving(true);

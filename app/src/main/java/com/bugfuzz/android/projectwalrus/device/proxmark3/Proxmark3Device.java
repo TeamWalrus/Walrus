@@ -71,11 +71,13 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
         return out.toBytes();
     }
 
-    private void tryAcquireAndSetStatus(String status) throws IOException {
+    private boolean tryAcquireAndSetStatus(String status) {
         if (!semaphore.tryAcquire())
-            throw new IOException("Device is busy");
+            return false;
 
         setStatus(status);
+
+        return true;
     }
 
     private void releaseAndSetStatus() {
@@ -84,122 +86,121 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     }
 
     private <O> O sendThenReceiveCommands(Proxmark3Command out,
-                                          ReceiveSink<Proxmark3Command, O> receiveSink,
-                                          String status) throws IOException {
-        tryAcquireAndSetStatus(status);
+                                          ReceiveSink<Proxmark3Command, O> receiveSink)
+            throws IOException {
+        setReceiving(true);
 
         try {
-            setReceiving(true);
-
-            try {
-                send(out);
-                return receive(receiveSink);
-            } finally {
-                setReceiving(false);
-            }
+            send(out);
+            return receive(receiveSink);
         } finally {
-            releaseAndSetStatus();
-        }
-    }
-
-    public TuneResult tune(boolean lf, boolean hf) throws IOException {
-        long arg = 0;
-        if (lf)
-            arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF;
-        if (hf)
-            arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF;
-        if (arg == 0)
-            throw new IllegalArgumentException("Must tune LF or HF");
-
-        Proxmark3Command result = sendThenReceiveCommands(
-                new Proxmark3Command(Proxmark3Command.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
-                new CommandWaiter(Proxmark3Command.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT),
-                "Tuning");
-        if (result == null)
-            throw new IOException("Failed to tune antenna before timeout");
-
-        float[] v_LF = new float[256];
-        for (int i = 0; i < 256; ++i)
-            v_LF[i] = ((result.data[i] & 0xff) << 8) / 1e3f;
-
-        return new TuneResult(
-                lf, hf,
-                lf ? v_LF : null,
-                lf ? (result.args[0] & 0xffff) / 1e3f : null,
-                lf ? (result.args[0] >> 16) / 1e3f : null,
-                lf ? 12e6f / ((result.args[2] & 0xffff) + 1) : null,
-                lf ? (result.args[2] >> 16) / 1e3f : null,
-                hf ? (result.args[1] & 0xffff) / 1e3f : null);
-    }
-
-    @Override
-    public void readCardData(Class<? extends CardData> cardDataClass, final CardDataSink cardDataSink) throws IOException {
-        tryAcquireAndSetStatus("Reading");
-
-        try {
-            setReceiving(true);
-
-            try {
-                // TODO: use cardDataClass
-                send(new Proxmark3Command(Proxmark3Command.HID_DEMOD_FSK, new long[]{0, 0, 0}));
-
-                // TODO: do periodic VERSION-based device-aliveness checking like Chameleon Mini will/does
-                receive(new ReceiveSink<Proxmark3Command, Boolean>() {
-                    @Override
-                    public Boolean onReceived(Proxmark3Command in) throws IOException {
-                        if (in.op != Proxmark3Command.DEBUG_PRINT_STRING)
-                            return null;
-
-                        String dataAsString = in.dataAsString();
-
-                        if (dataAsString.equals("Stopped"))
-                            return true;
-
-                        Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
-                        if (matcher.find())
-                            cardDataSink.onCardData(new HIDCardData(new BigInteger(matcher.group(1), 16)));
-
-                        return null;
-                    }
-
-                    @Override
-                    public boolean wantsMore() {
-                        return cardDataSink.wantsMore();
-                    }
-                });
-            } finally {
-                setReceiving(false);
-            }
-
-            send(new Proxmark3Command(Proxmark3Command.VERSION));
-        } finally {
-            releaseAndSetStatus();
+            setReceiving(false);
         }
     }
 
     @Override
-    public void writeCardData(CardData cardData) throws IOException {
-        // TODO: use cardDataClass
-        HIDCardData hidCardData = (HIDCardData) cardData;
+    public void readCardData(Class<? extends CardData> cardDataClass,
+                             final CardDataSink cardDataSink) throws IOException {
+        if (!tryAcquireAndSetStatus("Reading"))
+            throw new IOException("Device busy");
 
-        if (!sendThenReceiveCommands(
-                new Proxmark3Command(
-                        Proxmark3Command.HID_CLONE_TAG,
-                        new long[]{
-                                hidCardData.data.shiftRight(64).intValue(),
-                                hidCardData.data.shiftRight(32).intValue(),
-                                hidCardData.data.intValue()
-                        },
-                        new byte[]{hidCardData.data.bitLength() > 44 ? (byte) 1 : 0}),
-                new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
-                    @Override
-                    public Boolean onReceived(Proxmark3Command in) {
-                        return in.op == Proxmark3Command.DEBUG_PRINT_STRING &&
-                                in.dataAsString().equals("DONE!") ? true : null;
+        cardDataSink.onStarting();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    setReceiving(true);
+
+                    try {
+                        // TODO: use cardDataClass
+                        send(new Proxmark3Command(Proxmark3Command.HID_DEMOD_FSK,
+                                new long[]{0, 0, 0}));
+
+                        // TODO: do periodic VERSION-based device-aliveness checking like Chameleon Mini will/does
+                        receive(new ReceiveSink<Proxmark3Command, Boolean>() {
+                            @Override
+                            public Boolean onReceived(Proxmark3Command in) throws IOException {
+                                if (in.op != Proxmark3Command.DEBUG_PRINT_STRING)
+                                    return null;
+
+                                String dataAsString = in.dataAsString();
+
+                                if (dataAsString.equals("Stopped"))
+                                    return true;
+
+                                Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
+                                if (matcher.find())
+                                    cardDataSink.onCardData(new HIDCardData(new BigInteger(
+                                            matcher.group(1), 16)));
+
+                                return null;
+                            }
+
+                            @Override
+                            public boolean wantsMore() {
+                                return cardDataSink.shouldContinue();
+                            }
+                        });
+                    } finally {
+                        setReceiving(false);
                     }
-                },
-                "Writing"))
-            throw new IOException("Failed to write card data before timeout");
+
+                    send(new Proxmark3Command(Proxmark3Command.VERSION));
+                } catch (IOException exception) {
+                    cardDataSink.onError(exception.getMessage());
+                    return;
+                } finally {
+                    releaseAndSetStatus();
+                }
+
+                cardDataSink.onFinish();
+            }
+        }).start();
+    }
+
+    @Override
+    public void writeCardData(final CardData cardData, final CardDataOperationCallbacks callbacks)
+            throws IOException {
+        if (!tryAcquireAndSetStatus("Writing"))
+            throw new IOException("Device busy");
+
+        callbacks.onStarting();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // TODO: use cardDataClass
+                    HIDCardData hidCardData = (HIDCardData) cardData;
+
+                    if (!sendThenReceiveCommands(
+                            new Proxmark3Command(
+                                    Proxmark3Command.HID_CLONE_TAG,
+                                    new long[]{
+                                            hidCardData.data.shiftRight(64).intValue(),
+                                            hidCardData.data.shiftRight(32).intValue(),
+                                            hidCardData.data.intValue()
+                                    },
+                                    new byte[]{hidCardData.data.bitLength() > 44 ? (byte) 1 : 0}),
+                            new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
+                                @Override
+                                public Boolean onReceived(Proxmark3Command in) {
+                                    return in.op == Proxmark3Command.DEBUG_PRINT_STRING &&
+                                            in.dataAsString().equals("DONE!") ? true : null;
+                                }
+                            }))
+                        throw new IOException("Failed to write card data before timeout");
+                } catch (IOException exception) {
+                    callbacks.onError(exception.getMessage());
+                    return;
+                } finally {
+                    releaseAndSetStatus();
+                }
+
+                callbacks.onFinish();
+            }
+        }).start();
     }
 
     @Override
@@ -208,16 +209,58 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     }
 
     public String getVersion() throws IOException {
-        Proxmark3Command version = sendThenReceiveCommands(
-                new Proxmark3Command(Proxmark3Command.VERSION),
-                new CommandWaiter(Proxmark3Command.ACK, DEFAULT_TIMEOUT),
-                "Getting version");
-        if (version == null)
-            throw new IOException("Failed to get device version before timeout");
+        if (!tryAcquireAndSetStatus("Getting version"))
+            throw new IOException("Device busy");
 
-        return version.dataAsString();
+        try {
+            Proxmark3Command version = sendThenReceiveCommands(
+                    new Proxmark3Command(Proxmark3Command.VERSION),
+                    new CommandWaiter(Proxmark3Command.ACK, DEFAULT_TIMEOUT));
+            if (version == null)
+                throw new IOException("Failed to get device version before timeout");
+
+            return version.dataAsString();
+        } finally {
+            releaseAndSetStatus();
+        }
     }
 
+    public TuneResult tune(boolean lf, boolean hf) throws IOException {
+        if (!tryAcquireAndSetStatus("Tuning"))
+            throw new IOException("Device busy");
+
+        try {
+            long arg = 0;
+            if (lf)
+                arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF;
+            if (hf)
+                arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF;
+            if (arg == 0)
+                throw new IllegalArgumentException("Must tune LF or HF");
+
+            Proxmark3Command result = sendThenReceiveCommands(
+                    new Proxmark3Command(Proxmark3Command.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
+                    new CommandWaiter(Proxmark3Command.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT));
+            if (result == null)
+                throw new IOException("Failed to tune antenna before timeout");
+
+            float[] v_LF = new float[256];
+            for (int i = 0; i < 256; ++i)
+                v_LF[i] = ((result.data[i] & 0xff) << 8) / 1e3f;
+
+            return new TuneResult(
+                    lf, hf,
+                    lf ? v_LF : null,
+                    lf ? (result.args[0] & 0xffff) / 1e3f : null,
+                    lf ? (result.args[0] >> 16) / 1e3f : null,
+                    lf ? 12e6f / ((result.args[2] & 0xffff) + 1) : null,
+                    lf ? (result.args[2] >> 16) / 1e3f : null,
+                    hf ? (result.args[1] & 0xffff) / 1e3f : null);
+        } finally {
+            releaseAndSetStatus();
+        }
+    }
+    
     private static class CommandWaiter extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
 
         private final long op;

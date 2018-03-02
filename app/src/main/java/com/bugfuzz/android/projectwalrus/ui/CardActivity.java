@@ -3,12 +3,12 @@ package com.bugfuzz.android.projectwalrus.ui;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -33,12 +33,7 @@ import com.bugfuzz.android.projectwalrus.data.QueryUtils;
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.util.GeoUtils;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
+import com.bugfuzz.android.projectwalrus.device.LocationAwareCardDataSink;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -50,7 +45,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +54,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_MODE";
     private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_CARD";
+
+    private static final String PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG = "pick_card_device_dialog";
 
     private Mode mode;
     private Card card;
@@ -394,13 +390,20 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             args.putInt("callback_id", callbackId);
             pickCardDeviceDialogFragment.setArguments(args);
 
-            pickCardDeviceDialogFragment.show(getFragmentManager(), "pick_card_device_dialog");
+            pickCardDeviceDialogFragment.show(getFragmentManager(),
+                    PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
         } else
             onCardDeviceClick(cardDevices.get(0), callbackId);
     }
 
     @Override
     public void onCardDeviceClick(final CardDevice cardDevice, int callbackId) {
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment pickCardDeviceDialogFragment = fragmentManager.findFragmentByTag(
+                PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
+        if (pickCardDeviceDialogFragment != null)
+            fragmentManager.beginTransaction().remove(pickCardDeviceDialogFragment).commit();
+
         switch (callbackId) {
             case 0: {
                 final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
@@ -426,15 +429,34 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             case 1:
             case 2:
-                new WriteOrEmulateCardDataTask(this, cardDevice, card.cardData, callbackId == 1)
-                        .execute();
+                WriteOrEmulateCardDataOperationCallbacks writeOrEmulateCardDataOperationCallbacks =
+                        new WriteOrEmulateCardDataOperationCallbacks(cardDevice, card.cardData,
+                                callbackId == 1);
+                try {
+                    if (callbackId == 1)
+                        cardDevice.writeCardData(card.cardData,
+                                writeOrEmulateCardDataOperationCallbacks);
+                    else
+                        cardDevice.emulateCardData(card.cardData,
+                                writeOrEmulateCardDataOperationCallbacks);
+                } catch (IOException exception) {
+                    Toast.makeText(this, "Failed to start " +
+                                    (callbackId == 1 ? "writing" : "emulating") + " card: " +
+                                    exception.getMessage(), Toast.LENGTH_LONG).show();
+                }
                 break;
         }
     }
 
     private void onChooseReadCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
         if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
-            new ReadCardDataTask(this, cardDevice, cardDataClass).execute();
+            try {
+                cardDevice.readCardData(cardDataClass, new ReadCardDataSink(cardDevice,
+                        cardDataClass));
+            } catch (IOException exception) {
+                Toast.makeText(this, "Failed to start reading cards: " + exception.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
         else {
             BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
             finish();
@@ -475,77 +497,39 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         EDIT_BULK_READ_CARD_TEMPLATE
     }
 
-    private static class ReadCardDataTask extends AsyncTask<Void, Void, IOException> {
-
-        private final WeakReference<CardActivity> activity;
+    private class WriteOrEmulateCardDataOperationCallbacks
+            implements CardDevice.CardDataOperationCallbacks {
 
         private final CardDevice cardDevice;
-        private final Class<? extends CardData> cardDataClass;
-
-        private FusedLocationProviderClient fusedLocationProviderClient;
-        private LocationCallback locationCallback;
-        private Location currentBestLocation;
-
-        private CardData cardData;
-        private Location location;
+        private final CardData cardData;
+        private final boolean write;
 
         private Dialog dialog;
 
-        ReadCardDataTask(CardActivity activity, CardDevice cardDevice,
-                         Class<? extends CardData> cardDataClass) {
-            this.activity = new WeakReference<>(activity);
+        private volatile boolean stop;
 
+        WriteOrEmulateCardDataOperationCallbacks(CardDevice cardDevice, CardData cardData, boolean write) {
             this.cardDevice = cardDevice;
-            this.cardDataClass = cardDataClass;
+            this.cardData = cardData;
+            this.write = write;
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            CardActivity activity = this.activity.get();
-            if (activity == null) {
-                cancel(false);
-                return;
-            }
-
-            try {
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
-
-                LocationRequest locationRequest = new LocationRequest();
-                locationRequest.setInterval(2000);
-                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-                locationCallback = new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        for (Location location : locationResult.getLocations()) {
-                            if (currentBestLocation == null ||
-                                    GeoUtils.isBetterLocation(location, currentBestLocation))
-                                currentBestLocation = location;
-                        }
-                    }
-                };
-
-                fusedLocationProviderClient.requestLocationUpdates(locationRequest,
-                        locationCallback, null);
-            } catch (SecurityException ignored) {
-            }
-
-            CardDataIOView cardDataIOView = new CardDataIOView(activity);
+        public void onStarting() {
+            CardDataIOView cardDataIOView = new CardDataIOView(CardActivity.this);
             cardDataIOView.setCardDeviceClass(cardDevice.getClass());
-            cardDataIOView.setDirection(true);
-            cardDataIOView.setCardDataClass(cardDataClass);
+            cardDataIOView.setDirection(false);
+            cardDataIOView.setCardDataClass(cardData.getClass());
             cardDataIOView.setPadding(0, 60, 0, 10);
 
-            dialog = new AlertDialog.Builder(activity)
-                    .setTitle("Waiting for card")
+            dialog = new AlertDialog.Builder(CardActivity.this)
+                    .setTitle((write ? "Writing" : "Emulating") + " card")
                     .setView(cardDataIOView)
                     .setCancelable(true)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
-                            ReadCardDataTask.this.cancel(false);
+                            stop = true;
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -558,136 +542,114 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
-        protected IOException doInBackground(Void... params) {
-            try {
-                cardDevice.readCardData(cardDataClass, new CardDevice.CardDataSink() {
-                    @Override
-                    public void onCardData(CardData cardData) {
-                        ReadCardDataTask.this.cardData = cardData;
-                        ReadCardDataTask.this.location = currentBestLocation;
-                    }
-
-                    @Override
-                    public boolean wantsMore() {
-                        return !isCancelled() && ReadCardDataTask.this.cardData == null;
-                    }
-                });
-            } catch (IOException exception) {
-                return exception;
-            }
-
-            return null;
+        public boolean shouldContinue() {
+            return !stop;
         }
 
         @Override
-        protected void onPostExecute(IOException exception) {
-            super.onPostExecute(exception);
-
-            try {
-                CardActivity activity = this.activity.get();
-                if (activity == null)
-                    return;
-
-                if (exception != null) {
-                    Toast.makeText(activity, "Failed to read card: " + exception.getMessage(),
+        public void onError(final String message) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(CardActivity.this, "Failed to " +
+                            (write ? "write" : "emulate") + " card: " + message,
                             Toast.LENGTH_LONG).show();
-                    return;
                 }
+            });
 
-                if (cardData != null) {
-                    activity.card.setCardData(cardData, location);
-                    activity.dirty = true;
-                    activity.updateUI();
-                }
-            } finally {
-                if (locationCallback != null)
-                    fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-
-                dialog.dismiss();
-            }
+            onFinish();
         }
 
         @Override
-        protected void onCancelled(IOException exception) {
-            super.onCancelled(exception);
-
-            if (locationCallback != null)
-                fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-
-            dialog.cancel();
+        public void onFinish() {
+            dialog.dismiss();
         }
     }
 
-    private static class WriteOrEmulateCardDataTask extends AsyncTask<Void, Void, IOException> {
-
-        private final WeakReference<Context> context;
+    private class ReadCardDataSink extends LocationAwareCardDataSink {
 
         private final CardDevice cardDevice;
-        private final CardData cardData;
-        private final boolean write;
+        private final Class<? extends CardData> cardDataClass;
 
         private Dialog dialog;
 
-        WriteOrEmulateCardDataTask(Context context, CardDevice cardDevice, CardData cardData,
-                                   boolean write) {
-            this.context = new WeakReference<>(context);
+        private volatile boolean stop;
+
+        ReadCardDataSink(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
+            super(CardActivity.this);
 
             this.cardDevice = cardDevice;
-            this.cardData = cardData;
-            this.write = write;
+            this.cardDataClass = cardDataClass;
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        public void onStarting() {
+            super.onStarting();
 
-            Context context = this.context.get();
-            if (context == null) {
-                cancel(false);
-                return;
-            }
-
-            CardDataIOView cardDataIOView = new CardDataIOView(context);
+            CardDataIOView cardDataIOView = new CardDataIOView(CardActivity.this);
             cardDataIOView.setCardDeviceClass(cardDevice.getClass());
-            cardDataIOView.setDirection(false);
-            cardDataIOView.setCardDataClass(cardData.getClass());
-            cardDataIOView.setPadding(0, 60, 0, 60);
+            cardDataIOView.setDirection(true);
+            cardDataIOView.setCardDataClass(cardDataClass);
+            cardDataIOView.setPadding(0, 60, 0, 10);
 
-            dialog = new AlertDialog.Builder(context)
-                    .setTitle((write ? "Writing" : "Emulating") + " card")
+            dialog = new AlertDialog.Builder(CardActivity.this)
+                    .setTitle("Waiting for card")
                     .setView(cardDataIOView)
+                    .setCancelable(true)
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            stop = true;
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
                     .show();
         }
 
         @Override
-        protected IOException doInBackground(Void... params) {
-            try {
-                if (write)
-                    cardDevice.writeCardData(cardData);
-                else
-                    cardDevice.emulateCardData(cardData);
-            } catch (IOException exception) {
-                return exception;
-            }
+        public void onCardData(final CardData cardData) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    card.setCardData(cardData, getCurrentBestLocation());
+                    dirty = true;
+                    updateUI();
+                }
+            });
 
-            return null;
+            stop = true;
         }
 
         @Override
-        protected void onPostExecute(IOException exception) {
-            super.onPostExecute(exception);
+        public boolean shouldContinue() {
+            return !stop;
+        }
 
-            try {
-                Context context = this.context.get();
-                if (context == null)
-                    return;
+        @Override
+        public void onError(final String message) {
+            super.onError(message);
 
-                if (exception != null)
-                    Toast.makeText(context, "Failed to " + (write ? "write" : "emulate") +
-                            " card: " + exception.getMessage(), Toast.LENGTH_LONG).show();
-            } finally {
-                dialog.dismiss();
-            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(CardActivity.this, "Failed to read card: " + message,
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+
+            onFinish();
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+
+            dialog.dismiss();
         }
     }
 }
