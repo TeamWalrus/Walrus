@@ -117,6 +117,11 @@ public enum CardDeviceManager {
         seenUsbDevices.remove(usbDevice);
     }
 
+    public void addDebugDevice(Context context) {
+        DebugDevice debugDevice = new DebugDevice(context);
+        cardDevices.put(debugDevice.getID(), debugDevice);
+    }
+
     public Map<Integer, CardDevice> getCardDevices() {
         return Collections.unmodifiableMap(cardDevices);
     }

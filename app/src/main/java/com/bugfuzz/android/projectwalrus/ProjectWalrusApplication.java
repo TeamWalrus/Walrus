@@ -28,6 +28,8 @@ public class ProjectWalrusApplication extends Application {
         LocalBroadcastManager.getInstance(this).registerReceiver(new DeviceChangedBroadcastHandler(),
                 new IntentFilter(CardDeviceManager.ACTION_DEVICE_UPDATE));
 
+        CardDeviceManager.INSTANCE.addDebugDevice(this);
+
         new Thread(new Runnable() {
             @Override
             public void run() {

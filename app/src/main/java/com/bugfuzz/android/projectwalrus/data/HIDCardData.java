@@ -5,6 +5,7 @@ import com.bugfuzz.android.projectwalrus.R;
 import org.parceler.Parcel;
 
 import java.math.BigInteger;
+import java.util.Random;
 
 @Parcel
 @CardData.Metadata(
@@ -14,6 +15,11 @@ import java.math.BigInteger;
 public class HIDCardData extends CardData {
 
     public BigInteger data;
+
+    @SuppressWarnings("unused")
+    public static HIDCardData newDebugInstance() {
+        return new HIDCardData(new BigInteger(44, new Random()));
+    }
 
     public HIDCardData() {
     }

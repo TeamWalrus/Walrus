@@ -409,7 +409,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 if (readableTypes.length > 1) {
                     String[] names = new String[readableTypes.length];
                     for (int i = 0; i < names.length; ++i)
-                        names[i] = readableTypes[i].getSimpleName();
+                        names[i] = readableTypes[i].getAnnotation(CardData.Metadata.class).name();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Choose card type to read")

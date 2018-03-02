@@ -4,7 +4,9 @@ import com.bugfuzz.android.projectwalrus.R;
 
 import org.parceler.Parcel;
 
+import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Random;
 
 @Parcel
 @CardData.Metadata(
@@ -41,6 +43,12 @@ public class ISO14443ACardData extends CardData {
     public byte sak;
     public int[] ats;
     public byte[] data;
+
+    @SuppressWarnings("unused")
+    public static ISO14443ACardData newDebugInstance() {
+        return new ISO14443ACardData((long) (Math.random() * Long.MAX_VALUE), (short) 0x0004,
+                (byte) 0x18, null, null);
+    }
 
     public ISO14443ACardData() {
     }
