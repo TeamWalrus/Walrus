@@ -46,9 +46,17 @@ public abstract class CardDevice {
         return status;
     }
 
-    public abstract void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException;
+    public void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException {
+        throw new UnsupportedOperationException("Device does not support card reading");
+    }
 
-    public abstract void writeCardData(CardData cardData) throws IOException;
+    public void writeCardData(CardData cardData) throws IOException {
+        throw new UnsupportedOperationException("Device does not support card writing");
+    }
+
+    public void emulateCardData(CardData cardData) throws IOException {
+        throw new UnsupportedOperationException("Device does not support card emulation");
+    }
 
     public Intent getDeviceActivityIntent(Context context) {
         return null;
@@ -74,5 +82,7 @@ public abstract class CardDevice {
         Class<? extends CardData>[] supportsRead();
 
         Class<? extends CardData>[] supportsWrite();
+
+        Class<? extends CardData>[] supportsEmulate();
     }
 }

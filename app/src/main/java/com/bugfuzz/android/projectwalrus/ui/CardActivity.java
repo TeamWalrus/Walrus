@@ -356,35 +356,47 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     }
 
     public void onWriteCardClick(View view) {
+        startWriteOrEmulateCardSetup(true);
+    }
+
+    public void onEmulateCardClick(View view) {
+        startWriteOrEmulateCardSetup(false);
+    }
+
+    private void startWriteOrEmulateCardSetup(boolean write) {
         if (CardDeviceManager.INSTANCE.getCardDevices().isEmpty()) {
             Toast.makeText(this, "No card devices connected", Toast.LENGTH_LONG).show();
             return;
         }
 
         final List<CardDevice> cardDevices = new ArrayList<>();
-        for (CardDevice cardDevice : CardDeviceManager.INSTANCE.getCardDevices().values())
-            if (ArrayUtils.contains(
-                    cardDevice.getClass().getAnnotation(CardDevice.Metadata.class).supportsRead(),
+        for (CardDevice cardDevice : CardDeviceManager.INSTANCE.getCardDevices().values()) {
+            CardDevice.Metadata metadata = cardDevice.getClass().getAnnotation(
+                    CardDevice.Metadata.class);
+            if (ArrayUtils.contains(write ? metadata.supportsWrite() : metadata.supportsEmulate(),
                     card.cardData.getClass()))
                 cardDevices.add(cardDevice);
+        }
 
         if (cardDevices.isEmpty()) {
-            Toast.makeText(this, "No connected card device can write this kind of card",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No connected card device can " + (write ? "write" : "emulate") +
+                    " this kind of card", Toast.LENGTH_LONG).show();
             return;
         }
+
+        int callbackId = write ? 1 : 2;
 
         if (cardDevices.size() > 1) {
             PickCardDeviceDialogFragment pickCardDeviceDialogFragment =
                     new PickCardDeviceDialogFragment();
 
             Bundle args = new Bundle();
-            args.putInt("callback_id", 1);
+            args.putInt("callback_id", callbackId);
             pickCardDeviceDialogFragment.setArguments(args);
 
             pickCardDeviceDialogFragment.show(getFragmentManager(), "pick_card_device_dialog");
         } else
-            onCardDeviceClick(cardDevices.get(0), 1);
+            onCardDeviceClick(cardDevices.get(0), callbackId);
     }
 
     @Override
@@ -413,7 +425,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             }
 
             case 1:
-                new WriteCardDataTask(this, cardDevice, card.cardData).execute();
+            case 2:
+                new WriteOrEmulateCardDataTask(this, cardDevice, card.cardData, callbackId == 1)
+                        .execute();
                 break;
         }
     }
@@ -604,20 +618,23 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
     }
 
-    private static class WriteCardDataTask extends AsyncTask<Void, Void, IOException> {
+    private static class WriteOrEmulateCardDataTask extends AsyncTask<Void, Void, IOException> {
 
         private final WeakReference<Context> context;
 
         private final CardDevice cardDevice;
         private final CardData cardData;
+        private final boolean write;
 
         private Dialog dialog;
 
-        WriteCardDataTask(Context context, CardDevice cardDevice, CardData cardData) {
+        WriteOrEmulateCardDataTask(Context context, CardDevice cardDevice, CardData cardData,
+                                   boolean write) {
             this.context = new WeakReference<>(context);
 
             this.cardDevice = cardDevice;
             this.cardData = cardData;
+            this.write = write;
         }
 
         @Override
@@ -637,7 +654,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             cardDataIOView.setPadding(0, 60, 0, 60);
 
             dialog = new AlertDialog.Builder(context)
-                    .setTitle("Writing card")
+                    .setTitle((write ? "Writing" : "Emulating") + " card")
                     .setView(cardDataIOView)
                     .show();
         }
@@ -645,7 +662,10 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         @Override
         protected IOException doInBackground(Void... params) {
             try {
-                cardDevice.writeCardData(cardData);
+                if (write)
+                    cardDevice.writeCardData(cardData);
+                else
+                    cardDevice.emulateCardData(cardData);
             } catch (IOException exception) {
                 return exception;
             }
@@ -663,8 +683,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                     return;
 
                 if (exception != null)
-                    Toast.makeText(context, "Failed to write card: " + exception.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Failed to " + (write ? "write" : "emulate") +
+                            " card: " + exception.getMessage(), Toast.LENGTH_LONG).show();
             } finally {
                 dialog.dismiss();
             }

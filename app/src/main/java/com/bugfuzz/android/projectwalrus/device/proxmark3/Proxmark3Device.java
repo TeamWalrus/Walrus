@@ -25,7 +25,8 @@ import java.util.regex.Pattern;
         name = "Proxmark 3",
         icon = R.drawable.proxmark3,
         supportsRead = {HIDCardData.class},
-        supportsWrite = {HIDCardData.class}
+        supportsWrite = {HIDCardData.class},
+        supportsEmulate = {}
 )
 @UsbCardDevice.UsbIDs({
         @UsbCardDevice.UsbIDs.IDs(vendorId = 11565, productId = 20557),

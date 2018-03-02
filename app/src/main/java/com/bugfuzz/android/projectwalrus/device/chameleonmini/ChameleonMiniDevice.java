@@ -17,6 +17,8 @@ import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.Semaphore;
@@ -26,7 +28,8 @@ import java.util.logging.Logger;
         name = "Chameleon Mini",
         icon = R.drawable.chameleon_mini,
         supportsRead = {ISO14443ACardData.class},
-        supportsWrite = {ISO14443ACardData.class}
+        supportsWrite = {},
+        supportsEmulate = {ISO14443ACardData.class}
 )
 @UsbCardDevice.UsbIDs({@UsbCardDevice.UsbIDs.IDs(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
@@ -48,28 +51,23 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         usbSerialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
     }
 
-    // TODO: remove
-    @Override
-    protected Pair<String, Integer> sliceIncoming(byte[] in) {
-        Pair<String, Integer> r = super.sliceIncoming(in);
-        if (r != null)
-            Logger.getAnonymousLogger().info(">>>>> READ LINE >>>>> : " + r.first);
-        return r;
+    private void tryAcquireAndSetStatus(String status) throws IOException {
+        if (!semaphore.tryAcquire())
+            throw new IOException("Device is busy");
+
+        setStatus(status);
     }
 
-    // TODO: remove
-    @Override
-    protected byte[] formatOutgoing(String out) {
-        Logger.getAnonymousLogger().info("<<<<< SENT LINE <<<<< : " + out);
-        return super.formatOutgoing(out);
+    private void releaseAndSetStatus() {
+        setStatus("Idle");
+        semaphore.release();
     }
 
     @Override
     public void readCardData(Class<? extends CardData> cardDataClass, final CardDataSink cardDataSink) throws IOException {
         // TODO: use cardDataClass
 
-        if (!semaphore.tryAcquire())
-            throw new IOException("Device is busy");
+        tryAcquireAndSetStatus("Reading");
 
         try {
             setReceiving(true);
@@ -89,17 +87,21 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                         switch (state) {
                             case 0:
                                 if (!in.equals("100:OK"))
-                                    throw new IOException("Unexpected response to CONFIG command: " + in);
+                                    throw new IOException(
+                                            "Unexpected response to CONFIG= command: " + in);
 
                                 send("TIMEOUT=2");
+
                                 ++state;
                                 break;
 
                             case 1:
-                                if (!in.equals("100:OK")) //check response from chameleon mini
-                                    throw new IOException("Unexpected response to TIMEOUT command: " + in);
+                                if (!in.equals("100:OK"))
+                                    throw new IOException(
+                                            "Unexpected response to TIMEOUT= command: " + in);
 
                                 send("IDENTIFY");
+
                                 ++state;
                                 break;
 
@@ -115,43 +117,48 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                                         break;
 
                                     default:
-                                        throw new IOException("Unexpected response to IDENTIFY command: " + in);
+                                        throw new IOException(
+                                                "Unexpected response to IDENTIFY command: " + in);
                                 }
                                 break;
 
                             case 3:
-                                // Discard unused line from chameleon mini
                                 ++state;
                                 break;
 
                             case 4:
                                 String line_atqa[] = in.split(":");
-                                atqa = Short.reverseBytes((short) Integer.parseInt(line_atqa[1].trim(), 16));
+                                atqa = Short.reverseBytes(
+                                        (short) Integer.parseInt(line_atqa[1].trim(), 16));
+
                                 ++state;
                                 break;
 
                             case 5:
                                 String line_uid[] = in.split(":");
                                 uid = Long.parseLong(line_uid[1].trim(), 16);
+
                                 ++state;
                                 break;
 
                             case 6:
                                 String line_sak[] = in.split(":");
                                 sak = (byte) Integer.parseInt(line_sak[1].trim(), 16);
-                                cardDataSink.onCardData(new ISO14443ACardData(uid, atqa, sak, null, null));
+
+                                cardDataSink.onCardData(
+                                        new ISO14443ACardData(uid, atqa, sak, null, null));
 
                                 if (!cardDataSink.wantsMore())
                                     break;
 
                                 resetWatchdog();
 
-                                // Start again :)
                                 send("IDENTIFY");
-                                // State 2 because config and timeout already configured
+
                                 state = 2;
                                 break;
                         }
+
                         return null;
                     }
 
@@ -164,15 +171,13 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 setReceiving(false);
             }
         } finally {
-            semaphore.release();
+            releaseAndSetStatus();
         }
     }
 
     @Override
-    public void writeCardData(final CardData cardData) throws IOException {
-
-        if (!semaphore.tryAcquire())
-            throw new IOException("Device is busy");
+    public void emulateCardData(final CardData cardData) throws IOException {
+        tryAcquireAndSetStatus("Emulating");
 
         try {
             setReceiving(true);
@@ -188,36 +193,36 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                     public Boolean onReceived(String in) throws IOException {
                         switch (state) {
                             case 0:
-                                // are these null checks required?
-                                if (in == null)
-                                    throw new IOException("Couldn't read CONFIG result");
                                 if (!in.equals("100:OK"))
-                                    throw new IOException("Unexpected response to CONFIG= command: " + in);
+                                    throw new IOException(
+                                            "Unexpected response to CONFIG= command: " + in);
 
-                                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-                                int chameleonMiniSlot = sharedPref.getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
-                                send("SETTING=" + chameleonMiniSlot);
+                                int slot = PreferenceManager.getDefaultSharedPreferences(context)
+                                        .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
+                                send("SETTING=" + slot);
+
                                 ++state;
                                 break;
 
                             case 1:
-                                if (in == null)
-                                    throw new IOException("Couldn't read SETTING= result");
                                 if (!in.equals("100:OK"))
-                                    throw new IOException("Unexpected response to SETTING= command: " + in);
+                                    throw new IOException(
+                                            "Unexpected response to SETTING= command: " + in);
 
                                 ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
                                 send("UID=" + String.format("%08x", iso14443ACardData.uid));
+
                                 ++state;
                                 break;
 
                             case 2:
-                                if (in == null)
-                                    throw new IOException("Couldn't read WRITE (UID=) result");
                                 if (!in.equals("100:OK"))
-                                    throw new IOException("Unexpected response to WRITE (UID=) command: " + in);
+                                    throw new IOException(
+                                            "Unexpected response to WRITE (UID=) command: " + in);
+
                                 return true;
                         }
+
                         return null;
                     }
                 });
@@ -225,7 +230,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 setReceiving(false);
             }
         } finally {
-            semaphore.release();
+            releaseAndSetStatus();
         }
     }
 
@@ -235,8 +240,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     }
 
     public String getVersion() throws IOException {
-        if (!semaphore.tryAcquire())
-            throw new IOException("Device is busy");
+        tryAcquireAndSetStatus("Getting version");
 
         try {
             setReceiving(true);
@@ -266,7 +270,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                 setReceiving(false);
             }
         } finally {
-            semaphore.release();
+            releaseAndSetStatus();
         }
     }
 }
