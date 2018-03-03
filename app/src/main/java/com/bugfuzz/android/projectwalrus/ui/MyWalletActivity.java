@@ -68,13 +68,6 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setAdapter(new CardAdapter());
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                if (parent.getChildAdapterPosition(view) != 0)
-                    outRect.set(0, -455, 0, 0);
-            }
-        });
 
         FabSpeedDial fabSpeedDial = findViewById(R.id.floatingActionButton);
         fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {

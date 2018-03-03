@@ -24,8 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/searchView"
-        android:background="@android:color/background_light"
-        android:paddingTop="6dp"
+        android:background="@color/primaryDarkColor"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
         android:scrollbars="vertical"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
 
@@ -39,7 +41,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         app:elevation="8dp"
-        app:fabBackgroundTint="@color/primaryColor"
+        app:fabBackgroundTint="@color/secondaryColor"
         app:fabGravity="bottom_end"
         app:fabMenu="@menu/menu_mywallet_fab"
         app:miniFabBackgroundTint="@android:color/white"/>
