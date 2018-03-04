@@ -31,6 +31,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
     public ChameleonMiniDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice, "\r\n", "ISO-8859-1");
+
+        setStatus("Idle");
     }
 
     @Override
