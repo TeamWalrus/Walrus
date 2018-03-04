@@ -1,11 +1,12 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,9 +18,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,13 +72,36 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         super(DatabaseHelper.class);
     }
 
-    public static void startActivity(Context context, Mode mode, Card card) {
-        Intent intent = new Intent(context, CardActivity.class);
+    public static void startActivity(Activity activity, Mode mode, Card card, View transitionView) {
+        Intent intent = new Intent(activity, CardActivity.class);
 
         intent.putExtra(EXTRA_MODE, mode);
         intent.putExtra(EXTRA_CARD, Parcels.wrap(card));
 
-        context.startActivity(intent);
+        if (transitionView != null &&
+                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            List<Pair<View, String>> sharedElements = new ArrayList<>();
+
+            View view = activity.findViewById(android.R.id.statusBarBackground);
+            if (view != null)
+                sharedElements.add(new Pair<>(view, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME));
+            view = activity.findViewById(android.R.id.navigationBarBackground);
+            if (view != null)
+                sharedElements.add(new Pair<>(view,
+                        Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME));
+            view = activity.findViewById(R.id.toolbar);
+            if (view != null)
+                sharedElements.add(new Pair<>(view, "toolbar"));
+
+            sharedElements.add(new Pair<>(transitionView, "card"));
+
+            // noinspection unchecked, SuspiciousToArrayCall
+            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(activity,
+                    (Pair<View, String>[]) sharedElements.toArray(new Pair[sharedElements.size()]));
+
+            activity.startActivity(intent, activityOptions.toBundle());
+        } else
+            activity.startActivity(intent);
     }
 
     @Override
@@ -276,13 +302,13 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.editCard:
-                CardActivity.startActivity(this, Mode.EDIT, card);
+                CardActivity.startActivity(this, Mode.EDIT, card, walrusCardView);
                 return true;
 
             case R.id.duplicateCard:
                 Card duplicatedCard = Card.copyOf(card);
                 duplicatedCard.name = "Copy of " + duplicatedCard.name;
-                CardActivity.startActivity(this, Mode.EDIT, duplicatedCard);
+                CardActivity.startActivity(this, Mode.EDIT, duplicatedCard, null);
                 return true;
 
             case R.id.deleteCard:
@@ -310,7 +336,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             case R.id.save:
                 save();
-                finish();
+                supportFinishAfterTransition();
                 return true;
 
             case R.id.start:
@@ -441,8 +467,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                                 writeOrEmulateCardDataOperationCallbacks);
                 } catch (IOException exception) {
                     Toast.makeText(this, "Failed to start " +
-                                    (callbackId == 1 ? "writing" : "emulating") + " card: " +
-                                    exception.getMessage(), Toast.LENGTH_LONG).show();
+                            (callbackId == 1 ? "writing" : "emulating") + " card: " +
+                            exception.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -459,7 +485,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             }
         else {
             BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
-            finish();
+            supportFinishAfterTransition();
         }
     }
 
@@ -488,7 +514,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                             })
                     .show();
         else
-            finish();
+            supportFinishAfterTransition();
     }
 
     public enum Mode {
@@ -552,7 +578,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 @Override
                 public void run() {
                     Toast.makeText(CardActivity.this, "Failed to " +
-                            (write ? "write" : "emulate") + " card: " + message,
+                                    (write ? "write" : "emulate") + " card: " + message,
                             Toast.LENGTH_LONG).show();
                 }
             });

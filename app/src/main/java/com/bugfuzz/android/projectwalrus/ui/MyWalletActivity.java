@@ -4,9 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -76,12 +76,12 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 switch (menuItem.getItemId()) {
                     case R.id.add_new_card:
                         CardActivity.startActivity(MyWalletActivity.this,
-                                CardActivity.Mode.EDIT, null);
+                                CardActivity.Mode.EDIT, null, null);
                         return true;
 
                     case R.id.bulk_read_cards:
                         CardActivity.startActivity(MyWalletActivity.this,
-                                CardActivity.Mode.EDIT_BULK_READ_CARD_TEMPLATE, null);
+                                CardActivity.Mode.EDIT_BULK_READ_CARD_TEMPLATE, null, null);
                         return true;
                 }
 
@@ -171,6 +171,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
 
             ((WalrusCardView) ((FrameLayout) holder.itemView).getChildAt(0)).setCard(card);
             holder.id = card.id;
+            ViewCompat.setTransitionName(holder.itemView, "card-" + card.id);
         }
 
         @Override
@@ -194,8 +195,9 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CardActivity.startActivity(v.getContext(), CardActivity.Mode.VIEW,
-                                getHelper().getCardDao().queryForId(id));
+                        CardActivity.startActivity(MyWalletActivity.this, CardActivity.Mode.VIEW,
+                                getHelper().getCardDao().queryForId(id),
+                                ((FrameLayout) v).getChildAt(0));
                     }
                 });
             }

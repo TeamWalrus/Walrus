@@ -42,7 +42,9 @@
             android:exported="false">
         </service>
 
-        <activity android:name=".ui.MyWalletActivity">
+        <activity
+            android:name=".ui.MyWalletActivity"
+            android:theme="@style/LauncherActivityTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
