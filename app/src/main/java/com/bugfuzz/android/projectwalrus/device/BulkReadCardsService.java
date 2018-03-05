@@ -108,7 +108,7 @@ public class BulkReadCardsService extends Service {
         try {
             cardDevice.readCardData(cardDataClass, cardDataSink);
         } catch (IOException exception) {
-            Toast.makeText(this, "Failed to start reading cards: " + exception.getMessage(),
+            Toast.makeText(this, getString(R.string.failed_start_bulk_reading, exception.getMessage()),
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -127,13 +127,14 @@ public class BulkReadCardsService extends Service {
         if (android.os.Build.VERSION.SDK_INT >= O &&
                 notificationManager.getNotificationChannel(CHANNEL_ID) == null)
             notificationManager.createNotificationChannel(
-                    new NotificationChannel(CHANNEL_ID, "Bulk card read operations",
+                    new NotificationChannel(CHANNEL_ID,
+                            getString(R.string.bulk_read_notification_channel_name),
                             NotificationManager.IMPORTANCE_DEFAULT));
 
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle("Bulk reading cards from " + sinks.size() + " device" +
-                        (sinks.size() != 1 ? "s" : ""))
+                .setContentTitle(getResources().getQuantityString(R.plurals.bulk_reading_from,
+                        sinks.size(), sinks.size()))
                 .setOngoing(true)
                 .setProgress(0, 0, true)
                 .setContentIntent(TaskStackBuilder.create(this)

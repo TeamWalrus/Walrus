@@ -3,7 +3,7 @@
     <com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniSlotPickerPreference
         android:defaultValue="1"
         android:key="default_chameleon_cardslot"
-        android:summary="Default Chameleon Mini card slot to be used when writing cards to Chameleon Mini."
-        android:title="Default Card Slot"/>
+        android:summary="@string/default_card_slot_preference_message"
+        android:title="@string/default_card_slot_preference"/>
 
 </PreferenceScreen>

@@ -120,11 +120,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             dirty = true;
 
         if (mode == Mode.VIEW)
-            setTitle("View Card");
+            setTitle(R.string.view_card);
         else if (mode == Mode.EDIT)
-            setTitle(dirty ? "New Card" : "Edit Card");
+            setTitle(dirty ? R.string.new_card : R.string.edit_card);
         else
-            setTitle("Set Template");
+            setTitle(R.string.set_template);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
@@ -218,7 +218,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             walrusCardView.setCard(card);
 
             ((TextView) findViewById(R.id.dateAcquired)).setText(card.cardDataAcquired != null ?
-                    card.cardDataAcquired.toString() : "Unknown");
+                    card.cardDataAcquired.toString() : getString(R.string.unknown));
 
             SupportMapFragment locationMap =
                     (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.locationMap);
@@ -284,7 +284,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         // Do not save a Card if the Name field is blank
         if (card.name.isEmpty()) {
-            Toast.makeText(this, "Card name is required", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.card_name_required, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -307,15 +307,15 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             case R.id.duplicateCard:
                 Card duplicatedCard = Card.copyOf(card);
-                duplicatedCard.name = "Copy of " + duplicatedCard.name;
+                duplicatedCard.name = getString(R.string.copy_of, duplicatedCard.name);
                 CardActivity.startActivity(this, Mode.EDIT, duplicatedCard, null);
                 return true;
 
             case R.id.deleteCard:
                 new AlertDialog.Builder(this)
-                        .setTitle("Delete Confirmation")
-                        .setMessage("This card entry will disappear from your device. Are you sure you want to continue?")
-                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                        .setTitle(R.string.delete_card)
+                        .setMessage(R.string.delete_message)
+                        .setPositiveButton(R.string.delete_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 getHelper().getCardDao().delete(card);
@@ -325,7 +325,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                                 dialog.dismiss();
                             }
                         })
-                        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -360,7 +360,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         Map<Integer, CardDevice> cardDevices = CardDeviceManager.INSTANCE.getCardDevices();
 
         if (cardDevices.isEmpty()) {
-            Toast.makeText(this, "No card devices connected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.no_card_devices, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -387,7 +387,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     private void startWriteOrEmulateCardSetup(boolean write) {
         if (CardDeviceManager.INSTANCE.getCardDevices().isEmpty()) {
-            Toast.makeText(this, "No card devices connected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.no_card_devices, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -401,8 +401,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         if (cardDevices.isEmpty()) {
-            Toast.makeText(this, "No connected card device can " + (write ? "write" : "emulate") +
-                    " this kind of card", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,
+                    write ? R.string.no_device_can_write : R.string.no_device_can_emulate,
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -441,7 +442,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                         names[i] = readableTypes[i].getAnnotation(CardData.Metadata.class).name();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Choose card type to read")
+                    builder.setTitle(R.string.choose_card_type)
                             .setItems(names, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     onChooseReadCardType(cardDevice, readableTypes[which]);
@@ -466,9 +467,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                         cardDevice.emulateCardData(card.cardData,
                                 writeOrEmulateCardDataOperationCallbacks);
                 } catch (IOException exception) {
-                    Toast.makeText(this, "Failed to start " +
-                            (callbackId == 1 ? "writing" : "emulating") + " card: " +
-                            exception.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,
+                            getString(callbackId == 1 ?
+                                            R.string.failed_to_write :
+                                            R.string.failed_to_emulate,
+                            exception.getMessage()), Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -480,7 +483,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 cardDevice.readCardData(cardDataClass, new ReadCardDataSink(cardDevice,
                         cardDataClass));
             } catch (IOException exception) {
-                Toast.makeText(this, "Failed to start reading cards: " + exception.getMessage(),
+                Toast.makeText(this, getString(R.string.failed_to_read, exception.getMessage()),
                         Toast.LENGTH_LONG).show();
             }
         else {
@@ -493,9 +496,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     public void onBackPressed() {
         if (dirty)
             new AlertDialog.Builder(this).setMessage(mode == Mode.EDIT ?
-                    "Discard changes?" : "Discard bulk read card template changes?")
+                    R.string.discard_card_changes : R.string.discard_bulk_read_changes)
                     .setCancelable(true)
-                    .setPositiveButton("Discard",
+                    .setPositiveButton(R.string.discard_button,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog,
@@ -504,7 +507,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                                     dialog.dismiss();
                                 }
                             })
-                    .setNegativeButton("Back",
+                    .setNegativeButton(R.string.back_button,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog,
@@ -549,7 +552,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             cardDataIOView.setPadding(0, 60, 0, 10);
 
             dialog = new AlertDialog.Builder(CardActivity.this)
-                    .setTitle((write ? "Writing" : "Emulating") + " card")
+                    .setTitle(write ? R.string.writing_card : R.string.emulating_card)
                     .setView(cardDataIOView)
                     .setCancelable(true)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -577,8 +580,10 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(CardActivity.this, "Failed to " +
-                                    (write ? "write" : "emulate") + " card: " + message,
+                    Toast.makeText(
+                            CardActivity.this,
+                            getString(write ? R.string.failed_to_write : R.string.failed_to_emulate,
+                                    message),
                             Toast.LENGTH_LONG).show();
                 }
             });
@@ -619,7 +624,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             cardDataIOView.setPadding(0, 60, 0, 10);
 
             dialog = new AlertDialog.Builder(CardActivity.this)
-                    .setTitle("Waiting for card")
+                    .setTitle(R.string.waiting_for_card)
                     .setView(cardDataIOView)
                     .setCancelable(true)
                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -663,7 +668,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(CardActivity.this, "Failed to read card: " + message,
+                    Toast.makeText(CardActivity.this, getString(R.string.failed_to_read, message),
                             Toast.LENGTH_LONG).show();
                 }
             });

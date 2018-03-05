@@ -2,6 +2,8 @@ package com.bugfuzz.android.projectwalrus.data;
 
 import android.location.Location;
 
+import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
+import com.bugfuzz.android.projectwalrus.R;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -20,7 +22,7 @@ public class Card {
     public int id;
 
     @DatabaseField(columnName = NAME_FIELD_NAME)
-    public String name = "Unnamed Card";
+    public String name;
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     public CardData cardData;
@@ -49,6 +51,7 @@ public class Card {
     }
 
     public Card() {
+        name = ProjectWalrusApplication.getContext().getString(R.string.default_card_name);
     }
 
     public Card(String name, CardData cardData, Date cardCreated, Date cardDataAcquired,

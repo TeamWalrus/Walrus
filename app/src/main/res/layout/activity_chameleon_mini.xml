@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/chameleonMiniRevG"
+                android:text="@string/chameleon_mini"
                 android:textAlignment="center"
                 android:textSize="24sp"/>
 
@@ -50,7 +50,8 @@
         <TextView
             android:id="@+id/version"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/retrieving"/>
 
     </LinearLayout>
 

@@ -55,32 +55,32 @@
 
         <activity
             android:name=".ui.BulkReadCardsActivity"
-            android:label="Ongoing Bulk Card Reads"
+            android:label="@string/bulk_read_cards_activity_name"
             android:parentActivityName=".ui.MyWalletActivity"/>
 
         <activity
             android:name=".ui.DevicesActivity"
-            android:label="Devices"
+            android:label="@string/devices_activity_name"
             android:parentActivityName=".ui.MyWalletActivity"/>
 
         <activity
             android:name=".device.proxmark3.Proxmark3Activity"
-            android:label="Proxmark 3"
+            android:label="@string/proxmark3_activity_name"
             android:parentActivityName=".ui.DevicesActivity"/>
 
         <activity
             android:name=".device.proxmark3.Proxmark3TuneResultActivity"
-            android:label="Proxmark 3 - Tune Results"
+            android:label="@string/proxmark3_tune_result_activity_name"
             android:parentActivityName=".device.proxmark3.Proxmark3Activity"/>
 
         <activity
             android:name=".device.chameleonmini.ChameleonMiniActivity"
-            android:label="Chameleon Mini Rev.G"
+            android:label="@string/chameleon_mini_activity_name"
             android:parentActivityName=".ui.DevicesActivity"/>
 
         <activity
             android:name=".ui.SettingsActivity"
-            android:label="Settings"
+            android:label="@string/settings_activity_name"
             android:parentActivityName=".ui.MyWalletActivity"/>
 
         <activity

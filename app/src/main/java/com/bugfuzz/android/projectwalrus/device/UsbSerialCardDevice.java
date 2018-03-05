@@ -4,6 +4,7 @@ import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.util.Pair;
 
+import com.bugfuzz.android.projectwalrus.R;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -26,7 +27,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
         usbSerialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice, usbDeviceConnection);
         if (!usbSerialDevice.open())
-            throw new IOException("Failed to open USB serial device");
+            throw new IOException(context.getString(R.string.failed_open_usb_serial_device));
 
         setupSerialParams(usbSerialDevice);
 

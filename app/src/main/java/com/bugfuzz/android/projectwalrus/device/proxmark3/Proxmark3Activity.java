@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.device.FindVersionTask;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -54,9 +55,7 @@ public class Proxmark3Activity extends AppCompatActivity {
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        ((TextView) findViewById(R.id.version)).setText(R.string.retrieving);
-
-        new FindVersionTask(this).execute();
+        new FindVersionTask(this, proxmark3Device).execute();
     }
 
     public void onTuneLFClick(View view) {
@@ -69,42 +68,6 @@ public class Proxmark3Activity extends AppCompatActivity {
 
     private void tune(boolean lf) {
         new Proxmark3Activity.TuneTask(this, lf).execute();
-    }
-
-    private static class FindVersionTask extends AsyncTask<Void, Void, Pair<String, IOException>> {
-
-        private final WeakReference<Proxmark3Activity> activity;
-
-        FindVersionTask(Proxmark3Activity activity) {
-            this.activity = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected Pair<String, IOException> doInBackground(Void... params) {
-            Proxmark3Activity proxmark3Activity = activity.get();
-            if (proxmark3Activity == null)
-                return null;
-
-            try {
-                return new Pair<>(proxmark3Activity.proxmark3Device.getVersion(), null);
-            } catch (IOException exception) {
-                return new Pair<>(null, exception);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Pair<String, IOException> result) {
-            if (result == null)
-                return;
-
-            Proxmark3Activity proxmark3Activity = activity.get();
-            if (proxmark3Activity == null)
-                return;
-
-            ((TextView) proxmark3Activity.findViewById(R.id.version)).setText(result.first != null ?
-                    result.first :
-                    "Failed to get version: " + result.second.getMessage());
-        }
     }
 
     private static class TuneTask extends
@@ -132,7 +95,7 @@ public class Proxmark3Activity extends AppCompatActivity {
             }
 
             progressDialog = new ProgressDialog(proxmark3Activity);
-            progressDialog.setMessage("Tuning...");
+            progressDialog.setMessage(proxmark3Activity.getString(R.string.tuning_progress));
             progressDialog.setCancelable(false);
             progressDialog.show();
         }
@@ -165,7 +128,9 @@ public class Proxmark3Activity extends AppCompatActivity {
 
             Proxmark3Device.TuneResult tuneResult = result.first;
             if (tuneResult == null) {
-                Toast.makeText(proxmark3Activity, "Failed to tune: " + result.second.getMessage(),
+                Toast.makeText(proxmark3Activity,
+                        proxmark3Activity.getString(R.string.failed_to_tune,
+                                result.second.getMessage()),
                         Toast.LENGTH_LONG).show();
                 return;
             }

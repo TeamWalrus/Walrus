@@ -8,6 +8,7 @@ import android.os.Vibrator;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
@@ -96,7 +97,7 @@ public class BulkReadCardDataSink extends LocationAwareCardDataSink {
         new Handler(context.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, "Failed while bulk reading cards: " + message,
+                Toast.makeText(context, context.getString(R.string.failed_bulk_reading, message),
                         Toast.LENGTH_LONG).show();
             }
         });

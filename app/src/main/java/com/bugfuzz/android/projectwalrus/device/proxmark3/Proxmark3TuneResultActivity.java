@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
@@ -47,10 +46,13 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
 
         if (tuneResult.lf) {
             setResultInfo(tuneResult.peak_v, 2.948f, 14.730f, R.id.lfOk);
-            ((TextView) findViewById(R.id.lf125)).setText("" + tuneResult.v_125 + "V");
-            ((TextView) findViewById(R.id.lf134)).setText("" + tuneResult.v_134 + "V");
-            ((TextView) findViewById(R.id.lfOptimal)).setText("" + tuneResult.peak_v + "V at " +
-                    (tuneResult.peak_f / 1000) + "kHz");
+            ((TextView) findViewById(R.id.lf125)).setText(
+                    getResources().getString(R.string.tune_voltage, tuneResult.v_125));
+            ((TextView) findViewById(R.id.lf134)).setText(
+                    getResources().getString(R.string.tune_voltage, tuneResult.v_134));
+            ((TextView) findViewById(R.id.lfOptimal)).setText(
+                    getResources().getString(R.string.tune_peak_voltage, tuneResult.peak_v,
+                            (tuneResult.peak_f / 1000)));
 
             LineChart lfChart = findViewById(R.id.lfChart);
             if (tuneResult.v_LF != null) {
@@ -58,7 +60,7 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
                 for (int i = 255; i >= 19; --i)
                     entries.add(new Entry(12e6f / (i + 1) / 1e3f, tuneResult.v_LF[i]));
 
-                LineDataSet lineDataSet = new LineDataSet(entries, "LF");
+                LineDataSet lineDataSet = new LineDataSet(entries, getString(R.string.lf));
                 lineDataSet.setColor(Color.BLACK);
                 lineDataSet.setCircleColor(Color.BLUE);
 
@@ -77,23 +79,24 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
 
         if (tuneResult.hf) {
             setResultInfo(tuneResult.v_HF, 3.167f, 7.917f, R.id.hfOk);
-            ((TextView) findViewById(R.id.hfV)).setText("" + tuneResult.v_HF + "V");
+            ((TextView) findViewById(R.id.hfV)).setText(
+                    getResources().getString(R.string.tune_voltage, tuneResult.v_HF));
         } else
             findViewById(R.id.hf).setVisibility(View.GONE);
     }
 
     private void setResultInfo(float value, float marginal, float ok, int id) {
-        String text;
+        int text;
         int color;
 
-        if (value >= ok){
-            text = "OK";
+        if (value >= ok) {
+            text = R.string.tune_ok;
             color = Color.rgb(0, 0x80, 0);
         } else if (value >= marginal) {
-            text = "Marginal";
+            text = R.string.tune_marginal;
             color = Color.rgb(0x80, 0x80, 0);
         } else {
-            text = "Unusable";
+            text = R.string.tune_unusable;
             color = Color.rgb(0xff, 0, 0);
         }
 

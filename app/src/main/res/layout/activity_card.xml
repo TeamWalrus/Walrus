@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="onWriteCardClick"
-                    android:text="@string/writeCard"/>
+                    android:text="@string/write_card"/>
 
                 <Button
                     android:id="@+id/emulateCard"
@@ -48,7 +48,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:onClick="onEmulateCardClick"
-                    android:text="@string/emulateCard"/>
+                    android:text="@string/emulate_card"/>
 
             </LinearLayout>
 
@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="onReadCardClick"
-                    android:text="@string/readCard"/>
+                    android:text="@string/read_card"/>
 
             </LinearLayout>
 
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/dateAcquired"
+                android:text="@string/date_acquired"
                 android:textColor="@color/secondaryColor"/>
 
             <TextView

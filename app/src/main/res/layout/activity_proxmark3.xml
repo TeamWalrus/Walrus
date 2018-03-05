@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/tuning"
+            android:text="@string/tune"
             android:textColor="@color/secondaryColor"/>
 
         <LinearLayout
@@ -70,7 +70,8 @@
         <TextView
             android:id="@+id/version"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="@string/retrieving"/>
 
     </LinearLayout>
 

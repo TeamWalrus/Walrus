@@ -8,11 +8,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Pair;
 import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.device.FindVersionTask;
 
 import java.io.IOException;
 
@@ -59,24 +61,7 @@ public class ChameleonMiniActivity extends AppCompatActivity {
                 .replace(R.id.settings, new ChameleonMiniActivity.SettingsFragment())
                 .commit();
 
-
-        ((TextView) findViewById(R.id.version)).setText(R.string.retrieving);
-
-        (new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                try {
-                    return chameleonMiniDevice.getVersion();
-                } catch (IOException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(String version) {
-                ((TextView) findViewById(R.id.version)).setText(version != null ? version : getString(R.string.unable_to_determine));
-            }
-        }).execute();
+        new FindVersionTask(this, chameleonMiniDevice).execute();
     }
 
     public static class SettingsFragment extends PreferenceFragment {

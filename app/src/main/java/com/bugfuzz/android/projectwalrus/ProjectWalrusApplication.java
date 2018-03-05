@@ -18,9 +18,18 @@ import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import static android.os.Build.VERSION_CODES.O;
 
 public class ProjectWalrusApplication extends Application {
+
+    private static Context context;
+
+    public static Context getContext() {
+        return context;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        context = getApplicationContext();
 
         // Add Chameleon Mini Default card slot value
         PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini, false);
@@ -52,15 +61,15 @@ public class ProjectWalrusApplication extends Application {
                 if (cardDevice == null)
                     return;
 
-                toast = cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class)
-                        .name() + " connected";
+                toast = getString(R.string.device_connected,
+                        cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
 
                 timings = new long[]{200, 200, 200, 200, 200};
                 amplitudes = new int[]{255, 0, 255, 0, 255};
                 singleTiming = 300;
             } else {
-                toast = intent.getStringExtra(CardDeviceManager.EXTRA_DEVICE_NAME) +
-                        " disconnected";
+                toast = getString(R.string.device_disconnected,
+                        intent.getStringExtra(CardDeviceManager.EXTRA_DEVICE_NAME));
 
                 timings = new long[]{500, 200, 500, 200, 500};
                 amplitudes = new int[]{255, 0, 255, 0, 255};

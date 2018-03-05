@@ -1,44 +1,466 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="app_name">Walrus</string>
-    <string name="save">Save</string>
-    <string name="readCard">Read Card</string>
-    <string name="writeCard">Write Card</string>
-    <string name="emulateCard">Emulate Card</string>
-    <string name="search">Search cards</string>
-    <string name="notes">Notes</string>
-    <string name="dateAcquired">Date Acquired</string>
+    <!--
+        App-wide
+    -->
+
+    <!-- Application name -->
+    <string name="app_name" translatable="false">Walrus</string>
+
+
+    <!--
+        BulkReadCardDataSink
+    -->
+
+    <!-- Toast displayed when bulk card reading fails with an error -->
+    <string name="failed_bulk_reading">Failed while bulk reading cards: <xliff:g id="amount">%1$s</xliff:g></string>
+
+
+    <!--
+        BulkReadCardsActivity
+    -->
+
+    <!-- Activity title -->
+    <string name="bulk_read_cards_activity_name">Bulk Card Reads</string>
+
+    <!-- Displayed as a button -->
+    <string name="stop_button">Stop</string>
+
+    <!-- Displayed as a button -->
+    <string name="back_button">Back</string>
+
+    <!-- Used in status line of a bulk read list item -->
+    <plurals name="num_cards_read">
+        <item quantity="one"><xliff:g id="amount">%1$d</xliff:g> card read</item>
+        <item quantity="other"><xliff:g id="amount">%1$d</xliff:g> cards read</item>
+    </plurals>
+
+    <!-- Dialog title -->
+    <string name="bulk_reading_cards">Bulk reading cards</string>
+
+
+    <!--
+        BulkReadCardsService
+    -->
+
+    <!-- Toast displayed when bulk card reading fails with an error -->
+    <string name="failed_start_bulk_reading">Failed to start bulk reading cards: <xliff:g id="error">%1$s</xliff:g></string>
+
+    <!-- Name for bulk read notification channel -->
+    <string name="bulk_read_notification_channel_name">Bulk card reads</string>
+
+    <!-- Used in notification context title -->
+    <plurals name="bulk_reading_from">
+        <item quantity="one">Reading cards from <xliff:g id="amount">%1$d</xliff:g> device</item>
+        <item quantity="other">Reading cards from <xliff:g id="amount">%1$d</xliff:g> devices</item>
+    </plurals>
+
+
+    <!--
+        Card
+    -->
+
+    <!-- Default name for a newly created card -->
+    <string name="default_card_name">Unnamed Card</string>
+
+
+    <!--
+        CardActivity, DeleteAllCardsPreference
+    -->
+
+    <!-- Displayed as a button -->
+    <string name="delete_button">Delete</string>
+
+
+    <!--
+        CardActivity
+    -->
+
+    <!-- Displayed as a button -->
+    <string name="write_card">Write Card</string>
+
+    <!-- Displayed as a button -->
+    <string name="emulate_card">Emulate Card</string>
+
+    <!-- Displayed as a button -->
+    <string name="read_card">Read Card</string>
+
+    <!-- Section header -->
+    <string name="date_acquired">Date Acquired</string>
+
+    <!-- Section header -->
     <string name="location">Location</string>
-    <string name="actionBar_deleteCard">Delete</string>
-    <string name="actionBar_duplicateCard">Duplicate</string>
-    <string name="devices">Devices</string>
-    <string name="settings">Settings</string>
-    <string name="chameleonMiniRevG">Chameleon Mini Rev.G</string>
-    <string name="proxmark3">Proxmark 3</string>
-    <string name="tuning">Tuning</string>
-    <string name="version">Version Information</string>
+
+    <!-- Displayed in place of a location when none is available -->
     <string name="unknown">Unknown</string>
-    <string name="tune_lf">Tune LF</string>
-    <string name="tune_hf">Tune HF</string>
-    <string name="lf">LF</string>
-    <string name="_125khz">125kHz</string>
-    <string name="_134khz">134kHz</string>
-    <string name="optimal">Optimal</string>
-    <string name="v">V</string>
-    <string name="khz">kHz</string>
-    <string name="hf">HF</string>
-    <string name="_13_56mhz">13.56MHz</string>
-    <string name="start">Start</string>
-    <string name="add_new_card">Add New Card</string>
-    <string name="bulk_read_cards">Bulk Read Cards</string>
+
+    <!-- Section header -->
+    <string name="notes">Notes</string>
+
+    <!-- Activity title when viewing a card -->
+    <string name="view_card">View Card</string>
+
+    <!-- Activity title when editing a new card -->
+    <string name="new_card">New Card</string>
+
+    <!-- Activity title when editing a card -->
+    <string name="edit_card">Edit Card</string>
+
+    <!-- Activity title when creating a bulk read card template -->
+    <string name="set_template">Set Template</string>
+
+    <!-- Toast message shown when attempting to save a card with no name -->
+    <string name="card_name_required">Card name is required</string>
+
+    <!-- Name for newly duplicated cards -->
+    <string name="copy_of">Copy of <xliff:g id="name">%1$s</xliff:g></string>
+
+    <!-- Dialog title -->
+    <string name="delete_card">Delete card</string>
+
+    <!-- Warning when a user deletes a card -->
+    <string name="delete_message">This action cannot be undone. Are you sure you want to continue?</string>
+
+    <!-- Displayed as a button -->
+    <string name="cancel_button">Cancel</string>
+
+    <!-- Toast message shown when a user attempts to do something that requires a card device -->
+    <string name="no_card_devices">No card devices connected</string>
+
+    <!-- Toast message shown when a user attempts to write a card without a supporting card
+         device -->
+    <string name="no_device_can_write">No connected device can write this kind of card</string>
+
+    <!-- Toast message shown when a user attempts to emulate a card without a supporting card
+         device -->
+    <string name="no_device_can_emulate">No connected device can emulate this kind of card</string>
+
+    <!-- Dialog title -->
+    <string name="choose_card_type">Choose card type to read</string>
+
+    <!-- Toast displayed when card writing fails with an error -->
+    <string name="failed_to_write">Failed to write card: <xliff:g id="error">%1$s</xliff:g></string>
+
+    <!-- Toast displayed when card emulation fails with an error -->
+    <string name="failed_to_emulate">Failed to emulate card: <xliff:g id="error">%1$s</xliff:g></string>
+
+    <!-- Toast displayed when card reading fails with an error -->
+    <string name="failed_to_read">Failed to read card: <xliff:g id="error">%1$s</xliff:g></string>
+
+    <!-- Dialog message -->
+    <string name="discard_card_changes">Discard changes?</string>
+
+    <!-- Dialog message -->
+    <string name="discard_bulk_read_changes">Discard bulk read card template?</string>
+
+    <!-- Displayed as a button -->
+    <string name="discard_button">Discard</string>
+
+    <!-- Card device status -->
+    <string name="writing_card">Writing card</string>
+
+    <!-- Card device status -->
+    <string name="emulating_card">Emulating card</string>
+
+    <!-- Card device status -->
+    <string name="waiting_for_card">Waiting for card</string>
+
+
+    <!--
+        ChameleonMiniActivity
+        Proxmark3Activity
+    -->
+
+    <!-- Section header -->
+    <string name="version">Version Information</string>
+
+    <!-- Card device status -->
     <string name="retrieving">Retrieving…</string>
-    <string name="unable_to_determine">(Unable to determine)</string>
-    <string name="stop">STOP</string>
-    <string name="back">BACK</string>
-    <string name="delete">DELETE</string>
-    <string name="dialog_delete_all_cards_warning">Warning!</string>
-    <string name="dialog_delete_all_cards_message">All cards will be deleted from your device. This action cannot be undone. Are you sure you want to continue?</string>
+
+
+    <!--
+        ChameleonMiniActivity
+    -->
+
+    <!-- Activity title -->
+    <string name="chameleon_mini_activity_name" translatable="false">Chameleon Mini</string>
+
+    <!-- Device name -->
+    <string name="chameleon_mini" translatable="false">Chameleon Mini</string>
+
+
+    <!--
+        ChameleonMiniDevice
+        Proxmark3Device
+    -->
+
+    <!-- Card device status -->
+    <string name="idle">Idle</string>
+
+    <!-- Shown in error message -->
+    <string name="device_busy">Device is busy</string>
+
+    <!-- Card device status -->
+    <string name="reading">Reading</string>
+
+    <!-- Card device status -->
+    <string name="getting_version">Getting version</string>
+
+    <!-- Shown in error message -->
+    <string name="get_version_timeout">Timed out while getting version</string>
+
+
+    <!--
+        ChameleonMiniDevice
+    -->
+
+    <!-- Shown in error message -->
+    <string name="command_error">Unexpected response to <xliff:g id="command">%1$s</xliff:g> command: <xliff:g id="error">%2$s</xliff:g></string>
+
+    <!-- Card device status -->
+    <string name="emulating">Emulating</string>
+
+
+    <!--
+        DeleteAllCardsPreference
+    -->
+
+    <!-- Shown in bold red color to draw attention -->
+    <string name="warning">Warning!</string>
+
+    <!-- Warning when user deletes all cards -->
+    <string name="delete_all_cards">All cards will be deleted. This action cannot be undone. Are you sure you want to continue?</string>
+
+    <!-- Toast message shown after all cards have been deleted -->
+    <string name="all_cards_deleted">All cards deleted</string>
+
+
+    <!--
+        DevicesActivity
+    -->
+
+    <!-- Activity title -->
+    <string name="devices_activity_name">Devices</string>
+
+    <!-- Toast message shown when user tries open settings for a device that doesn't support any -->
+    <string name="device_has_no_settings">Device has no settings</string>
+
+
+    <!--
+        FindVersionTask
+    -->
+
+    <!-- Toast displayed when getting a device's version fails with an error -->
+    <string name="failed_get_version">Failed to get version: <xliff:g id="error">%1$s</xliff:g></string>
+
+
+    <!--
+        menu_bulk_read_card
+    -->
+
+    <!-- Shown as alternative to toolbar icon -->
+    <string name="start">Start</string>
+
+
+    <!--
+        menu_edit_card
+    -->
+
+    <!-- Shown as alternative to toolbar icon -->
+    <string name="save">Save</string>
+
+
+    <!--
+        menu_mywallet, menu_mywallet_fab
+    -->
+
+    <!-- Shown in floating action button speed dial -->
+    <string name="add_new_card">Add New Card</string>
+
+    <!-- Shown in floating action button speed dial -->
+    <string name="bulk_read_cards">Bulk Read Cards</string>
+
+    <!-- Shown as alternative to toolbar icon -->
+    <string name="devices">Devices</string>
+
+    <!-- Shown as alternative to toolbar icon -->
+    <string name="settings">Settings</string>
+
+
+    <!--
+        menu_view_card
+    -->
+
+    <!-- Shown in toolbar menu -->
+    <string name="delete">Delete</string>
+
+    <!-- Shown in toolbar menu -->
+    <string name="duplicate">Duplicate</string>
+
+
+    <!--
+        MyWalletActivity, menu_mywallet
+    -->
+
+    <!-- Shown as placeholder text for card search in wallet -->
+    <string name="search_cards">Search cards</string>
+
+
+    <!--
+        PickCardDeviceDialogFragment
+    -->
+
+    <!-- Dialog title -->
     <string name="choose_device">Choose device</string>
+
+
+    <!--
+        preferences
+    -->
+
+    <!-- Preference title -->
+    <string name="open_source_preference">Open Source</string>
+
+    <!-- Preference title -->
+    <string name="delete_all_cards_preference">Delete All Cards</string>
+
+
+    <!--
+        preferences_chameleon_mini
+    -->
+
+    <!-- Preference title -->
+    <string name="default_card_slot_preference">Default Card Slot</string>
+
+    <!-- Preference message -->
+    <string name="default_card_slot_preference_message">Default <xliff:g>Chameleon Mini</xliff:g> card slot to be used for emulation</string>
+
+
+    <!--
+        ProjectWalrusApplication
+    -->
+
+    <!-- Toast message shown when a card device is connected -->
+    <string name="device_disconnected"><xliff:g id="device">%1$s</xliff:g> disconnected</string>
+
+    <!-- Toast message shown when a card device is disconnected -->
+    <string name="device_connected"><xliff:g id="device">%1$s</xliff:g> connected</string>
+
+
+    <!--
+        Proxmark3Activity
+    -->
+
+    <!-- Activity title -->
+    <string name="proxmark3_activity_name" translatable="false">Proxmark3</string>
+
+    <!-- Device name -->
+    <string name="proxmark3" translatable="false">Proxmark3</string>
+
+    <!-- Section header. Tuning allows the user to check the RF response of the device's connected
+         antenna(s) -->
+    <string name="tune">Tune</string>
+
+    <!-- Displayed as a button -->
+    <string name="tune_lf">Tune LF</string>
+
+    <!-- Displayed as a button -->
+    <string name="tune_hf">Tune HF</string>
+
+    <!-- Progress dialog message -->
+    <string name="tuning_progress">Tuning…</string>
+
+    <!-- Toast displayed when Proxmark3 tuning fails with an error -->
+    <string name="failed_to_tune">Failed to tune: <xliff:g id="error">%1$s</xliff:g></string>
+
+
+    <!--
+        Proxmark3Device
+    -->
+
+    <!-- Card device status -->
+    <string name="writing">Writing</string>
+
+    <!-- Shown in error message -->
+    <string name="write_card_timeout">Timed out while writing card</string>
+
+    <!-- Card device status -->
+    <string name="tuning">Tuning</string>
+
+    <!-- Shown in error message -->
+    <string name="tune_timeout">Timed out while tuning</string>
+
+
+    <!--
+        Proxmark3TuneResultActivity
+    -->
+
+    <!-- Activity title -->
+    <string name="proxmark3_tune_result_activity_name"><xliff:g>Proxmark3</xliff:g> - Tune Results</string>
+
+    <!-- Used in tune results table. LF = Low Frequency -->
+    <string name="lf">LF</string>
+
+    <!-- Used in tune results table -->
+    <string name="_125khz" translatable="false">125kHz</string>
+
+    <!-- Used in tune results table -->
+    <string name="_134khz" translatable="false">134kHz</string>
+
+    <!-- Used in tune results table -->
+    <string name="optimal">Optimal</string>
+
+    <!-- Used in tune results table -->
+    <string name="tune_voltage" translatable="false">%.3fV</string>
+
+    <!-- Used in tune results table. Shows the peak voltage reached and what frequency it was
+         reached at during tuning -->
+    <string name="tune_peak_voltage"><xliff:g id="voltage">%1$.3fV</xliff:g>, reached at <xliff:g id="frequency">%2$.3fkHz</xliff:g></string>
+
+    <!-- Used in tune results table -->
+    <string name="v" translatable="false">V</string>
+
+    <!-- Used in tune results table -->
+    <string name="khz" translatable="false">kHz</string>
+
+    <!-- Used in tune results table. HF = High Frequency -->
+    <string name="hf" translatable="false">HF</string>
+
+    <!-- Used in tune results table -->
+    <string name="_13_56mhz" translatable="false">13.56MHz</string>
+
+    <!-- Used in tune results table. Antenna usability rating -->
+    <string name="tune_ok">OK</string>
+
+    <!-- Used in tune results table. Antenna usability rating -->
+    <string name="tune_marginal">Marginal</string>
+
+    <!-- Used in tune results table. Antenna usability rating -->
+    <string name="tune_unusable">Unusable</string>
+
+
+    <!--
+        SettingsActivity
+    -->
+
+    <!-- Activity title -->
+    <string name="settings_activity_name">Settings</string>
+
+
+    <!--
+        UsbCardDevice
+    -->
+
+    <!-- Toast displayed when USB card device connection fails with an error -->
+    <string name="failed_open_usb_connection">Failed to open USB connection</string>
+
+
+    <!--
+        UsbSerialCardDevice
+    -->
+
+    <!-- Toast displayed when serial USB card device opening fails with an error -->
+    <string name="failed_open_usb_serial_device">Failed to open USB serial device</string>
 
 </resources>
