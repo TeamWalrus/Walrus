@@ -1,6 +1,7 @@
 package com.bugfuzz.android.projectwalrus.device;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static android.os.Build.VERSION_CODES.O;
 
 public class BulkReadCardsService extends Service {
 
@@ -35,6 +37,7 @@ public class BulkReadCardsService extends Service {
     private static final String EXTRA_CARD_DATA_CLASS = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_DATA_CLASS";
     private static final String EXTRA_CARD_TEMPLATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_TEMPLATE";
 
+    private static final String CHANNEL_ID = "bulk_read_cards";
     private static final int NOTIFICATION_ID = 1;
 
     private final Binder binder = new ServiceBinder();
@@ -42,7 +45,7 @@ public class BulkReadCardsService extends Service {
     private List<BulkReadCardDataSink> sinks = new ArrayList<>();
 
     private NotificationCompat.Builder notificationBuilder =
-            new NotificationCompat.Builder(this, "bulk_read_cards");
+            new NotificationCompat.Builder(this, CHANNEL_ID);
 
     public static void startService(Context context, CardDevice cardDevice,
                                     Class<? extends CardData> cardDataClass, Card cardTemplate) {
@@ -118,6 +121,15 @@ public class BulkReadCardsService extends Service {
     }
 
     private Notification getNotification() {
+        final NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= O &&
+                notificationManager.getNotificationChannel(CHANNEL_ID) == null)
+            notificationManager.createNotificationChannel(
+                    new NotificationChannel(CHANNEL_ID, "Bulk card read operations",
+                            NotificationManager.IMPORTANCE_DEFAULT));
+
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle("Bulk reading cards from " + sinks.size() + " device" +
