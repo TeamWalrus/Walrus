@@ -33,6 +33,6 @@ public class DevicesActivity extends AppCompatActivity
         if (intent != null)
             startActivity(intent);
         else
-            Toast.makeText(this, "Device has no settings", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.device_has_no_settings, Toast.LENGTH_SHORT).show();
     }
 }

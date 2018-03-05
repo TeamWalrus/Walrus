@@ -79,8 +79,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                 cardDataIOView.setCardDeviceClass(sink.getCardDevice().getClass());
                 cardDataIOView.setDirection(true);
                 cardDataIOView.setCardDataClass(sink.getCardDataClass());
-                cardDataIOView.setStatus(sink.getNumberOfCardsRead() + " card" +
-                        (sink.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
+                cardDataIOView.setStatus(getResources().getQuantityString(R.plurals.num_cards_read,
+                        sink.getNumberOfCardsRead(), sink.getNumberOfCardsRead()));
                 cardDataIOView.setPadding(0, 60, 0, 10);
 
                 final LocalBroadcastManager localBroadcastManager =
@@ -90,25 +90,26 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                         new BroadcastReceiver() {
                             @Override
                             public void onReceive(Context context, Intent intent) {
-                                cardDataIOView.setStatus(sink.getNumberOfCardsRead() + " card" +
-                                        (sink.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
+                                cardDataIOView.setStatus(getResources().getQuantityString(
+                                        R.plurals.num_cards_read, sink.getNumberOfCardsRead(),
+                                        sink.getNumberOfCardsRead()));
                             }
                         };
                 localBroadcastManager.registerReceiver(bulkReadCardDataSinkUpdateBroadcastReceiver,
                         new IntentFilter(BulkReadCardDataSink.ACTION_UPDATE));
 
                 final Dialog dialog = new AlertDialog.Builder(BulkReadCardsActivity.this)
-                        .setTitle("Bulk reading cards")
+                        .setTitle(R.string.bulk_reading_cards)
                         .setView(cardDataIOView)
                         .setCancelable(true)
-                        .setPositiveButton(R.string.stop, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.stop_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 sink.stopReading();
                                 dialog.dismiss();
                             }
                         })
-                        .setNegativeButton(R.string.back, new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.back_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -205,11 +206,10 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                     ContextCompat.getDrawable(activity, cardDeviceMetadata.icon()));
             ((ImageView) view.findViewById(R.id.card_data_class)).setImageDrawable(
                     ContextCompat.getDrawable(activity, cardDataClassMetadata.icon()));
-            ((TextView) view.findViewById(R.id.name)).setText(cardDataClassMetadata.name() +
-                    " cards from " + cardDeviceMetadata.name());
+            ((TextView) view.findViewById(R.id.name)).setText(cardDeviceMetadata.name());
             ((TextView) view.findViewById(R.id.status)).setText(
-                    sink.getNumberOfCardsRead() + " card" +
-                            (sink.getNumberOfCardsRead() != 1 ? "s" : "") + " read");
+                    getResources().getQuantityString(R.plurals.num_cards_read,
+                            sink.getNumberOfCardsRead(), sink.getNumberOfCardsRead()));
 
             return view;
         }

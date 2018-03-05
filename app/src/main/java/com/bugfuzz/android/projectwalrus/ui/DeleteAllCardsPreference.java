@@ -23,7 +23,7 @@ public class DeleteAllCardsPreference extends DialogPreference {
         super(context, attrs);
 
         setDialogLayoutResource(R.layout.dialog_delete_all_cards);
-        setPositiveButtonText(R.string.delete);
+        setPositiveButtonText(R.string.delete_button);
         setNegativeButtonText(android.R.string.cancel);
     }
 
@@ -41,7 +41,7 @@ public class DeleteAllCardsPreference extends DialogPreference {
                 LocalBroadcastManager.getInstance(getContext()).sendBroadcast(
                         new Intent(QueryUtils.ACTION_WALLET_UPDATE));
 
-                Toast.makeText(getContext(), "All cards deleted.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.all_cards_deleted, Toast.LENGTH_LONG).show();
 
                 dialog.dismiss();
                 break;

@@ -25,14 +25,15 @@ import java.util.concurrent.Semaphore;
         supportsEmulate = {ISO14443ACardData.class}
 )
 @UsbCardDevice.UsbIDs({@UsbCardDevice.UsbIDs.IDs(vendorId = 5840, productId = 1202)})
-public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
+public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
+        implements CardDevice.Versioned {
 
     private final Semaphore semaphore = new Semaphore(1);
 
     public ChameleonMiniDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice, "\r\n", "ISO-8859-1");
 
-        setStatus("Idle");
+        setStatus(context.getString(R.string.idle));
     }
 
     @Override
@@ -55,7 +56,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
     }
 
     private void releaseAndSetStatus() {
-        setStatus("Idle");
+        setStatus(context.getString(R.string.idle));
         semaphore.release();
     }
 
@@ -64,8 +65,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                              final CardDataSink cardDataSink) throws IOException {
         // TODO: use cardDataClass
 
-        if (!tryAcquireAndSetStatus("Reading"))
-            throw new IOException("Device is busy");
+        if (!tryAcquireAndSetStatus(context.getString(R.string.reading)))
+            throw new IOException(context.getString(R.string.device_busy));
 
         cardDataSink.onStarting();
 
@@ -90,9 +91,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                                 switch (state) {
                                     case 0:
                                         if (!in.equals("100:OK"))
-                                            throw new IOException(
-                                                    "Unexpected response to CONFIG= command: " +
-                                                            in);
+                                            throw new IOException(context.getString(
+                                                    R.string.command_error, "CONFIG=", in));
 
                                         send("TIMEOUT=2");
 
@@ -101,9 +101,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
                                     case 1:
                                         if (!in.equals("100:OK"))
-                                            throw new IOException(
-                                                    "Unexpected response to TIMEOUT= command: " +
-                                                            in);
+                                            throw new IOException(context.getString(
+                                                    R.string.command_error, "TIMEOUT=", in));
 
                                         send("IDENTIFY");
 
@@ -122,9 +121,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                                                 break;
 
                                             default:
-                                                throw new IOException(
-                                                        "Unexpected response to IDENTIFY command: " +
-                                                                in);
+                                                throw new IOException(context.getString(
+                                                        R.string.command_error, "IDENTIFY", in));
                                         }
                                         break;
 
@@ -193,8 +191,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             throws IOException {
         // TODO: ask what slot if not specified in settings here
 
-        if (!tryAcquireAndSetStatus("Emulating"))
-            throw new IOException("Device is busy");
+        if (!tryAcquireAndSetStatus(context.getString(R.string.emulating)))
+            throw new IOException(context.getString(R.string.device_busy));
 
         callbacks.onStarting();
 
@@ -216,8 +214,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                                 switch (state) {
                                     case 0:
                                         if (!in.equals("100:OK"))
-                                            throw new IOException(
-                                                    "Unexpected response to CONFIG= command: " + in);
+                                            throw new IOException(context.getString(
+                                                    R.string.command_error, "CONFIG=", in));
 
                                         int slot = PreferenceManager.getDefaultSharedPreferences(context)
                                                 .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
@@ -228,8 +226,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
                                     case 1:
                                         if (!in.equals("100:OK"))
-                                            throw new IOException(
-                                                    "Unexpected response to SETTING= command: " + in);
+                                            throw new IOException(context.getString(
+                                                    R.string.command_error, "SETTING=", in));
 
                                         ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
                                         send("UID=" + String.format("%08x", iso14443ACardData.uid));
@@ -239,8 +237,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
 
                                     case 2:
                                         if (!in.equals("100:OK"))
-                                            throw new IOException(
-                                                    "Unexpected response to WRITE (UID=) command: " + in);
+                                            throw new IOException(context.getString(
+                                                    R.string.command_error, "UID=", in));
 
                                         return true;
                                 }
@@ -273,9 +271,10 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
         return ChameleonMiniActivity.getStartActivityIntent(context, this);
     }
 
+    @Override
     public String getVersion() throws IOException {
-        if (!tryAcquireAndSetStatus("Getting version"))
-            throw new IOException("Device is busy");
+        if (!tryAcquireAndSetStatus(context.getString(R.string.getting_version)))
+            throw new IOException(context.getString(R.string.device_busy));
 
         try {
             setReceiving(true);
@@ -283,7 +282,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
             try {
                 send("VERSION?");
 
-                return receive(new WatchdogReceiveSink<String, String>(3000) {
+                String version = receive(new WatchdogReceiveSink<String, String>(3000) {
                     private int state;
 
                     @Override
@@ -291,7 +290,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                         switch (state) {
                             case 0:
                                 if (!in.equals("101:OK WITH TEXT"))
-                                    throw new IOException("Unexpected response to VERSION? command: " + in);
+                                    throw new IOException(context.getString(
+                                            R.string.command_error, "VERSION?", in));
                                 ++state;
                                 break;
 
@@ -301,6 +301,11 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice {
                         return null;
                     }
                 });
+
+                if (version == null)
+                    throw new IOException(context.getString(R.string.get_version_timeout));
+
+                return version;
             } finally {
                 setReceiving(false);
             }

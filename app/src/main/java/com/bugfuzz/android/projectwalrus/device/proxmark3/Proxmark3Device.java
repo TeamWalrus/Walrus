@@ -32,7 +32,8 @@ import java.util.regex.Pattern;
         @UsbCardDevice.UsbIDs.IDs(vendorId = 11565, productId = 20557),
         @UsbCardDevice.UsbIDs.IDs(vendorId = 39620, productId = 19343)
 })
-public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
+public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
+        implements CardDevice.Versioned {
 
     private static final long DEFAULT_TIMEOUT = 20 * 1000;
     private static final Pattern TAG_ID_PATTERN = Pattern.compile("TAG ID: ([0-9a-fA-F]+)");
@@ -44,7 +45,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
 
         send(new Proxmark3Command(Proxmark3Command.VERSION));
 
-        setStatus("Idle");
+        setStatus(context.getString(R.string.idle));
     }
 
     @Override
@@ -81,7 +82,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     }
 
     private void releaseAndSetStatus() {
-        setStatus("Idle");
+        setStatus(context.getString(R.string.idle));
         semaphore.release();
     }
 
@@ -101,8 +102,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     @Override
     public void readCardData(Class<? extends CardData> cardDataClass,
                              final CardDataSink cardDataSink) throws IOException {
-        if (!tryAcquireAndSetStatus("Reading"))
-            throw new IOException("Device busy");
+        if (!tryAcquireAndSetStatus(context.getString(R.string.reading)))
+            throw new IOException(context.getString(R.string.device_busy));
 
         cardDataSink.onStarting();
 
@@ -162,8 +163,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     @Override
     public void writeCardData(final CardData cardData, final CardDataOperationCallbacks callbacks)
             throws IOException {
-        if (!tryAcquireAndSetStatus("Writing"))
-            throw new IOException("Device busy");
+        if (!tryAcquireAndSetStatus(context.getString(R.string.writing)))
+            throw new IOException(context.getString(R.string.device_busy));
 
         callbacks.onStarting();
 
@@ -190,7 +191,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
                                             in.dataAsString().equals("DONE!") ? true : null;
                                 }
                             }))
-                        throw new IOException("Failed to write card data before timeout");
+                        throw new IOException(context.getString(R.string.write_card_timeout));
                 } catch (IOException exception) {
                     callbacks.onError(exception.getMessage());
                     return;
@@ -208,16 +209,17 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
         return Proxmark3Activity.getStartActivityIntent(context, this);
     }
 
+    @Override
     public String getVersion() throws IOException {
-        if (!tryAcquireAndSetStatus("Getting version"))
-            throw new IOException("Device busy");
+        if (!tryAcquireAndSetStatus(context.getString(R.string.getting_version)))
+            throw new IOException(context.getString(R.string.device_busy));
 
         try {
             Proxmark3Command version = sendThenReceiveCommands(
                     new Proxmark3Command(Proxmark3Command.VERSION),
                     new CommandWaiter(Proxmark3Command.ACK, DEFAULT_TIMEOUT));
             if (version == null)
-                throw new IOException("Failed to get device version before timeout");
+                throw new IOException(context.getString(R.string.get_version_timeout));
 
             return version.dataAsString();
         } finally {
@@ -226,8 +228,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
     }
 
     public TuneResult tune(boolean lf, boolean hf) throws IOException {
-        if (!tryAcquireAndSetStatus("Tuning"))
-            throw new IOException("Device busy");
+        if (!tryAcquireAndSetStatus(context.getString(R.string.tuning)))
+            throw new IOException(context.getString(R.string.device_busy));
 
         try {
             long arg = 0;
@@ -242,7 +244,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command> {
                     new Proxmark3Command(Proxmark3Command.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
                     new CommandWaiter(Proxmark3Command.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT));
             if (result == null)
-                throw new IOException("Failed to tune antenna before timeout");
+                throw new IOException(context.getString(R.string.tune_timeout));
 
             float[] v_LF = new float[256];
             for (int i = 0; i < 256; ++i)

@@ -5,6 +5,8 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 
+import com.bugfuzz.android.projectwalrus.R;
+
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,7 +25,7 @@ public abstract class UsbCardDevice extends CardDevice {
 
         usbDeviceConnection = usbManager.openDevice(usbDevice);
         if (usbDeviceConnection == null)
-            throw new IOException("Failed to open USB connection");
+            throw new IOException(context.getString(R.string.failed_open_usb_connection));
     }
 
     public UsbDevice getUsbDevice() {

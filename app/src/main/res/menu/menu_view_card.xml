@@ -14,13 +14,13 @@
     <item
         android:id="@+id/duplicateCard"
         android:orderInCategory="2"
-        android:title="@string/actionBar_duplicateCard"
+        android:title="@string/duplicate"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/deleteCard"
         android:orderInCategory="3"
-        android:title="@string/actionBar_deleteCard"
+        android:title="@string/delete"
         app:showAsAction="never"/>
 
 </menu>

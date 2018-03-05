@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.bugfuzz.android.projectwalrus.ui.DeleteAllCardsPreference android:title="Delete All Cards"/>
+    <com.bugfuzz.android.projectwalrus.ui.DeleteAllCardsPreference android:title="@string/delete_all_cards_preference"/>
 
-    <Preference android:title="Open Source">
+    <Preference android:title="@string/open_source_preference">
         <intent android:action=".ui.WebViewActivity">
             <!--suppress AndroidElementNotAllowed -->
             <extra

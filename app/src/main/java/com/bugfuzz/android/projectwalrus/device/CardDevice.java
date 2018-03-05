@@ -83,6 +83,10 @@ public abstract class CardDevice {
         void onCardData(CardData cardData);
     }
 
+    public interface Versioned {
+        public String getVersion() throws IOException;
+    }
+
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
         String name();

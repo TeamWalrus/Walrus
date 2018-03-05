@@ -15,7 +15,7 @@
         android:layout_below="@+id/toolbar"
         android:layout_marginEnd="7dp"
         android:iconifiedByDefault="false"
-        android:queryHint="@string/search"
+        android:queryHint="@string/search_cards"
         android:visibility="gone"
         tools:ignore="UnknownIdInLayout"/>
 
