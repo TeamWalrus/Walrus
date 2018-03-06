@@ -323,19 +323,25 @@
     <string name="bulk_read_settings_preference">Bulk Card Reading</string>
 
     <!-- Preference title -->
-    <string name="bulk_read_vibrate_preference">Vibrate on Card Read</string>
+    <string name="bulk_read_vibrate_preference">Vibrate on card read</string>
+
+    <!-- Preference group title -->
+    <string name="devices_settings_preference">Devices</string>
+
+    <!-- Preference title -->
+    <string name="on_device_connected_preference">Vibrate on device connect / disconnect</string>
 
     <!-- Preference group title -->
     <string name="wallet_settings_preference">Wallet</string>
 
     <!-- Preference title -->
-    <string name="delete_all_cards_preference">Delete All Cards</string>
+    <string name="delete_all_cards_preference">Delete all cards</string>
 
     <!-- Preference group title -->
-    <string name="about_preference">About</string>
+    <string name="about_settings_preference">About</string>
 
     <!-- Preference title -->
-    <string name="open_source_preference">Open Source</string>
+    <string name="open_source_preference">Open source licenses</string>
 
 
     <!--
