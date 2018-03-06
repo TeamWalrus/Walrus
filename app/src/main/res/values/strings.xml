@@ -300,7 +300,7 @@
 
 
     <!--
-        MyWalletActivity, menu_mywallet
+        WalletActivity, menu_mywallet
     -->
 
     <!-- Shown as placeholder text for card search in wallet -->

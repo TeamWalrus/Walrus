@@ -28,7 +28,7 @@ import java.util.List;
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
 
-public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
+public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
 
     private RecyclerView recyclerView;
     private final BroadcastReceiver walletUpdateBroadcastReceiver = new BroadcastReceiver() {
@@ -39,7 +39,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
     };
     private SearchView sv;
 
-    public MyWalletActivity() {
+    public WalletActivity() {
         super(DatabaseHelper.class);
     }
 
@@ -75,12 +75,12 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
             public boolean onMenuItemSelected(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.add_new_card:
-                        CardActivity.startActivity(MyWalletActivity.this,
+                        CardActivity.startActivity(WalletActivity.this,
                                 CardActivity.Mode.EDIT, null, null);
                         return true;
 
                     case R.id.bulk_read_cards:
-                        CardActivity.startActivity(MyWalletActivity.this,
+                        CardActivity.startActivity(WalletActivity.this,
                                 CardActivity.Mode.EDIT_BULK_READ_CARD_TEMPLATE, null, null);
                         return true;
                 }
@@ -195,7 +195,7 @@ public class MyWalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelpe
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CardActivity.startActivity(MyWalletActivity.this, CardActivity.Mode.VIEW,
+                        CardActivity.startActivity(WalletActivity.this, CardActivity.Mode.VIEW,
                                 getHelper().getCardDao().queryForId(id),
                                 ((FrameLayout) v).getChildAt(0));
                     }
