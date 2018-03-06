@@ -319,11 +319,23 @@
         preferences
     -->
 
+    <!-- Preference group title -->
+    <string name="bulk_read_settings_preference">Bulk Card Reading</string>
+
     <!-- Preference title -->
-    <string name="open_source_preference">Open Source</string>
+    <string name="bulk_read_vibrate_preference">Vibrate on Card Read</string>
+
+    <!-- Preference group title -->
+    <string name="wallet_settings_preference">Wallet</string>
 
     <!-- Preference title -->
     <string name="delete_all_cards_preference">Delete All Cards</string>
+
+    <!-- Preference group title -->
+    <string name="about_preference">About</string>
+
+    <!-- Preference title -->
+    <string name="open_source_preference">Open Source</string>
 
 
     <!--
