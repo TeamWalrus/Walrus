@@ -186,6 +186,9 @@
     <!-- Card device status -->
     <string name="waiting_for_card">Waiting for card</string>
 
+    <!-- Toast shown when user tries to write or emulate a card with no card data -->
+    <string name="no_card_data">Card has no card data</string>
+
 
     <!--
         ChameleonMiniActivity

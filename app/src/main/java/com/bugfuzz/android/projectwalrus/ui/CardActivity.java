@@ -405,6 +405,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     }
 
     private void startWriteOrEmulateCardSetup(boolean write) {
+        if (card.cardData == null) {
+            Toast.makeText(this, R.string.no_card_data, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (CardDeviceManager.INSTANCE.getCardDevices().isEmpty()) {
             Toast.makeText(this, R.string.no_card_devices, Toast.LENGTH_LONG).show();
             return;
