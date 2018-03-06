@@ -65,8 +65,8 @@ public class Card {
                 other.cardCreated != null ? new Date(other.cardCreated.getTime()) : null,
                 other.cardDataAcquired != null ? new Date(other.cardDataAcquired.getTime()) : null,
                 other.notes,
-                other.cardLocationLng,
-                other.cardLocationLat);
+                other.cardLocationLat,
+                other.cardLocationLng);
     }
 
     public Card() {
