@@ -292,7 +292,7 @@
 
     <!--
         menu_mywallet
-        MyWalletActivity
+        WalletActivity
     -->
 
     <!-- Shown as placeholder text for card search in wallet and as alternative to toolbar icon -->

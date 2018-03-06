@@ -43,7 +43,7 @@
         </service>
 
         <activity
-            android:name=".ui.MyWalletActivity"
+            android:name=".ui.WalletActivity"
             android:theme="@style/LauncherActivityTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -56,12 +56,12 @@
         <activity
             android:name=".ui.BulkReadCardsActivity"
             android:label="@string/bulk_read_cards_activity_name"
-            android:parentActivityName=".ui.MyWalletActivity"/>
+            android:parentActivityName=".ui.WalletActivity"/>
 
         <activity
             android:name=".ui.DevicesActivity"
             android:label="@string/devices_activity_name"
-            android:parentActivityName=".ui.MyWalletActivity"/>
+            android:parentActivityName=".ui.WalletActivity"/>
 
         <activity
             android:name=".device.proxmark3.Proxmark3Activity"
@@ -81,7 +81,7 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_activity_name"
-            android:parentActivityName=".ui.MyWalletActivity"/>
+            android:parentActivityName=".ui.WalletActivity"/>
 
         <activity
             android:name=".ui.WebViewActivity"
