@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.content.SharedPreferences;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -135,12 +136,15 @@ public class ProjectWalrusApplication extends Application {
 
             Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
 
-            Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
-            if (vibrator != null) {
-                if (android.os.Build.VERSION.SDK_INT >= O)
-                    vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
-                else
-                    vibrator.vibrate(singleTiming);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            if (sharedPref.getBoolean("pref_key_on_device_connected_vibrate", true)) {
+                Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
+                if (vibrator != null) {
+                    if (android.os.Build.VERSION.SDK_INT >= O)
+                        vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
+                    else
+                        vibrator.vibrate(singleTiming);
+                }
             }
         }
     }

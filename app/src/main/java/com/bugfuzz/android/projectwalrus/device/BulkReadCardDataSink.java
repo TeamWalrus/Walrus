@@ -21,9 +21,11 @@ package com.bugfuzz.android.projectwalrus.device;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
@@ -78,12 +80,15 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
             return;
         lastCardData = cardData;
 
-        Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
-        if (vibrator != null) {
-            if (android.os.Build.VERSION.SDK_INT >= O)
-                vibrator.vibrate(VibrationEffect.createOneShot(300, 255));
-            else
-                vibrator.vibrate(300);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        if (sharedPref.getBoolean("pref_key_bulk_read_vibrate", true)) {
+            Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
+            if (vibrator != null) {
+                if (android.os.Build.VERSION.SDK_INT >= O)
+                    vibrator.vibrate(VibrationEffect.createOneShot(300, 255));
+                else
+                    vibrator.vibrate(300);
+            }
         }
 
         final Card card = Card.copyOf(cardTemplate);

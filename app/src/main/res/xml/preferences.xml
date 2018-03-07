@@ -20,15 +20,42 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <com.bugfuzz.android.projectwalrus.ui.DeleteAllCardsPreference android:title="@string/delete_all_cards_preference"/>
+     <PreferenceCategory android:title="@string/bulk_read_settings_preference">
 
-    <Preference android:title="@string/open_source_preference">
-        <intent android:action=".ui.WebViewActivity">
-            <!--suppress AndroidElementNotAllowed -->
-            <extra
-                android:name="com.bugfuzz.android.projectwalrus.ui.WebViewActivity.EXTRA_URL"
-                android:value="file:///android_asset/open_source.html"/>
-        </intent>
-    </Preference>
+        <CheckBoxPreference
+            android:key="pref_key_bulk_read_vibrate"
+            android:title="@string/bulk_read_vibrate_preference"
+            android:defaultValue="true"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/devices_settings_preference">
+
+        <CheckBoxPreference
+            android:key="pref_key_on_device_connected_vibrate"
+            android:title="@string/on_device_connected_preference"
+            android:defaultValue="true"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/wallet_settings_preference">
+
+        <com.bugfuzz.android.projectwalrus.ui.DeleteAllCardsPreference
+            android:title="@string/delete_all_cards_preference"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/about_settings_preference">
+
+        <Preference android:title="@string/open_source_preference">
+            <intent android:action=".ui.WebViewActivity">
+                <!--suppress AndroidElementNotAllowed -->
+                <extra
+                    android:name="com.bugfuzz.android.projectwalrus.ui.WebViewActivity.EXTRA_URL"
+                    android:value="file:///android_asset/open_source.html"/>
+            </intent>
+        </Preference>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
