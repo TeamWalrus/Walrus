@@ -24,8 +24,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -49,8 +49,8 @@ public class ProjectWalrusApplication extends Application {
     private static Context context;
 
     private static Location currentBestLocation;
-    private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationCallback locationCallback;
+    private static FusedLocationProviderClient fusedLocationProviderClient;
+    private static LocationCallback locationCallback;
 
     public static Context getContext() {
         return context;
@@ -58,6 +58,31 @@ public class ProjectWalrusApplication extends Application {
 
     public static Location getCurrentBestLocation() {
         return currentBestLocation != null ? new Location(currentBestLocation) : null;
+    }
+
+    public static void startLocationUpdates() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(2000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+                    if (currentBestLocation == null ||
+                            GeoUtils.isBetterLocation(location, currentBestLocation))
+                        currentBestLocation = location;
+                }
+            }
+        };
+
+        try {
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest,
+                    locationCallback, null);
+        } catch (SecurityException ignored) {
+        }
     }
 
     @Override
@@ -80,30 +105,6 @@ public class ProjectWalrusApplication extends Application {
                 CardDeviceManager.INSTANCE.scanForDevices(ProjectWalrusApplication.this);
             }
         }).start();
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(2000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                for (Location location : locationResult.getLocations()) {
-                    if (currentBestLocation == null ||
-                            GeoUtils.isBetterLocation(location, currentBestLocation))
-                        currentBestLocation = location;
-                }
-            }
-        };
-
-        try {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest,
-                    locationCallback, null);
-        } catch (SecurityException ignored) {
-            locationCallback = null;
-        }
     }
 
     public class DeviceChangedBroadcastHandler extends BroadcastReceiver {

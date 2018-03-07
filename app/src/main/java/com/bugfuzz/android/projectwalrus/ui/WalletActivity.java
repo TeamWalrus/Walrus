@@ -19,11 +19,15 @@
 
 package com.bugfuzz.android.projectwalrus.ui;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +40,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.SearchView;
 
+import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
@@ -56,6 +61,7 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             recyclerView.getAdapter().notifyDataSetChanged();
         }
     };
+
     private SearchView sv;
 
     public WalletActivity() {
@@ -110,6 +116,20 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         LocalBroadcastManager.getInstance(this).registerReceiver(walletUpdateBroadcastReceiver,
                 new IntentFilter(QueryUtils.ACTION_WALLET_UPDATE));
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        else
+            ProjectWalrusApplication.startLocationUpdates();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            ProjectWalrusApplication.startLocationUpdates();
     }
 
     @Override
