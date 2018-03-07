@@ -27,6 +27,7 @@ import android.os.Vibrator;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -37,9 +38,11 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import static android.content.Context.VIBRATOR_SERVICE;
 import static android.os.Build.VERSION_CODES.O;
 
-public class BulkReadCardDataSink extends LocationAwareCardDataSink {
+public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
     public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
+
+    private final Context context;
 
     private final CardDevice cardDevice;
     private final Class<? extends CardData> cardDataClass;
@@ -57,8 +60,7 @@ public class BulkReadCardDataSink extends LocationAwareCardDataSink {
     public BulkReadCardDataSink(Context context, CardDevice cardDevice,
                                 Class<? extends CardData> cardDataClass, Card cardTemplate,
                                 OnStopCallback onStopCallback) {
-        super(context);
-
+        this.context = context;
         this.cardDevice = cardDevice;
         this.cardDataClass = cardDataClass;
         this.cardTemplate = cardTemplate;
@@ -67,8 +69,6 @@ public class BulkReadCardDataSink extends LocationAwareCardDataSink {
 
     @Override
     public void onStarting() {
-        super.onStarting();
-
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
     }
 
@@ -88,7 +88,7 @@ public class BulkReadCardDataSink extends LocationAwareCardDataSink {
 
         final Card card = Card.copyOf(cardTemplate);
         card.name += " (" + ++numberOfCardsRead + ")";
-        card.setCardData(cardData, getCurrentBestLocation());
+        card.setCardData(cardData, ProjectWalrusApplication.getCurrentBestLocation());
 
         new Handler(context.getMainLooper()).post(new Runnable() {
             @Override
@@ -111,8 +111,6 @@ public class BulkReadCardDataSink extends LocationAwareCardDataSink {
 
     @Override
     public void onError(final String message) {
-        super.onError(message);
-
         new Handler(context.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -126,8 +124,6 @@ public class BulkReadCardDataSink extends LocationAwareCardDataSink {
 
     @Override
     public void onFinish() {
-        super.onFinish();
-
         OpenHelperManager.releaseHelper();
 
         onStopCallback.onStop(this);

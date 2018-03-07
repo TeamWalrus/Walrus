@@ -46,6 +46,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -55,7 +56,6 @@ import com.bugfuzz.android.projectwalrus.data.QueryUtils;
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.device.LocationAwareCardDataSink;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -621,7 +621,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
     }
 
-    private class ReadCardDataSink extends LocationAwareCardDataSink {
+    private class ReadCardDataSink implements CardDevice.CardDataSink {
 
         private final CardDevice cardDevice;
         private final Class<? extends CardData> cardDataClass;
@@ -631,16 +631,12 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         private volatile boolean stop;
 
         ReadCardDataSink(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
-            super(CardActivity.this);
-
             this.cardDevice = cardDevice;
             this.cardDataClass = cardDataClass;
         }
 
         @Override
         public void onStarting() {
-            super.onStarting();
-
             CardDataIOView cardDataIOView = new CardDataIOView(CardActivity.this);
             cardDataIOView.setCardDeviceClass(cardDevice.getClass());
             cardDataIOView.setDirection(true);
@@ -671,7 +667,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    card.setCardData(cardData, getCurrentBestLocation());
+                    card.setCardData(cardData, ProjectWalrusApplication.getCurrentBestLocation());
                     dirty = true;
                     updateUI();
                 }
@@ -687,8 +683,6 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         @Override
         public void onError(final String message) {
-            super.onError(message);
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -702,8 +696,6 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         @Override
         public void onFinish() {
-            super.onFinish();
-
             dialog.dismiss();
         }
     }

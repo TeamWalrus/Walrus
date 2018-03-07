@@ -24,6 +24,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -33,6 +34,12 @@ import android.widget.Toast;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
+import com.bugfuzz.android.projectwalrus.util.GeoUtils;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 import static android.os.Build.VERSION_CODES.O;
 
@@ -40,8 +47,16 @@ public class ProjectWalrusApplication extends Application {
 
     private static Context context;
 
+    private static Location currentBestLocation;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationCallback locationCallback;
+
     public static Context getContext() {
         return context;
+    }
+
+    public static Location getCurrentBestLocation() {
+        return new Location(currentBestLocation);
     }
 
     @Override
@@ -50,7 +65,6 @@ public class ProjectWalrusApplication extends Application {
 
         context = getApplicationContext();
 
-        // Add Chameleon Mini Default card slot value
         PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini, false);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(new DeviceChangedBroadcastHandler(),
@@ -64,6 +78,30 @@ public class ProjectWalrusApplication extends Application {
                 CardDeviceManager.INSTANCE.scanForDevices(ProjectWalrusApplication.this);
             }
         }).start();
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(2000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+                    if (currentBestLocation == null ||
+                            GeoUtils.isBetterLocation(location, currentBestLocation))
+                        currentBestLocation = location;
+                }
+            }
+        };
+
+        try {
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest,
+                    locationCallback, null);
+        } catch (SecurityException ignored) {
+            locationCallback = null;
+        }
     }
 
     public class DeviceChangedBroadcastHandler extends BroadcastReceiver {
