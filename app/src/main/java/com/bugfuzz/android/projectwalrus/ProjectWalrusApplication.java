@@ -57,7 +57,7 @@ public class ProjectWalrusApplication extends Application {
     }
 
     public static Location getCurrentBestLocation() {
-        return new Location(currentBestLocation);
+        return currentBestLocation != null ? new Location(currentBestLocation) : null;
     }
 
     @Override
