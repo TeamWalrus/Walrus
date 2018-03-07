@@ -1,0 +1,16 @@
+Plug in Proxmark3
+	Check device settings for device
+	Add card from Proxmark3 using single read
+	View the card
+	Edit the card
+	Write the card
+	Duplicate the card
+	Search cards
+	Delete the card
+	Add cards from Proxmark using bulk read
+	Test vibrate setting on card read
+	Stop bulk read
+	Delete all cards
+Disconnect device
+
+Repeat with Chameleon Mini
