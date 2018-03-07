@@ -71,7 +71,8 @@ public class ProjectWalrusApplication extends Application {
         LocalBroadcastManager.getInstance(this).registerReceiver(new DeviceChangedBroadcastHandler(),
                 new IntentFilter(CardDeviceManager.ACTION_UPDATE));
 
-        CardDeviceManager.INSTANCE.addDebugDevice(this);
+        if (BuildConfig.DEBUG)
+            CardDeviceManager.INSTANCE.addDebugDevice(this);
 
         new Thread(new Runnable() {
             @Override
