@@ -19,19 +19,7 @@
 
 apply plugin: 'com.android.application'
 
-def keystorePropertiesFile = rootProject.file("../walrus-keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 android {
-    signingConfigs {
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-        }
-    }
     compileSdkVersion 27
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -47,11 +35,26 @@ android {
         resValue "string", "google_maps_key",
                 (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
     }
+    if (new File("../walrus-keystore.properties").exists()) {
+        def keystorePropertiesFile = rootProject.file("../walrus-keystore.properties")
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+        signingConfigs {
+            config {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            if (new File("../walrus-keystore.properties").exists())
+                signingConfig signingConfigs.config
         }
     }
 }
