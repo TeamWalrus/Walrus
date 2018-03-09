@@ -29,7 +29,7 @@ import java.util.Random;
 @Parcel
 @CardData.Metadata(
         name = "HID",
-        icon = R.drawable.hid
+        icon = R.drawable.drawable_hid
 )
 public class HIDCardData extends CardData {
 

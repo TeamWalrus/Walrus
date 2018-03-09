@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 
 @CardDevice.Metadata(
         name = "Debug Device",
-        icon = R.drawable.debug_device,
+        icon = R.drawable.drawable_debug_device,
         supportsRead = {HIDCardData.class, ISO14443ACardData.class},
         supportsWrite = {HIDCardData.class, ISO14443ACardData.class},
         supportsEmulate = {HIDCardData.class, ISO14443ACardData.class}

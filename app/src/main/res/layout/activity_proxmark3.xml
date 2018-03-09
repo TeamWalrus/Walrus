@@ -40,7 +40,7 @@
                 android:layout_width="128dp"
                 android:layout_height="96dp"
                 android:padding="8dp"
-                android:src="@drawable/proxmark3"/>
+                android:src="@drawable/drawable_proxmark3"/>
 
             <TextView
                 android:layout_width="match_parent"

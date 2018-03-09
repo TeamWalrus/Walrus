@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 @CardDevice.Metadata(
         name = "Proxmark3",
-        icon = R.drawable.proxmark3,
+        icon = R.drawable.drawable_proxmark3,
         supportsRead = {HIDCardData.class},
         supportsWrite = {HIDCardData.class},
         supportsEmulate = {}

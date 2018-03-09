@@ -23,14 +23,12 @@ import com.bugfuzz.android.projectwalrus.R;
 
 import org.parceler.Parcel;
 
-import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Random;
 
 @Parcel
 @CardData.Metadata(
         name = "ISO 14443A",
-        icon = R.drawable.mifare
+        icon = R.drawable.drawable_mifare
 )
 public class ISO14443ACardData extends CardData {
 

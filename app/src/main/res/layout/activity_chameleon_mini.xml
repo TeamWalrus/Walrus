@@ -41,7 +41,7 @@
                 android:layout_width="128dp"
                 android:layout_height="96dp"
                 android:padding="8dp"
-                app:srcCompat="@drawable/chameleon_mini"/>
+                app:srcCompat="@drawable/drawable_chameleon_mini"/>
 
             <TextView
                 android:layout_width="match_parent"

@@ -38,7 +38,7 @@ import java.util.concurrent.Semaphore;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
-        icon = R.drawable.chameleon_mini,
+        icon = R.drawable.drawable_chameleon_mini,
         supportsRead = {ISO14443ACardData.class},
         supportsWrite = {},
         supportsEmulate = {ISO14443ACardData.class}
