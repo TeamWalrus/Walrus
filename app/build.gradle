@@ -50,8 +50,14 @@ android {
         }
     }
     buildTypes {
+        debug {
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (new File("../walrus-keystore.properties").exists())
                 signingConfig signingConfigs.config
