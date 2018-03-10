@@ -41,6 +41,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.squareup.leakcanary.LeakCanary;
 
 import static android.os.Build.VERSION_CODES.O;
 
@@ -88,6 +89,10 @@ public class ProjectWalrusApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (LeakCanary.isInAnalyzerProcess(this))
+            return;
+        LeakCanary.install(this);
 
         context = getApplicationContext();
 
