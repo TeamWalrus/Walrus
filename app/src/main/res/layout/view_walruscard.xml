@@ -53,7 +53,7 @@
                     android:id="@+id/editableName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
                     android:paddingEnd="18dp"
                     android:paddingStart="20dp"
                     android:paddingTop="18dp"
