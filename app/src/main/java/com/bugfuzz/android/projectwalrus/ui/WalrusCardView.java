@@ -25,6 +25,8 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
@@ -39,6 +41,7 @@ import com.bugfuzz.android.projectwalrus.data.CardData;
 public class WalrusCardView extends FrameLayout {
 
     public EditText editableNameView;
+    private Pair<Integer, Integer> maxSize;
     private Card card;
     private TextView nameView, humanReadableTextView;
     private ImageView logoView;
@@ -59,6 +62,16 @@ public class WalrusCardView extends FrameLayout {
         super(context);
 
         init(null, 0);
+    }
+
+    public static Pair<Integer, Integer> getMaxSize(DisplayMetrics displayMetrics) {
+        // Raw dimensions from ISO/IEC 7810 card size ID 1
+        final int scale = 4;
+        return new Pair<>(
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 85.6f * scale,
+                        displayMetrics),
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 53.98f * scale,
+                        displayMetrics));
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -90,57 +103,61 @@ public class WalrusCardView extends FrameLayout {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WalrusCardView, defStyle, 0);
         setEditable(a.getBoolean(R.styleable.WalrusCardView_editable, false));
         a.recycle();
+
+        maxSize = getMaxSize(getResources().getDisplayMetrics());
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // Raw dimensions from ISO/IEC 7810 card size ID 1
-        final int
-                scale = 4,
-                maxWidth = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 85.6f * scale,
-                        getResources().getDisplayMetrics()),
-                maxHeight = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 53.98f * scale,
-                        getResources().getDisplayMetrics());
-
-        Integer width = null, height = null;
+        int width, height;
 
         switch (MeasureSpec.getMode(widthMeasureSpec)) {
             case MeasureSpec.UNSPECIFIED:
-                width = maxWidth;
+                width = maxSize.first;
                 break;
 
             case MeasureSpec.EXACTLY:
+                width = MeasureSpec.getSize(widthMeasureSpec);
                 break;
 
             case MeasureSpec.AT_MOST:
-                width = Math.min(Math.max(maxWidth, getSuggestedMinimumWidth()),
-                        MeasureSpec.getSize(widthMeasureSpec));
+                width = Math.min(maxSize.first, MeasureSpec.getSize(widthMeasureSpec));
                 break;
+
+            default:
+                throw new IllegalArgumentException();
         }
 
         switch (MeasureSpec.getMode(heightMeasureSpec)) {
             case MeasureSpec.UNSPECIFIED:
-                height = maxHeight;
+                height = maxSize.second;
                 break;
 
             case MeasureSpec.EXACTLY:
+                height = MeasureSpec.getSize(heightMeasureSpec);
                 break;
 
             case MeasureSpec.AT_MOST:
-                height = Math.min(Math.max(maxHeight, getSuggestedMinimumHeight()),
-                        MeasureSpec.getSize(heightMeasureSpec));
+                height = Math.min(maxSize.second, MeasureSpec.getSize(heightMeasureSpec));
                 break;
+
+            default:
+                throw new IllegalArgumentException();
         }
 
-        if (width != null)
-            widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+        if (width < getSuggestedMinimumWidth())
+            width = getSuggestedMinimumWidth();
+        if (height < getSuggestedMinimumHeight())
+            height = getSuggestedMinimumHeight();
 
-        if (height != null)
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        final double ratio = (double) maxSize.first / maxSize.second;
+        if (width >= height)
+            height = (int) (width / ratio);
+        else
+            width = (int) (height * ratio);
 
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
     }
 
     public void setCard(Card newCard) {

@@ -30,6 +30,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -37,6 +39,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.SearchView;
 
@@ -85,14 +88,31 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                recyclerView.getAdapter().notifyDataSetChanged();
+                if (recyclerView.getAdapter() != null)
+                    recyclerView.getAdapter().notifyDataSetChanged();
                 return false;
             }
         });
 
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setAdapter(new CardAdapter());
-        recyclerView.setHasFixedSize(true);
+        recyclerView.setVisibility(View.INVISIBLE);
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                        int span = (int) (recyclerView.getWidth() / (WalrusCardView.getMaxSize(
+                                getResources().getDisplayMetrics()).first * 0.8));
+
+                        recyclerView.setLayoutManager(span > 1 ?
+                                new GridLayoutManager(WalletActivity.this, span) :
+                                new LinearLayoutManager(WalletActivity.this));
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setAdapter(new CardAdapter());
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
+                });
 
         FabSpeedDial fabSpeedDial = findViewById(R.id.floatingActionButton);
         fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
