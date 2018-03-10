@@ -32,7 +32,7 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/toolbar"
-        android:layout_marginEnd="7dp"
+        android:background="@android:color/white"
         android:iconifiedByDefault="false"
         android:queryHint="@string/search_cards"
         android:visibility="gone"
