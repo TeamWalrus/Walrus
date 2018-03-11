@@ -10,8 +10,8 @@
   <meta name="description" content="The Android App for all your RFID cloning needs!">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://192.168.1.8:4000/lumpy/">
-  <link rel="alternate" type="application/rss+xml" title="Project Walrus" href="/feed.xml">
+  <link rel="canonical" href="http://localhost:4000/lumpy/">
+  <link rel="alternate" type="application/rss+xml" title="Walrus" href="/feed.xml">
   
   
 </head>
@@ -24,7 +24,7 @@
   <div class="wrapper">
     
     
-    <a class="site-title" href="/">Project Walrus</a>
+    <a class="site-title" href="/">Walrus</a>
   
     
       <nav class="site-nav">
@@ -84,24 +84,46 @@
   </header>
 
   <div class="post-content">
-    <h1 id="adding-bluetooth-support-to-the-rfid-tastic-thief-for-347">Adding Bluetooth support to the RFID Tastic Thief for $3.47</h1>
+    <h1 id="adding-bluetooth-support-to-the-bishop-fox-rfid-tastic-thief">Adding Bluetooth support to the <a href="https://www.bishopfox.com/resources/tools/rfid-hacking/attack-tools/">Bishop Fox RFID Tastic Thief</a></h1>
 
-<p>We will use the existing Arduino board on the Tastic RFID Thief to send data via a cheap Bluetooth module.</p>
+<p>Lumpy is based on the previous work done by Fran Brown and the awesome team who worked on the Tastic RFID Thief project over at Bishop Fox. Lumpy improves on <a href="https://www.bishopfox.com/resources/tools/rfid-hacking/attack-tools/">Bishop Fox’s Tastic RFID Thief</a> by adding bluetooth support for the minimal cost of $3.47. This enables wireless communication between the long range card reader and our Walrus app, allowing cloned cards to be sent to your Walrus wallet via a bluetooth connection.</p>
+
+<p><img src="/assets/lumpy_hc06.png" alt="lumpy" /></p>
 
 <hr />
 <h2 id="equipment-needed">Equipment Needed</h2>
-<p>You will need a wireless serial Bluetooth RF transceiver. The HC06 is a very cheap solution that does the trick. I picked up one from <a href="https://www.ebay.com/itm/Wireless-Serial-4-Pin-Bluetooth-RF-Transceiver-Module-HC-06-RS232-With-backplane-/200924726178">ebay</a> for $3.47 USD:</p>
+<p>You will need a wireless serial Bluetooth RF transceiver. The HC06 is a cheap solution that does the trick. I picked up one from <a href="https://www.ebay.com/itm/Wireless-Serial-4-Pin-Bluetooth-RF-Transceiver-Module-HC-06-RS232-With-backplane-/200924726178">ebay</a> for $3.47 USD:</p>
+
+<p><img src="/assets/hc06.png" alt="HC06" /></p>
 
 <h2 id="change-the-baud-rate-of-hc06">Change the Baud rate of HC06</h2>
-<p>First change the operating board rate of the HC06. This will vary on the equipment you have, but there are a few instructions and guides on how to change the default settings of the HC06 using AT commands. Commands vary on the board so here are instructions used for both <a href="http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-module/">HC05</a> and <a href="http://www.instructables.com/id/How-to-Change-the-Name-of-HC-06-Bluetooth-Module/">HC06</a> modules. I found that HC05 commands worked when changing the baud rate of my HC06 board -  ¯\_(ツ)_/¯. So don’t be afraid to experiment…</p>
+<p>First change the operating board rate of the HC06. This will vary on the equipment you have, and there are a few instructions and guides on how to change the default settings of the HC06 using AT commands. Commands vary on the board so here are instructions used for both <a href="http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-module/">HC05</a> and <a href="http://www.instructables.com/id/How-to-Change-the-Name-of-HC-06-Bluetooth-Module/">HC06</a> modules. I found that HC05 commands worked when changing the baud rate of my HC06 board -  ¯\_(ツ)_/¯. So don’t be afraid to experiment…</p>
 
-<p>The operating baud rate of the HC06 module needs to be set to #### to correctly receive data from the Tastic RFID Thief Arduino board.</p>
+<p>The operating baud rate of the HC06 module needs to be set to <code class="highlighter-rouge">57600</code> to correctly receive data from the Tastic RFID Thief Arduino board.</p>
 
-<h2 id="rx-to-tx">RX to TX</h2>
-<p>Simply connect the TX (pin X) of the Tastic RFID Thief Arduino board to the RX of the HC06 Bluetooth module. You can now connect the Tastic RFID Thief to Walrus via Bluetooth and clone cards from roughly half a meter.</p>
+<p>The baud rate was found in the source code for the Arduino board used in the Bishop fox Tastic RFID Thief project still available for download <a href="http://www.bishopfox.com/download/814/">here</a>. The relevant section of code is shown below:</p>
 
-<h2 id="power">Power</h2>
-<p>You also need to steal some power from somewhere. Again the Tastic RFID Thief Arduino board has a spare 5v line which will do. However, you will find that this will draw too much electricity from the Arduino. To solve this problem, provide external power to the Arduino module. Either use a power bank or siphon some juice from the battery pack added by bishop fox (We have also upgraded this battery pack solution - instead of AAA batteries we use Lithium Ion batteries).</p>
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Set up function from Tastic_RFID_Adrudion</span>
+<span class="k">void</span> <span class="nf">setup</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="nf">pinMode</span><span class="p">(</span><span class="m">13</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>  <span class="c1">// LED</span>
+  <span class="nf">pinMode</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="n">INPUT</span><span class="p">);</span>     <span class="c1">// DATA0 (INT0)</span>
+  <span class="nf">pinMode</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="n">INPUT</span><span class="p">);</span>     <span class="c1">// DATA1 (INT1)</span>
+  
+  <span class="n">Serial</span><span class="p">.</span><span class="nf">begin</span><span class="p">(</span><span class="m">57600</span><span class="p">);</span>   <span class="c1">// This is the baud rate we need to configure the HC06 bluetooth module to </span>
+  <span class="n">Serial</span><span class="p">.</span><span class="nf">println</span><span class="p">(</span><span class="s">"RFID Readers"</span><span class="p">);</span>
+  <span class="p">...</span>
+</code></pre></div></div>
+
+<h2 id="design-overview-and-changes">Design Overview and Changes</h2>
+<p>The PCB (originally designed by Bishop Fox) was modified and bluetooth support added, enabling cloned access card information to be sent directly to the Walrus Android app. The PCB should still be able to fit into the same commercial RFID readers as before, and cloned badges are still written to the CARDS.txt file on the external microSD card.</p>
+
+<p><img src="/assets/walrus_overview.png" alt="Walrus-and-lumpy-overview" /></p>
+
+<h2 id="breadboard-layout">Breadboard Layout</h2>
+<p>To get the cloned card read from the Tastic RFID Thief Arduino microcontroller, simply connect the D1/TX pin from the Arduino microcontroller to the RX of the HC06 Bluetooth module. The breadboard layout below should give an idea of how the HC06 module should be connected:</p>
+
+<p><img src="/assets/Tastic-Custom_RFID_Stealer_PCB_du_2018.png" alt="Tastic-modifications-breadboard-layout" /></p>
 
   </div>
 
@@ -114,14 +136,14 @@
 
   <div class="wrapper">
 
-    <h2 class="footer-heading">Project Walrus</h2>
+    <h2 class="footer-heading">Walrus</h2>
 
     <div class="footer-col-wrapper">
       <div class="footer-col footer-col-1">
         <ul class="contact-list">
           <li>
             
-              Project Walrus
+              Walrus
             
             </li>
             
