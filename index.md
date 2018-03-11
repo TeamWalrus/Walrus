@@ -3,7 +3,7 @@ layout: home
 ---
 
 ![Logo]({{ "/assets/walrus.png" }})
-# Project Walrus - Card Cloning Made Simple
+# Walrus - Card Cloning Made Simple
 
 Walrus enables you to use your existing contactless card cloning devices with your Android device. Using a simple interface, cards can be read into a wallet to be written or emulated later.
 
