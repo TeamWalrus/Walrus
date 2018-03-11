@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Walrus</title>
-  <meta name="description" content="The Android App for all your RFID cloning needs!">
+  <meta name="description" content="Make the most of your card cloning devices.">
 
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="canonical" href="http://localhost:4000/">
@@ -85,34 +85,41 @@
 
 <p>Walrus enables you to use your existing contactless card cloning devices with your Android device. Using a simple interface, cards can be read into a wallet to be written or emulated later.</p>
 
-<p>Designed for physical security assessors, Walrus has features that will help you in your next red team engagement. Bulk card reading lets you easily capture multiple cards as you move around your target location, while simultaneous device reading lets you use different devices to read multiple card types all at once.</p>
+<p>Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.</p>
 
-<p>Walrus currently supports the <a href="https://github.com/Proxmark/proxmark3">Proxmark3</a> and the <a href="https://github.com/emsec/ChameleonMini">Chameleon Mini</a>, with more device support on the way.</p>
+<h2 id="demo">Demo</h2>
+
+<p>As an example, Walrus can be used to tap into the power of the Tastic RFID Thief long range card reader, allowing for walk-by cloning of a victim’s access card in a matter of seconds. The cloned card can then quickly be emulated or written to a blank card via an attached Proxmark.</p>
 
 <style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; } .embed-container iframe, .embed-container object, .embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }</style>
 <div class="embed-container"><iframe src="https://player.vimeo.com/video/247914436" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe></div>
+<p></p>
+
+<h2 id="design">Design</h2>
+
+<p>Walrus does not implement all of the functionality supported by a given card device and card type pair, instead choosing to implement only the subset that is common across most devices and most useful in real-world usage. This includes basic tasks such as card reading, writing and emulation, as well as some device-specific functionality such as antenna tuning or device configuration.</p>
 
 <h2 id="features">Features</h2>
 
-<h3 id="device-agnostic">Device Agnostic</h3>
-<p>Walrus is device agnostic, meaning you can use a wide range of card cloning devices. Walrus currently supports the Proxmark3 and Chameleon Mini Rev.G and partial support for the Tastic RFID Thief. We are further developing Walrus to add support for new devices such as the <a href="http://hackerwarehouse.com/product/blekey/">BLE-Key</a>, <a href="https://store.ryscc.com/collections/all/products/magspoof">MagSpoof v2</a> and <a href="https://github.com/rfidtool/ESP-RFID-Tool/blob/master/README.md#esp-rfid-tool">RFID-Tool</a>.</p>
+<h3 id="multi-device-support">Multi-device Support</h3>
 
-<h3 id="walk-by-cloning">‘Walk by’ Cloning</h3>
-<p>Walrus can tap into the power of the Tastic RFID Thief long range card reader and allows for ‘walk by’ cloning of a victim’s access card in a matter of seconds. The cloned card can then be emulated or written to a new blank card via an attached Proxmark. Instructions on adding Bluetooth support to your Tastic RFID Thief for $3.47 can be found <a href="/lumpy/">here</a>.</p>
+<p>Walrus currently supports the <a href="https://github.com/Proxmark/proxmark3">Proxmark3</a> and the <a href="https://github.com/emsec/ChameleonMini">Chameleon Mini</a>, with more device support on the way.</p>
 
-<h3 id="lfhf-tune-and-card-cloning-with-the-proxmark-3">LF/HF Tune and card cloning with the Proxmark 3</h3>
-<p>Gone are the days of <code class="highlighter-rouge">hw tune</code> :)</p>
+<h3 id="bulk-card-reading">Bulk Card Reading</h3>
 
-<p><img src="/assets/prox_tune1.png" alt="Proxmark3-Screenshot" /></p>
+<p>Bulk card reading continually reads cards from a device until manually stopped. This lets you easily capture multiple cards as you move around your target location. Vibration feedback lets you know when you have successfully read a card without the need for any interaction with your card reading or Android devices. Simultaneous device I/O support lets you use different devices to read multiple card types all at once or write a card on a device while you are still reading from another device.</p>
 
-<h3 id="bypass-the-8-card-slot-limit-of-the-chameleon-mini-revg">Bypass the 8 card slot limit of the Chameleon Mini Rev.G.</h3>
-<p>Your Walrus wallet size is limited only by the amount of free storage on your device.
-By default, Walrus will emulate cards on card slot 1 of the attached Chameleon Mini device. However, this can be adjusted in the device settings:</p>
+<h3 id="location-awareness">Location Awareness</h3>
 
-<p><img src="/assets/chameleon_1.png" alt="ChameleonMini-Screenshot" /></p>
+<p>Each time a card is seen, it is recorded with your location, making it easier to determine where the card may grant access to.</p>
 
-<h3 id="share-cards-coming-soon">Share cards (coming soon)</h3>
-<p>In some situations, there might be two consultants on an engagement. One consultant can be tasked with cloning an access card from an employee using the RFID Tastic Thief. Once an access card has been obtained, the cloned card can be sent to the second consultant, who is waiting close by and is ready to write a new card or emulate the access card on a Proxmark.</p>
+<h3 id="brute-forcing-coming-soon">Brute-forcing (Coming soon)</h3>
+
+<p>If you find a card reader that needs to be opened, your stored cards can be emulated through a device one by one. The cards are ordered in increasing distance between the reader and the location the card was captured, increasing the chances of a matching card being emulated and the reader granting access.</p>
+
+<h3 id="shareable-cards-coming-soon">Shareable Cards (Coming Soon)</h3>
+
+<p>Cards can be shared between instances of Walrus and exported for external use. This can be useful if there are two consultants on an engagement; one consultant can be tasked with cloning an access card from an employee in the field while the second consultant can write or emulate the access card at a reader.</p>
 
 
 </div>
@@ -147,7 +154,7 @@ By default, Walrus will emulate cards on card slot 1 of the attached Chameleon M
       </div>
 
       <div class="footer-col footer-col-3">
-        <p>The Android App for all your RFID cloning needs!</p>
+        <p>Make the most of your card cloning devices.</p>
       </div>
     </div>
 
