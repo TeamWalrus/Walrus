@@ -6,6 +6,9 @@ layout: home
 
 # Walrus - Card Cloning Made Simple
 
+<div align='center' width='100%'><a href='https://play.google.com/store/apps/details?id=com.bugfuzz.android.projectwalrus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width='160'/></a></div>
+<p></p>
+
 Walrus enables you to use your existing contactless card cloning devices with your Android device. Using a simple interface, cards can be read into a wallet to be written or emulated later.
 
 Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.
