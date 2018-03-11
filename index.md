@@ -39,6 +39,6 @@ Each time a card is seen, it is recorded with your location, making it easier to
 
 If you find a card reader that needs to be opened, your stored cards can be emulated through a device one by one. The cards are ordered in increasing distance between the reader and the location the card was captured, increasing the chances of a matching card being emulated and the reader granting access.
 
-### Shareable Cards (Coming Soon)
+### Shareable Cards (Coming soon)
 
 Cards can be shared between instances of Walrus and exported for external use. This can be useful if there are two consultants on an engagement; one consultant can be tasked with cloning an access card from an employee in the field while the second consultant can write or emulate the access card at a reader.
