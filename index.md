@@ -2,9 +2,9 @@
 layout: home
 ---
 
-![Logo]({{ "/assets/walrus.png" }})
+<p align="center"><img src="/assets/walrus.png"></p>
 
-# Walrus - Card Cloning Made Simple
+<h1 align="center">Walrus - Card Cloning Made Simple</h1>
 
 {% include play-store-badge.html %}
 
