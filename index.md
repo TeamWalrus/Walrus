@@ -45,6 +45,10 @@ If you find a card reader that needs to be opened, your stored cards can be emul
 
 Cards can be shared between instances of Walrus and exported for external use. This can be useful if there are two consultants on an engagement; one consultant can be tasked with cloning an access card from an employee in the field while the second consultant can write or emulate the access card at a reader.
 
+### More to come!
+
+Check out our [GitHub enhancement issues](https://github.com/megabug/ProjectWalrus/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) to get a sneak peek of what's in the pipeline!
+
 ## Ready to start?
 
 Check out the [Getting Started](/docs/getting-started/) page!
