@@ -6,8 +6,7 @@ layout: home
 
 # Walrus - Card Cloning Made Simple
 
-<div align='center' width='100%'><a href='https://play.google.com/store/apps/details?id=com.bugfuzz.android.projectwalrus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width='160'/></a></div>
-<p></p>
+{% include play-store-badge.html %}
 
 Walrus enables you to use your existing contactless card cloning devices with your Android device. Using a simple interface, cards can be read into a wallet to be written or emulated later.
 
@@ -45,3 +44,7 @@ If you find a card reader that needs to be opened, your stored cards can be emul
 ### Shareable Cards (Coming soon)
 
 Cards can be shared between instances of Walrus and exported for external use. This can be useful if there are two consultants on an engagement; one consultant can be tasked with cloning an access card from an employee in the field while the second consultant can write or emulate the access card at a reader.
+
+## Ready to start?
+
+Check out the [Getting Started](/docs/getting-started/) page!

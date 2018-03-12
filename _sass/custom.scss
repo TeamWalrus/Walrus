@@ -1,0 +1,20 @@
+img.screenshot {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+
+  border: 1px solid darken($background-color, 80);
+  box-shadow: 4px 4px #ddd;
+}
+
+img.sized-screenshot {
+  max-height: 600px;
+}
+
+p.arrow {
+  text-align: center;
+
+  @include relative-font-size(2);
+  font-weight: bold;
+  color: darken($background-color, 80);
+}
