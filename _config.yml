@@ -7,3 +7,8 @@ github_username: megabug/ProjectWalrus
 # Build settings
 markdown: kramdown
 theme: minima
+
+header_pages:
+    - docs/getting-started.md
+    - development.md
+    - lumpy.md
