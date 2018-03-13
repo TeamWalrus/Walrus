@@ -1,18 +1,21 @@
-# Site settings
 title: Walrus
 description: Make the most of your card cloning devices.
 url: http://project-walrus.io
+
 github_username: megabug/Walrus
 
-# Build settings
 markdown: kramdown
 remote_theme: jekyll/minima
 plugins:
-        - jekyll-remote-theme
-        - jekyll-feed
-        - jekyll-seo-tag
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-seo-tag
 
 header_pages:
-        - docs/getting-started.md
-        - development.md
-        - lumpy.md
+  - docs/getting-started.md
+  - development.md
+  - lumpy.md
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
