@@ -27,7 +27,7 @@ Walrus does not implement all of the functionality supported by a given card dev
 
 ### Multi-device Support
 
-Walrus currently supports the [Proxmark3](https://github.com/Proxmark/proxmark3) and the [Chameleon Mini](https://github.com/emsec/ChameleonMini), with more device support on the way.
+Walrus [currently supports](/device-support/) the [Proxmark3](https://github.com/Proxmark/proxmark3) and the [Chameleon Mini](https://github.com/emsec/ChameleonMini), with more device support on the way.
 
 ### Bulk Card Reading
 
