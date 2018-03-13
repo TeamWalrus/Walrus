@@ -4,6 +4,8 @@ url: http://project-walrus.io
 
 github_username: megabug/Walrus
 
+google_analytics: UA-115651889-1
+
 markdown: kramdown
 remote_theme: jekyll/minima
 plugins:
