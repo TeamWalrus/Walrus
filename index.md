@@ -47,7 +47,7 @@ Cards can be shared between instances of Walrus and exported for external use. T
 
 ### More to come!
 
-Check out our [GitHub enhancement issues](https://github.com/megabug/ProjectWalrus/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) to get a sneak peek of what's in the pipeline!
+Check out our [GitHub enhancement issues](https://github.com/megabug/Walrus/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) to get a sneak peek of what's in the pipeline!
 
 ## Ready to start?
 
