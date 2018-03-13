@@ -10,7 +10,6 @@ markdown: kramdown
 remote_theme: jekyll/minima
 plugins:
   - jekyll-remote-theme
-  - jekyll-feed
   - jekyll-seo-tag
 
 header_pages:
