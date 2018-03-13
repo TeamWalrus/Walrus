@@ -52,3 +52,7 @@ Check out our [GitHub enhancement issues](https://github.com/megabug/Walrus/issu
 ## Ready to start?
 
 Check out the [Getting Started](/docs/getting-started/) page!
+
+## Want to help?
+
+Check out the [Development](/development/) page!
