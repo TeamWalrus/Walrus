@@ -6,9 +6,13 @@ github_username: megabug/Walrus
 
 # Build settings
 markdown: kramdown
-theme: minima
+remote_theme: jekyll/minima
+plugins:
+        - jekyll-remote-theme
+        - jekyll-feed
+        - jekyll-seo-tag
 
 header_pages:
-    - docs/getting-started.md
-    - development.md
-    - lumpy.md
+        - docs/getting-started.md
+        - development.md
+        - lumpy.md

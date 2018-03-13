@@ -4,7 +4,7 @@ layout: home
 
 <p align="center"><img src="/assets/walrus.png"></p>
 
-<h1 align="center">Walrus - Card Cloning Made Simple</h1>
+<h1 class="post-title" align="center">Walrus - Card Cloning Made Simple</h1>
 
 {% include play-store-badge.html %}
 
