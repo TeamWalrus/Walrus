@@ -14,7 +14,7 @@ plugins:
 
 header_pages:
   - docs/getting-started.md
-  - development.md
+  - roadmap.md
   - lumpy.md
 
 exclude:

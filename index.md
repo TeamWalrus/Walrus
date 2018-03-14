@@ -13,6 +13,8 @@ Walrus enables you to use your existing contactless card cloning devices with yo
 
 Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.
 
+Walrus is [open source](https://github.com/megabug/Walrus), released under the [GNU General Public License v3.0](https://github.com/megabug/Walrus/blob/master/LICENSE).
+
 ## Demo
 
 As an example, Walrus can be used to tap into the power of the Tastic RFID Thief long range card reader, allowing for walk-by cloning of a victim's access card in a matter of seconds. The cloned card can then quickly be emulated or written to a blank card via an attached Proxmark.
@@ -48,7 +50,7 @@ Cards can be shared between instances of Walrus and exported for external use. T
 
 ### More to come!
 
-Check out our [GitHub enhancement issues](https://github.com/megabug/Walrus/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) to get a sneak peek of what's in the pipeline!
+Check out our [roadmap](/roadmap/) to get a sneak peek of what's in the pipeline!
 
 ## Ready to start?
 
@@ -56,4 +58,4 @@ Check out the [Getting Started](/docs/getting-started/) page!
 
 ## Want to help?
 
-Check out the [Development](/development/) page!
+Check out our [GitHub repository](https://github.com/megabug/Walrus)!
