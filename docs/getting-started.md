@@ -7,7 +7,7 @@ permalink: /docs/getting-started/
 * Contents
 {:toc}
 
-### Installation
+## Installation
 
 You can get Walrus from the Google Play Store:
 
@@ -15,7 +15,7 @@ You can get Walrus from the Google Play Store:
 
 Alternatively, if you're comfortable with doing so, you can clone the [Git repository](https://github.com/megabug/Walrus) and build Walrus yourself. Check out the [README](https://github.com/megabug/Walrus/blob/master/README.md) file for build instructions.
 
-### Connect your device
+## Connect your device
 
 Start Walrus and you'll be presented with your new, blank wallet:
 
@@ -33,7 +33,7 @@ Upon successful connection, you'll see a short message:
 
 <img src="/assets/device-connected.png" class="screenshot sized-screenshot">
 
-### Check your device
+## Check your device
 
 Check that Walrus has correctly identified your device. Go to the device list by selecting the device list toolbar button:
 
@@ -49,7 +49,7 @@ Select your newly attached device and you should see a screen showing your devic
 
 At this point, you should understand the capabilities of your device that Walrus (currently) supports. Check the [device support](/device-support/) page to see what your device can do. While most devices can read cards, only some can write or emulate cards back out again.
 
-### Read a card
+## Read a card
 
 You're now set to add a new card and read its card data. First, note that Walrus distinguishes between cards and card data. Cards have metadata like a human readable name, date of creation, notes, and so on, *as well as* card data. Card data is the actual ID or other token held on a physical access control card that is read by a card reader.
 
@@ -79,7 +79,7 @@ After saving your card into your wallet by selecting the save icon, you'll retur
 
 <img src="/assets/wallet-with-read-card.png" class="screenshot sized-screenshot">
 
-### Writing a card
+## Writing a card
 
 If your device supports it, writing a card is simple.
 
@@ -93,7 +93,7 @@ Place a writable physical card on your device's antenna and select the "*Write C
 
 After this, the card data should be written.
 
-### Emulating a card
+## Emulating a card
 
 Again, if your device supports it, emulating a card is easy, being much the same as writing a card (see above).
 
@@ -103,7 +103,7 @@ You can now hold your device's antenna up to a reader and the card data will be 
 
 <!-- <img src="/assets/TODO" class="screenshot sized-screenshot"> -->
 
-### Bulk reading cards
+## Bulk reading cards
 
 Bulk reading cards lets you stealthy read multiple cards over a period of time without having to interact with your Android device.
 
