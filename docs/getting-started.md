@@ -4,6 +4,9 @@ title: Getting Started
 permalink: /docs/getting-started/
 ---
 
+* Contents
+{:toc}
+
 ### Installation
 
 You can get Walrus from the Google Play Store:
