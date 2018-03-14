@@ -4,7 +4,8 @@ layout: home
 
 <p align="center"><img src="/assets/walrus.png"></p>
 
-<h1 class="post-title" align="center">Walrus - Card Cloning Made Simple</h1>
+<h1 class="post-title" align="center">Walrus</h1>
+<h2 align="center">{{ site.description }}</h2>
 
 {% include play-store-badge.html %}
 
