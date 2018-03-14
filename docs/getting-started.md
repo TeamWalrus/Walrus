@@ -9,7 +9,7 @@ permalink: /docs/getting-started/
 
 ## Installation
 
-You can get Walrus from the Google Play Store:
+You can get Walrus on Google Play:
 
 {% include play-store-badge.html %}
 
