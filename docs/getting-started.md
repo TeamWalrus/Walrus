@@ -21,7 +21,7 @@ Start Walrus and you'll be presented with your new, blank wallet:
 
 <img src="/assets/blank-wallet.png" class="screenshot sized-screenshot">
 
-(You may be asked to allow Walrus access to your location. This is use to add location information to each card you read; it's necessary to start listening for location updates ASAP in order to ensure an accurate fix is ready by the time a card is ready to read.)
+(You may be asked to allow Walrus access to your location. This is use to add location information to each card you read; it's necessary to start listening for location updates ASAP in order to ensure an accurate fix is ready by the time a card is being read.)
 
 Connect your Proxmark3 or Chameleon Mini to your Android device. You may require a [OTG USB](https://www.androidpit.com/usb-otg-what-it-means-and-how-to-use-it) cable or adapter.
 
@@ -53,7 +53,7 @@ At this point, you should understand the capabilities of your device that Walrus
 
 You're now set to add a new card and read its card data. First, note that Walrus distinguishes between cards and card data. Cards have metadata like a human readable name, date of creation, notes, and so on, *as well as* card data. Card data is the actual ID or other token held on a physical access control card that is read by a card reader.
 
-From the wallet, select the "*Add New Card*" action:
+From your wallet, select the "*Add New Card*" action:
 
 <img src="/assets/add-new-card-button.png" class="screenshot sized-screenshot">
 
@@ -83,7 +83,7 @@ After saving your card into your wallet by selecting the save icon, you'll retur
 
 If your device supports it, writing a card is simple.
 
-Select the card in the wallet to be taken to its detailed information screen:
+Select the card in your wallet to be taken to its detailed information screen:
 
 <img src="/assets/view-card.png" class="screenshot sized-screenshot">
 
@@ -97,7 +97,7 @@ After this, the card data should be written.
 
 Again, if your device supports it, emulating a card is easy, being much the same as writing a card (see above).
 
-As before, select the card in the wallet to be taken to its detailed information screen. This time, select the "*Emulate Card*" button. Currently, as Walrus only supports the Chameleon Mini for emulation, the card data is sent to the device and emulation is started immediately. (When support for other devices that don't permanently store a card in order to emulate it is added, a dialog will pop up much the same as when writing a card.)
+As before, select the card in your wallet to be taken to its detailed information screen. This time, select the "*Emulate Card*" button. Currently, as Walrus only supports the Chameleon Mini for emulation, the card data is sent to the device and emulation is started immediately. (When support for other devices that don't permanently store a card in order to emulate it is added, a dialog will pop up much the same as when writing a card.)
 
 You can now hold your device's antenna up to a reader and the card data will be read.
 
@@ -105,17 +105,17 @@ You can now hold your device's antenna up to a reader and the card data will be 
 
 ## Bulk reading cards
 
-Bulk reading cards lets you stealthy read multiple cards over a period of time without having to interact with your Android device.
+Bulk reading cards lets you stealthily read multiple cards over a period of time without having to interact with your Android device.
 
-From the wallet, select "*Bulk Read Cards*":
+From your wallet, select "*Bulk Read Cards*":
 
 <img src="/assets/bulk-read-cards.png" class="screenshot sized-screenshot">
 
-You'll be asked to fill in a card template for any new cards read during the bulk card read. Metadata will be taken from this template when new card data is read (the name will have an ascending per-run ID number added.)
+You'll be asked to fill in a card template for any new cards read during the bulk card read. Metadata will be taken from this template when new card data is read (with the name having an additional ascending per-run ID number.)
 
 <img src="/assets/set-template.png" class="screenshot sized-screenshot">
 
-Select the start button to start the bulk read. You'll be returned to the wallet and a notification will appear to indicate that the bulk read is in progress in the background:
+Select the start button to start the bulk read. You'll be returned to your wallet and a notification will appear to indicate that the bulk read is in progress in the background:
 
 <img src="/assets/start-icon.png" class="screenshot" width="40">
 
@@ -123,9 +123,9 @@ Select the start button to start the bulk read. You'll be returned to the wallet
 
 <img src="/assets/bulk-read-notification.png" class="screenshot sized-screenshot">
 
-Wave some physical cards over your device's antenna. Note that there is a deduplication filter - Walrus will ignore the same card being read more than once in succession. Either alternate between two different cards for testing purposes, or try a bunch of different ones.
+Wave some physical cards over your device's antenna. Note that there is a anti-duplicate filter - Walrus will ignore the same card being read more than once in succession. Either alternate between two different cards for testing purposes, or try a bunch of different ones.
 
-Each card will lead to a new card appearing instantly in your wallet:
+Each read card will lead to a new card appearing instantly in your wallet:
 
 <img src="/assets/bulk-read-wallet.png" class="screenshot sized-screenshot">
 
@@ -140,6 +140,8 @@ Selecting the bulk read notification or the ongoing bulk reads toolbar icon in t
 By selecting a bulk card read, you can view its status or stop it:
 
 <img src="/assets/bulk-read-dialog.png" class="screenshot sized-screenshot">
+
+Congrats, you've covered Walrus's basic functionality!
 
 ## Gotchas
 
