@@ -52,7 +52,11 @@ public abstract class CardDevice {
 
     private String status;
 
+<<<<<<< HEAD
     CardDevice(Context context) {
+=======
+    protected CardDevice(Context context, String status) {
+>>>>>>> 4abb030e... Add BTHackDevice
         this.context = context;
 
         id = nextId++;

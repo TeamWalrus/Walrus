@@ -20,6 +20,7 @@
 package com.bugfuzz.android.projectwalrus.device;
 
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,9 +29,11 @@ import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.bugfuzz.android.projectwalrus.device.bthack.BTHackDevice;
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -258,5 +261,10 @@ public enum CardDeviceManager {
 
             CardDeviceManager.INSTANCE.scanForDevices(context);
         }
+    }
+
+    public void attachBTHack(Context context, BluetoothDevice bluetoothDevice) {
+        BTHackDevice btHackDevice = new BTHackDevice(context, bluetoothDevice);
+        cardDevices.put(btHackDevice.getId(), btHackDevice);
     }
 }

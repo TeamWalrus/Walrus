@@ -57,6 +57,7 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     private DatabaseHelper databaseHelper;
 
     private CardData lastCardData;
+    private long lastCardDataTime;
     private volatile int numberOfCardsRead;
 
     private volatile boolean stop;
@@ -81,11 +82,17 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
     @Override
     @WorkerThread
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/BulkReadCardDataSink.java
     public void onCardData(CardData cardData) {
         if (cardData.equals(lastCardData)) {
+=======
+    public void onResult(CardData cardData) {
+        if (cardData.equals(lastCardData) && System.currentTimeMillis() < lastCardDataTime + 5000) {
+>>>>>>> 4abb030e... Add BTHackDevice:app/src/main/java/com/bugfuzz/android/projectwalrus/device/BulkReadCardDataOperationRunner.java
             return;
         }
         lastCardData = cardData;
+        lastCardDataTime = System.currentTimeMillis();
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         if (sharedPref.getBoolean("pref_key_bulk_read_vibrate", true)) {
