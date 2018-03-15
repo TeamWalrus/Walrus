@@ -503,6 +503,14 @@
 
 
     <!--
+        WalletActivity
+    -->
+
+    <!-- Shown before requesting location permissions -->
+    <string name="location_rationale">Walrus can (optionally) use your device\'s location to allow the location of captured cards to be recorded.</string>
+
+
+    <!--
         UsbSerialCardDevice
     -->
 

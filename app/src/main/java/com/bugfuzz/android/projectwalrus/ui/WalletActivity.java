@@ -24,10 +24,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -54,8 +52,12 @@ import java.util.List;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper> {
+
+    private static final int LOCATION_REQUEST_CODE = 0;
 
     private RecyclerView recyclerView;
     private final BroadcastReceiver walletUpdateBroadcastReceiver = new BroadcastReceiver() {
@@ -137,19 +139,22 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         LocalBroadcastManager.getInstance(this).registerReceiver(walletUpdateBroadcastReceiver,
                 new IntentFilter(QueryUtils.ACTION_WALLET_UPDATE));
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION))
+            gotLocationPermissions();
         else
-            ProjectWalrusApplication.startLocationUpdates();
+            EasyPermissions.requestPermissions(this, getString(R.string.location_rationale),
+                    LOCATION_REQUEST_CODE, Manifest.permission.ACCESS_FINE_LOCATION);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            ProjectWalrusApplication.startLocationUpdates();
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @AfterPermissionGranted(LOCATION_REQUEST_CODE)
+    private void gotLocationPermissions() {
+        ProjectWalrusApplication.startLocationUpdates();
     }
 
     @Override
