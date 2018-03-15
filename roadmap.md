@@ -16,7 +16,7 @@ You can always look at our [GitHub issues listing](https://github.com/megabug/Wa
 
   - Arduino-controlled Wiegand devices over Bluetooth, e.g. our [Lumpy](/lumpy/) design.
 
-- **Support for more card types!** The Proxmark3 and Chameleon Mini already support more cards than exposed by Walrus. Adding this support is just a simple matter of extending the device-specific driver code to handle more card types. Thanks to Walrus's extendible design, this should be an easy one (but don't all developers say things like that?)
+- **Support for more card types!** The Proxmark3 and Chameleon Mini already support more cards than exposed by Walrus. Adding this support is just a simple matter of extending the device-specific driver code to handle more card types. Thanks to Walrus's extensible codebase design, this should be an easy one (but don't all developers say things like that?)
 
 - **Tagging of cards**.
 
