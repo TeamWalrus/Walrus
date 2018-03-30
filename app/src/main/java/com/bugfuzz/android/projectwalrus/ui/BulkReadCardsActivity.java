@@ -221,10 +221,13 @@ public class BulkReadCardsActivity extends AppCompatActivity {
             CardData.Metadata cardDataClassMetadata = sink.getCardDataClass()
                     .getAnnotation(CardData.Metadata.class);
 
-            ((ImageView) view.findViewById(R.id.device)).setImageDrawable(
-                    ContextCompat.getDrawable(activity, cardDeviceMetadata.icon()));
-            ((ImageView) view.findViewById(R.id.card_data_class)).setImageDrawable(
-                    ContextCompat.getDrawable(activity, cardDataClassMetadata.icon()));
+            ImageView device = view.findViewById(R.id.device);
+            device.setImageDrawable(ContextCompat.getDrawable(activity, cardDeviceMetadata.icon()));
+            device.setContentDescription(cardDeviceMetadata.name());
+            ImageView cardDeviceClass = view.findViewById(R.id.card_data_class);
+            cardDeviceClass.setImageDrawable(ContextCompat.getDrawable(activity,
+                    cardDataClassMetadata.icon()));
+            cardDeviceClass.setContentDescription(cardDataClassMetadata.name());
             ((TextView) view.findViewById(R.id.name)).setText(cardDeviceMetadata.name());
             ((TextView) view.findViewById(R.id.status)).setText(
                     getResources().getQuantityString(R.plurals.num_cards_read,

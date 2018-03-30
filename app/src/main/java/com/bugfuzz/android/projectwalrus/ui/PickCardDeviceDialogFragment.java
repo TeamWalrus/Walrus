@@ -65,10 +65,11 @@ public class PickCardDeviceDialogFragment extends DialogFragment {
         cardDeviceListFragment.getListView().setDivider(null);
 
         Window window = getDialog().getWindow();
+        if (window != null) {
+            Point displaySize = new Point();
+            window.getWindowManager().getDefaultDisplay().getSize(displaySize);
 
-        Point displaySize = new Point();
-        window.getWindowManager().getDefaultDisplay().getSize(displaySize);
-
-        window.setLayout((int) (displaySize.x * 0.85), WindowManager.LayoutParams.WRAP_CONTENT);
+            window.setLayout((int) (displaySize.x * 0.85), WindowManager.LayoutParams.WRAP_CONTENT);
+        }
     }
 }

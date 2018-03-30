@@ -117,7 +117,9 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         return receive(receiveSink, 250);
     }
 
-    protected <O> O receive(ReceiveSink<T, O> receiveSink, long internalTimeout) throws IOException {
+    protected <O> O receive(ReceiveSink<T, O> receiveSink,
+                            @SuppressWarnings("SameParameterValue") long internalTimeout)
+            throws IOException {
         while (receiveSink.wantsMore()) {
             T in = receive(internalTimeout);
             if (in == null)

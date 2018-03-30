@@ -59,8 +59,9 @@ public class CardDeviceView extends FrameLayout {
         CardDevice.Metadata metadata = cardDevice.getClass().getAnnotation(
                 CardDevice.Metadata.class);
 
-        ((ImageView) findViewById(R.id.image)).setImageDrawable(
-                ContextCompat.getDrawable(getContext(), metadata.icon()));
+        ImageView image = findViewById(R.id.image);
+        image.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.icon()));
+        image.setContentDescription(metadata.name());
         ((TextView) findViewById(R.id.name)).setText(metadata.name());
         String status = cardDevice.getStatusText();
         ((TextView) findViewById(R.id.status)).setText(status != null ? status : "");

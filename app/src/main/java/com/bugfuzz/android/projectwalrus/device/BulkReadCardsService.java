@@ -61,9 +61,9 @@ public class BulkReadCardsService extends Service {
 
     private final Binder binder = new ServiceBinder();
 
-    private List<BulkReadCardDataSink> sinks = new ArrayList<>();
+    private final List<BulkReadCardDataSink> sinks = new ArrayList<>();
 
-    private NotificationCompat.Builder notificationBuilder =
+    private final NotificationCompat.Builder notificationBuilder =
             new NotificationCompat.Builder(this, CHANNEL_ID);
 
     public static void startService(Context context, CardDevice cardDevice,
@@ -115,9 +115,11 @@ public class BulkReadCardsService extends Service {
                                 LocalBroadcastManager.getInstance(BulkReadCardsService.this)
                                         .sendBroadcast(new Intent(ACTION_UPDATE));
 
-                                if (!sinks.isEmpty())
-                                    notificationManager.notify(NOTIFICATION_ID, getNotification());
-                                else
+                                if (!sinks.isEmpty()) {
+                                    if (notificationManager != null)
+                                        notificationManager.notify(NOTIFICATION_ID,
+                                                getNotification());
+                                } else
                                     stopSelf();
                             }
                         });
@@ -143,7 +145,7 @@ public class BulkReadCardsService extends Service {
         final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (android.os.Build.VERSION.SDK_INT >= O &&
+        if (notificationManager != null && android.os.Build.VERSION.SDK_INT >= O &&
                 notificationManager.getNotificationChannel(CHANNEL_ID) == null)
             notificationManager.createNotificationChannel(
                     new NotificationChannel(CHANNEL_ID,

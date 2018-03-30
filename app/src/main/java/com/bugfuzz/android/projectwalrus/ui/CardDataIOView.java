@@ -57,9 +57,11 @@ public class CardDataIOView extends FrameLayout {
     }
 
     public void setCardDeviceClass(Class<? extends CardDevice> cardDeviceClass) {
-        ((ImageView) findViewById(R.id.device)).setImageDrawable(
-                ContextCompat.getDrawable(getContext(),
-                        cardDeviceClass.getAnnotation(CardDevice.Metadata.class).icon()));
+        ImageView device = findViewById(R.id.device);
+        CardDevice.Metadata metadata = cardDeviceClass.getAnnotation(CardDevice.Metadata.class);
+
+        device.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.icon()));
+        device.setContentDescription(metadata.name());
     }
 
     public void setDirection(boolean reading) {
@@ -67,12 +69,15 @@ public class CardDataIOView extends FrameLayout {
         directionImage.setImageDrawable(
                 ContextCompat.getDrawable(getContext(), R.drawable.drawable_card_data_io_direction));
         directionImage.setRotation(90 + (reading ? 180 : 0));
+        directionImage.setContentDescription(reading ? "Reading" : "Writing");
     }
 
     public void setCardDataClass(Class<? extends CardData> cardDataClass) {
-        ((ImageView) findViewById(R.id.type)).setImageDrawable(
-                ContextCompat.getDrawable(getContext(),
-                        cardDataClass.getAnnotation(CardData.Metadata.class).icon()));
+        ImageView type = findViewById(R.id.type);
+        CardData.Metadata metadata = cardDataClass.getAnnotation(CardData.Metadata.class);
+
+        type.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.icon()));
+        type.setContentDescription(metadata.name());
     }
 
     public void setStatus(String status) {

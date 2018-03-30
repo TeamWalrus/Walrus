@@ -34,6 +34,7 @@ import java.util.Date;
 
 @DatabaseTable()
 @Parcel
+@SuppressWarnings("WeakerAccess")
 public class Card {
     public static final String NAME_FIELD_NAME = "name";
 

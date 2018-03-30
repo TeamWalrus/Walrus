@@ -91,6 +91,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
         return out.toBytes();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean tryAcquireAndSetStatus(String status) {
         if (!semaphore.tryAcquire())
             return false;
@@ -140,7 +141,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                         // TODO: do periodic VERSION-based device-aliveness checking like Chameleon Mini will/does
                         receive(new ReceiveSink<Proxmark3Command, Boolean>() {
                             @Override
-                            public Boolean onReceived(Proxmark3Command in) throws IOException {
+                            public Boolean onReceived(Proxmark3Command in) {
                                 if (in.op != Proxmark3Command.DEBUG_PRINT_STRING)
                                     return null;
 
@@ -286,7 +287,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
         private final long op;
 
-        CommandWaiter(long op, long timeout) {
+        CommandWaiter(long op, @SuppressWarnings("SameParameterValue") long timeout) {
             super(timeout);
 
             this.op = op;

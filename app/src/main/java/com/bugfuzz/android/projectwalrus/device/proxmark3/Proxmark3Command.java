@@ -65,7 +65,7 @@ class Proxmark3Command {
         this(op, args, new byte[0]);
     }
 
-    Proxmark3Command(@Opcode long op) {
+    Proxmark3Command(@Opcode @SuppressWarnings("SameParameterValue") long op) {
         this(op, new long[3]);
     }
 

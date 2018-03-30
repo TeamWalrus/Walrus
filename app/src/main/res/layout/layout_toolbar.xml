@@ -30,4 +30,5 @@
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:id="@+id/toolbar"
     android:transitionName="toolbar"
-    tools:targetApi="lollipop"/>
+    tools:targetApi="lollipop"
+    tools:ignore="Overdraw"/>

@@ -69,7 +69,8 @@
                 android:layout_height="wrap_content"
                 android:paddingEnd="20dp"
                 android:paddingStart="20dp"
-                android:paddingTop="16dp"/>
+                android:paddingTop="16dp"
+                tools:ignore="ContentDescription"/>
 
         </TableRow>
 

@@ -49,7 +49,7 @@ public abstract class OrmLiteBaseAppCompatActivity<H extends OrmLiteSqliteOpenHe
         OpenHelperManager.releaseHelper();
     }
 
-    public H getHelper() {
+    protected H getHelper() {
         return helper;
     }
 }

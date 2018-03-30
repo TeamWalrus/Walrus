@@ -19,6 +19,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center"
@@ -34,21 +35,24 @@
             android:id="@+id/device"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:id="@+id/direction"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:id="@+id/type"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            tools:ignore="ContentDescription"/>
 
     </LinearLayout>
 

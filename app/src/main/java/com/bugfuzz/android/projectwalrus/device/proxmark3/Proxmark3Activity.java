@@ -28,7 +28,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;

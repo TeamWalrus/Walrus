@@ -64,12 +64,16 @@ public enum CardDeviceManager {
 
     public void scanForDevices(Context context) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-
-        for (UsbDevice usbDevice : usbManager.getDeviceList().values())
-            handleUsbDeviceAttached(context, usbDevice);
+        if (usbManager != null)
+            for (UsbDevice usbDevice : usbManager.getDeviceList().values())
+                handleUsbDeviceAttached(context, usbDevice);
     }
 
     private synchronized void handleUsbDeviceAttached(Context context, UsbDevice usbDevice) {
+        UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        if (usbManager == null)
+            return;
+
         if (askingForUsbPermission || seenUsbDevices.contains(usbDevice))
             return;
 
@@ -81,8 +85,6 @@ public enum CardDeviceManager {
             for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value())
                 if (ids.vendorId() == usbDevice.getVendorId() &&
                         ids.productId() == usbDevice.getProductId()) {
-                    UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-
                     if (usbManager.hasPermission(usbDevice))
                         new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
                     else {
@@ -212,11 +214,8 @@ public enum CardDeviceManager {
                         final UsbCardDevice cardDevice;
                         try {
                             cardDevice = constructor.newInstance(context, usbDevice);
-                        } catch (InstantiationException e) {
-                            continue;
-                        } catch (IllegalAccessException e) {
-                            continue;
-                        } catch (InvocationTargetException e) {
+                        } catch (InstantiationException | InvocationTargetException |
+                                IllegalAccessException e) {
                             continue;
                         }
 

@@ -25,19 +25,19 @@
         android:id="@+id/search"
         android:icon="@drawable/ic_search_white_24px"
         android:title="@string/search_cards"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/bulk_read_cards"
         android:icon="@drawable/ic_library_add_white_24px"
         android:title="@string/bulk_read_cards"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/devices"
         android:icon="@drawable/ic_device_hub_white_24px"
         android:title="@string/devices"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/settings"

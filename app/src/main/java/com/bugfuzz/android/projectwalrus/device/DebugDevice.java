@@ -27,7 +27,6 @@ import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.data.HIDCardData;
 import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 @CardDevice.Metadata(
@@ -45,7 +44,7 @@ public class DebugDevice extends CardDevice {
 
     @Override
     public void readCardData(final Class<? extends CardData> cardDataClass,
-                             final CardDataSink cardDataSink) throws IOException {
+                             final CardDataSink cardDataSink) {
         cardDataSink.onStarting();
 
         new Thread(new Runnable() {
@@ -70,8 +69,7 @@ public class DebugDevice extends CardDevice {
     }
 
     @Override
-    public void writeCardData(CardData cardData, final CardDataOperationCallbacks callbacks)
-            throws IOException {
+    public void writeCardData(CardData cardData, final CardDataOperationCallbacks callbacks) {
         callbacks.onStarting();
 
         new Thread(new Runnable() {
@@ -84,8 +82,7 @@ public class DebugDevice extends CardDevice {
     }
 
     @Override
-    public void emulateCardData(CardData cardData, final CardDataOperationCallbacks callbacks)
-            throws IOException {
+    public void emulateCardData(CardData cardData, final CardDataOperationCallbacks callbacks) {
         callbacks.onStarting();
 
         new Thread(new Runnable() {

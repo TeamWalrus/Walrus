@@ -19,7 +19,6 @@
 
 package com.bugfuzz.android.projectwalrus.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -28,11 +27,9 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
@@ -140,12 +137,19 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         else if (card.id == 0)
             dirty = true;
 
-        if (mode == Mode.VIEW)
-            setTitle(R.string.view_card);
-        else if (mode == Mode.EDIT)
-            setTitle(dirty ? R.string.new_card : R.string.edit_card);
-        else
-            setTitle(R.string.set_template);
+        switch (mode) {
+            case VIEW:
+                setTitle(R.string.view_card);
+                break;
+
+            case EDIT:
+                setTitle(dirty ? R.string.new_card : R.string.edit_card);
+                break;
+
+            default:
+                setTitle(R.string.set_template);
+                break;
+        }
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 

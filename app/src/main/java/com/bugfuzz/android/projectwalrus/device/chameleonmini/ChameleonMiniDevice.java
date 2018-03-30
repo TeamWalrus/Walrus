@@ -66,6 +66,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
         usbSerialDevice.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean tryAcquireAndSetStatus(String status) {
         if (!semaphore.tryAcquire())
             return false;

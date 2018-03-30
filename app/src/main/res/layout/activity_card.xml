@@ -58,7 +58,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="onWriteCardClick"
-                    android:text="@string/write_card"/>
+                    android:text="@string/write_card"
+                    tools:ignore="ButtonStyle"/>
 
                 <Button
                     android:id="@+id/emulateCard"
@@ -67,7 +68,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:onClick="onEmulateCardClick"
-                    android:text="@string/emulate_card"/>
+                    android:text="@string/emulate_card"
+                    tools:ignore="ButtonStyle"/>
 
             </LinearLayout>
 
@@ -147,7 +149,8 @@
                 android:id="@+id/notesEditor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"/>
+                android:inputType="textMultiLine"
+                android:hint="@string/notes"/>
 
         </LinearLayout>
 

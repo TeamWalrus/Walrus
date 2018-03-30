@@ -25,6 +25,7 @@ import org.parceler.Parcel;
 
 import java.util.Arrays;
 
+@SuppressWarnings("WeakerAccess")
 @Parcel
 @CardData.Metadata(
         name = "ISO 14443A",
@@ -36,7 +37,6 @@ public class ISO14443ACardData extends CardData {
 
     static {
         CARD_TYPES = new KnownISO14333AType[]{
-                //                      atqa          sak           ats                                                                                       manufacturer          type
                 new KnownISO14333AType((short) 0x0004, (byte) 0x09, null, "NXP", "Mifare Mini"),
                 new KnownISO14333AType((short) 0x0004, (byte) 0x08, null, "NXP", "Mifare Classic 1k"),
                 new KnownISO14333AType((short) 0x0002, (byte) 0x18, null, "NXP", "Mifare Classic 4k"),

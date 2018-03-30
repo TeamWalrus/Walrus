@@ -24,8 +24,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 
-import com.bugfuzz.android.projectwalrus.R;
-
 public class WebViewActivity extends AppCompatActivity {
 
     private static final String EXTRA_URL = "com.bugfuzz.android.projectwalrus.ui.WebViewActivity.EXTRA_URL";

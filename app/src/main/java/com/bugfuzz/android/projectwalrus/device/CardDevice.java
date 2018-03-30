@@ -47,7 +47,7 @@ public abstract class CardDevice {
 
     private String status;
 
-    public CardDevice(Context context) {
+    CardDevice(Context context) {
         this.context = context;
 
         id = nextID++;
@@ -89,7 +89,7 @@ public abstract class CardDevice {
         return null;
     }
 
-    public void close() {
+    void close() {
     }
 
     public interface CardDataOperationCallbacks {
@@ -111,7 +111,7 @@ public abstract class CardDevice {
     }
 
     public interface Versioned {
-        public String getVersion() throws IOException;
+        String getVersion() throws IOException;
     }
 
     @Retention(RetentionPolicy.RUNTIME)

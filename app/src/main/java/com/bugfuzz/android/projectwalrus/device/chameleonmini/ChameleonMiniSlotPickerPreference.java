@@ -31,10 +31,10 @@ import android.widget.NumberPicker;
 
 public class ChameleonMiniSlotPickerPreference extends DialogPreference {
 
-    public static final int MAX_VALUE = 8;
-    public static final int MIN_VALUE = 1;
+    private static final int MAX_VALUE = 8;
+    private static final int MIN_VALUE = 1;
 
-    public static final boolean WRAP_SELECTOR_WHEEL = true;
+    private static final boolean WRAP_SELECTOR_WHEEL = true;
 
     private NumberPicker np;
     private int value;
@@ -92,12 +92,12 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
         setValue(restorePersistedValue ? getPersistedInt(1) : (Integer) defaultValue);
     }
 
-    public void setValue(int value) {
+    private void setValue(int value) {
         this.value = value;
         persistInt(this.value);
     }
 
-    public int getValue() {
+    private int getValue() {
         return this.value;
     }
 }

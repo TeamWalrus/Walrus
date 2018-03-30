@@ -19,6 +19,7 @@
 
 package com.bugfuzz.android.projectwalrus;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -47,11 +48,10 @@ import static android.os.Build.VERSION_CODES.O;
 
 public class ProjectWalrusApplication extends Application {
 
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
 
     private static Location currentBestLocation;
-    private static FusedLocationProviderClient fusedLocationProviderClient;
-    private static LocationCallback locationCallback;
 
     public static Context getContext() {
         return context;
@@ -62,26 +62,25 @@ public class ProjectWalrusApplication extends Application {
     }
 
     public static void startLocationUpdates() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        FusedLocationProviderClient fusedLocationProviderClient =
+                LocationServices.getFusedLocationProviderClient(context);
 
-        LocationRequest locationRequest = new LocationRequest();
+        LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                for (Location location : locationResult.getLocations()) {
-                    if (currentBestLocation == null ||
-                            GeoUtils.isBetterLocation(location, currentBestLocation))
-                        currentBestLocation = location;
-                }
-            }
-        };
-
         try {
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,
-                    locationCallback, null);
+                    new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
+                            for (Location location : locationResult.getLocations()) {
+                                if (currentBestLocation == null ||
+                                        GeoUtils.isBetterLocation(location, currentBestLocation))
+                                    currentBestLocation = location;
+                            }
+                        }
+                    }, null);
         } catch (SecurityException ignored) {
         }
     }
