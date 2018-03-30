@@ -20,6 +20,14 @@
 # We're an open source project, so...
 -dontobfuscate
 
+# Keep annotations (for devices and OrmLite, etc.)
+-keepattributes *Annotation*
+
+# Work around https://sourceforge.net/p/proguard/bugs/531/#e9ed
+-keepclassmembers,allowshrinking class android.support.** {
+    !static final <fields>;
+}
+
 # Don't warn about these being referenced but not found
 -dontwarn com.google.errorprone.**
 -dontwarn com.google.gson.**
