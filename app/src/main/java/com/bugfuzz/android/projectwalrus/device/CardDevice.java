@@ -21,6 +21,9 @@ package com.bugfuzz.android.projectwalrus.device;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.bugfuzz.android.projectwalrus.data.CardData;
@@ -90,15 +93,20 @@ public abstract class CardDevice {
     }
 
     public interface CardDataOperationCallbacks {
+        @UiThread
         void onStarting();
 
+        @WorkerThread
         boolean shouldContinue();
 
+        @WorkerThread
         void onError(String message);
+        @WorkerThread
         void onFinish();
     }
 
     public interface CardDataSink extends CardDataOperationCallbacks {
+        @WorkerThread
         void onCardData(CardData cardData);
     }
 
@@ -109,7 +117,7 @@ public abstract class CardDevice {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
         String name();
-        int icon();
+        @DrawableRes int icon();
 
         Class<? extends CardData>[] supportsRead();
         Class<? extends CardData>[] supportsWrite();

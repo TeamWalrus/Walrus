@@ -30,6 +30,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -563,6 +565,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
+        @UiThread
         public void onStarting() {
             CardDataIOView cardDataIOView = new CardDataIOView(CardActivity.this);
             cardDataIOView.setCardDeviceClass(cardDevice.getClass());
@@ -590,11 +593,13 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
+        @WorkerThread
         public boolean shouldContinue() {
             return !stop;
         }
 
         @Override
+        @WorkerThread
         public void onError(final String message) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -611,6 +616,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
+        @WorkerThread
         public void onFinish() {
             dialog.dismiss();
         }
@@ -631,6 +637,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
+        @UiThread
         public void onStarting() {
             CardDataIOView cardDataIOView = new CardDataIOView(CardActivity.this);
             cardDataIOView.setCardDeviceClass(cardDevice.getClass());
@@ -658,6 +665,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
+        @WorkerThread
         public void onCardData(final CardData cardData) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -672,11 +680,13 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
+        @WorkerThread
         public boolean shouldContinue() {
             return !stop;
         }
 
         @Override
+        @WorkerThread
         public void onError(final String message) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -690,6 +700,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
+        @WorkerThread
         public void onFinish() {
             dialog.dismiss();
         }

@@ -207,7 +207,8 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
         @Override
-        public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        @NonNull
+        public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             FrameLayout frameLayout = new FrameLayout(parent.getContext());
             frameLayout.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -223,7 +224,7 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         @Override
-        public void onBindViewHolder(CardViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
             Card card;
             String filter = sv.getQuery().toString();
             if (!filter.isEmpty()) {

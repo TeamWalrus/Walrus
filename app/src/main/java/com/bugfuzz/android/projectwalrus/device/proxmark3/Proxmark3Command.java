@@ -19,25 +19,37 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
-import android.util.LongSparseArray;
+import android.support.annotation.LongDef;
+import android.support.annotation.Size;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.EnumSet;
 
 class Proxmark3Command {
+
+    public static final long ACK = 0xff;
+    public static final long DEBUG_PRINT_STRING = 0x100;
+    public static final long VERSION = 0x107;
+    public static final long HID_DEMOD_FSK = 0x20b;
+    public static final long HID_CLONE_TAG = 0x210;
+    public static final long MEASURE_ANTENNA_TUNING = 0x400;
+    public static final long MEASURED_ANTENNA_TUNING = 0x410;
+
     static final long
             MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
             MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
 
+    @Opcode
     final long op;
     final long[] args;
     final byte[] data;
 
-    Proxmark3Command(long op, long[] args, byte[] data) {
+    Proxmark3Command(@Opcode long op, @Size(3) long[] args, @Size(max = 512) byte[] data) {
         this.op = op;
 
         if (args.length != 3)
@@ -49,11 +61,11 @@ class Proxmark3Command {
         this.data = Arrays.copyOf(data, 512);
     }
 
-    Proxmark3Command(long op, long[] args) {
+    Proxmark3Command(@Opcode long op, @Size(max = 512) long[] args) {
         this(op, args, new byte[0]);
     }
 
-    Proxmark3Command(long op) {
+    Proxmark3Command(@Opcode long op) {
         this(op, new long[3]);
     }
 
@@ -101,18 +113,19 @@ class Proxmark3Command {
     }
 
     public String dataAsString() {
-        return new String(ArrayUtils.subarray(data, 0, (int)args[0]));
+        return new String(ArrayUtils.subarray(data, 0, (int) args[0]));
     }
 
-        public static final long ACK = 0xff;
-
-        public static final long DEBUG_PRINT_STRING = 0x100;
-
-        public static final long VERSION = 0x107;
-
-        public static final long HID_DEMOD_FSK = 0x20b;
-        public static final long HID_CLONE_TAG = 0x210;
-
-        public static final long MEASURE_ANTENNA_TUNING = 0x400;
-        public static final long MEASURED_ANTENNA_TUNING = 0x410;
+    @Retention(RetentionPolicy.SOURCE)
+    @LongDef({
+            ACK,
+            DEBUG_PRINT_STRING,
+            VERSION,
+            HID_DEMOD_FSK,
+            HID_CLONE_TAG,
+            MEASURE_ANTENNA_TUNING,
+            MEASURED_ANTENNA_TUNING
+    })
+    public @interface Opcode {
+    }
 }

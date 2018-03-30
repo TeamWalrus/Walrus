@@ -26,6 +26,8 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
@@ -70,11 +72,13 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     }
 
     @Override
+    @UiThread
     public void onStarting() {
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
     }
 
     @Override
+    @WorkerThread
     public void onCardData(CardData cardData) {
         if (cardData.equals(lastCardData))
             return;
@@ -110,11 +114,13 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     }
 
     @Override
+    @WorkerThread
     public boolean shouldContinue() {
         return !stop;
     }
 
     @Override
+    @WorkerThread
     public void onError(final String message) {
         new Handler(context.getMainLooper()).post(new Runnable() {
             @Override
@@ -128,6 +134,7 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     }
 
     @Override
+    @WorkerThread
     public void onFinish() {
         OpenHelperManager.releaseHelper();
 
