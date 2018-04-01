@@ -20,68 +20,100 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
-import android.graphics.Point;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.RecyclerView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
-public class PickCardDeviceDialogFragment extends DialogFragment {
+public class PickCardDeviceDialogFragment extends DialogFragment
+        implements CardDeviceAdapter.OnCardDeviceClickCallback {
 
-    private static final String CARD_DEVICE_LIST_FRAGMENT_TAG =
-            "pick_card_device_dialog_card_device_list";
+    private RecyclerView.Adapter adapter;
 
-    public static void show(Activity activity, String fragmentTag, int callbackId) {
-        PickCardDeviceDialogFragment pickCardDeviceDialogFragment =
-                new PickCardDeviceDialogFragment();
+    private final BroadcastReceiver deviceUpdateBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (adapter != null)
+                adapter.notifyDataSetChanged();
+        }
+    };
+
+    public static void show(Activity activity, String fragmentTag,
+                            Class<? extends CardData> cardDataFilterClass,
+                            CardDeviceAdapter.FilterMode cardDataFilterMode, int callbackId) {
+        PickCardDeviceDialogFragment dialog = new PickCardDeviceDialogFragment();
 
         Bundle args = new Bundle();
+        if (cardDataFilterClass != null) {
+            args.putString("card_data_filter_class", cardDataFilterClass.getName());
+            args.putInt("card_data_filter_mode", cardDataFilterMode.ordinal());
+        }
         args.putInt("callback_id", callbackId);
-        pickCardDeviceDialogFragment.setArguments(args);
+        dialog.setArguments(args);
 
-        pickCardDeviceDialogFragment.show(activity.getFragmentManager(), fragmentTag);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.dialog_pick_card_device, container, false);
+        dialog.show(activity.getFragmentManager(), fragmentTag);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
+        String cardDataFilterClassName = getArguments().getString("card_data_filter_class");
+        Class<? extends CardData> cardDataFilterClass = null;
+        CardDeviceAdapter.FilterMode cardDataFilterMode = null;
+        if (cardDataFilterClassName != null) {
+            try {
+                // noinspection unchecked
+                cardDataFilterClass = (Class<? extends CardData>) Class.forName(
+                        cardDataFilterClassName);
+            } catch (ClassNotFoundException ignored) {
+            }
+            cardDataFilterMode = CardDeviceAdapter.FilterMode.values()[
+                    getArguments().getInt("card_data_filter_mode")];
+        }
 
-        if (getChildFragmentManager().findFragmentByTag(CARD_DEVICE_LIST_FRAGMENT_TAG) == null)
-            getChildFragmentManager().beginTransaction()
-                    .add(R.id.card_device_list, new CardDeviceListFragment(),
-                            CARD_DEVICE_LIST_FRAGMENT_TAG)
-                    .commit();
+        adapter = new CardDeviceAdapter(cardDataFilterClass, cardDataFilterMode, this, 14);
+
+        return new MaterialDialog.Builder(getActivity())
+                .title(R.string.choose_device)
+                .adapter(adapter, null)
+                .build();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        CardDeviceListFragment cardDeviceListFragment =
-                (CardDeviceListFragment) getChildFragmentManager().findFragmentByTag(
-                        CARD_DEVICE_LIST_FRAGMENT_TAG);
-        cardDeviceListFragment.setCallbackId(getArguments().getInt("callback_id"));
-        cardDeviceListFragment.getListView().setDivider(null);
+        IntentFilter intentFilter = new IntentFilter(CardDeviceManager.ACTION_UPDATE);
+        intentFilter.addAction(CardDevice.ACTION_STATUS_UPDATE);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
+                deviceUpdateBroadcastReceiver, intentFilter);
+    }
 
-        Window window = getDialog().getWindow();
-        if (window != null) {
-            Point displaySize = new Point();
-            window.getWindowManager().getDefaultDisplay().getSize(displaySize);
+    @Override
+    public void onPause() {
+        super.onPause();
 
-            window.setLayout((int) (displaySize.x * 0.85), WindowManager.LayoutParams.WRAP_CONTENT);
-        }
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(
+                deviceUpdateBroadcastReceiver);
+    }
+
+    @Override
+    public void onCardDeviceClick(CardDevice cardDevice) {
+        ((OnCardDeviceClickCallback) getActivity()).onCardDeviceClick(cardDevice,
+                getArguments().getInt("callback_id"));
+    }
+
+    public interface OnCardDeviceClickCallback {
+        void onCardDeviceClick(CardDevice cardDevice, int callbackId);
     }
 }

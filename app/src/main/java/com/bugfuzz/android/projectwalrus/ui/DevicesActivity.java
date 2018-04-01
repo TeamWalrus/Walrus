@@ -19,18 +19,33 @@
 
 package com.bugfuzz.android.projectwalrus.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 public class DevicesActivity extends AppCompatActivity
-        implements CardDeviceListFragment.OnCardDeviceClickCallback {
+        implements CardDeviceAdapter.OnCardDeviceClickCallback {
+
+    private final RecyclerView.Adapter adapter = new CardDeviceAdapter(null, null, this);
+
+    private final BroadcastReceiver deviceUpdateBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            adapter.notifyDataSetChanged();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +58,31 @@ public class DevicesActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
+
+        RecyclerView recyclerView = findViewById(R.id.card_device_list);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
-    public void onCardDeviceClick(CardDevice cardDevice, int id) {
+    public void onResume() {
+        super.onResume();
+
+        IntentFilter intentFilter = new IntentFilter(CardDeviceManager.ACTION_UPDATE);
+        intentFilter.addAction(CardDevice.ACTION_STATUS_UPDATE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(deviceUpdateBroadcastReceiver,
+                intentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(deviceUpdateBroadcastReceiver);
+    }
+
+    @Override
+    public void onCardDeviceClick(CardDevice cardDevice) {
         Intent intent = cardDevice.getDeviceActivityIntent(this);
 
         if (intent != null)

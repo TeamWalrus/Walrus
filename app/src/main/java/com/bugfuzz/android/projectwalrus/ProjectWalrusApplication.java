@@ -101,8 +101,10 @@ public class ProjectWalrusApplication extends Application {
                 new DeviceChangedBroadcastHandler(),
                 new IntentFilter(CardDeviceManager.ACTION_UPDATE));
 
-        if (BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG) {
             CardDeviceManager.INSTANCE.addDebugDevice(this);
+            CardDeviceManager.INSTANCE.addDebugDevice(this);
+        }
 
         new Thread(new Runnable() {
             @Override

@@ -204,11 +204,11 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         LocalBroadcastManager.getInstance(this).unregisterReceiver(walletUpdateBroadcastReceiver);
     }
 
-    private class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
+    private class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
         @Override
         @NonNull
-        public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             FrameLayout frameLayout = new FrameLayout(parent.getContext());
             frameLayout.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -220,11 +220,11 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             frameLayout.addView(walrusCardView);
 
-            return new CardViewHolder(frameLayout);
+            return new ViewHolder(frameLayout);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Card card;
             String filter = sv.getQuery().toString();
             if (!filter.isEmpty()) {
@@ -250,11 +250,11 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             }
         }
 
-        class CardViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder {
 
             private int id;
 
-            CardViewHolder(View itemView) {
+            ViewHolder(View itemView) {
                 super(itemView);
 
                 itemView.setOnClickListener(new View.OnClickListener() {

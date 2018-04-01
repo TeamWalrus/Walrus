@@ -28,7 +28,6 @@
         android:id="@+id/image"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="2dp"
         tools:ignore="ContentDescription"/>
 
     <LinearLayout

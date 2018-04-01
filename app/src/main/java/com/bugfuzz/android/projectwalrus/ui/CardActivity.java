@@ -71,8 +71,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
-        implements OnMapReadyCallback, CardDeviceListFragment.OnCardDeviceClickCallback,
-        DeleteCardConfirmDialogFragment.OnDeleteCardConfirmCallback {
+        implements OnMapReadyCallback, DeleteCardConfirmDialogFragment.OnDeleteCardConfirmCallback,
+        PickCardDeviceDialogFragment.OnCardDeviceClickCallback {
 
     private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_MODE";
     private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_CARD";
@@ -377,7 +377,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
 
         if (cardDevices.size() > 1)
-            PickCardDeviceDialogFragment.show(this, PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG, 0);
+            PickCardDeviceDialogFragment.show(this, PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG, null,
+                    null, 0);
         else
             onCardDeviceClick(cardDevices.get(0), 0);
     }
@@ -421,6 +422,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         if (cardDevices.size() > 1)
             PickCardDeviceDialogFragment.show(this, PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG,
+                    card.cardData.getClass(),
+                    write ? CardDeviceAdapter.FilterMode.WRITABLE :
+                            CardDeviceAdapter.FilterMode.EMULATABLE,
                     callbackId);
         else
             onCardDeviceClick(cardDevices.get(0), callbackId);
