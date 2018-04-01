@@ -19,5 +19,5 @@
   -->
 
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
-    <changeBounds android:duration="250" />
+    <changeBounds android:duration="250"/>
 </transitionSet>

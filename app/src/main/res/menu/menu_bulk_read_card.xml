@@ -25,7 +25,7 @@
         android:id="@+id/start"
         android:icon="@drawable/ic_play_arrow_white_24px"
         android:orderInCategory="1"
-        app:showAsAction="always"
-        android:title="@string/start"/>
+        android:title="@string/start"
+        app:showAsAction="always"/>
 
 </menu>

@@ -61,12 +61,6 @@ public class ISO14443ACardData extends CardData {
     public int[] ats;
     public byte[] data;
 
-    @SuppressWarnings("unused")
-    public static ISO14443ACardData newDebugInstance() {
-        return new ISO14443ACardData((long) (Math.random() * Long.MAX_VALUE), (short) 0x0004,
-                (byte) 0x18, null, null);
-    }
-
     public ISO14443ACardData() {
     }
 
@@ -76,6 +70,12 @@ public class ISO14443ACardData extends CardData {
         this.sak = sak;
         this.ats = ats;
         this.data = data;
+    }
+
+    @SuppressWarnings("unused")
+    public static ISO14443ACardData newDebugInstance() {
+        return new ISO14443ACardData((long) (Math.random() * Long.MAX_VALUE), (short) 0x0004,
+                (byte) 0x18, null, null);
     }
 
     @Override
@@ -90,6 +90,30 @@ public class ISO14443ACardData extends CardData {
     @Override
     public String getHumanReadableText() {
         return Long.toHexString(uid);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        ISO14443ACardData that = (ISO14443ACardData) o;
+
+        return uid == that.uid &&
+                atqa == that.atqa &&
+                sak == that.sak &&
+                Arrays.equals(ats, that.ats) &&
+                Arrays.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (uid ^ (uid >>> 32));
+        result = 31 * result + atqa;
+        result = 31 * result + (int) sak;
+        result = 31 * result + Arrays.hashCode(ats);
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
     }
 
     static private class KnownISO14333AType {
@@ -108,34 +132,9 @@ public class ISO14443ACardData extends CardData {
         }
 
         boolean matches(ISO14443ACardData cardData) {
-            return
-                    !(atqa != null && atqa != cardData.atqa) &&
+            return !(atqa != null && atqa != cardData.atqa) &&
                     !(sak != null && sak != cardData.sak) &&
                     !(ats != null && !Arrays.equals(ats, cardData.ats));
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        ISO14443ACardData that = (ISO14443ACardData)o;
-
-        return uid == that.uid &&
-                atqa == that.atqa &&
-                sak == that.sak &&
-                Arrays.equals(ats, that.ats) &&
-                Arrays.equals(data, that.data);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (uid ^ (uid >>> 32));
-        result = 31 * result + atqa;
-        result = 31 * result + (int) sak;
-        result = 31 * result + Arrays.hashCode(ats);
-        result = 31 * result + Arrays.hashCode(data);
-        return result;
     }
 }

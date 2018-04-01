@@ -26,8 +26,12 @@
         <item name="android:windowEnterTransition">@transition/transition_window_fade</item>
         <item name="android:windowExitTransition">@transition/transition_window_fade</item>
 
-        <item name="android:windowSharedElementEnterTransition">@transition/transition_shared_element</item>
-        <item name="android:windowSharedElementExitTransition">@transition/transition_shared_element</item>
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/transition_shared_element
+        </item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/transition_shared_element
+        </item>
     </style>
 
 </resources>

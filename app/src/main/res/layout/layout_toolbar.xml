@@ -20,15 +20,15 @@
 
 <android.support.v7.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
     android:elevation="4dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    android:id="@+id/toolbar"
     android:transitionName="toolbar"
-    tools:targetApi="lollipop"
-    tools:ignore="Overdraw"/>
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    tools:ignore="Overdraw"
+    tools:targetApi="lollipop"/>

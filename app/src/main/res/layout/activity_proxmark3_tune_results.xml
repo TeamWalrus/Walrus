@@ -26,9 +26,9 @@
     <include layout="@layout/layout_toolbar"/>
 
     <TableLayout
+        android:id="@+id/lf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/lf"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
         android:paddingTop="8dp"
@@ -69,8 +69,8 @@
                 android:id="@+id/lf125"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"/>
 
         </TableRow>
 
@@ -87,8 +87,8 @@
                 android:id="@+id/lf134"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"/>
 
         </TableRow>
 
@@ -105,16 +105,16 @@
                 android:id="@+id/lfOptimal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"/>
 
         </TableRow>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -138,17 +138,17 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="@string/khz"/>
+                android:text="@string/khz"
+                android:textAlignment="center"/>
 
         </LinearLayout>
 
     </TableLayout>
 
     <TableLayout
+        android:id="@+id/hf"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/hf"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
         android:paddingTop="24dp"
@@ -189,8 +189,8 @@
                 android:id="@+id/hfV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"/>
 
         </TableRow>
 

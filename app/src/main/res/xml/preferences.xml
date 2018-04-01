@@ -20,21 +20,21 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-     <PreferenceCategory android:title="@string/bulk_read_settings_preference">
+    <PreferenceCategory android:title="@string/bulk_read_settings_preference">
 
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="pref_key_bulk_read_vibrate"
-            android:title="@string/bulk_read_vibrate_preference"
-            android:defaultValue="true"/>
+            android:title="@string/bulk_read_vibrate_preference"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/devices_settings_preference">
 
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="pref_key_on_device_connected_vibrate"
-            android:title="@string/on_device_connected_preference"
-            android:defaultValue="true"/>
+            android:title="@string/on_device_connected_preference"/>
 
     </PreferenceCategory>
 

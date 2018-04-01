@@ -496,7 +496,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                             getString(callbackId == 1 ?
                                             R.string.failed_to_write :
                                             R.string.failed_to_emulate,
-                            exception.getMessage()), Toast.LENGTH_LONG).show();
+                                    exception.getMessage()), Toast.LENGTH_LONG).show();
                 }
                 break;
         }

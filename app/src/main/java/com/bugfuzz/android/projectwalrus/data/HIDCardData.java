@@ -35,16 +35,16 @@ public class HIDCardData extends CardData {
 
     public BigInteger data;
 
-    @SuppressWarnings("unused")
-    public static HIDCardData newDebugInstance() {
-        return new HIDCardData(new BigInteger(44, new Random()));
-    }
-
     public HIDCardData() {
     }
 
     public HIDCardData(BigInteger data) {
         this.data = data;
+    }
+
+    @SuppressWarnings("unused")
+    public static HIDCardData newDebugInstance() {
+        return new HIDCardData(new BigInteger(44, new Random()));
     }
 
     @Override

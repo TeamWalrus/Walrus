@@ -59,17 +59,6 @@ public class Card {
     @DatabaseField
     public Double cardLocationLng;
 
-    public static Card copyOf(Card other) {
-        return new Card(
-                other.name,
-                SerializationUtils.clone(other.cardData),
-                other.cardCreated != null ? new Date(other.cardCreated.getTime()) : null,
-                other.cardDataAcquired != null ? new Date(other.cardDataAcquired.getTime()) : null,
-                other.notes,
-                other.cardLocationLat,
-                other.cardLocationLng);
-    }
-
     public Card() {
         name = ProjectWalrusApplication.getContext().getString(R.string.default_card_name);
     }
@@ -83,6 +72,17 @@ public class Card {
         this.notes = notes;
         this.cardLocationLat = cardLocationLat;
         this.cardLocationLng = cardLocationLng;
+    }
+
+    public static Card copyOf(Card other) {
+        return new Card(
+                other.name,
+                SerializationUtils.clone(other.cardData),
+                other.cardCreated != null ? new Date(other.cardCreated.getTime()) : null,
+                other.cardDataAcquired != null ? new Date(other.cardDataAcquired.getTime()) : null,
+                other.notes,
+                other.cardLocationLat,
+                other.cardLocationLng);
     }
 
     public void setCardData(CardData cardData, Location location) {

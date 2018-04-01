@@ -282,7 +282,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
             releaseAndSetStatus();
         }
     }
-    
+
     private static class CommandWaiter extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
 
         private final long op;

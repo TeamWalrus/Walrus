@@ -101,6 +101,7 @@ public abstract class CardDevice {
 
         @WorkerThread
         void onError(String message);
+
         @WorkerThread
         void onFinish();
     }
@@ -117,10 +118,13 @@ public abstract class CardDevice {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
         String name();
+
         @DrawableRes int icon();
 
         Class<? extends CardData>[] supportsRead();
+
         Class<? extends CardData>[] supportsWrite();
+
         Class<? extends CardData>[] supportsEmulate();
     }
 }

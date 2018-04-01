@@ -19,100 +19,100 @@
   -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="failed_bulk_reading">Fehler beim Mehrfacheinlesen der Karten: <xliff:g id="amount">%1$s</xliff:g></string>
-  <string name="bulk_read_cards_activity_name">Mehrfacheinlesen von Karten</string>
-  <string name="stop_button">Anhalten</string>
-  <string name="back_button">Zurück</string>
-  <plurals name="num_cards_read">
-    <item quantity="one"><xliff:g id="amount">%1$d</xliff:g> Karte eingelesen</item>
-    <item quantity="other"><xliff:g id="amount">%1$d</xliff:g> Karten eingelesen</item>
-  </plurals>
-  <string name="bulk_reading_cards">Mehrfacheinlesen von Karten</string>
-  <string name="failed_start_bulk_reading">Mehrfacheinlesen der Karten konnte nicht gestartet werden: <xliff:g id="error">%1$s</xliff:g></string>
-  <string name="bulk_read_notification_channel_name">Mehrfacheinlesen von Karten</string>
-  <plurals name="bulk_reading_from">
-    <item quantity="one">Lese Karten von <xliff:g id="amount">%1$d</xliff:g> Gerät ein</item>
-    <item quantity="other">Lese Karten von <xliff:g id="amount">%1$d</xliff:g> Geräten ein</item>
-  </plurals>
-  <string name="default_card_name">Unbenannte Karte</string>
-  <string name="delete_button">Löschen</string>
-  <string name="write_card">Karte schreiben</string>
-  <string name="emulate_card">Karte emulieren</string>
-  <string name="read_card">Karte lesen</string>
-  <string name="date_acquired">Datum erhalten</string>
-  <string name="location">Standort</string>
-  <string name="unknown">Unbekannt</string>
-  <string name="notes">Hinweise</string>
-  <string name="view_card">Karte anzeigen</string>
-  <string name="new_card">Neue Karte</string>
-  <string name="edit_card">Karte bearbeiten</string>
-  <string name="set_template">Vorlage festlegen</string>
-  <string name="card_name_required">Kartenname erforderlich</string>
-  <string name="copy_of">Kopie von <xliff:g id="name">%1$s</xliff:g></string>
-  <string name="delete_card">Karte löschen</string>
-  <string name="delete_message">Dieser Vorgang kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?</string>
-  <string name="cancel_button">Abbrechen</string>
-  <string name="no_card_devices">Keine Kartengeräte angeschlossen</string>
-  <string name="no_device_can_write">Keines der verbundenen Geräte kann auf diese Kartenart schreiben</string>
-  <string name="no_device_can_emulate">Keines der verbundenen Gerät kann diese Kartenart emulieren</string>
-  <string name="choose_card_type">Kartentyp wählen, der ausgelesen werden soll</string>
-  <string name="failed_to_write">Schreiben der Karte fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
-  <string name="failed_to_emulate">Emulieren der Karte fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
-  <string name="failed_to_read">Lesen der Karte fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
-  <string name="discard_card_changes">Änderungen verwerfen?</string>
-  <string name="discard_bulk_read_changes">Vorlage für das Mehrfachauslesen von Karten verwerfen?</string>
-  <string name="discard_button">Verwerfen</string>
-  <string name="writing_card">Schreibe auf Karte</string>
-  <string name="emulating_card">Emuliere Karte</string>
-  <string name="waiting_for_card">Warte auf Karte</string>
-  <string name="version">Versionsdaten</string>
-  <string name="retrieving">Empfange …</string>
-  <string name="idle">Bereit</string>
-  <string name="device_busy">Gerät ist beschäftigt</string>
-  <string name="reading">Lese</string>
-  <string name="getting_version">Rufe Versionsdaten ab</string>
-  <string name="get_version_timeout">Zeitüberschreitung beim Versionsabruf</string>
-  <string name="command_error">Unerwartete Reaktion auf <xliff:g id="command">%1$s</xliff:g>-Befehl: <xliff:g id="error">%2$s</xliff:g></string>
-  <string name="emulating">Emuliere</string>
-  <string name="warning">Achtung!</string>
-  <string name="delete_all_cards">Sämtliche Karten werden gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?</string>
-  <string name="all_cards_deleted">Alle Karten gelöscht</string>
-  <string name="devices_activity_name">Geräte</string>
-  <string name="device_has_no_settings">Gerät hat keine Einstellungen</string>
-  <string name="failed_get_version">Versionsabruf fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
-  <string name="start">Start</string>
-  <string name="save">Speichern</string>
-  <string name="add_new_card">Neue Karte hinzufügen</string>
-  <string name="bulk_read_cards">Mehrfacheinlesen von Karten</string>
-  <string name="devices">Geräte</string>
-  <string name="settings">Einstellungen</string>
-  <string name="search_cards">Karten suchen</string>
-  <string name="delete">Löschen</string>
-  <string name="duplicate">Duplizieren</string>
-  <string name="choose_device">Gerät auswählen</string>
-  <string name="open_source_preference">Open Source</string>
-  <string name="delete_all_cards_preference">Alle Karten löschen</string>
-  <string name="default_card_slot_preference">Standard-Kartensteckplatz</string>
-  <string name="default_card_slot_preference_message">Standard <xliff:g>Chameleon-Mini</xliff:g>-Kartensteckplatz für Emulation</string>
-  <string name="device_disconnected"><xliff:g id="device">%1$s</xliff:g> getrennt</string>
-  <string name="device_connected"><xliff:g id="device">%1$s</xliff:g> verbunden</string>
-  <string name="tune">Antennenabstimmung</string>
-  <string name="tune_lf">LW einstellen</string>
-  <string name="tune_hf">KW einstellen</string>
-  <string name="tuning_progress">Antennenabstimmung läuft …</string>
-  <string name="failed_to_tune">Frequenzabgleich fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
-  <string name="writing">Schreibe</string>
-  <string name="write_card_timeout">Zeitüberschreitung beim Schreiben auf die Karte</string>
-  <string name="tuning">Antennenabstimmung</string>
-  <string name="tune_timeout">Zeitüberschreitung beim Antennenabstimmung</string>
-  <string name="proxmark3_tune_result_activity_name"><xliff:g>Proxmark3</xliff:g> – Ergebnisse des Antennenabstimmung</string>
-  <string name="lf">LW</string>
-  <string name="optimal">Optimal</string>
-  <string name="tune_peak_voltage"><xliff:g id="voltage">%1$.3fV</xliff:g>, erreicht bei <xliff:g id="frequency">%2$.3fkHz</xliff:g></string>
-  <string name="tune_ok">In Ordnung</string>
-  <string name="tune_marginal">Grenzwertig</string>
-  <string name="tune_unusable">Unbrauchbar</string>
-  <string name="settings_activity_name">Einstellungen</string>
-  <string name="failed_open_usb_connection">USB-Verbindung konnte nicht hergestellt werden</string>
-  <string name="failed_open_usb_serial_device">Verbindung zu USB-Serial-Gerät konnte nicht hergestellt werden</string>
+    <string name="failed_bulk_reading">Fehler beim Mehrfacheinlesen der Karten: <xliff:g id="amount">%1$s</xliff:g></string>
+    <string name="bulk_read_cards_activity_name">Mehrfacheinlesen von Karten</string>
+    <string name="stop_button">Anhalten</string>
+    <string name="back_button">Zurück</string>
+    <plurals name="num_cards_read">
+        <item quantity="one"><xliff:g id="amount">%1$d</xliff:g> Karte eingelesen</item>
+        <item quantity="other"><xliff:g id="amount">%1$d</xliff:g> Karten eingelesen</item>
+    </plurals>
+    <string name="bulk_reading_cards">Mehrfacheinlesen von Karten</string>
+    <string name="failed_start_bulk_reading">Mehrfacheinlesen der Karten konnte nicht gestartet werden: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="bulk_read_notification_channel_name">Mehrfacheinlesen von Karten</string>
+    <plurals name="bulk_reading_from">
+        <item quantity="one">Lese Karten von <xliff:g id="amount">%1$d</xliff:g> Gerät ein</item>
+        <item quantity="other">Lese Karten von <xliff:g id="amount">%1$d</xliff:g> Geräten ein</item>
+    </plurals>
+    <string name="default_card_name">Unbenannte Karte</string>
+    <string name="delete_button">Löschen</string>
+    <string name="write_card">Karte schreiben</string>
+    <string name="emulate_card">Karte emulieren</string>
+    <string name="read_card">Karte lesen</string>
+    <string name="date_acquired">Datum erhalten</string>
+    <string name="location">Standort</string>
+    <string name="unknown">Unbekannt</string>
+    <string name="notes">Hinweise</string>
+    <string name="view_card">Karte anzeigen</string>
+    <string name="new_card">Neue Karte</string>
+    <string name="edit_card">Karte bearbeiten</string>
+    <string name="set_template">Vorlage festlegen</string>
+    <string name="card_name_required">Kartenname erforderlich</string>
+    <string name="copy_of">Kopie von <xliff:g id="name">%1$s</xliff:g></string>
+    <string name="delete_card">Karte löschen</string>
+    <string name="delete_message">Dieser Vorgang kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?</string>
+    <string name="cancel_button">Abbrechen</string>
+    <string name="no_card_devices">Keine Kartengeräte angeschlossen</string>
+    <string name="no_device_can_write">Keines der verbundenen Geräte kann auf diese Kartenart schreiben</string>
+    <string name="no_device_can_emulate">Keines der verbundenen Gerät kann diese Kartenart emulieren</string>
+    <string name="choose_card_type">Kartentyp wählen, der ausgelesen werden soll</string>
+    <string name="failed_to_write">Schreiben der Karte fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_to_emulate">Emulieren der Karte fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_to_read">Lesen der Karte fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="discard_card_changes">Änderungen verwerfen?</string>
+    <string name="discard_bulk_read_changes">Vorlage für das Mehrfachauslesen von Karten verwerfen?</string>
+    <string name="discard_button">Verwerfen</string>
+    <string name="writing_card">Schreibe auf Karte</string>
+    <string name="emulating_card">Emuliere Karte</string>
+    <string name="waiting_for_card">Warte auf Karte</string>
+    <string name="version">Versionsdaten</string>
+    <string name="retrieving">Empfange …</string>
+    <string name="idle">Bereit</string>
+    <string name="device_busy">Gerät ist beschäftigt</string>
+    <string name="reading">Lese</string>
+    <string name="getting_version">Rufe Versionsdaten ab</string>
+    <string name="get_version_timeout">Zeitüberschreitung beim Versionsabruf</string>
+    <string name="command_error">Unerwartete Reaktion auf <xliff:g id="command">%1$s</xliff:g>-Befehl: <xliff:g id="error">%2$s</xliff:g></string>
+    <string name="emulating">Emuliere</string>
+    <string name="warning">Achtung!</string>
+    <string name="delete_all_cards">Sämtliche Karten werden gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?</string>
+    <string name="all_cards_deleted">Alle Karten gelöscht</string>
+    <string name="devices_activity_name">Geräte</string>
+    <string name="device_has_no_settings">Gerät hat keine Einstellungen</string>
+    <string name="failed_get_version">Versionsabruf fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="start">Start</string>
+    <string name="save">Speichern</string>
+    <string name="add_new_card">Neue Karte hinzufügen</string>
+    <string name="bulk_read_cards">Mehrfacheinlesen von Karten</string>
+    <string name="devices">Geräte</string>
+    <string name="settings">Einstellungen</string>
+    <string name="search_cards">Karten suchen</string>
+    <string name="delete">Löschen</string>
+    <string name="duplicate">Duplizieren</string>
+    <string name="choose_device">Gerät auswählen</string>
+    <string name="open_source_preference">Open Source</string>
+    <string name="delete_all_cards_preference">Alle Karten löschen</string>
+    <string name="default_card_slot_preference">Standard-Kartensteckplatz</string>
+    <string name="default_card_slot_preference_message">Standard <xliff:g>Chameleon-Mini</xliff:g>-Kartensteckplatz für Emulation</string>
+    <string name="device_disconnected"><xliff:g id="device">%1$s</xliff:g> getrennt</string>
+    <string name="device_connected"><xliff:g id="device">%1$s</xliff:g> verbunden</string>
+    <string name="tune">Antennenabstimmung</string>
+    <string name="tune_lf">LW einstellen</string>
+    <string name="tune_hf">KW einstellen</string>
+    <string name="tuning_progress">Antennenabstimmung läuft …</string>
+    <string name="failed_to_tune">Frequenzabgleich fehlgeschlagen: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="writing">Schreibe</string>
+    <string name="write_card_timeout">Zeitüberschreitung beim Schreiben auf die Karte</string>
+    <string name="tuning">Antennenabstimmung</string>
+    <string name="tune_timeout">Zeitüberschreitung beim Antennenabstimmung</string>
+    <string name="proxmark3_tune_result_activity_name"><xliff:g>Proxmark3</xliff:g> – Ergebnisse des Antennenabstimmung</string>
+    <string name="lf">LW</string>
+    <string name="optimal">Optimal</string>
+    <string name="tune_peak_voltage"><xliff:g id="voltage">%1$.3fV</xliff:g>, erreicht bei <xliff:g id="frequency">%2$.3fkHz</xliff:g></string>
+    <string name="tune_ok">In Ordnung</string>
+    <string name="tune_marginal">Grenzwertig</string>
+    <string name="tune_unusable">Unbrauchbar</string>
+    <string name="settings_activity_name">Einstellungen</string>
+    <string name="failed_open_usb_connection">USB-Verbindung konnte nicht hergestellt werden</string>
+    <string name="failed_open_usb_serial_device">Verbindung zu USB-Serial-Gerät konnte nicht hergestellt werden</string>
 </resources>
