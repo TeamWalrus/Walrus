@@ -109,7 +109,8 @@ class Proxmark3Command {
 
     @Override
     public String toString() {
-        return "<Proxmark3Command " + op + ", args " + Arrays.toString(args) + ", data " + Arrays.toString(data) + ">";
+        return "<Proxmark3Command " + op + ", args " + Arrays.toString(args) + ", data " +
+                Arrays.toString(data) + ">";
     }
 
     public String dataAsString() {

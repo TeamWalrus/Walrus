@@ -241,7 +241,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                     card.cardDataAcquired.toString() : getString(R.string.unknown));
 
             SupportMapFragment locationMap =
-                    (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.locationMap);
+                    (SupportMapFragment) getSupportFragmentManager().findFragmentById(
+                            R.id.locationMap);
             TextView locationUnknown = findViewById(R.id.locationUnknown);
             if (card.cardLocationLat != null && card.cardLocationLng != null) {
                 getSupportFragmentManager().beginTransaction().show(locationMap).commit();
@@ -335,22 +336,25 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.delete_card)
                         .setMessage(R.string.delete_message)
-                        .setPositiveButton(R.string.delete_button, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                getHelper().getCardDao().delete(card);
-                                LocalBroadcastManager.getInstance(CardActivity.this).sendBroadcast(
-                                        new Intent(QueryUtils.ACTION_WALLET_UPDATE));
-                                finish();
-                                dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
+                        .setPositiveButton(R.string.delete_button,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        getHelper().getCardDao().delete(card);
+                                        LocalBroadcastManager.getInstance(CardActivity.this)
+                                                .sendBroadcast(new Intent(
+                                                        QueryUtils.ACTION_WALLET_UPDATE));
+                                        finish();
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setNegativeButton(R.string.cancel_button,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
                         .show();
                 return true;
 
@@ -502,7 +506,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
     }
 
-    private void onChooseReadCardType(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
+    private void onChooseReadCardType(CardDevice cardDevice,
+                                      Class<? extends CardData> cardDataClass) {
         if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
             try {
                 cardDevice.readCardData(cardDataClass, new ReadCardDataSink(cardDevice,
@@ -562,7 +567,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         private volatile boolean stop;
 
-        WriteOrEmulateCardDataOperationCallbacks(CardDevice cardDevice, CardData cardData, boolean write) {
+        WriteOrEmulateCardDataOperationCallbacks(CardDevice cardDevice, CardData cardData,
+                                                 boolean write) {
             this.cardDevice = cardDevice;
             this.cardData = cardData;
             this.write = write;
@@ -587,12 +593,13 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                             stop = true;
                         }
                     })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
                     .show();
         }
 
@@ -659,12 +666,13 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                             stop = true;
                         }
                     })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
+                    .setNegativeButton(android.R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
                     .show();
         }
 

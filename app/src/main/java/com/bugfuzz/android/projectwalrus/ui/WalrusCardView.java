@@ -100,7 +100,8 @@ public class WalrusCardView extends FrameLayout {
             }
         });
 
-        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WalrusCardView, defStyle, 0);
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.WalrusCardView,
+                defStyle, 0);
         setEditable(a.getBoolean(R.styleable.WalrusCardView_editable, false));
         a.recycle();
 

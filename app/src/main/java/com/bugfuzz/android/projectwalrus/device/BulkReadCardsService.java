@@ -129,8 +129,8 @@ public class BulkReadCardsService extends Service {
         try {
             cardDevice.readCardData(cardDataClass, cardDataSink);
         } catch (IOException exception) {
-            Toast.makeText(this, getString(R.string.failed_start_bulk_reading, exception.getMessage()),
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.failed_start_bulk_reading,
+                    exception.getMessage()), Toast.LENGTH_LONG).show();
             return;
         }
 

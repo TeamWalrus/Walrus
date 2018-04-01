@@ -52,7 +52,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
+                          int newVersion) {
     }
 
     @Override

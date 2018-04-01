@@ -138,7 +138,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                         send(new Proxmark3Command(Proxmark3Command.HID_DEMOD_FSK,
                                 new long[]{0, 0, 0}));
 
-                        // TODO: do periodic VERSION-based device-aliveness checking like Chameleon Mini will/does
+                        // TODO: do periodic VERSION-based device-aliveness checking like Chameleon
+                        // Mini will/does
                         receive(new ReceiveSink<Proxmark3Command, Boolean>() {
                             @Override
                             public Boolean onReceived(Proxmark3Command in) {
@@ -261,7 +262,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                 throw new IllegalArgumentException("Must tune LF or HF");
 
             Proxmark3Command result = sendThenReceiveCommands(
-                    new Proxmark3Command(Proxmark3Command.MEASURE_ANTENNA_TUNING, new long[]{arg, 0, 0}),
+                    new Proxmark3Command(Proxmark3Command.MEASURE_ANTENNA_TUNING,
+                            new long[]{arg, 0, 0}),
                     new CommandWaiter(Proxmark3Command.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT));
             if (result == null)
                 throw new IOException(context.getString(R.string.tune_timeout));
@@ -283,7 +285,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
         }
     }
 
-    private static class CommandWaiter extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
+    private static class CommandWaiter
+            extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
 
         private final long op;
 

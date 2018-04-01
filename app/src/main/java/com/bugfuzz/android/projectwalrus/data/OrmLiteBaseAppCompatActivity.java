@@ -25,7 +25,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
-public abstract class OrmLiteBaseAppCompatActivity<H extends OrmLiteSqliteOpenHelper> extends AppCompatActivity {
+public abstract class OrmLiteBaseAppCompatActivity<H extends OrmLiteSqliteOpenHelper>
+        extends AppCompatActivity {
 
     private final Class<? extends OrmLiteSqliteOpenHelper> helperClass;
     private H helper;

@@ -163,9 +163,11 @@ public enum CardDeviceManager {
                             UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
                             if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED))
-                                CardDeviceManager.INSTANCE.handleUsbDeviceAttached(context, usbDevice);
+                                CardDeviceManager.INSTANCE.handleUsbDeviceAttached(context,
+                                        usbDevice);
                             else
-                                CardDeviceManager.INSTANCE.handleUsbDeviceDetached(context, usbDevice);
+                                CardDeviceManager.INSTANCE.handleUsbDeviceDetached(context,
+                                        usbDevice);
                         }
                     }).start();
                     break;

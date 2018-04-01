@@ -216,6 +216,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 
         callbacks.onStarting();
 
+        // TODO: the indentation here is lol
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -237,8 +238,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                             throw new IOException(context.getString(
                                                     R.string.command_error, "CONFIG=", in));
 
-                                        int slot = PreferenceManager.getDefaultSharedPreferences(context)
-                                                .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
+                                        int slot = PreferenceManager.getDefaultSharedPreferences(
+                                                context).getInt(
+                                                        ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
                                         send("SETTING=" + slot);
 
                                         ++state;
@@ -249,7 +251,8 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                             throw new IOException(context.getString(
                                                     R.string.command_error, "SETTING=", in));
 
-                                        ISO14443ACardData iso14443ACardData = (ISO14443ACardData) cardData;
+                                        ISO14443ACardData iso14443ACardData =
+                                                (ISO14443ACardData) cardData;
                                         send("UID=" + String.format("%08x", iso14443ACardData.uid));
 
                                         ++state;

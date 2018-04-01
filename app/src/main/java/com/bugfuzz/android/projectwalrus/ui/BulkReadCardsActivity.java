@@ -94,7 +94,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                 final BulkReadCardDataSink sink =
                         (BulkReadCardDataSink) adapterView.getItemAtPosition(i);
 
-                final CardDataIOView cardDataIOView = new CardDataIOView(BulkReadCardsActivity.this);
+                final CardDataIOView cardDataIOView = new CardDataIOView(
+                        BulkReadCardsActivity.this);
                 cardDataIOView.setCardDeviceClass(sink.getCardDevice().getClass());
                 cardDataIOView.setDirection(true);
                 cardDataIOView.setCardDataClass(sink.getCardDataClass());
@@ -121,19 +122,21 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                         .setTitle(R.string.bulk_reading_cards)
                         .setView(cardDataIOView)
                         .setCancelable(true)
-                        .setPositiveButton(R.string.stop_button, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sink.stopReading();
-                                dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton(R.string.back_button, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
+                        .setPositiveButton(R.string.stop_button,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        sink.stopReading();
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setNegativeButton(R.string.back_button,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                })
                         .show();
 
                 final BroadcastReceiver bulkReadCardsServiceUpdateNotificationHandler =
@@ -171,7 +174,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
             }
         });
 
-        bindService(new Intent(this, BulkReadCardsService.class), bulkReadCardsServiceConnection, 0);
+        bindService(new Intent(this, BulkReadCardsService.class), bulkReadCardsServiceConnection,
+                0);
 
         IntentFilter intentFilter = new IntentFilter(BulkReadCardsService.ACTION_UPDATE);
         intentFilter.addAction(BulkReadCardDataSink.ACTION_UPDATE);
