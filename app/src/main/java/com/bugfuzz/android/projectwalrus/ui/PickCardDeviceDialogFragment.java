@@ -19,6 +19,7 @@
 
 package com.bugfuzz.android.projectwalrus.ui;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -35,6 +36,17 @@ public class PickCardDeviceDialogFragment extends DialogFragment {
 
     private static final String CARD_DEVICE_LIST_FRAGMENT_TAG =
             "pick_card_device_dialog_card_device_list";
+
+    public static void show(Activity activity, String fragmentTag, int callbackId) {
+        PickCardDeviceDialogFragment pickCardDeviceDialogFragment =
+                new PickCardDeviceDialogFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("callback_id", callbackId);
+        pickCardDeviceDialogFragment.setArguments(args);
+
+        pickCardDeviceDialogFragment.show(activity.getFragmentManager(), fragmentTag);
+    }
 
     @Nullable
     @Override

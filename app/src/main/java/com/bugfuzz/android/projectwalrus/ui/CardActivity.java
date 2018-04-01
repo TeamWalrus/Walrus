@@ -71,7 +71,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
-        implements OnMapReadyCallback, CardDeviceListFragment.OnCardDeviceClickCallback {
+        implements OnMapReadyCallback, CardDeviceListFragment.OnCardDeviceClickCallback,
+        DeleteCardConfirmDialogFragment.OnDeleteCardConfirmCallback {
 
     private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_MODE";
     private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_CARD";
@@ -333,29 +334,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 return true;
 
             case R.id.deleteCard:
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.delete_card)
-                        .setMessage(R.string.delete_message)
-                        .setPositiveButton(R.string.delete_button,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        getHelper().getCardDao().delete(card);
-                                        LocalBroadcastManager.getInstance(CardActivity.this)
-                                                .sendBroadcast(new Intent(
-                                                        QueryUtils.ACTION_WALLET_UPDATE));
-                                        finish();
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setNegativeButton(R.string.cancel_button,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .show();
+                DeleteCardConfirmDialogFragment.show(this, "delete_card_confirm_dialog", 0);
                 return true;
 
             case R.id.save:
@@ -376,6 +355,15 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         }
     }
 
+    @Override
+    public void onDeleteCardConfirm(int callbackId) {
+        getHelper().getCardDao().delete(card);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(
+                QueryUtils.ACTION_WALLET_UPDATE));
+
+        finish();
+    }
+
     public void onReadCardClick(View view) {
         startReadCardSetup();
     }
@@ -388,16 +376,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             return;
         }
 
-        if (cardDevices.size() > 1) {
-            PickCardDeviceDialogFragment pickCardDeviceDialogFragment =
-                    new PickCardDeviceDialogFragment();
-
-            Bundle args = new Bundle();
-            args.putInt("callback_id", 0);
-            pickCardDeviceDialogFragment.setArguments(args);
-
-            pickCardDeviceDialogFragment.show(getFragmentManager(), "pick_card_device_dialog");
-        } else
+        if (cardDevices.size() > 1)
+            PickCardDeviceDialogFragment.show(this, PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG, 0);
+        else
             onCardDeviceClick(cardDevices.get(0), 0);
     }
 
@@ -438,17 +419,10 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         int callbackId = write ? 1 : 2;
 
-        if (cardDevices.size() > 1) {
-            PickCardDeviceDialogFragment pickCardDeviceDialogFragment =
-                    new PickCardDeviceDialogFragment();
-
-            Bundle args = new Bundle();
-            args.putInt("callback_id", callbackId);
-            pickCardDeviceDialogFragment.setArguments(args);
-
-            pickCardDeviceDialogFragment.show(getFragmentManager(),
-                    PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
-        } else
+        if (cardDevices.size() > 1)
+            PickCardDeviceDialogFragment.show(this, PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG,
+                    callbackId);
+        else
             onCardDeviceClick(cardDevices.get(0), callbackId);
     }
 
