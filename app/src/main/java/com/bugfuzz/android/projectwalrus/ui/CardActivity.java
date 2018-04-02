@@ -67,17 +67,20 @@ import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         implements OnMapReadyCallback, DeleteCardConfirmDialogFragment.OnDeleteCardConfirmCallback,
-        PickCardDeviceDialogFragment.OnCardDeviceClickCallback {
+        PickCardDeviceDialogFragment.OnCardDeviceClickCallback,
+        PickCardDataClassDialogFragment.OnCardDataClassClickCallback {
 
     private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_MODE";
     private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_CARD";
 
     private static final String PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG = "pick_card_device_dialog";
+    private static final String PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG = "pick_card_data_class_dialog";
 
     private Mode mode;
     private Card card;
@@ -443,26 +446,17 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 final Class<? extends CardData> readableTypes[] = cardDevice.getClass()
                         .getAnnotation(CardDevice.Metadata.class).supportsRead();
 
-                if (readableTypes.length > 1) {
-                    String[] names = new String[readableTypes.length];
-                    for (int i = 0; i < names.length; ++i)
-                        names[i] = readableTypes[i].getAnnotation(CardData.Metadata.class).name();
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle(R.string.choose_card_type)
-                            .setItems(names, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    onChooseReadCardType(cardDevice, readableTypes[which]);
-                                }
-                            })
-                            .create().show();
-                } else
-                    onChooseReadCardType(cardDevice, readableTypes[0]);
+                if (readableTypes.length > 1)
+                    PickCardDataClassDialogFragment.show(this,
+                            PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG, Arrays.asList(readableTypes),
+                            cardDevice.getID());
+                else
+                    onCardDataClassClick(readableTypes[0], cardDevice.getID());
                 break;
             }
 
             case 1:
-            case 2:
+            case 2: {
                 WriteOrEmulateCardDataOperationCallbacks writeOrEmulateCardDataOperationCallbacks =
                         new WriteOrEmulateCardDataOperationCallbacks(cardDevice, card.cardData,
                                 callbackId == 1);
@@ -481,11 +475,22 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                                     exception.getMessage()), Toast.LENGTH_LONG).show();
                 }
                 break;
+            }
         }
     }
 
-    private void onChooseReadCardType(CardDevice cardDevice,
-                                      Class<? extends CardData> cardDataClass) {
+    @Override
+    public void onCardDataClassClick(Class<? extends CardData> cardDataClass, int callbackId) {
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment pickCardDataClassDialogFragment = fragmentManager.findFragmentByTag(
+                PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG);
+        if (pickCardDataClassDialogFragment != null)
+            fragmentManager.beginTransaction().remove(pickCardDataClassDialogFragment).commit();
+
+        CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(callbackId);
+        if (cardDevice == null)
+            return;
+
         if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
             try {
                 cardDevice.readCardData(cardDataClass, new ReadCardDataSink(cardDevice,
