@@ -46,6 +46,9 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
     public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
 
+    private int id;
+    private static int nextID;
+
     private final Context context;
 
     private final CardDevice cardDevice;
@@ -69,6 +72,8 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
         this.cardDataClass = cardDataClass;
         this.cardTemplate = cardTemplate;
         this.onStopCallback = onStopCallback;
+
+        id = nextID++;
     }
 
     @Override
@@ -156,6 +161,10 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
     public void stopReading() {
         stop = true;
+    }
+
+    public int getID() {
+        return id;
     }
 
     public interface OnStopCallback {

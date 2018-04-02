@@ -22,7 +22,6 @@ package com.bugfuzz.android.projectwalrus.ui;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
@@ -81,6 +80,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     private static final String PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG = "pick_card_device_dialog";
     private static final String PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG = "pick_card_data_class_dialog";
+    private static final String CARD_DATA_IO_DIALOG_FRAGMENT_TAG = "card_data_io_dialog";
 
     private Mode mode;
     private Card card;
@@ -546,7 +546,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         private final CardData cardData;
         private final boolean write;
 
-        private Dialog dialog;
+        private SingleCardDataIODialogFragment dialog;
 
         private volatile boolean stop;
 
@@ -560,30 +560,19 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         @Override
         @UiThread
         public void onStarting() {
-            CardDataIOView cardDataIOView = new CardDataIOView(CardActivity.this);
-            cardDataIOView.setCardDeviceClass(cardDevice.getClass());
-            cardDataIOView.setDirection(false);
-            cardDataIOView.setCardDataClass(cardData.getClass());
-            cardDataIOView.setPadding(0, 60, 0, 10);
+            dialog = SingleCardDataIODialogFragment.show(
+                    CardActivity.this, CARD_DATA_IO_DIALOG_FRAGMENT_TAG, cardDevice.getClass(),
+                    cardData.getClass(),
+                    write ? SingleCardDataIODialogFragment.Mode.WRITE :
+                            SingleCardDataIODialogFragment.Mode.EMULATE,
+                    0);
 
-            dialog = new AlertDialog.Builder(CardActivity.this)
-                    .setTitle(write ? R.string.writing_card : R.string.emulating_card)
-                    .setView(cardDataIOView)
-                    .setCancelable(true)
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            stop = true;
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                    .show();
+            dialog.setOnCancelCallback(new SingleCardDataIODialogFragment.OnCancelCallback() {
+                @Override
+                public void onCancelClick(int callbackId) {
+                    stop = true;
+                }
+            });
         }
 
         @Override
@@ -621,7 +610,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         private final CardDevice cardDevice;
         private final Class<? extends CardData> cardDataClass;
 
-        private Dialog dialog;
+        private SingleCardDataIODialogFragment dialog;
 
         private volatile boolean stop;
 
@@ -633,30 +622,16 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         @Override
         @UiThread
         public void onStarting() {
-            CardDataIOView cardDataIOView = new CardDataIOView(CardActivity.this);
-            cardDataIOView.setCardDeviceClass(cardDevice.getClass());
-            cardDataIOView.setDirection(true);
-            cardDataIOView.setCardDataClass(cardDataClass);
-            cardDataIOView.setPadding(0, 60, 0, 10);
+            dialog = SingleCardDataIODialogFragment.show(
+                    CardActivity.this, CARD_DATA_IO_DIALOG_FRAGMENT_TAG, cardDevice.getClass(),
+                    cardDataClass, SingleCardDataIODialogFragment.Mode.READ, 0);
 
-            dialog = new AlertDialog.Builder(CardActivity.this)
-                    .setTitle(R.string.waiting_for_card)
-                    .setView(cardDataIOView)
-                    .setCancelable(true)
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            stop = true;
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                    .show();
+            dialog.setOnCancelCallback(new SingleCardDataIODialogFragment.OnCancelCallback() {
+                @Override
+                public void onCancelClick(int callbackId) {
+                    stop = true;
+                }
+            });
         }
 
         @Override

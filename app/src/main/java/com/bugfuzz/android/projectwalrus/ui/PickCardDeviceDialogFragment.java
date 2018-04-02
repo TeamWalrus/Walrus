@@ -48,10 +48,11 @@ public class PickCardDeviceDialogFragment extends DialogFragment
                 adapter.notifyDataSetChanged();
         }
     };
-
-    public static void show(Activity activity, String fragmentTag,
-                            Class<? extends CardData> cardDataFilterClass,
-                            CardDeviceAdapter.FilterMode cardDataFilterMode, int callbackId) {
+    
+    public static PickCardDeviceDialogFragment show(Activity activity, String fragmentTag,
+                                                    Class<? extends CardData> cardDataFilterClass,
+                                                    CardDeviceAdapter.FilterMode cardDataFilterMode,
+                                                    int callbackId) {
         PickCardDeviceDialogFragment dialog = new PickCardDeviceDialogFragment();
 
         Bundle args = new Bundle();
@@ -63,6 +64,7 @@ public class PickCardDeviceDialogFragment extends DialogFragment
         dialog.setArguments(args);
 
         dialog.show(activity.getFragmentManager(), fragmentTag);
+        return dialog;
     }
 
     @Override

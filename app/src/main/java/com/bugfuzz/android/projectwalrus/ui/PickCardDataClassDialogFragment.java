@@ -44,8 +44,9 @@ import java.util.List;
 public class PickCardDataClassDialogFragment extends DialogFragment
         implements CardDataClassAdapter.OnCardDataClassClickCallback {
 
-    public static void show(Activity activity, String fragmentTag,
-                            List<Class<? extends CardData>> cardDataClasses, int callbackId) {
+    public static PickCardDataClassDialogFragment show(Activity activity, String fragmentTag,
+                                                       List<Class<? extends CardData>>
+                                                               cardDataClasses, int callbackId) {
         PickCardDataClassDialogFragment dialog = new PickCardDataClassDialogFragment();
 
         String[] cardDataClassNames = new String[cardDataClasses.size()];
@@ -58,6 +59,7 @@ public class PickCardDataClassDialogFragment extends DialogFragment
         dialog.setArguments(args);
 
         dialog.show(activity.getFragmentManager(), fragmentTag);
+        return dialog;
     }
 
     @Override

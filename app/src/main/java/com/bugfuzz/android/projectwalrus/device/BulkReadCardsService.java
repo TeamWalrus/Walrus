@@ -44,7 +44,9 @@ import org.parceler.Parcels;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Build.VERSION_CODES.O;
@@ -61,7 +63,7 @@ public class BulkReadCardsService extends Service {
 
     private final Binder binder = new ServiceBinder();
 
-    private final List<BulkReadCardDataSink> sinks = new ArrayList<>();
+    private final Map<Integer, BulkReadCardDataSink> sinks = new LinkedHashMap<>();
 
     private final NotificationCompat.Builder notificationBuilder =
             new NotificationCompat.Builder(this, CHANNEL_ID);
@@ -111,7 +113,7 @@ public class BulkReadCardsService extends Service {
                         new Handler(getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                sinks.remove(sink);
+                                sinks.remove(sink.getID());
                                 LocalBroadcastManager.getInstance(BulkReadCardsService.this)
                                         .sendBroadcast(new Intent(ACTION_UPDATE));
 
@@ -134,7 +136,7 @@ public class BulkReadCardsService extends Service {
             return;
         }
 
-        sinks.add(cardDataSink);
+        sinks.put(cardDataSink.getID(), cardDataSink);
         LocalBroadcastManager.getInstance(BulkReadCardsService.this)
                 .sendBroadcast(new Intent(ACTION_UPDATE));
 
@@ -173,8 +175,8 @@ public class BulkReadCardsService extends Service {
     }
 
     public class ServiceBinder extends Binder {
-        public List<BulkReadCardDataSink> getSinks() {
-            return Collections.unmodifiableList(sinks);
+        public Map<Integer, BulkReadCardDataSink> getSinks() {
+            return Collections.unmodifiableMap(sinks);
         }
     }
 }
