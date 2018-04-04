@@ -39,7 +39,7 @@ public abstract class CardDevice {
     public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_DEVICE_ID";
     public static final String EXTRA_STATUS = "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_STATUS";
 
-    static private int nextID;
+    static private int nextId;
 
     protected final Context context;
 
@@ -50,10 +50,10 @@ public abstract class CardDevice {
     CardDevice(Context context) {
         this.context = context;
 
-        id = nextID++;
+        id = nextId++;
     }
 
-    public int getID() {
+    public int getId() {
         return id;
     }
 
@@ -76,7 +76,7 @@ public abstract class CardDevice {
         this.status = status;
 
         Intent broadcastIntent = new Intent(ACTION_STATUS_UPDATE);
-        broadcastIntent.putExtra(EXTRA_DEVICE_ID, getID());
+        broadcastIntent.putExtra(EXTRA_DEVICE_ID, getId());
         broadcastIntent.putExtra(EXTRA_STATUS, status);
         LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent);
     }

@@ -449,9 +449,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 if (readableTypes.length > 1)
                     PickCardDataClassDialogFragment.show(this,
                             PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG, Arrays.asList(readableTypes),
-                            cardDevice.getID());
+                            cardDevice.getId());
                 else
-                    onCardDataClassClick(readableTypes[0], cardDevice.getID());
+                    onCardDataClassClick(readableTypes[0], cardDevice.getId());
                 break;
             }
 

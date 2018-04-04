@@ -72,7 +72,7 @@ public class BulkReadCardsService extends Service {
                                     Class<? extends CardData> cardDataClass, Card cardTemplate) {
         Intent intent = new Intent(context, BulkReadCardsService.class);
 
-        intent.putExtra(EXTRA_DEVICE, cardDevice.getID());
+        intent.putExtra(EXTRA_DEVICE, cardDevice.getId());
         intent.putExtra(EXTRA_CARD_DATA_CLASS, cardDataClass);
         intent.putExtra(EXTRA_CARD_TEMPLATE, Parcels.wrap(cardTemplate));
 
@@ -113,7 +113,7 @@ public class BulkReadCardsService extends Service {
                         new Handler(getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                sinks.remove(sink.getID());
+                                sinks.remove(sink.getId());
                                 LocalBroadcastManager.getInstance(BulkReadCardsService.this)
                                         .sendBroadcast(new Intent(ACTION_UPDATE));
 
@@ -136,7 +136,7 @@ public class BulkReadCardsService extends Service {
             return;
         }
 
-        sinks.put(cardDataSink.getID(), cardDataSink);
+        sinks.put(cardDataSink.getId(), cardDataSink);
         LocalBroadcastManager.getInstance(BulkReadCardsService.this)
                 .sendBroadcast(new Intent(ACTION_UPDATE));
 

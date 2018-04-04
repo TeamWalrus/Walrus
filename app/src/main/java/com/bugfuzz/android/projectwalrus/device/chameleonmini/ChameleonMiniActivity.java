@@ -39,7 +39,7 @@ public class ChameleonMiniActivity extends AppCompatActivity {
     public static Intent getStartActivityIntent(Context context, ChameleonMiniDevice device) {
         Intent intent = new Intent(context, ChameleonMiniActivity.class);
 
-        intent.putExtra(EXTRA_DEVICE, device.getID());
+        intent.putExtra(EXTRA_DEVICE, device.getId());
 
         return intent;
     }

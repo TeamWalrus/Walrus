@@ -80,9 +80,9 @@ public enum CardDeviceManager {
         seenUsbDevices.add(usbDevice);
 
         for (Class<? extends UsbCardDevice> klass : usbCardDeviceClasses) {
-            UsbCardDevice.UsbIDs usbIDs = klass.getAnnotation(
-                    UsbCardDevice.UsbIDs.class);
-            for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value())
+            UsbCardDevice.UsbIds usbIds = klass.getAnnotation(
+                    UsbCardDevice.UsbIds.class);
+            for (UsbCardDevice.UsbIds.Ids ids : usbIds.value())
                 if (ids.vendorId() == usbDevice.getVendorId() &&
                         ids.productId() == usbDevice.getProductId()) {
                     if (usbManager.hasPermission(usbDevice))
@@ -140,7 +140,7 @@ public enum CardDeviceManager {
 
     public void addDebugDevice(Context context) {
         DebugDevice debugDevice = new DebugDevice(context);
-        cardDevices.put(debugDevice.getID(), debugDevice);
+        cardDevices.put(debugDevice.getId(), debugDevice);
     }
 
     public Map<Integer, CardDevice> getCardDevices() {
@@ -201,9 +201,9 @@ public enum CardDeviceManager {
         @Override
         public void run() {
             for (Class<? extends UsbCardDevice> klass : usbCardDeviceClasses) {
-                UsbCardDevice.UsbIDs usbIDs = klass.getAnnotation(
-                        UsbCardDevice.UsbIDs.class);
-                for (UsbCardDevice.UsbIDs.IDs ids : usbIDs.value()) {
+                UsbCardDevice.UsbIds usbIds = klass.getAnnotation(
+                        UsbCardDevice.UsbIds.class);
+                for (UsbCardDevice.UsbIds.Ids ids : usbIds.value()) {
                     if (ids.vendorId() == usbDevice.getVendorId() &&
                             ids.productId() == usbDevice.getProductId()) {
                         Constructor<? extends UsbCardDevice> constructor;
@@ -224,14 +224,14 @@ public enum CardDeviceManager {
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getID(),
+                                CardDeviceManager.INSTANCE.cardDevices.put(cardDevice.getId(),
                                         cardDevice);
                             }
                         });
 
                         Intent broadcastIntent = new Intent(ACTION_UPDATE);
                         broadcastIntent.putExtra(EXTRA_DEVICE_WAS_ADDED, true);
-                        broadcastIntent.putExtra(EXTRA_DEVICE_ID, cardDevice.getID());
+                        broadcastIntent.putExtra(EXTRA_DEVICE_ID, cardDevice.getId());
                         LocalBroadcastManager.getInstance(context)
                                 .sendBroadcast(broadcastIntent);
                     }

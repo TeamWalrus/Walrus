@@ -43,7 +43,7 @@ import java.util.concurrent.Semaphore;
         supportsWrite = {},
         supportsEmulate = {ISO14443ACardData.class}
 )
-@UsbCardDevice.UsbIDs({@UsbCardDevice.UsbIDs.IDs(vendorId = 5840, productId = 1202)})
+@UsbCardDevice.UsbIds({@UsbCardDevice.UsbIds.Ids(vendorId = 5840, productId = 1202)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
         implements CardDevice.Versioned {
 

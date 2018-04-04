@@ -47,7 +47,7 @@ public class Proxmark3Activity extends AppCompatActivity {
     public static Intent getStartActivityIntent(Context context, Proxmark3Device device) {
         Intent intent = new Intent(context, Proxmark3Activity.class);
 
-        intent.putExtra(EXTRA_DEVICE, device.getID());
+        intent.putExtra(EXTRA_DEVICE, device.getId());
 
         return intent;
     }

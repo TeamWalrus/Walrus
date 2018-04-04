@@ -96,7 +96,7 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         BulkReadCardsDialogFragment dialog = new BulkReadCardsDialogFragment();
 
         Bundle args = new Bundle();
-        args.putInt("sink_id", sink.getID());
+        args.putInt("sink_id", sink.getId());
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 

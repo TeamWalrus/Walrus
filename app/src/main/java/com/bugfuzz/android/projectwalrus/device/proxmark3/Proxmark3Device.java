@@ -47,9 +47,9 @@ import java.util.regex.Pattern;
         supportsWrite = {HIDCardData.class},
         supportsEmulate = {}
 )
-@UsbCardDevice.UsbIDs({
-        @UsbCardDevice.UsbIDs.IDs(vendorId = 11565, productId = 20557),
-        @UsbCardDevice.UsbIDs.IDs(vendorId = 39620, productId = 19343)
+@UsbCardDevice.UsbIds({
+        @UsbCardDevice.UsbIds.Ids(vendorId = 11565, productId = 20557),
+        @UsbCardDevice.UsbIds.Ids(vendorId = 39620, productId = 19343)
 })
 public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
         implements CardDevice.Versioned {
