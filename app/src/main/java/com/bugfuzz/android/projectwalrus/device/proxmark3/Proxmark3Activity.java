@@ -19,14 +19,12 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
-import android.app.ProgressDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 
@@ -36,11 +34,13 @@ import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import com.bugfuzz.android.projectwalrus.device.FindVersionTask;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 
-public class Proxmark3Activity extends AppCompatActivity {
+public class Proxmark3Activity extends AppCompatActivity
+        implements Proxmark3TuneFragment.OnTuneResultCallback {
 
     private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
+
+    private static final String PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG = "proxmark3_tune_dialog";
 
     private Proxmark3Device proxmark3Device;
 
@@ -85,75 +85,29 @@ public class Proxmark3Activity extends AppCompatActivity {
     }
 
     private void tune(boolean lf) {
-        new Proxmark3Activity.TuneTask(this, lf).execute();
+        Proxmark3TuneDialogFragment.show(this, PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
+        Proxmark3TuneFragment.show(this, proxmark3Device, lf, "proxmark3_tune");
     }
 
-    private static class TuneTask extends
-            AsyncTask<Void, Void, Pair<Proxmark3Device.TuneResult, IOException>> {
+    @Override
+    public void onTuneResult(Proxmark3Device.TuneResult result) {
+        removeTuneDialog();
 
-        private final WeakReference<Proxmark3Activity> activity;
+        Proxmark3TuneResultActivity.startActivity(this, result);
+    }
 
-        private final boolean lf;
+    @Override
+    public void onTuneError(IOException exception) {
+        removeTuneDialog();
 
-        private ProgressDialog progressDialog;
+        Toast.makeText(this, getString(R.string.failed_to_tune, exception.getMessage()),
+                Toast.LENGTH_LONG).show();
+    }
 
-        TuneTask(Proxmark3Activity activity, boolean lf) {
-            this.activity = new WeakReference<>(activity);
-            this.lf = lf;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            Proxmark3Activity proxmark3Activity = activity.get();
-            if (proxmark3Activity == null) {
-                cancel(false);
-                return;
-            }
-
-            progressDialog = new ProgressDialog(proxmark3Activity);
-            progressDialog.setMessage(proxmark3Activity.getString(R.string.tuning_progress));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Pair<Proxmark3Device.TuneResult, IOException> doInBackground(Void... params) {
-            Proxmark3Activity proxmark3Activity = activity.get();
-            if (proxmark3Activity == null)
-                return null;
-
-            try {
-                return new Pair<>(proxmark3Activity.proxmark3Device.tune(lf, !lf), null);
-            } catch (IOException exception) {
-                return new Pair<>(null, exception);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Pair<Proxmark3Device.TuneResult, IOException> result) {
-            super.onPostExecute(result);
-
-            progressDialog.dismiss();
-
-            if (result == null)
-                return;
-
-            Proxmark3Activity proxmark3Activity = activity.get();
-            if (proxmark3Activity == null)
-                return;
-
-            Proxmark3Device.TuneResult tuneResult = result.first;
-            if (tuneResult == null) {
-                Toast.makeText(proxmark3Activity,
-                        proxmark3Activity.getString(R.string.failed_to_tune,
-                                result.second.getMessage()),
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            Proxmark3TuneResultActivity.startActivity(proxmark3Activity, tuneResult);
-        }
+    private void removeTuneDialog() {
+        Fragment proxmark3TuneDialogFragment =
+                getFragmentManager().findFragmentByTag(PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
+        if (proxmark3TuneDialogFragment != null)
+            getFragmentManager().beginTransaction().remove(proxmark3TuneDialogFragment).commit();
     }
 }
