@@ -26,13 +26,18 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.device.FindVersionTask;
+import com.bugfuzz.android.projectwalrus.device.FindVersionFragment;
 
-public class ChameleonMiniActivity extends AppCompatActivity {
+import java.io.IOException;
+
+public class ChameleonMiniActivity extends AppCompatActivity
+        implements FindVersionFragment.OnFindVersionCallback {
+
     public static final String DEFAULT_SLOT_KEY = "default_chameleon_cardslot";
     private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity.EXTRA_DEVICE";
 
@@ -73,7 +78,18 @@ public class ChameleonMiniActivity extends AppCompatActivity {
                 .replace(R.id.settings, new ChameleonMiniActivity.SettingsFragment())
                 .commit();
 
-        new FindVersionTask(this, chameleonMiniDevice).execute();
+        FindVersionFragment.show(this, chameleonMiniDevice, "find_version_fragment_id");
+    }
+
+    @Override
+    public void onVersionResult(String version) {
+        ((TextView) findViewById(R.id.version)).setText(version);
+    }
+
+    @Override
+    public void onVersionError(IOException exception) {
+        ((TextView) findViewById(R.id.version)).setText(getString(R.string.failed_get_version,
+                exception.getMessage()));
     }
 
     public static class SettingsFragment extends PreferenceFragment {

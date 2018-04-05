@@ -204,6 +204,9 @@
     <!-- Card device status -->
     <string name="retrieving">Retrieving…</string>
 
+    <!-- Toast displayed when getting a device's version fails with an error -->
+    <string name="failed_get_version">Failed to get version: <xliff:g id="error">%1$s</xliff:g></string>
+
 
     <!--
         ChameleonMiniActivity
@@ -271,14 +274,6 @@
 
     <!-- Toast message shown when user tries open settings for a device that doesn't support any -->
     <string name="device_has_no_settings">Device has no settings</string>
-
-
-    <!--
-        FindVersionTask
-    -->
-
-    <!-- Toast displayed when getting a device's version fails with an error -->
-    <string name="failed_get_version">Failed to get version: <xliff:g id="error">%1$s</xliff:g></string>
 
 
     <!--

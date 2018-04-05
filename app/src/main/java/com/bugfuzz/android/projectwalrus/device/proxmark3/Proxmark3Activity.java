@@ -26,17 +26,19 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.device.FindVersionTask;
+import com.bugfuzz.android.projectwalrus.device.FindVersionFragment;
 
 import java.io.IOException;
 
 public class Proxmark3Activity extends AppCompatActivity
-        implements Proxmark3TuneFragment.OnTuneResultCallback {
+        implements FindVersionFragment.OnFindVersionCallback,
+        Proxmark3TuneFragment.OnTuneResultCallback {
 
     private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
 
@@ -73,7 +75,18 @@ public class Proxmark3Activity extends AppCompatActivity
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        new FindVersionTask(this, proxmark3Device).execute();
+        FindVersionFragment.show(this, proxmark3Device, "find_version_fragment_id");
+    }
+
+    @Override
+    public void onVersionResult(String version) {
+        ((TextView) findViewById(R.id.version)).setText(version);
+    }
+
+    @Override
+    public void onVersionError(IOException exception) {
+        ((TextView) findViewById(R.id.version)).setText(getString(R.string.failed_get_version,
+                exception.getMessage()));
     }
 
     public void onTuneLFClick(View view) {
@@ -89,6 +102,13 @@ public class Proxmark3Activity extends AppCompatActivity
         Proxmark3TuneFragment.show(this, proxmark3Device, lf, "proxmark3_tune");
     }
 
+    private void removeTuneDialog() {
+        Fragment proxmark3TuneDialogFragment =
+                getFragmentManager().findFragmentByTag(PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
+        if (proxmark3TuneDialogFragment != null)
+            getFragmentManager().beginTransaction().remove(proxmark3TuneDialogFragment).commit();
+    }
+
     @Override
     public void onTuneResult(Proxmark3Device.TuneResult result) {
         removeTuneDialog();
@@ -102,12 +122,5 @@ public class Proxmark3Activity extends AppCompatActivity
 
         Toast.makeText(this, getString(R.string.failed_to_tune, exception.getMessage()),
                 Toast.LENGTH_LONG).show();
-    }
-
-    private void removeTuneDialog() {
-        Fragment proxmark3TuneDialogFragment =
-                getFragmentManager().findFragmentByTag(PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
-        if (proxmark3TuneDialogFragment != null)
-            getFragmentManager().beginTransaction().remove(proxmark3TuneDialogFragment).commit();
     }
 }
