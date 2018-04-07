@@ -27,8 +27,6 @@ import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
@@ -64,7 +62,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.apache.commons.lang3.ArrayUtils;
 import org.parceler.Parcels;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,7 +70,8 @@ import java.util.Map;
 public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         implements OnMapReadyCallback, DeleteCardConfirmDialogFragment.OnDeleteCardConfirmCallback,
         PickCardDeviceDialogFragment.OnCardDeviceClickCallback,
-        PickCardDataClassDialogFragment.OnCardDataClassClickCallback {
+        PickCardDataClassDialogFragment.OnCardDataClassClickCallback,
+        ReadCardDataFragment.OnCardDataCallback {
 
     private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_MODE";
     private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.ui.CardActivity.EXTRA_CARD";
@@ -457,23 +455,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             case 1:
             case 2: {
-                WriteOrEmulateCardDataOperationCallbacks writeOrEmulateCardDataOperationCallbacks =
-                        new WriteOrEmulateCardDataOperationCallbacks(cardDevice, card.cardData,
-                                callbackId == 1);
-                try {
-                    if (callbackId == 1)
-                        cardDevice.writeCardData(card.cardData,
-                                writeOrEmulateCardDataOperationCallbacks);
-                    else
-                        cardDevice.emulateCardData(card.cardData,
-                                writeOrEmulateCardDataOperationCallbacks);
-                } catch (IOException exception) {
-                    Toast.makeText(this,
-                            getString(callbackId == 1 ?
-                                            R.string.failed_to_write :
-                                            R.string.failed_to_emulate,
-                                    exception.getMessage()), Toast.LENGTH_LONG).show();
-                }
+                WriteOrEmulateCardDataFragment.show(this, "write_or_emulate_card_data", cardDevice,
+                        card.cardData, callbackId == 1, 0);
                 break;
             }
         }
@@ -492,17 +475,18 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             return;
 
         if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
-            try {
-                cardDevice.readCardData(cardDataClass, new ReadCardDataSink(cardDevice,
-                        cardDataClass));
-            } catch (IOException exception) {
-                Toast.makeText(this, getString(R.string.failed_to_read, exception.getMessage()),
-                        Toast.LENGTH_LONG).show();
-            }
+            ReadCardDataFragment.show(this, "read_card_data", cardDevice, cardDataClass, 0);
         else {
             BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
             supportFinishAfterTransition();
         }
+    }
+
+    @Override
+    public void onCardData(CardData cardData, int callbackId) {
+        card.setCardData(cardData, ProjectWalrusApplication.getCurrentBestLocation());
+        dirty = true;
+        updateUI();
     }
 
     @Override
@@ -537,142 +521,5 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         VIEW,
         EDIT,
         EDIT_BULK_READ_CARD_TEMPLATE
-    }
-
-    private class WriteOrEmulateCardDataOperationCallbacks
-            implements CardDevice.CardDataOperationCallbacks {
-
-        private final CardDevice cardDevice;
-        private final CardData cardData;
-        private final boolean write;
-
-        private SingleCardDataIODialogFragment dialog;
-
-        private volatile boolean stop;
-
-        WriteOrEmulateCardDataOperationCallbacks(CardDevice cardDevice, CardData cardData,
-                                                 boolean write) {
-            this.cardDevice = cardDevice;
-            this.cardData = cardData;
-            this.write = write;
-        }
-
-        @Override
-        @UiThread
-        public void onStarting() {
-            dialog = SingleCardDataIODialogFragment.show(
-                    CardActivity.this, CARD_DATA_IO_DIALOG_FRAGMENT_TAG, cardDevice.getClass(),
-                    cardData.getClass(),
-                    write ? SingleCardDataIODialogFragment.Mode.WRITE :
-                            SingleCardDataIODialogFragment.Mode.EMULATE,
-                    0);
-
-            dialog.setOnCancelCallback(new SingleCardDataIODialogFragment.OnCancelCallback() {
-                @Override
-                public void onCancelClick(int callbackId) {
-                    stop = true;
-                }
-            });
-        }
-
-        @Override
-        @WorkerThread
-        public boolean shouldContinue() {
-            return !stop;
-        }
-
-        @Override
-        @WorkerThread
-        public void onError(final String message) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(
-                            CardActivity.this,
-                            getString(write ? R.string.failed_to_write : R.string.failed_to_emulate,
-                                    message),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-
-            onFinish();
-        }
-
-        @Override
-        @WorkerThread
-        public void onFinish() {
-            dialog.dismiss();
-        }
-    }
-
-    private class ReadCardDataSink implements CardDevice.CardDataSink {
-
-        private final CardDevice cardDevice;
-        private final Class<? extends CardData> cardDataClass;
-
-        private SingleCardDataIODialogFragment dialog;
-
-        private volatile boolean stop;
-
-        ReadCardDataSink(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
-            this.cardDevice = cardDevice;
-            this.cardDataClass = cardDataClass;
-        }
-
-        @Override
-        @UiThread
-        public void onStarting() {
-            dialog = SingleCardDataIODialogFragment.show(
-                    CardActivity.this, CARD_DATA_IO_DIALOG_FRAGMENT_TAG, cardDevice.getClass(),
-                    cardDataClass, SingleCardDataIODialogFragment.Mode.READ, 0);
-
-            dialog.setOnCancelCallback(new SingleCardDataIODialogFragment.OnCancelCallback() {
-                @Override
-                public void onCancelClick(int callbackId) {
-                    stop = true;
-                }
-            });
-        }
-
-        @Override
-        @WorkerThread
-        public void onCardData(final CardData cardData) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    card.setCardData(cardData, ProjectWalrusApplication.getCurrentBestLocation());
-                    dirty = true;
-                    updateUI();
-                }
-            });
-
-            stop = true;
-        }
-
-        @Override
-        @WorkerThread
-        public boolean shouldContinue() {
-            return !stop;
-        }
-
-        @Override
-        @WorkerThread
-        public void onError(final String message) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(CardActivity.this, getString(R.string.failed_to_read, message),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-
-            onFinish();
-        }
-
-        @Override
-        @WorkerThread
-        public void onFinish() {
-            dialog.dismiss();
-        }
     }
 }
