@@ -32,6 +32,8 @@ import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.ViewHolder> {
@@ -74,14 +76,14 @@ class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CardDevice cardDevice = getFilteredCardDevices().get(position);
+        CardDevice cardDevice = getSortedFilteredCardDevices().get(position);
         ((CardDeviceView) ((FrameLayout) holder.itemView).getChildAt(0)).setCardDevice(cardDevice);
         holder.cardDevice = cardDevice;
     }
 
     @Override
     public int getItemCount() {
-        return getFilteredCardDevices().size();
+        return getSortedFilteredCardDevices().size();
     }
 
     private List<CardDevice> getFilteredCardDevices() {
@@ -112,6 +114,20 @@ class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.ViewHolde
                 cardDevices.add(cardDevice);
         }
 
+        return cardDevices;
+    }
+
+    private List<CardDevice> getSortedFilteredCardDevices() {
+        List<CardDevice> cardDevices = getFilteredCardDevices();
+        Collections.sort(cardDevices, new Comparator<CardDevice>() {
+            @Override
+            public int compare(CardDevice a, CardDevice b) {
+                CardDevice.Metadata
+                        ma = a.getClass().getAnnotation(CardDevice.Metadata.class),
+                        mb = b.getClass().getAnnotation(CardDevice.Metadata.class);
+                return ma.name().compareTo(mb.name());
+            }
+        });
         return cardDevices;
     }
 
