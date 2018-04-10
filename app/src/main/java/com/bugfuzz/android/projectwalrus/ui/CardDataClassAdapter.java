@@ -20,34 +20,36 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.data.CardData;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 class CardDataClassAdapter extends RecyclerView.Adapter<CardDataClassAdapter.ViewHolder> {
 
     private final OnCardDataClassClickCallback onCardDataClassClickCallback;
     private final int startEndPadding;
 
-    private final List<Class<? extends CardData>> cardDataClasses;
+    private final Set<Class<? extends CardData>> cardDataClasses;
 
     CardDataClassAdapter(OnCardDataClassClickCallback onCardDataClassClickCallback,
-                         List<Class<? extends CardData>> cardDataClasses, int startEndPadding) {
+                         Set<Class<? extends CardData>> cardDataClasses, int startEndPadding) {
         this.onCardDataClassClickCallback = onCardDataClassClickCallback;
         this.cardDataClasses = cardDataClasses;
         this.startEndPadding = startEndPadding;
     }
 
     CardDataClassAdapter(OnCardDataClassClickCallback onCardDataClassClickCallback,
-                         List<Class<? extends CardData>> cardDataClasses) {
+                         Set<Class<? extends CardData>> cardDataClasses) {
         this(onCardDataClassClickCallback, cardDataClasses, 0);
     }
 
@@ -71,15 +73,32 @@ class CardDataClassAdapter extends RecyclerView.Adapter<CardDataClassAdapter.Vie
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Class<? extends CardData> cardDataClass = getSortedCardDataClasses().get(position);
+
         CardDataClassView cardDataClassView =
                 (CardDataClassView) ((FrameLayout) holder.itemView).getChildAt(0);
-        cardDataClassView.setCardDataClass(cardDataClasses.get(position));
-        holder.cardDataClass = cardDataClasses.get(position);
+        cardDataClassView.setCardDataClass(cardDataClass);
+        holder.cardDataClass = cardDataClass;
     }
 
     @Override
     public int getItemCount() {
         return cardDataClasses.size();
+    }
+
+    private List<Class<? extends CardData>> getSortedCardDataClasses() {
+        List<Class<? extends CardData>> sortedCardDataClasses = new ArrayList<>(cardDataClasses);
+        Collections.sort(sortedCardDataClasses, new Comparator<Class<? extends CardData>>() {
+            @Override
+            public int compare(Class<? extends CardData> a, Class<? extends CardData> b) {
+                CardData.Metadata
+                        ma = a.getAnnotation(CardData.Metadata.class),
+                        mb = b.getAnnotation(CardData.Metadata.class);
+                return ma.name().compareTo(mb.name());
+            }
+        });
+
+        return sortedCardDataClasses;
     }
 
     public interface OnCardDataClassClickCallback {

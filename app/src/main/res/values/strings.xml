@@ -101,13 +101,16 @@
     -->
 
     <!-- Displayed as a button -->
-    <string name="write_card">Write Card</string>
+    <string name="view_card_data">View Data</string>
 
     <!-- Displayed as a button -->
-    <string name="emulate_card">Emulate Card</string>
+    <string name="write_card_data">Write</string>
 
     <!-- Displayed as a button -->
-    <string name="read_card">Read Card</string>
+    <string name="emulate_card_data">Emulate</string>
+
+    <!-- Displayed as a button -->
+    <string name="read_card_data">Set Data</string>
 
     <!-- Section header -->
     <string name="date_acquired">Date Acquired</string>
@@ -160,7 +163,7 @@
     <string name="no_device_can_emulate">No connected device can emulate this kind of card</string>
 
     <!-- Dialog title -->
-    <string name="choose_card_type">Choose card type to read</string>
+    <string name="choose_card_type">Choose card type</string>
 
     <!-- Toast displayed when card writing fails with an error -->
     <string name="failed_to_write">Failed to write card: <xliff:g id="error">%1$s</xliff:g></string>
@@ -191,6 +194,9 @@
 
     <!-- Toast shown when user tries to write or emulate a card with no card data -->
     <string name="no_card_data">Card has no card data</string>
+
+    <!-- Toast shown when card type doesn't have a view dialog -->
+    <string name="no_view_card_dialog">This type of card doesn\'t have a detailed view</string>
 
 
     <!--
@@ -252,6 +258,17 @@
 
 
     <!--
+        ComponentDialogFragment
+    -->
+
+    <!-- Dialog title -->
+    <string name="manual_card_data_entry_title">Manual <xliff:g id="card_data_class">%1$s</xliff:g> data entry</string>
+
+    <!-- Dialog title -->
+    <string name="view_card_data_title"><xliff:g id="card_data_class">%1$s</xliff:g> data</string>
+
+
+    <!--
         DeleteAllCardsPreference
     -->
 
@@ -274,6 +291,49 @@
 
     <!-- Toast message shown when user tries open settings for a device that doesn't support any -->
     <string name="device_has_no_settings">Device has no settings</string>
+
+
+    <!--
+        FixedBinaryComponent
+    -->
+
+    <!-- Error message -->
+    <string name="invalid_fixed_value">Invalid fixed value</string>
+
+
+    <!--
+        HIDCardDataDialogFragment
+    -->
+
+    <!-- Component label -->
+    <string name="hid_format">Format</string>
+
+    <!-- Format type -->
+    <string name="hid_raw">Raw</string>
+
+    <!-- Format type -->
+    <string name="hid_26_bit">HID 26-bit (H10301)</string>
+
+    <!-- Format type -->
+    <string name="hid_34_bit">HID 34-bit (H10306)</string>
+
+    <!-- Format type -->
+    <string name="hid_35_bit_corporate_1000">HID 35-bit Corporate 1000</string>
+
+    <!-- Format type -->
+    <string name="hid_37_bit">HID 37-bit (H10302)</string>
+
+    <!-- Format type -->
+    <string name="hid_37_bit_with_facility_code">HID 37-bit with Facility Code (H10304)</string>
+
+    <!-- Component label -->
+    <string name="hid_data">Data</string>
+
+    <!-- Component label -->
+    <string name="hid_facility_code">Facility Code (hex)</string>
+
+    <!-- Component label -->
+    <string name="hid_card_number">Card Number (hex)</string>
 
 
     <!--
@@ -331,11 +391,28 @@
 
 
     <!--
-        PickCardDeviceDialogFragment
+        ParityBinaryComponent
+    -->
+
+    <!-- Error message -->
+    <string name="invalid_parity">Invalid parity</string>
+
+
+    <!--
+        PickCardDataSourceDialogFragment
     -->
 
     <!-- Dialog title -->
-    <string name="choose_device">Choose device</string>
+    <string name="choose_source">Choose source</string>
+
+    <!-- Dialog title -->
+    <string name="choose_sink">Choose destination</string>
+
+    <!-- Dialog title -->
+    <string name="choose_target">Choose target</string>
+
+    <!-- Option in source listing -->
+    <string name="manual_entry">Manual entry</string>
 
 
     <!--
@@ -498,6 +575,28 @@
 
 
     <!--
+        UsbSerialCardDevice
+    -->
+
+    <!-- Toast displayed when serial USB card device opening fails with an error -->
+    <string name="failed_open_usb_serial_device">Failed to open USB serial device</string>
+
+
+    <!--
+        VariableBinaryComponent
+    -->
+
+    <!-- Error message, should be short -->
+    <string name="cant_be_empty">Can\'t be empty</string>
+
+    <!-- Error message, should be short -->
+    <string name="invalid_hex_value">Invalid hex digit</string>
+
+    <!-- Error message, should be short -->
+    <string name="too_many_bits">Too many bits</string>
+
+
+    <!--
         WalletActivity
     -->
 
@@ -506,10 +605,9 @@
 
 
     <!--
-        UsbSerialCardDevice
+        Unsorted stuff falls here...
     -->
+    <string name="dummy_to_catch_unsorted_stuff" tools:keep="@string/dummy_to_catch_unsorted_stuff"/>
 
-    <!-- Toast displayed when serial USB card device opening fails with an error -->
-    <string name="failed_open_usb_serial_device">Failed to open USB serial device</string>
 
 </resources>

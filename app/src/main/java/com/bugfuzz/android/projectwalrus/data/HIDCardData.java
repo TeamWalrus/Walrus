@@ -29,27 +29,31 @@ import java.util.Random;
 @Parcel
 @CardData.Metadata(
         name = "HID",
-        icon = R.drawable.drawable_hid
+        icon = R.drawable.drawable_hid,
+        viewDialogFragment = HIDCardDataDialogFragment.class,
+        editDialogFragment = HIDCardDataDialogFragment.class
 )
 public class HIDCardData extends CardData {
 
     public BigInteger data;
+    public Integer format;
 
     public HIDCardData() {
+        data = BigInteger.ZERO;
     }
 
     public HIDCardData(BigInteger data) {
+        this(data, null);
+    }
+
+    public HIDCardData(BigInteger data, Integer format) {
         this.data = data;
+        this.format = format;
     }
 
     @SuppressWarnings("unused")
     public static HIDCardData newDebugInstance() {
-        return new HIDCardData(new BigInteger(44, new Random()));
-    }
-
-    @Override
-    public String getTypeDetailInfo() {
-        return (data.bitLength() + (data.signum() == -1 ? 1 : 0)) + "-bit";
+        return new HIDCardData(new BigInteger(100, new Random()));
     }
 
     @Override

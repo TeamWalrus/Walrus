@@ -112,7 +112,6 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         return new MaterialDialog.Builder(getActivity())
                 .title(R.string.bulk_reading_cards)
                 .customView(cardDataIOView, false)
-                .cancelable(true)
                 .positiveText(R.string.stop_button)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override

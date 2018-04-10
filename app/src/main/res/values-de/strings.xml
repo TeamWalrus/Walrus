@@ -36,9 +36,9 @@
     </plurals>
     <string name="default_card_name">Unbenannte Karte</string>
     <string name="delete_button">Löschen</string>
-    <string name="write_card">Karte schreiben</string>
-    <string name="emulate_card">Karte emulieren</string>
-    <string name="read_card">Karte lesen</string>
+    <string name="write_card_data">Karte schreiben</string>
+    <string name="emulate_card_data">Karte emulieren</string>
+    <string name="read_card_data">Karte lesen</string>
     <string name="date_acquired">Datum erhalten</string>
     <string name="location">Standort</string>
     <string name="unknown">Unbekannt</string>
@@ -89,7 +89,7 @@
     <string name="search_cards">Karten suchen</string>
     <string name="delete">Löschen</string>
     <string name="duplicate">Duplizieren</string>
-    <string name="choose_device">Gerät auswählen</string>
+    <string name="choose_source">Gerät auswählen</string>
     <string name="open_source_preference">Open Source</string>
     <string name="delete_all_cards_preference">Alle Karten löschen</string>
     <string name="default_card_slot_preference">Standard-Kartensteckplatz</string>

@@ -22,36 +22,27 @@ package com.bugfuzz.android.projectwalrus.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.RecyclerView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
-import com.bugfuzz.android.projectwalrus.device.CardDevice;
-import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PickCardDataClassDialogFragment extends DialogFragment
         implements CardDataClassAdapter.OnCardDataClassClickCallback {
 
-    public static PickCardDataClassDialogFragment show(Activity activity, String fragmentTag,
-                                                       List<Class<? extends CardData>>
-                                                               cardDataClasses, int callbackId) {
+    public static PickCardDataClassDialogFragment show(
+            Activity activity, String fragmentTag, Set<Class<? extends CardData>> cardDataClasses,
+            int callbackId) {
         PickCardDataClassDialogFragment dialog = new PickCardDataClassDialogFragment();
 
         String[] cardDataClassNames = new String[cardDataClasses.size()];
-        for (int i = 0; i < cardDataClasses.size(); ++i)
-            cardDataClassNames[i] = cardDataClasses.get(i).getName();
+        int i = 0;
+        for (Class<? extends CardData> cardDataClass : cardDataClasses)
+            cardDataClassNames[i++] = cardDataClass.getName();
 
         Bundle args = new Bundle();
         args.putStringArray("card_data_class_names", cardDataClassNames);
@@ -64,7 +55,7 @@ public class PickCardDataClassDialogFragment extends DialogFragment
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        List<Class<? extends CardData>> cardDataClasses = new ArrayList<>();
+        Set<Class<? extends CardData>> cardDataClasses = new HashSet<>();
         String[] cardDataClassNames = getArguments().getStringArray(
                 "card_data_class_names");
         if (cardDataClassNames != null)

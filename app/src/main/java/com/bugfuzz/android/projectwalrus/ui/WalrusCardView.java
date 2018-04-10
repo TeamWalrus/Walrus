@@ -22,8 +22,6 @@ package com.bugfuzz.android.projectwalrus.ui;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Pair;
@@ -37,13 +35,16 @@ import android.widget.TextView;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.Card;
 import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.util.UIUtils;
 
 public class WalrusCardView extends FrameLayout {
 
+    // TODO: ugh, public
     public EditText editableNameView;
     private Pair<Integer, Integer> maxSize;
     private Card card;
-    private TextView nameView, humanReadableTextView;
+    private TextView nameView;
+    private TextView humanReadableTextView;
     private ImageView logoView;
 
     public WalrusCardView(Context context, AttributeSet attrs, int defStyle) {
@@ -83,20 +84,10 @@ public class WalrusCardView extends FrameLayout {
         logoView = view.findViewById(R.id.logo);
         humanReadableTextView = view.findViewById(R.id.humanReadableText);
 
-        editableNameView.addTextChangedListener(new TextWatcher() {
+        editableNameView.addTextChangedListener(new UIUtils.TextChangeWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onNotIgnoredTextChanged(CharSequence s, int start, int before, int count) {
                 card.name = editableNameView.getText().toString();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
             }
         });
 

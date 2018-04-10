@@ -40,6 +40,8 @@ public class DebugDevice extends CardDevice {
 
     public DebugDevice(Context context) {
         super(context);
+
+        setStatus(context.getString(R.string.idle));
     }
 
     @Override

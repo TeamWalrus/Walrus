@@ -94,7 +94,6 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
         return new MaterialDialog.Builder(getActivity())
                 .title(title)
                 .customView(cardDataIOView, false)
-                .cancelable(true)
                 .negativeText(R.string.cancel_button)
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override

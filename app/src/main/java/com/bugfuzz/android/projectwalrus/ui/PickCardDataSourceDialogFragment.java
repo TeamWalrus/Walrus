@@ -27,8 +27,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
@@ -36,7 +38,7 @@ import com.bugfuzz.android.projectwalrus.data.CardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
-public class PickCardDeviceDialogFragment extends DialogFragment
+public class PickCardDataSourceDialogFragment extends DialogFragment
         implements CardDeviceAdapter.OnCardDeviceClickCallback {
 
     private RecyclerView.Adapter adapter;
@@ -48,12 +50,11 @@ public class PickCardDeviceDialogFragment extends DialogFragment
                 adapter.notifyDataSetChanged();
         }
     };
-    
-    public static PickCardDeviceDialogFragment show(Activity activity, String fragmentTag,
-                                                    Class<? extends CardData> cardDataFilterClass,
-                                                    CardDeviceAdapter.FilterMode cardDataFilterMode,
-                                                    int callbackId) {
-        PickCardDeviceDialogFragment dialog = new PickCardDeviceDialogFragment();
+
+    public static PickCardDataSourceDialogFragment show(
+            Activity activity, String fragmentTag, Class<? extends CardData> cardDataFilterClass,
+            CardDeviceAdapter.FilterMode cardDataFilterMode, int callbackId) {
+        PickCardDataSourceDialogFragment dialog = new PickCardDataSourceDialogFragment();
 
         Bundle args = new Bundle();
         if (cardDataFilterClass != null) {
@@ -83,12 +84,41 @@ public class PickCardDeviceDialogFragment extends DialogFragment
                     getArguments().getInt("card_data_filter_mode")];
         }
 
-        adapter = new CardDeviceAdapter(cardDataFilterClass, cardDataFilterMode, this, 14);
+        adapter = new CardDeviceAdapter(cardDataFilterClass, cardDataFilterMode, this);
+
+        @StringRes int title;
+        if (cardDataFilterMode == null)
+            title = R.string.choose_source;
+        else if (cardDataFilterMode == CardDeviceAdapter.FilterMode.WRITABLE)
+            title = R.string.choose_sink;
+        else
+            title = R.string.choose_target;
 
         return new MaterialDialog.Builder(getActivity())
-                .title(R.string.choose_device)
-                .adapter(adapter, null)
+                .title(title)
+                .customView(R.layout.dialog_pick_card_data_source, false)
                 .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        View dialogView = ((MaterialDialog) getDialog()).getCustomView();
+
+        ((RecyclerView) dialogView.findViewById(R.id.card_device_list)).setAdapter(adapter);
+
+        View manualEntryView = dialogView.findViewById(R.id.manual_entry);
+        if (getArguments().getString("card_data_filter_class") == null)
+            manualEntryView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((OnCardDataSourceClickCallback) getActivity()).onManualEntryClick(
+                            getArguments().getInt("callback_id"));
+                }
+            });
+        else
+            manualEntryView.setVisibility(View.GONE);
     }
 
     @Override
@@ -111,11 +141,13 @@ public class PickCardDeviceDialogFragment extends DialogFragment
 
     @Override
     public void onCardDeviceClick(CardDevice cardDevice) {
-        ((OnCardDeviceClickCallback) getActivity()).onCardDeviceClick(cardDevice,
+        ((OnCardDataSourceClickCallback) getActivity()).onCardDeviceClick(cardDevice,
                 getArguments().getInt("callback_id"));
     }
 
-    public interface OnCardDeviceClickCallback {
+    public interface OnCardDataSourceClickCallback {
+        void onManualEntryClick(int callbackId);
+
         void onCardDeviceClick(CardDevice cardDevice, int callbackId);
     }
 }

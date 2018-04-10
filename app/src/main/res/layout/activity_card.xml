@@ -53,22 +53,28 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/writeCard"
+                    android:id="@+id/viewData"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="onWriteCardClick"
-                    android:text="@string/write_card"
+                    android:onClick="onViewCardDataClick"
+                    android:text="@string/view_card_data"
                     tools:ignore="ButtonStyle"/>
 
                 <Button
-                    android:id="@+id/emulateCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:onClick="onEmulateCardClick"
-                    android:text="@string/emulate_card"
+                    android:onClick="onWriteCardDataClick"
+                    android:text="@string/write_card_data"
+                    tools:ignore="ButtonStyle"/>
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onEmulateCardDataClick"
+                    android:text="@string/emulate_card_data"
                     tools:ignore="ButtonStyle"/>
 
             </LinearLayout>
@@ -79,12 +85,11 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/readCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="onReadCardClick"
-                    android:text="@string/read_card"/>
+                    android:onClick="onReadCardDataClick"
+                    android:text="@string/read_card_data"/>
 
             </LinearLayout>
 

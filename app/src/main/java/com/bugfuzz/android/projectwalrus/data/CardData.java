@@ -19,6 +19,7 @@
 
 package com.bugfuzz.android.projectwalrus.data;
 
+import android.app.DialogFragment;
 import android.support.annotation.DrawableRes;
 
 import java.io.Serializable;
@@ -28,6 +29,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 public abstract class CardData implements Serializable {
+
+    public static Class<? extends CardData>[] getCardDataClasses() {
+        // noinspection unchecked
+        return new Class[]{
+                HIDCardData.class,
+                ISO14443ACardData.class
+        };
+    }
+
     public String getTypeDetailInfo() {
         return null;
     }
@@ -40,5 +50,13 @@ public abstract class CardData implements Serializable {
         String name();
 
         @DrawableRes int icon();
+
+        Class<? extends DialogFragment> viewDialogFragment() default DialogFragment.class;
+
+        Class<? extends DialogFragment> editDialogFragment() default DialogFragment.class;
+    }
+
+    public interface OnEditedCardDataCallback {
+        void onEditedCardData(CardData cardData, int callbackId);
     }
 }

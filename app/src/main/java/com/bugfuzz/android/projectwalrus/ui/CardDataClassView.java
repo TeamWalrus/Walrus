@@ -29,7 +29,6 @@ import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.data.CardData;
-import com.bugfuzz.android.projectwalrus.device.CardDevice;
 
 public class CardDataClassView extends FrameLayout {
 
