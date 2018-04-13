@@ -27,8 +27,10 @@ import android.hardware.usb.UsbManager;
 import com.bugfuzz.android.projectwalrus.R;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 public abstract class UsbCardDevice extends CardDevice {
 
@@ -61,10 +63,12 @@ public abstract class UsbCardDevice extends CardDevice {
         super.close();
     }
 
+    @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface UsbIds {
         Ids[] value();
 
+        @Target({})
         @Retention(RetentionPolicy.RUNTIME)
         @interface Ids {
             int vendorId();

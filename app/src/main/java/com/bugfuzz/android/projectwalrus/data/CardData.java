@@ -22,8 +22,10 @@ package com.bugfuzz.android.projectwalrus.data;
 import android.support.annotation.DrawableRes;
 
 import java.io.Serializable;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 public abstract class CardData implements Serializable {
     public String getTypeDetailInfo() {
@@ -32,6 +34,7 @@ public abstract class CardData implements Serializable {
 
     public abstract String getHumanReadableText();
 
+    @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
         String name();

@@ -29,8 +29,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.bugfuzz.android.projectwalrus.data.CardData;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 public abstract class CardDevice {
 
@@ -115,6 +117,7 @@ public abstract class CardDevice {
         String getVersion() throws IOException;
     }
 
+    @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
         String name();

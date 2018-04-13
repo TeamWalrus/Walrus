@@ -24,8 +24,10 @@ import android.support.annotation.Size;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -117,6 +119,7 @@ class Proxmark3Command {
         return new String(ArrayUtils.subarray(data, 0, (int) args[0]));
     }
 
+    @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
     @Retention(RetentionPolicy.SOURCE)
     @LongDef({
             ACK,
