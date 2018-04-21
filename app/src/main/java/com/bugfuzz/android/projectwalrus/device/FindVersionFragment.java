@@ -63,7 +63,7 @@ public class FindVersionFragment extends Fragment {
         void onVersionError(IOException exception);
     }
 
-    private class FindVersionTask extends AsyncTask<Void, Void, Pair<String, IOException>> {
+    private static class FindVersionTask extends AsyncTask<Void, Void, Pair<String, IOException>> {
 
         private final WeakReference<FindVersionFragment> findVersionFragmentWeakReference;
         private final CardDevice.Versioned versionedCardDevice;
