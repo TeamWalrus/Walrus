@@ -34,8 +34,8 @@ import java.lang.annotation.Target;
 
 public abstract class UsbCardDevice extends CardDevice {
 
-    protected final UsbDevice usbDevice;
-    protected UsbDeviceConnection usbDeviceConnection;
+    private final UsbDevice usbDevice;
+    UsbDeviceConnection usbDeviceConnection;
 
     UsbCardDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context);

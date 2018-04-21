@@ -51,6 +51,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         }
     };
 
+    @SuppressWarnings("UnusedReturnValue")
     public static PickCardDataSourceDialogFragment show(
             Activity activity, String fragmentTag, Class<? extends CardData> cardDataFilterClass,
             CardDeviceAdapter.FilterMode cardDataFilterMode, int callbackId) {
@@ -105,6 +106,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         super.onStart();
 
         View dialogView = ((MaterialDialog) getDialog()).getCustomView();
+        assert dialogView != null;
 
         ((RecyclerView) dialogView.findViewById(R.id.card_device_list)).setAdapter(adapter);
 

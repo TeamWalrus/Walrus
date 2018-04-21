@@ -34,6 +34,7 @@ import java.util.Set;
 public class PickCardDataClassDialogFragment extends DialogFragment
         implements CardDataClassAdapter.OnCardDataClassClickCallback {
 
+    @SuppressWarnings("UnusedReturnValue")
     public static PickCardDataClassDialogFragment show(
             Activity activity, String fragmentTag, Set<Class<? extends CardData>> cardDataClasses,
             int callbackId) {

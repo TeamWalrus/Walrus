@@ -42,10 +42,8 @@ import com.bugfuzz.android.projectwalrus.ui.BulkReadCardsActivity;
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;

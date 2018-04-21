@@ -46,7 +46,7 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
     public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
 
-    private int id;
+    private final int id;
     private static int nextId;
 
     private final Context context;

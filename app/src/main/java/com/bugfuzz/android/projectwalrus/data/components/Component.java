@@ -30,7 +30,7 @@ import java.util.Set;
 
 abstract public class Component {
 
-    protected OnComponentChangeCallback onComponentChangeCallback;
+    OnComponentChangeCallback onComponentChangeCallback;
 
     public void createView(Context context) {
     }
@@ -63,6 +63,7 @@ abstract public class Component {
     }
 
     interface OnComponentChangeCallback {
+        @SuppressWarnings("unused")
         void onComponentChange(Component component);
     }
 }

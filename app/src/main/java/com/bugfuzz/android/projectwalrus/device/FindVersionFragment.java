@@ -30,6 +30,7 @@ import java.lang.ref.WeakReference;
 
 public class FindVersionFragment extends Fragment {
 
+    @SuppressWarnings("UnusedReturnValue")
     public static FindVersionFragment show(Activity activity,
                                            CardDevice cardDevice, String fragmentTag) {
         FindVersionFragment fragment = new FindVersionFragment();
@@ -68,8 +69,8 @@ public class FindVersionFragment extends Fragment {
         private final WeakReference<FindVersionFragment> findVersionFragmentWeakReference;
         private final CardDevice.Versioned versionedCardDevice;
 
-        public FindVersionTask(FindVersionFragment findVersionFragment,
-                               CardDevice.Versioned versionedCardDevice) {
+        FindVersionTask(FindVersionFragment findVersionFragment,
+                        CardDevice.Versioned versionedCardDevice) {
             this.findVersionFragmentWeakReference = new WeakReference<>(findVersionFragment);
 
             this.versionedCardDevice = versionedCardDevice;

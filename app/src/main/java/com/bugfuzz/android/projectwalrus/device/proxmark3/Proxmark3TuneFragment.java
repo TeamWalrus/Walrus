@@ -32,6 +32,7 @@ import java.lang.ref.WeakReference;
 
 public class Proxmark3TuneFragment extends Fragment {
 
+    @SuppressWarnings("UnusedReturnValue")
     public static Proxmark3TuneFragment show(Activity activity,
                                              Proxmark3Device proxmark3Device,
                                              boolean lf, String fragmentTag) {

@@ -70,7 +70,7 @@ public abstract class ContainerComponent extends Component {
 
     @Override
     @CallSuper
-    public void applyToValue(CardData cardData) {
+    void applyToValue(CardData cardData) {
         for (Component child : getApplicableChildren())
             child.applyToValue(cardData);
     }

@@ -32,11 +32,11 @@ import java.math.BigInteger;
 
 public abstract class BinaryComponent extends Component {
 
-    protected final int startPos;
-    protected final Integer length;
-    protected final Field field;
+    final int startPos;
+    final Integer length;
+    private final Field field;
     private final String name;
-    protected LinearLayout viewGroup;
+    LinearLayout viewGroup;
 
     BinaryComponent(Field field, String name, int startPos, Integer length) {
         this.field = field;
@@ -45,7 +45,7 @@ public abstract class BinaryComponent extends Component {
         this.length = length;
     }
 
-    protected void createViewGroup(Context context) {
+    void createViewGroup(Context context) {
         viewGroup = new LinearLayout(context);
         viewGroup.setOrientation(LinearLayout.VERTICAL);
 
@@ -61,7 +61,7 @@ public abstract class BinaryComponent extends Component {
         return viewGroup;
     }
 
-    protected void setFromBinaryValue(BigInteger whole, BigInteger value) {
+    void setFromBinaryValue(BigInteger whole, BigInteger value) {
     }
 
     @Override

@@ -83,6 +83,7 @@ public abstract class ComponentDialogFragment extends DialogFragment
         View result = super.onCreateView(inflater, container, savedInstanceState);
 
         ViewGroup viewGroup = (ViewGroup) ((MaterialDialog) getDialog()).getCustomView();
+        assert viewGroup != null;
 
         rootComponent.createView(getActivity());
         viewGroup.addView(rootComponent.getView());
@@ -130,5 +131,5 @@ public abstract class ComponentDialogFragment extends DialogFragment
         outState.putBundle("root_component", bundle);
     }
 
-    public abstract CardData createCardData();
+    protected abstract CardData createCardData();
 }

@@ -29,6 +29,7 @@ import com.bugfuzz.android.projectwalrus.R;
 
 public class Proxmark3TuneDialogFragment extends DialogFragment {
 
+    @SuppressWarnings("UnusedReturnValue")
     public static Proxmark3TuneDialogFragment show(Activity activity, String fragmentTag) {
         Proxmark3TuneDialogFragment dialog = new Proxmark3TuneDialogFragment();
 

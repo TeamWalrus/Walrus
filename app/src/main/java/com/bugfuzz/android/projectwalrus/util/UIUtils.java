@@ -36,6 +36,7 @@ public class UIUtils {
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         }
 
+        @SuppressWarnings("unused")
         public abstract void onNotIgnoredTextChanged(CharSequence charSequence, int i, int i1,
                                                      int i2);
 

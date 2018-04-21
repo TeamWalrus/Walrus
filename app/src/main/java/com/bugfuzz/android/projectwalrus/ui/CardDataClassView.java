@@ -21,8 +21,6 @@ package com.bugfuzz.android.projectwalrus.ui;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,27 +30,10 @@ import com.bugfuzz.android.projectwalrus.data.CardData;
 
 public class CardDataClassView extends FrameLayout {
 
-    public CardDataClassView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-
-        init(attrs, defStyle);
-    }
-
-    public CardDataClassView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-
-        init(attrs, 0);
-    }
-
     public CardDataClassView(Context context) {
         super(context);
 
-        init(null, 0);
-    }
-
-    private void init(AttributeSet attrs, int defStyle) {
-        View view = inflate(getContext(), R.layout.view_card_data_class, null);
-        addView(view);
+        addView(inflate(getContext(), R.layout.view_card_data_class, null));
     }
 
     public void setCardDataClass(Class<? extends CardData> cardDataClass) {

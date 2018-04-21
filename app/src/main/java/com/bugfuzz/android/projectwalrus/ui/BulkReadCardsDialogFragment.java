@@ -91,6 +91,7 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         }
     };
 
+    @SuppressWarnings("UnusedReturnValue")
     public static BulkReadCardsDialogFragment show(Activity activity, String fragmentTag,
                                                    BulkReadCardDataSink sink, int callbackId) {
         BulkReadCardsDialogFragment dialog = new BulkReadCardsDialogFragment();

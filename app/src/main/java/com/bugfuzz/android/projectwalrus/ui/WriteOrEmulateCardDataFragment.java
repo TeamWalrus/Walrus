@@ -44,6 +44,7 @@ public class WriteOrEmulateCardDataFragment extends Fragment
 
     private volatile boolean stop;
 
+    @SuppressWarnings("UnusedReturnValue")
     public static WriteOrEmulateCardDataFragment show(Activity activity, String fragmentTag,
                                                       CardDevice cardDevice, CardData cardData,
                                                       boolean write, int callbackId) {
@@ -138,7 +139,7 @@ public class WriteOrEmulateCardDataFragment extends Fragment
             fragmentManager.beginTransaction().remove(dialogFragment).commit();
     }
 
-    public void setCardData(CardData cardData) {
+    private void setCardData(CardData cardData) {
         this.cardData = cardData;
     }
 }

@@ -41,7 +41,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     private volatile boolean receiving;
     private byte[] buffer = new byte[0];
 
-    public UsbSerialCardDevice(Context context, UsbDevice usbDevice) throws IOException {
+    protected UsbSerialCardDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice);
 
         usbSerialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice, usbDeviceConnection);
@@ -94,7 +94,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
     abstract protected byte[] formatOutgoing(T out);
 
-    protected T receive(long timeout) {
+    private T receive(long timeout) {
         if (!receiving)
             throw new RuntimeException("Not receiving");
 
@@ -117,8 +117,8 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         return receive(receiveSink, 250);
     }
 
-    protected <O> O receive(ReceiveSink<T, O> receiveSink,
-                            @SuppressWarnings("SameParameterValue") long internalTimeout)
+    private <O> O receive(ReceiveSink<T, O> receiveSink,
+                          @SuppressWarnings("SameParameterValue") long internalTimeout)
             throws IOException {
         while (receiveSink.wantsMore()) {
             T in = receive(internalTimeout);

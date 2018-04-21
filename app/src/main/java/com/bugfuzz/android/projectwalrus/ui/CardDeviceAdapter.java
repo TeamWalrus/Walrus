@@ -43,8 +43,8 @@ class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.ViewHolde
     private final OnCardDeviceClickCallback onCardDeviceClickCallback;
     private final int startEndPadding;
 
-    CardDeviceAdapter(Class<? extends CardData> cardDataFilterClass, FilterMode cardDataFilterMode,
-                      OnCardDeviceClickCallback onCardDeviceClickCallback, int startEndPadding) {
+    private CardDeviceAdapter(Class<? extends CardData> cardDataFilterClass, FilterMode cardDataFilterMode,
+                              OnCardDeviceClickCallback onCardDeviceClickCallback, int startEndPadding) {
         this.cardDataFilterClass = cardDataFilterClass;
         this.cardDataFilterMode = cardDataFilterMode;
         this.onCardDeviceClickCallback = onCardDeviceClickCallback;

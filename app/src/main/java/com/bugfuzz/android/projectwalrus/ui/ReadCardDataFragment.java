@@ -41,6 +41,7 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
 
     private volatile boolean stop;
 
+    @SuppressWarnings("UnusedReturnValue")
     public static ReadCardDataFragment show(Activity activity, String fragmentTag,
                                             CardDevice cardDevice,
                                             Class<? extends CardData> cardDataClass,
