@@ -54,7 +54,8 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
     @SuppressWarnings("UnusedReturnValue")
     public static PickCardDataSourceDialogFragment show(
             Activity activity, String fragmentTag, Class<? extends CardData> cardDataFilterClass,
-            CardDeviceAdapter.FilterMode cardDataFilterMode, int callbackId) {
+            CardDeviceAdapter.FilterMode cardDataFilterMode, boolean allowManualEntry,
+            int callbackId) {
         PickCardDataSourceDialogFragment dialog = new PickCardDataSourceDialogFragment();
 
         Bundle args = new Bundle();
@@ -62,6 +63,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
             args.putString("card_data_filter_class", cardDataFilterClass.getName());
             args.putInt("card_data_filter_mode", cardDataFilterMode.ordinal());
         }
+        args.putBoolean("allow_manual_entry", allowManualEntry);
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 
@@ -111,7 +113,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         ((RecyclerView) dialogView.findViewById(R.id.card_device_list)).setAdapter(adapter);
 
         View manualEntryView = dialogView.findViewById(R.id.manual_entry);
-        if (getArguments().getString("card_data_filter_class") == null)
+        if (getArguments().getBoolean("allow_manual_entry"))
             manualEntryView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

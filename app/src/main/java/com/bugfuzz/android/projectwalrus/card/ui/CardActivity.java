@@ -389,7 +389,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     private void startReadCardDataSetup() {
         PickCardDataSourceDialogFragment.show(this, PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG, null,
-                null, 0);
+                null, mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE, 0);
     }
 
     public void onWriteCardDataClick(View view) {
@@ -433,6 +433,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 card.cardData.getClass(),
                 write ? CardDeviceAdapter.FilterMode.WRITABLE :
                         CardDeviceAdapter.FilterMode.EMULATABLE,
+                false,
                 write ? 1 : 2);
     }
 
