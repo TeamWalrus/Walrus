@@ -26,7 +26,7 @@ import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.bugfuzz.android.projectwalrus.data.CardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 
 import java.io.IOException;
 import java.lang.annotation.ElementType;

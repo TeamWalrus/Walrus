@@ -40,7 +40,7 @@
 
     <PreferenceCategory android:title="@string/wallet_settings_preference">
 
-        <com.bugfuzz.android.projectwalrus.ui.DeleteAllCardsPreference
+        <com.bugfuzz.android.projectwalrus.card.ui.DeleteAllCardsPreference
             android:title="@string/delete_all_cards_preference"/>
 
     </PreferenceCategory>

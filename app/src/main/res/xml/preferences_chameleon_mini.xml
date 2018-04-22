@@ -19,7 +19,7 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniSlotPickerPreference
+    <com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniSlotPickerPreference
         android:defaultValue="1"
         android:key="default_chameleon_cardslot"
         android:summary="@string/default_card_slot_preference_message"

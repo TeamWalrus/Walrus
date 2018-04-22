@@ -33,10 +33,10 @@ import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.data.Card;
-import com.bugfuzz.android.projectwalrus.data.CardData;
-import com.bugfuzz.android.projectwalrus.data.DatabaseHelper;
-import com.bugfuzz.android.projectwalrus.data.QueryUtils;
+import com.bugfuzz.android.projectwalrus.card.Card;
+import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
+import com.bugfuzz.android.projectwalrus.card.DatabaseHelper;
+import com.bugfuzz.android.projectwalrus.card.QueryUtils;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import static android.content.Context.VIBRATOR_SERVICE;

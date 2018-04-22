@@ -35,9 +35,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.data.Card;
-import com.bugfuzz.android.projectwalrus.data.CardData;
-import com.bugfuzz.android.projectwalrus.ui.BulkReadCardsActivity;
+import com.bugfuzz.android.projectwalrus.card.Card;
+import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
+import com.bugfuzz.android.projectwalrus.device.ui.BulkReadCardsActivity;
 
 import org.parceler.Parcels;
 

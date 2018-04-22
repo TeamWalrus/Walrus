@@ -39,7 +39,7 @@
             android:paddingStart="8dp"
             android:paddingTop="8dp">
 
-            <com.bugfuzz.android.projectwalrus.ui.WalrusCardView
+            <com.bugfuzz.android.projectwalrus.card.ui.WalrusCardView
                 android:id="@+id/card"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

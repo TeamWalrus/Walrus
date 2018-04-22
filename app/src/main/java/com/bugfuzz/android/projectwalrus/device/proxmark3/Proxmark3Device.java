@@ -25,11 +25,12 @@ import android.hardware.usb.UsbDevice;
 import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.data.CardData;
-import com.bugfuzz.android.projectwalrus.data.HIDCardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbSerialCardDevice;
+import com.bugfuzz.android.projectwalrus.device.proxmark3.ui.Proxmark3Activity;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -302,12 +303,12 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
         }
     }
 
-    static class TuneResult implements Serializable {
+    public static class TuneResult implements Serializable {
 
-        final boolean lf, hf;
+        public final boolean lf, hf;
 
-        final Float v_125, v_134, peak_f, peak_v, v_HF;
-        final float[] v_LF;
+        public final Float v_125, v_134, peak_f, peak_v, v_HF;
+        public final float[] v_LF;
 
         TuneResult(boolean lf, boolean hf, float[] v_LF, Float v_125, Float v_134, Float peak_f,
                    Float peak_v, Float v_HF) {

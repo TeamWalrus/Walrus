@@ -34,7 +34,7 @@ The current layout of Walrus's source code is as follows:
 
   * `/java/com/bugfuzz/android/projectwalrus`: Actual code lives here!
 
-    * `/data`: Code to do with persistent data (i.e. the wallet). The `Card` class, the base `CardData` class and various card data type classes, database models and database helpers are here.
+    * `/card`: Code to do with persistent data (i.e. the wallet). The `Card` class, the base `CardData` class and various card data type classes, database models and database helpers are here.
 
     * `/device`: Device-agnostic and device-specific driver code. The important `CardDeviceManager` lives here alongside the base `CardDevice` class and its child classes for various basic kinds of device (serial, line-based, etc.). Code to handle bulk reading is also located here.
 
@@ -42,7 +42,7 @@ The current layout of Walrus's source code is as follows:
 
       * `/chameleonmini`: Surprise! Chameleon Mini driver code.
 
-    * `/ui`: Code to do with the UI.
+    * `/ui`: Code to do with other UI.
 
     * `/util`: Miscellaneous.
 

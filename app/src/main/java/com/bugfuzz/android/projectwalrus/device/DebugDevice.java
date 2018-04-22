@@ -23,9 +23,9 @@ import android.content.Context;
 import android.os.SystemClock;
 
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.data.CardData;
-import com.bugfuzz.android.projectwalrus.data.HIDCardData;
-import com.bugfuzz.android.projectwalrus.data.ISO14443ACardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.ISO14443ACardData;
 
 import java.lang.reflect.InvocationTargetException;
 
