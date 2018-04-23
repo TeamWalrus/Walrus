@@ -49,8 +49,9 @@ import java.util.regex.Pattern;
         supportsEmulate = {}
 )
 @UsbCardDevice.UsbIds({
-        @UsbCardDevice.UsbIds.Ids(vendorId = 11565, productId = 20557),
-        @UsbCardDevice.UsbIds.Ids(vendorId = 39620, productId = 19343)
+        @UsbCardDevice.UsbIds.Ids(vendorId = 0x2d2d, productId = 0x504d), // CDC Proxmark3
+        @UsbCardDevice.UsbIds.Ids(vendorId = 0x9ac4, productId = 0x4b8f), // HID Proxmark3
+        @UsbCardDevice.UsbIds.Ids(vendorId = 0x502d, productId = 0x502d)  // Proxmark3 Easy(?)
 })
 public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
         implements CardDevice.Versioned {
