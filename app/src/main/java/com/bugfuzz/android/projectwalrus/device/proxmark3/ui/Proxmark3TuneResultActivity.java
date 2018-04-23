@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -105,7 +106,7 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
             findViewById(R.id.hf).setVisibility(View.GONE);
     }
 
-    private void setResultInfo(float value, float marginal, float ok, int id) {
+    private void setResultInfo(float value, float marginal, float ok, @IdRes int id) {
         int text;
         int color;
 
