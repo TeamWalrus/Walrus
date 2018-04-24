@@ -31,7 +31,8 @@ import com.bugfuzz.android.projectwalrus.R;
 
 public class DeleteCardConfirmDialogFragment extends DialogFragment {
 
-    public static void show(Activity activity, String fragmentTag, int callbackId) {
+    public static DeleteCardConfirmDialogFragment show(Activity activity, String fragmentTag,
+                                                       int callbackId) {
         DeleteCardConfirmDialogFragment dialog = new DeleteCardConfirmDialogFragment();
 
         Bundle args = new Bundle();
@@ -39,6 +40,7 @@ public class DeleteCardConfirmDialogFragment extends DialogFragment {
         dialog.setArguments(args);
 
         dialog.show(activity.getFragmentManager(), fragmentTag);
+        return dialog;
     }
 
     @Override
