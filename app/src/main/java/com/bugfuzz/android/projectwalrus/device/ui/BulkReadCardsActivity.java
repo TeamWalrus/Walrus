@@ -19,7 +19,6 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,17 +27,17 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
@@ -51,11 +50,11 @@ import java.util.ArrayList;
 
 public class BulkReadCardsActivity extends AppCompatActivity {
 
-    private ListView threadsView;
+    private RecyclerView threadsView;
     private final BroadcastReceiver bulkReadChangeBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ((BaseAdapter) threadsView.getAdapter()).notifyDataSetChanged();
+            threadsView.getAdapter().notifyDataSetChanged();
         }
     };
     private BulkReadCardsService.ServiceBinder bulkReadCardsServiceBinder;
@@ -63,13 +62,13 @@ public class BulkReadCardsActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             bulkReadCardsServiceBinder = (BulkReadCardsService.ServiceBinder) iBinder;
-            ((BaseAdapter) threadsView.getAdapter()).notifyDataSetChanged();
+            threadsView.getAdapter().notifyDataSetChanged();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             bulkReadCardsServiceBinder = null;
-            ((BaseAdapter) threadsView.getAdapter()).notifyDataSetChanged();
+            threadsView.getAdapter().notifyDataSetChanged();
         }
     };
 
@@ -86,14 +85,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
 
         threadsView = findViewById(R.id.threads);
-        threadsView.setAdapter(new ThreadsAdapter());
-        threadsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                BulkReadCardsDialogFragment.show(BulkReadCardsActivity.this, "card_data_io_dialog",
-                        (BulkReadCardDataSink) adapterView.getItemAtPosition(i), 0);
-            }
-        });
+        threadsView.setHasFixedSize(true);
+        threadsView.setAdapter(new ThreadAdapter());
 
         bindService(new Intent(this, BulkReadCardsService.class), bulkReadCardsServiceConnection,
                 0);
@@ -113,52 +106,65 @@ public class BulkReadCardsActivity extends AppCompatActivity {
         unbindService(bulkReadCardsServiceConnection);
     }
 
-    private class ThreadsAdapter extends BaseAdapter {
+    private class ThreadAdapter extends RecyclerView.Adapter<ThreadAdapter.ViewHolder> {
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.layout_bulk_read_cards, parent, false));
+        }
 
         @Override
-        public int getCount() {
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            holder.sink = new ArrayList<>(bulkReadCardsServiceBinder.getSinks().values())
+                    .get(position);
+
+            CardDevice.Metadata cardDeviceMetadata = holder.sink.getCardDevice().getClass()
+                    .getAnnotation(CardDevice.Metadata.class);
+            CardData.Metadata cardDataClassMetadata = holder.sink.getCardDataClass()
+                    .getAnnotation(CardData.Metadata.class);
+
+            View view = holder.itemView;
+
+            ImageView device = view.findViewById(R.id.device);
+            device.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
+                    cardDeviceMetadata.icon()));
+            device.setContentDescription(cardDeviceMetadata.name());
+
+            ImageView cardDeviceClass = view.findViewById(R.id.card_data_class);
+            cardDeviceClass.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
+                    cardDataClassMetadata.icon()));
+            cardDeviceClass.setContentDescription(cardDataClassMetadata.name());
+
+            ((TextView) view.findViewById(R.id.name)).setText(cardDeviceMetadata.name());
+            ((TextView) view.findViewById(R.id.status)).setText(
+                    getResources().getQuantityString(R.plurals.num_cards_read,
+                            holder.sink.getNumberOfCardsRead(),
+                            holder.sink.getNumberOfCardsRead()));
+        }
+
+        @Override
+        public int getItemCount() {
             return bulkReadCardsServiceBinder != null ?
                     bulkReadCardsServiceBinder.getSinks().size() : 0;
         }
 
-        @Override
-        public BulkReadCardDataSink getItem(int i) {
-            return new ArrayList<>(bulkReadCardsServiceBinder.getSinks().values()).get(i);
-        }
+        class ViewHolder extends RecyclerView.ViewHolder {
 
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
+            private BulkReadCardDataSink sink;
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            final Activity activity = BulkReadCardsActivity.this;
+            ViewHolder(View itemView) {
+                super(itemView);
 
-            View view = convertView == null ?
-                    activity.getLayoutInflater().inflate(
-                            R.layout.view_bulk_read_cards, parent, false) :
-                    convertView;
-
-            BulkReadCardDataSink sink = getItem(position);
-            CardDevice.Metadata cardDeviceMetadata = sink.getCardDevice().getClass()
-                    .getAnnotation(CardDevice.Metadata.class);
-            CardData.Metadata cardDataClassMetadata = sink.getCardDataClass()
-                    .getAnnotation(CardData.Metadata.class);
-
-            ImageView device = view.findViewById(R.id.device);
-            device.setImageDrawable(ContextCompat.getDrawable(activity, cardDeviceMetadata.icon()));
-            device.setContentDescription(cardDeviceMetadata.name());
-            ImageView cardDeviceClass = view.findViewById(R.id.card_data_class);
-            cardDeviceClass.setImageDrawable(ContextCompat.getDrawable(activity,
-                    cardDataClassMetadata.icon()));
-            cardDeviceClass.setContentDescription(cardDataClassMetadata.name());
-            ((TextView) view.findViewById(R.id.name)).setText(cardDeviceMetadata.name());
-            ((TextView) view.findViewById(R.id.status)).setText(
-                    getResources().getQuantityString(R.plurals.num_cards_read,
-                            sink.getNumberOfCardsRead(), sink.getNumberOfCardsRead()));
-
-            return view;
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        BulkReadCardsDialogFragment.show(BulkReadCardsActivity.this,
+                                "card_data_io_dialog", sink, 0);
+                    }
+                });
+            }
         }
     }
 }

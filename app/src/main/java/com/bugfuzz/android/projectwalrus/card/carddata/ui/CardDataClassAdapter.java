@@ -73,12 +73,11 @@ class CardDataClassAdapter extends RecyclerView.Adapter<CardDataClassAdapter.Vie
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Class<? extends CardData> cardDataClass = getSortedCardDataClasses().get(position);
+        holder.cardDataClass = getSortedCardDataClasses().get(position);
 
         CardDataClassView cardDataClassView =
                 (CardDataClassView) ((FrameLayout) holder.itemView).getChildAt(0);
-        cardDataClassView.setCardDataClass(cardDataClass);
-        holder.cardDataClass = cardDataClass;
+        cardDataClassView.setCardDataClass(holder.cardDataClass);
     }
 
     @Override

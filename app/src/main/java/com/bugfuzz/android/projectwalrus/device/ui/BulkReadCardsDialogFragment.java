@@ -153,6 +153,8 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
                 bulkReadCardsServiceUpdateNotificationHandler);
         localBroadcastManager.unregisterReceiver(
                 bulkReadCardDataSinkUpdateBroadcastReceiver);
+
+        getActivity().unbindService(bulkReadCardsServiceConnection);
     }
 
     private BulkReadCardDataSink getSink() {

@@ -76,9 +76,9 @@ public class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CardDevice cardDevice = getSortedFilteredCardDevices().get(position);
-        ((CardDeviceView) ((FrameLayout) holder.itemView).getChildAt(0)).setCardDevice(cardDevice);
-        holder.cardDevice = cardDevice;
+        holder.cardDevice = getSortedFilteredCardDevices().get(position);
+        ((CardDeviceView) ((FrameLayout) holder.itemView).getChildAt(0)).setCardDevice(
+                holder.cardDevice);
     }
 
     @Override
