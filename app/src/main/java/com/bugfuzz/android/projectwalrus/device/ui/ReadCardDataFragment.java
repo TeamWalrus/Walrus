@@ -22,6 +22,7 @@ package com.bugfuzz.android.projectwalrus.device.ui;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -56,6 +57,14 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
 
         activity.getFragmentManager().beginTransaction().add(fragment, fragmentTag).commit();
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (!(context instanceof OnCardDataCallback))
+            throw new RuntimeException("Parent doesn't implement fragment callback interface");
     }
 
     @Override

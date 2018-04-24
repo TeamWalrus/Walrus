@@ -22,6 +22,7 @@ package com.bugfuzz.android.projectwalrus.card.carddata.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -52,6 +53,14 @@ public class PickCardDataClassDialogFragment extends DialogFragment
 
         dialog.show(activity.getFragmentManager(), fragmentTag);
         return dialog;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (!(context instanceof OnCardDataClassClickCallback))
+            throw new RuntimeException("Parent doesn't implement fragment callback interface");
     }
 
     @Override

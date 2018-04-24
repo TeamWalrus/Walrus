@@ -22,6 +22,7 @@ package com.bugfuzz.android.projectwalrus.card.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
@@ -41,6 +42,14 @@ public class DeleteCardConfirmDialogFragment extends DialogFragment {
 
         dialog.show(activity.getFragmentManager(), fragmentTag);
         return dialog;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (!(context instanceof OnDeleteCardConfirmCallback))
+            throw new RuntimeException("Parent doesn't implement fragment callback interface");
     }
 
     @Override

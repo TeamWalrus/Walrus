@@ -72,6 +72,14 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (!(context instanceof OnCardDataSourceClickCallback))
+            throw new RuntimeException("Parent doesn't implement fragment callback interface");
+    }
+
+    @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         String cardDataFilterClassName = getArguments().getString("card_data_filter_class");
         Class<? extends CardData> cardDataFilterClass = null;

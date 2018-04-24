@@ -21,6 +21,7 @@ package com.bugfuzz.android.projectwalrus.card.carddata.ui.component;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,6 +46,14 @@ public abstract class ComponentDialogFragment extends DialogFragment
     protected Component rootComponent;
 
     private LinearLayout alertMessageViewGroup;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (!(context instanceof CardData.OnEditedCardDataCallback))
+            throw new RuntimeException("Parent doesn't implement fragment callback interface");
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
