@@ -20,15 +20,15 @@
 
 <resources>
 
-    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="App" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
     </style>
 
-    <style name="AppTheme" parent="BaseAppTheme"/>
+    <style name="App.WithTransitions"/>
 
-    <style name="LauncherActivityTheme" parent="AppTheme">
+    <style name="App.WithTransitions.LauncherActivity">
         <item name="android:windowBackground">@color/primaryDarkColor</item>
     </style>
 
