@@ -150,7 +150,7 @@ public class BulkReadCardsService extends Service {
             notificationManager.createNotificationChannel(
                     new NotificationChannel(CHANNEL_ID,
                             getString(R.string.bulk_read_notification_channel_name),
-                            NotificationManager.IMPORTANCE_DEFAULT));
+                            NotificationManager.IMPORTANCE_LOW));
 
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_notification)
@@ -158,6 +158,7 @@ public class BulkReadCardsService extends Service {
                         sinks.size(), sinks.size()))
                 .setOngoing(true)
                 .setProgress(0, 0, true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setContentIntent(TaskStackBuilder.create(this)
                         .addNextIntentWithParentStack(new Intent(this, BulkReadCardsActivity.class))
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
