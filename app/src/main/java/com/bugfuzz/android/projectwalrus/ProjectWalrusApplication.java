@@ -42,6 +42,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.squareup.leakcanary.LeakCanary;
 
 import static android.os.Build.VERSION_CODES.O;
@@ -70,6 +71,16 @@ public class ProjectWalrusApplication extends Application {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         try {
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(
+                    new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (currentBestLocation == null ||
+                                    GeoUtils.isBetterLocation(location, currentBestLocation))
+                                currentBestLocation = location;
+                        }
+                    });
+
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,
                     new LocationCallback() {
                         @Override
