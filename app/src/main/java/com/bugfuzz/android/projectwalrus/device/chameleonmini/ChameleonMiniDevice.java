@@ -35,6 +35,7 @@ import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.concurrent.Semaphore;
 
 @CardDevice.Metadata(
@@ -104,7 +105,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                             private int state;
 
                             private short atqa;
-                            private long uid;
+                            private BigInteger uid;
                             private byte sak;
 
                             @Override
@@ -161,7 +162,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 
                                     case 5:
                                         String line_uid[] = in.split(":");
-                                        uid = Long.parseLong(line_uid[1].trim(), 16);
+                                        uid = new BigInteger(line_uid[1].trim(), 16);
 
                                         ++state;
                                         break;
@@ -171,7 +172,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         sak = (byte) Integer.parseInt(line_sak[1].trim(), 16);
 
                                         cardDataSink.onCardData(
-                                                new ISO14443ACardData(uid, atqa, sak, null, null));
+                                                new ISO14443ACardData(atqa, uid, sak, null));
 
                                         if (!cardDataSink.shouldContinue())
                                             break;

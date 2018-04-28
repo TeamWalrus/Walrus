@@ -20,10 +20,16 @@
 package com.bugfuzz.android.projectwalrus.card.carddata;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.parceler.Parcel;
+import org.parceler.ParcelPropertyConverter;
 
+import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Random;
 
 @SuppressWarnings("WeakerAccess")
 @Parcel
@@ -78,27 +84,28 @@ public class ISO14443ACardData extends CardData {
         };
     }
 
-    public long uid;
-    public int atqa;
+    @ParcelPropertyConverter(MiscUtils.ShortParcelConverter.class)
+    public short atqa;
+    public BigInteger uid;
     public byte sak;
     public int[] ats;
-    public byte[] data;
 
     public ISO14443ACardData() {
+        uid = BigInteger.ZERO;
+        ats = new int[]{};
     }
 
-    public ISO14443ACardData(long uid, short atqa, byte sak, int[] ats, byte[] data) {
-        this.uid = uid;
+    public ISO14443ACardData(short atqa, BigInteger uid, byte sak, int[] ats) {
         this.atqa = atqa;
+        this.uid = uid;
         this.sak = sak;
         this.ats = ats;
-        this.data = data;
     }
 
     @SuppressWarnings("unused")
     public static ISO14443ACardData newDebugInstance() {
-        return new ISO14443ACardData((long) (Math.random() * Long.MAX_VALUE), (short) 0x0004,
-                (byte) 0x18, null, null);
+        return new ISO14443ACardData((short) 0x0004, new BigInteger(32, new Random()), (byte) 0x08,
+                new int[]{});
     }
 
     @Override
@@ -112,31 +119,35 @@ public class ISO14443ACardData extends CardData {
 
     @Override
     public String getHumanReadableText() {
-        return Long.toHexString(uid);
+        return uid.toString(16);
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
         if (o == null || getClass() != o.getClass())
             return false;
 
         ISO14443ACardData that = (ISO14443ACardData) o;
 
-        return uid == that.uid &&
-                atqa == that.atqa &&
-                sak == that.sak &&
-                Arrays.equals(ats, that.ats) &&
-                Arrays.equals(data, that.data);
+        return new EqualsBuilder()
+                .append(atqa, that.atqa)
+                .append(sak, that.sak)
+                .append(uid, that.uid)
+                .append(ats, that.ats)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (uid ^ (uid >>> 32));
-        result = 31 * result + atqa;
-        result = 31 * result + (int) sak;
-        result = 31 * result + Arrays.hashCode(ats);
-        result = 31 * result + Arrays.hashCode(data);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(atqa)
+                .append(uid)
+                .append(sak)
+                .append(ats)
+                .toHashCode();
     }
 
     static private class KnownISO14333AType {

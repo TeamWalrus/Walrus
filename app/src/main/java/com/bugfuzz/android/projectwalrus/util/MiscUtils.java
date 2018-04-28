@@ -19,11 +19,13 @@
 
 package com.bugfuzz.android.projectwalrus.util;
 
+import android.os.Parcel;
 import android.util.Pair;
+
+import org.parceler.ParcelConverter;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class MiscUtils {
 
@@ -34,5 +36,18 @@ public class MiscUtils {
             map.put(pair.first, pair.second);
 
         return map;
+    }
+
+    public static class ShortParcelConverter implements ParcelConverter<Short> {
+
+        @Override
+        public void toParcel(Short input, Parcel parcel) {
+            parcel.writeInt(input);
+        }
+
+        @Override
+        public Short fromParcel(Parcel parcel) {
+            return (short) parcel.readInt();
+        }
     }
 }
