@@ -21,6 +21,7 @@ package com.bugfuzz.android.projectwalrus.card.carddata;
 
 import android.app.DialogFragment;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
@@ -38,6 +39,7 @@ public abstract class CardData implements Serializable {
         };
     }
 
+    @Nullable
     public String getTypeDetailInfo() {
         return null;
     }

@@ -19,17 +19,23 @@
 
 package com.bugfuzz.android.projectwalrus.card.carddata;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.parceler.Parcel;
 import org.parceler.ParcelPropertyConverter;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 @SuppressWarnings("WeakerAccess")
 @Parcel
@@ -39,48 +45,55 @@ import java.util.Random;
 )
 public class ISO14443ACardData extends CardData {
 
-    private static final KnownISO14333AType[] CARD_TYPES;
+    private static final TypeMatcher[] TYPE_MATCHERS;
 
     static {
-        // TODO: migrate to XML or something
-        CARD_TYPES = new KnownISO14333AType[]{
-                new KnownISO14333AType((short) 0x0004, (byte) 0x09,
-                        null, "NXP", "Mifare Mini"),
-                new KnownISO14333AType((short) 0x0004, (byte) 0x08,
-                        null, "NXP", "Mifare Classic 1k"),
-                new KnownISO14333AType((short) 0x0002, (byte) 0x18,
-                        null, "NXP", "Mifare Classic 4k"),
-                new KnownISO14333AType((short) 0x0044, (byte) 0x00,
-                        null, "NXP", "Mifare Ultralight"),
-                new KnownISO14333AType((short) 0x0344, (byte) 0x20,
-                        new int[]{0x75, 0x77, 0x81, 0x02, 0x80}, "NXP", "Mifare DESFire"),
-                new KnownISO14333AType((short) 0x0344, (byte) 0x20,
-                        new int[]{0x75, 0x77, 0x81, 0x02, 0x80}, "NXP", "Mifare DESFire EV1"),
-                new KnownISO14333AType((short) 0x0304, (byte) 0x28,
-                        new int[]{0x38, 0x77, 0xb1, 0x4a, 0x43, 0x4f, 0x50, 0x33, 0x31}, "IBM",
-                        "Mifare JCOP31"),
-                new KnownISO14333AType((short) 0x0048, (byte) 0x20,
-                        new int[]{0x78, 0x77, 0xb1, 0x02, 0x4a, 0x43, 0x4f, 0x50, 0x76, 0x32, 0x34,
-                                0x31},
-                        "IBM", "Mifare JCOP31 v2.4.1"),
-                new KnownISO14333AType((short) 0x0048, (byte) 0x20,
-                        new int[]{0x38, 0x33, 0xb1, 0x4a, 0x43, 0x4f, 0x50, 0x34, 0x31, 0x56, 0x32,
-                                0x32},
-                        "IBM", "Mifare JCOP41 v2.2"),
-                new KnownISO14333AType((short) 0x0004, (byte) 0x28,
-                        new int[]{0x38, 0x33, 0xb1, 0x4a, 0x43, 0x4f, 0x50, 0x34, 0x31, 0x56, 0x32,
-                                0x33, 0x31},
-                        "IBM", "Mifare JCOP41 v2.3.1"),
-                new KnownISO14333AType((short) 0x0004, (byte) 0x88,
-                        null, "Infineon", "Mifare Classic 1k"),
-                new KnownISO14333AType((short) 0x0002, (byte) 0x98,
-                        null, "Gemplus", "MPCOS"),
-                new KnownISO14333AType((short) 0x0C00, null,
-                        null, "Innovision R&T", "Jewel"),
-                new KnownISO14333AType((short) 0x0002, (byte) 0x38,
-                        null, "Nokia", "MIFARE Classic 4k - emulated (6212 Classic)"),
-                new KnownISO14333AType((short) 0x0008, (byte) 0x38,
-                        null, "Nokia", "MIFARE Classic 4k - emulated (6131 NFC)")
+        /*
+           Scraped from:
+               https://www.nxp.com/docs/en/application-note/AN10833.pdf
+               http://nfc-tools.org/index.php/ISO14443A
+               Proxmark3 client's CmdHF14AInfo
+        */
+        TYPE_MATCHERS = new TypeMatcher[]{
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Ultralight"), 0x0044, 0x00),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Mini"), 0x0004, 0xffbf, 0x09),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Classic 1K"), 0x0004, 0xffbf, 0x08),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Classic 4K"), 0x0002, 0xffbf, 0x18),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 2K SL1"), 0x0004, 0xffbf, 0x08),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 2K EV1 SL1"),
+                        0x0004, 0xffbf, 0x08),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 4K SL1"), 0x0002, 0xffbf, 0x18),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 4K EV1 SL1"),
+                        0x0002, 0xffbf, 0x18),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 2K SL2"), 0x0004, 0xffbf, 0x10),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 4K SL2"), 0x0002, 0xffbf, 0x11),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 2K SL3"), 0x0004, 0xffbf, 0x20),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Plus 4K SL3"), 0x0002, 0xffbf, 0x20),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE DESFire"), 0x0344, 0x20),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE DESFire EV1"), 0x0344, 0x20),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Classic 1K (Emulated - SmartMX)"),
+                        0x0004, 0xf0ff, null),
+                new StaticTypeMatcher(new Type("NXP", "MIFARE Classic 4K (Emulated - SmartMX)"),
+                        0x0002, 0xf0ff, null),
+                new StaticTypeMatcher(new Type("NXP", "SmartMX"), 0x0048, 0xf0ff, null),
+
+                new StaticTypeMatcher(new Type("IBM", "MIFARE JCOP31"), 0x0304, 0x28),
+                new StaticTypeMatcher(new Type("IBM", "MIFARE JCOP41 v2.2"), 0x0048, 0x20),
+                new StaticTypeMatcher(new Type("IBM", "MIFARE JCOP41 v2.3.1"), 0x0004, 0x28),
+                new StaticTypeMatcher(new Type("IBM", "MIFARE JCOP31 v2.4.1"), 0x0048, 0x20),
+
+                new StaticTypeMatcher(new Type("Infineon", "MIFARE Classic 1K"), 0x0004, 0x88),
+
+                new StaticTypeMatcher(new Type("Gemplus", "MPCOS"), 0x0002, 0x98),
+
+                new StaticTypeMatcher(new Type("Innovision R&T", "Jewel"), 0x0c00, null),
+
+                new StaticTypeMatcher(
+                        new Type("Nokia", "MIFARE Classic 4K (Emulated - 6212 Classic)"),
+                        0x0002, 0x38),
+                new StaticTypeMatcher(
+                        new Type("Nokia", "MIFARE Classic 4K (Emulated - 6131 NFC)"),
+                        0x0008, 0x38)
         };
     }
 
@@ -108,13 +121,24 @@ public class ISO14443ACardData extends CardData {
                 new int[]{});
     }
 
+    @Nullable
     @Override
     public String getTypeDetailInfo() {
-        for (KnownISO14333AType type : CARD_TYPES)
-            if (type.matches(this))
-                return type.manufacturer + " " + type.type;
+        Set<Type> types = new TreeSet<>();
+        for (TypeMatcher typeMatcher : TYPE_MATCHERS) {
+            Type type = typeMatcher.match(this);
+            if (type != null)
+                types.add(type);
+        }
 
-        return null;
+        StringBuilder result = new StringBuilder();
+        for (Type type : types) {
+            if (result.length() > 0)
+                result.append(" or ");
+            result.append(type);
+        }
+
+        return result.length() > 0 ? result.toString() : null;
     }
 
     @Override
@@ -150,25 +174,71 @@ public class ISO14443ACardData extends CardData {
                 .toHashCode();
     }
 
-    static private class KnownISO14333AType {
-        final String manufacturer;
-        final String type;
-        private final Short atqa;
-        private final Byte sak;
-        private final int[] ats;
+    private interface TypeMatcher {
+        Type match(ISO14443ACardData cardData);
+    }
 
-        KnownISO14333AType(Short atqa, Byte sak, int[] ats, String manufacturer, String type) {
-            this.atqa = atqa;
-            this.sak = sak;
-            this.ats = ats;
+    public static class Type implements Comparable {
+
+        private final String manufacturer, product;
+
+        public Type(String manufacturer, String product) {
             this.manufacturer = manufacturer;
-            this.type = type;
+            this.product = product;
         }
 
-        boolean matches(ISO14443ACardData cardData) {
-            return !(atqa != null && atqa != cardData.atqa) &&
-                    !(sak != null && sak != cardData.sak) &&
-                    !(ats != null && !Arrays.equals(ats, cardData.ats));
+        public String getManufacturer() {
+            return manufacturer;
+        }
+
+        public String getProduct() {
+            return product;
+        }
+
+        @Override
+        public String toString() {
+            return manufacturer + " " + product;
+        }
+
+        @Override
+        public int compareTo(@NonNull Object o) {
+            if (this == o)
+                return 0;
+
+            Type that = (Type) o;
+
+            return new CompareToBuilder()
+                    .append(manufacturer, that.manufacturer)
+                    .append(product, that.product)
+                    .toComparison();
+        }
+    }
+
+    private static class StaticTypeMatcher implements TypeMatcher {
+
+        private final Type type;
+        private final short atqa, atqaMask;
+        private final Byte sak;
+
+        StaticTypeMatcher(Type type, @IntRange(from = 0, to = 65535) int atqa,
+                          @IntRange(from = 0, to = 65535) int atqaMask,
+                          @IntRange(from = 0, to = 255) Integer sak) {
+            this.type = type;
+            this.atqa = (short) atqa;
+            this.atqaMask = (short) atqaMask;
+            this.sak = sak != null ? sak.byteValue() : null;
+        }
+
+        StaticTypeMatcher(Type type, @IntRange(from = 0, to = 65535) int atqa,
+                          @IntRange(from = 0, to = 255) Integer sak) {
+            this(type, atqa, 0xffff, sak);
+        }
+
+        @Override
+        public Type match(ISO14443ACardData cardData) {
+            return (cardData.atqa & atqaMask) == (atqa & atqaMask) &&
+                    (sak == null || cardData.sak == sak) ?
+                    type : null;
         }
     }
 }
