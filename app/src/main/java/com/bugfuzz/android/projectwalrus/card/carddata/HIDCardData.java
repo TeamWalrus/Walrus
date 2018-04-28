@@ -22,6 +22,8 @@ package com.bugfuzz.android.projectwalrus.card.carddata;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.HIDCardDataDialogFragment;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.parceler.Parcel;
 
 import java.math.BigInteger;
@@ -64,16 +66,25 @@ public class HIDCardData extends CardData {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
         if (o == null || getClass() != o.getClass())
             return false;
 
         HIDCardData that = (HIDCardData) o;
 
-        return data.equals(that.data);
+        return new EqualsBuilder()
+                .append(data, that.data)
+                .append(format, that.format)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return data.hashCode();
+        return new HashCodeBuilder(17, 37)
+                .append(data)
+                .append(format)
+                .toHashCode();
     }
 }
