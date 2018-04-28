@@ -33,6 +33,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
@@ -107,6 +108,8 @@ public class WalrusApplication extends Application {
         context = getApplicationContext();
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini, false);
+
+        HIDCardData.setup(context);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new DeviceChangedBroadcastHandler(),

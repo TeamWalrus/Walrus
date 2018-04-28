@@ -19,9 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -91,9 +90,7 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         }
     };
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static BulkReadCardsDialogFragment show(Activity activity, String fragmentTag,
-                                                   BulkReadCardDataSink sink, int callbackId) {
+    public static BulkReadCardsDialogFragment create(BulkReadCardDataSink sink, int callbackId) {
         BulkReadCardsDialogFragment dialog = new BulkReadCardsDialogFragment();
 
         Bundle args = new Bundle();
@@ -101,7 +98,6 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 
-        dialog.show(activity.getFragmentManager(), fragmentTag);
         return dialog;
     }
 

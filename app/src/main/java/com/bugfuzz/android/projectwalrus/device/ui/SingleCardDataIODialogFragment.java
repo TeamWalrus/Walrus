@@ -19,9 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,10 +36,9 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
 
     private OnCancelCallback onCancelCallback;
 
-    public static SingleCardDataIODialogFragment show(Activity activity, String fragmentTag,
-                                                      Class<? extends CardDevice> cardDeviceClass,
-                                                      Class<? extends CardData> cardDataClass,
-                                                      Mode mode, int callbackId) {
+    public static SingleCardDataIODialogFragment create(Class<? extends CardDevice> cardDeviceClass,
+                                                        Class<? extends CardData> cardDataClass,
+                                                        Mode mode, int callbackId) {
         SingleCardDataIODialogFragment dialog = new SingleCardDataIODialogFragment();
 
         Bundle args = new Bundle();
@@ -50,7 +48,6 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 
-        dialog.show(activity.getFragmentManager(), fragmentTag);
         return dialog;
     }
 

@@ -19,9 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -42,11 +41,9 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
 
     private volatile boolean stop;
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static ReadCardDataFragment show(Activity activity, String fragmentTag,
-                                            CardDevice cardDevice,
-                                            Class<? extends CardData> cardDataClass,
-                                            int callbackId) {
+    public static ReadCardDataFragment create(CardDevice cardDevice,
+                                              Class<? extends CardData> cardDataClass,
+                                              int callbackId) {
         ReadCardDataFragment fragment = new ReadCardDataFragment();
 
         Bundle args = new Bundle();
@@ -55,7 +52,6 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
         args.putInt("callback_id", callbackId);
         fragment.setArguments(args);
 
-        activity.getFragmentManager().beginTransaction().add(fragment, fragmentTag).commit();
         return fragment;
     }
 
@@ -94,15 +90,15 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
             return;
         }
 
-        SingleCardDataIODialogFragment dialog = SingleCardDataIODialogFragment.show(
-                getActivity(), SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG, cardDevice.getClass(),
-                cardDataClass, SingleCardDataIODialogFragment.Mode.READ, 0);
+        SingleCardDataIODialogFragment dialog = SingleCardDataIODialogFragment.create(
+                cardDevice.getClass(), cardDataClass, SingleCardDataIODialogFragment.Mode.READ, 0);
         dialog.setOnCancelCallback(new SingleCardDataIODialogFragment.OnCancelCallback() {
             @Override
             public void onCancelClick(int callbackId) {
                 stop = true;
             }
         });
+        dialog.show(getChildFragmentManager(), SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG);
 
         setRetainInstance(true);
     }
@@ -150,11 +146,13 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
     @Override
     @WorkerThread
     public void onFinish() {
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getChildFragmentManager();
         Fragment dialogFragment = fragmentManager.findFragmentByTag(
                 SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG);
         if (dialogFragment != null)
-            fragmentManager.beginTransaction().remove(dialogFragment).commit();
+            fragmentManager.beginTransaction()
+                    .remove(dialogFragment)
+                    .commit();
     }
 
     public interface OnCardDataCallback {

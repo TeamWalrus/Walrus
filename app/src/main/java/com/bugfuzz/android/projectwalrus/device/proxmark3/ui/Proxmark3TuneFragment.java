@@ -19,8 +19,7 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3.ui;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Pair;
@@ -33,10 +32,7 @@ import java.lang.ref.WeakReference;
 
 public class Proxmark3TuneFragment extends Fragment {
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static Proxmark3TuneFragment show(Activity activity,
-                                             Proxmark3Device proxmark3Device,
-                                             boolean lf, String fragmentTag) {
+    public static Proxmark3TuneFragment create(Proxmark3Device proxmark3Device, boolean lf) {
         Proxmark3TuneFragment fragment = new Proxmark3TuneFragment();
 
         Bundle args = new Bundle();
@@ -44,7 +40,6 @@ public class Proxmark3TuneFragment extends Fragment {
         args.putBoolean("lf", lf);
         fragment.setArguments(args);
 
-        activity.getFragmentManager().beginTransaction().add(fragment, fragmentTag).commit();
         return fragment;
     }
 

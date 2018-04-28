@@ -19,9 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -51,9 +50,8 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         }
     };
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static PickCardDataSourceDialogFragment show(
-            Activity activity, String fragmentTag, Class<? extends CardData> cardDataFilterClass,
+    public static PickCardDataSourceDialogFragment create(
+            Class<? extends CardData> cardDataFilterClass,
             CardDeviceAdapter.FilterMode cardDataFilterMode, boolean allowManualEntry,
             int callbackId) {
         PickCardDataSourceDialogFragment dialog = new PickCardDataSourceDialogFragment();
@@ -67,7 +65,6 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 
-        dialog.show(activity.getFragmentManager(), fragmentTag);
         return dialog;
     }
 

@@ -19,8 +19,7 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Pair;
@@ -33,16 +32,13 @@ import java.lang.ref.WeakReference;
 
 public class FindVersionFragment extends Fragment {
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static FindVersionFragment show(Activity activity,
-                                           CardDevice cardDevice, String fragmentTag) {
+    public static FindVersionFragment show(CardDevice cardDevice) {
         FindVersionFragment fragment = new FindVersionFragment();
 
         Bundle args = new Bundle();
         args.putInt("versioned_device_id", cardDevice.getId());
         fragment.setArguments(args);
 
-        activity.getFragmentManager().beginTransaction().add(fragment, fragmentTag).commit();
         return fragment;
     }
 

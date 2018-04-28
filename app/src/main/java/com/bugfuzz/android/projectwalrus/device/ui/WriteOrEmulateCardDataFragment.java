@@ -19,9 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -44,10 +43,8 @@ public class WriteOrEmulateCardDataFragment extends Fragment
 
     private volatile boolean stop;
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static WriteOrEmulateCardDataFragment show(Activity activity, String fragmentTag,
-                                                      CardDevice cardDevice, CardData cardData,
-                                                      boolean write, int callbackId) {
+    public static WriteOrEmulateCardDataFragment create(CardDevice cardDevice, CardData cardData,
+                                                        boolean write, int callbackId) {
         WriteOrEmulateCardDataFragment fragment = new WriteOrEmulateCardDataFragment();
         fragment.setCardData(cardData);
 
@@ -57,7 +54,6 @@ public class WriteOrEmulateCardDataFragment extends Fragment
         args.putInt("callback_id", callbackId);
         fragment.setArguments(args);
 
-        activity.getFragmentManager().beginTransaction().add(fragment, fragmentTag).commit();
         return fragment;
     }
 
@@ -86,9 +82,8 @@ public class WriteOrEmulateCardDataFragment extends Fragment
             return;
         }
 
-        SingleCardDataIODialogFragment dialog = SingleCardDataIODialogFragment.show(
-                getActivity(), SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG, cardDevice.getClass(),
-                cardData.getClass(),
+        SingleCardDataIODialogFragment dialog = SingleCardDataIODialogFragment.create(
+                cardDevice.getClass(), cardData.getClass(),
                 write ? SingleCardDataIODialogFragment.Mode.WRITE :
                         SingleCardDataIODialogFragment.Mode.EMULATE, 0);
         dialog.setOnCancelCallback(new SingleCardDataIODialogFragment.OnCancelCallback() {
@@ -97,6 +92,7 @@ public class WriteOrEmulateCardDataFragment extends Fragment
                 stop = true;
             }
         });
+        dialog.show(getChildFragmentManager(), SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG);
 
         setRetainInstance(true);
     }
@@ -132,11 +128,13 @@ public class WriteOrEmulateCardDataFragment extends Fragment
     @Override
     @WorkerThread
     public void onFinish() {
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getChildFragmentManager();
         Fragment dialogFragment = fragmentManager.findFragmentByTag(
                 SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG);
         if (dialogFragment != null)
-            fragmentManager.beginTransaction().remove(dialogFragment).commit();
+            fragmentManager.beginTransaction()
+                    .remove(dialogFragment)
+                    .commit();
     }
 
     private void setCardData(CardData cardData) {

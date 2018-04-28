@@ -160,8 +160,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        BulkReadCardsDialogFragment.show(BulkReadCardsActivity.this,
-                                "card_data_io_dialog", sink, 0);
+                        BulkReadCardsDialogFragment.create(sink, 0).show(
+                                getSupportFragmentManager(), "card_data_io_dialog");
                     }
                 });
             }

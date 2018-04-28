@@ -17,70 +17,71 @@
  * along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bugfuzz.android.projectwalrus.card.carddata.ui.component;
+package com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.elements;
 
-import android.os.Bundle;
+import android.content.Context;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
+import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.Component;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ParityBinaryComponent extends BinaryComponent {
+public class ParityElement extends BinaryFormat.Element {
 
     private final int parityStartPos;
     private final int parityRunLength;
     private final int paritySkipLength;
     private final int parityLength;
     private final boolean even;
-    private final boolean edit;
 
-    private boolean invalid;
-
-    public ParityBinaryComponent(Field field, String name, int startPos,
-                                 Integer length, int parityStartPos, int parityRunLength,
-                                 int paritySkipLength, int parityLength, boolean even,
-                                 boolean edit) {
-        super(field, name, startPos, length);
+    public ParityElement(String id, String name, int startPos, Integer length, int parityStartPos,
+                         int parityRunLength, int paritySkipLength, int parityLength, boolean even) {
+        super(id, name, startPos, length);
 
         this.parityStartPos = parityStartPos;
         this.parityRunLength = parityRunLength;
         this.paritySkipLength = paritySkipLength;
         this.parityLength = parityLength;
         this.even = even;
-        this.edit = edit;
     }
 
     @Override
-    protected void setFromBinaryValue(BigInteger whole, BigInteger value) {
-        invalid = !edit && !value.equals(getBinaryValue(whole));
+    public Component createComponent(final Context context, final BigInteger value,
+                                     final boolean editable) {
+        return new Component(context, name) {
+            @Override
+            public Set<String> getProblems() {
+                Set<String> problems = new HashSet<>();
+
+                if (!editable && !extractValueAtMyPos(value).equals(calculate(value)))
+                    problems.add(context.getString(R.string.invalid_parity));
+
+                return problems;
+            }
+        };
     }
 
     @Override
-    public void setFromInstanceState(Bundle savedInstanceState) {
-        invalid = savedInstanceState.getBoolean("invalid");
+    public BigInteger extractValue(BigInteger source) {
+        return calculate(source);
     }
 
     @Override
-    public Set<Integer> getAlertMessages() {
-        if (invalid)
-            return Collections.singleton(R.string.invalid_parity);
-
-        return new HashSet<>();
+    public BigInteger applyComponent(BigInteger target, Component component) {
+        return applyAtMyPos(target, calculate(target));
     }
 
-    @Override
-    protected BigInteger getBinaryValue(BigInteger current) {
+    private BigInteger calculate(BigInteger value) {
         boolean parity = true;
         int p = parityStartPos;
         for (int i = 0; i < parityLength; ++i) {
             if (p >= startPos && (length == null || p < startPos + length))
                 throw new RuntimeException("Calculating parity over itself");
 
-            parity ^= current.testBit(p);
+            parity ^= value.testBit(p);
 
             if ((i + 1) % parityRunLength == 0)
                 p += paritySkipLength;
@@ -88,10 +89,5 @@ public class ParityBinaryComponent extends BinaryComponent {
         }
 
         return parity == even ? BigInteger.ZERO : BigInteger.ONE;
-    }
-
-    @Override
-    public void saveInstanceState(Bundle outState) {
-        outState.putBoolean("invalid", invalid);
     }
 }

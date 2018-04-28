@@ -38,7 +38,6 @@ import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;

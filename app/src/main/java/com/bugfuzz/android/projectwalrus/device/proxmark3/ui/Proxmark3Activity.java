@@ -19,7 +19,7 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3.ui;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,7 +76,9 @@ public class Proxmark3Activity extends AppCompatActivity
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        FindVersionFragment.show(this, proxmark3Device, "find_version_fragment_id");
+        getSupportFragmentManager().beginTransaction()
+                .add(FindVersionFragment.show(proxmark3Device), "find_version_fragment_id")
+                .commit();
     }
 
     @Override
@@ -99,15 +101,20 @@ public class Proxmark3Activity extends AppCompatActivity
     }
 
     private void tune(boolean lf) {
-        Proxmark3TuneDialogFragment.show(this, PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
-        Proxmark3TuneFragment.show(this, proxmark3Device, lf, "proxmark3_tune");
+        new Proxmark3TuneDialogFragment().show(getSupportFragmentManager(),
+                PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
+        getSupportFragmentManager().beginTransaction()
+                .add(Proxmark3TuneFragment.create(proxmark3Device, lf), "proxmark3_tune")
+                .commit();
     }
 
     private void removeTuneDialog() {
         Fragment proxmark3TuneDialogFragment =
-                getFragmentManager().findFragmentByTag(PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
+                getSupportFragmentManager().findFragmentByTag(PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
         if (proxmark3TuneDialogFragment != null)
-            getFragmentManager().beginTransaction().remove(proxmark3TuneDialogFragment).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .remove(proxmark3TuneDialogFragment)
+                    .commit();
     }
 
     @Override

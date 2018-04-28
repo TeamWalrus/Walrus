@@ -19,9 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus.card.carddata.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -35,10 +34,8 @@ import java.util.Set;
 public class PickCardDataClassDialogFragment extends DialogFragment
         implements CardDataClassAdapter.OnCardDataClassClickCallback {
 
-    @SuppressWarnings("UnusedReturnValue")
-    public static PickCardDataClassDialogFragment show(
-            Activity activity, String fragmentTag, Set<Class<? extends CardData>> cardDataClasses,
-            int callbackId) {
+    public static PickCardDataClassDialogFragment create(
+            Set<Class<? extends CardData>> cardDataClasses, int callbackId) {
         PickCardDataClassDialogFragment dialog = new PickCardDataClassDialogFragment();
 
         String[] cardDataClassNames = new String[cardDataClasses.size()];
@@ -51,7 +48,6 @@ public class PickCardDataClassDialogFragment extends DialogFragment
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 
-        dialog.show(activity.getFragmentManager(), fragmentTag);
         return dialog;
     }
 

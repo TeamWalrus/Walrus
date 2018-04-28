@@ -22,9 +22,9 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
@@ -75,11 +75,13 @@ public class ChameleonMiniActivity extends AppCompatActivity
             return;
         }
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.settings, new ChameleonMiniActivity.SettingsFragment())
                 .commit();
 
-        FindVersionFragment.show(this, chameleonMiniDevice, "find_version_fragment_id");
+        getSupportFragmentManager().beginTransaction()
+                .add(FindVersionFragment.show(chameleonMiniDevice), "find_version_fragment_id")
+                .commit();
     }
 
     @Override
@@ -93,10 +95,10 @@ public class ChameleonMiniActivity extends AppCompatActivity
                 exception.getMessage()));
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
+
         @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.preferences_chameleon_mini);
         }
     }

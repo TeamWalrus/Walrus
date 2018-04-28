@@ -20,12 +20,11 @@
 package com.bugfuzz.android.projectwalrus.card.carddata.ui.component;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,47 +35,54 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 
 import org.parceler.Parcels;
 
-public abstract class ComponentDialogFragment extends DialogFragment
+import java.util.TreeSet;
+
+public class ComponentDialogFragment extends DialogFragment
         implements Component.OnComponentChangeCallback {
 
-    protected Component rootComponent;
+    private ComponentViewModel viewModel;
 
-    private LinearLayout alertMessageViewGroup;
+    private Component component;
+
+    private LinearLayout problemViewGroup;
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        if (!(context instanceof CardData.OnEditedCardDataCallback))
-            throw new RuntimeException("Parent doesn't implement fragment callback interface");
+        ComponentSourceAndSink componentSourceAndSink = Parcels.unwrap(getArguments().getParcelable(
+                "source_and_sink"));
+        this.viewModel = ViewModelProviders.of(this, new ComponentViewModel.Factory(
+                componentSourceAndSink)).get(ComponentViewModel.class);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        boolean edit = getArguments().getBoolean("edit");
+        boolean editable = getArguments().getBoolean("editable");
 
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
-                .title(getString(
-                        edit ? R.string.manual_card_data_entry_title : R.string.view_card_data_title,
-                        createCardData().getClass().getAnnotation(CardData.Metadata.class).name()))
+                .title(getArguments().getString("title"))
                 .customView(R.layout.dialog_component_dialog, true);
 
-        if (edit) {
+        if (editable) {
             builder
                     .positiveText(android.R.string.ok)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog,
                                             @NonNull DialogAction which) {
-                            CardData cardData = createCardData();
-                            rootComponent.applyToValue(cardData);
+                            viewModel.getComponentSourceAndSink().apply(component);
 
-                            ((CardData.OnEditedCardDataCallback) getActivity()).onEditedCardData(
-                                    cardData, getArguments().getInt("callback_id"));
+                            if (getActivity() instanceof OnEditedCallback)
+                                ((OnEditedCallback) getActivity()).onEdited(
+                                        viewModel.getComponentSourceAndSink(),
+                                        getArguments().getInt("callback_id"));
+
+                            dismiss();
                         }
                     })
                     .negativeText(android.R.string.cancel);
@@ -87,58 +93,57 @@ public abstract class ComponentDialogFragment extends DialogFragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
 
         ViewGroup viewGroup = (ViewGroup) ((MaterialDialog) getDialog()).getCustomView();
         assert viewGroup != null;
 
-        rootComponent.createView(getActivity());
-        viewGroup.addView(rootComponent.getView());
+        component = viewModel.getComponentSourceAndSink().createComponent(getActivity(),
+                getArguments().getBoolean("editable"));
+        viewGroup.addView(component.getView());
 
         if (savedInstanceState != null)
-            rootComponent.setFromInstanceState(savedInstanceState.getBundle("root_component"));
-        else {
-            CardData cardData = Parcels.unwrap(getArguments().getParcelable("card_data"));
-            if (cardData != null)
-                rootComponent.setFromValue(cardData);
-        }
+            component.restoreInstanceState(savedInstanceState.getBundle("component"));
 
-        alertMessageViewGroup = new LinearLayout(getActivity());
-        viewGroup.addView(alertMessageViewGroup);
+        problemViewGroup = new LinearLayout(getActivity());
+        viewGroup.addView(problemViewGroup);
 
-        alertMessageViewGroup.setOrientation(LinearLayout.VERTICAL);
+        problemViewGroup.setOrientation(LinearLayout.VERTICAL);
 
+        component.setOnComponentChangeCallback(this);
         onComponentChange(null);
-        rootComponent.setOnComponentChangeCallback(this);
 
         return result;
     }
 
     @Override
     public void onComponentChange(Component changedComponent) {
-        ((MaterialDialog) getDialog()).getActionButton(DialogAction.POSITIVE).setEnabled(
-                !rootComponent.hasError());
+        if (getArguments().getBoolean("editable"))
+            ((MaterialDialog) getDialog()).getActionButton(DialogAction.POSITIVE).setEnabled(
+                    component.isValid());
 
-        alertMessageViewGroup.removeAllViews();
-        for (@StringRes Integer alertMessage : rootComponent.getAlertMessages()) {
-            TextView alertMessageView = new TextView(getActivity());
-            alertMessageViewGroup.addView(alertMessageView);
+        problemViewGroup.removeAllViews();
+        for (String problem : new TreeSet<>(component.getProblems())) {
+            TextView problemMessageView = new TextView(getActivity());
+            problemViewGroup.addView(problemMessageView);
 
-            alertMessageView.setPadding(0, 8, 0, 8);
-            alertMessageView.setText(getString(alertMessage));
-            alertMessageView.setTextColor(ContextCompat.getColor(getActivity(),
-                    R.color.secondaryColor));
+            problemMessageView.setPadding(0, 8, 0, 8);
+            problemMessageView.setText(problem);
+            problemMessageView.setTextColor(ContextCompat.getColor(getActivity(),
+                    android.R.color.holo_red_light));
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Bundle bundle = new Bundle();
-        rootComponent.saveInstanceState(bundle);
-        outState.putBundle("root_component", bundle);
+        component.saveInstanceState(bundle);
+        outState.putBundle("component", bundle);
     }
 
-    protected abstract CardData createCardData();
+    public interface OnEditedCallback {
+        void onEdited(ComponentSourceAndSink componentSourceAndSink, int callbackId);
+    }
 }

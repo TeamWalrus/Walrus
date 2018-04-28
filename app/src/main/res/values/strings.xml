@@ -198,6 +198,12 @@
     <!-- Toast shown when card type doesn't have a view dialog -->
     <string name="no_view_card_dialog">This type of card doesn\'t have a detailed view</string>
 
+    <!-- Dialog title -->
+    <string name="edit_card_data_title">Manual <xliff:g id="card_data_class">%1$s</xliff:g> data entry</string>
+
+    <!-- Dialog title -->
+    <string name="view_card_data_title"><xliff:g id="card_data_class">%1$s</xliff:g> data</string>
+
 
     <!--
         ChameleonMiniActivity
@@ -258,17 +264,6 @@
 
 
     <!--
-        ComponentDialogFragment
-    -->
-
-    <!-- Dialog title -->
-    <string name="manual_card_data_entry_title">Manual <xliff:g id="card_data_class">%1$s</xliff:g> data entry</string>
-
-    <!-- Dialog title -->
-    <string name="view_card_data_title"><xliff:g id="card_data_class">%1$s</xliff:g> data</string>
-
-
-    <!--
         DeleteAllCardsPreference
     -->
 
@@ -294,7 +289,7 @@
 
 
     <!--
-        FixedBinaryComponent
+        FixedElement
     -->
 
     <!-- Error message -->
@@ -327,13 +322,13 @@
     <string name="hid_37_bit_with_facility_code">HID 37-bit with Facility Code (H10304)</string>
 
     <!-- Component label -->
-    <string name="hid_data">Data</string>
+    <string name="hid_data">Data (hex)</string>
 
     <!-- Component label -->
-    <string name="hid_facility_code">Facility Code (hex)</string>
+    <string name="hid_facility_code">Facility Code</string>
 
     <!-- Component label -->
-    <string name="hid_card_number">Card Number (hex)</string>
+    <string name="hid_card_number">Card Number</string>
 
 
     <!--
@@ -391,7 +386,7 @@
 
 
     <!--
-        ParityBinaryComponent
+        ParityElement
     -->
 
     <!-- Error message -->

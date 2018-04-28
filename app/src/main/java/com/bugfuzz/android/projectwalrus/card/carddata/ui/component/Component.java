@@ -21,39 +21,60 @@ package com.bugfuzz.android.projectwalrus.card.carddata.ui.component;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
-
-import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.HashSet;
 import java.util.Set;
 
-abstract public class Component {
+public abstract class Component {
 
-    OnComponentChangeCallback onComponentChangeCallback;
+    private final Context context;
+    private final String title;
+    protected OnComponentChangeCallback onComponentChangeCallback;
 
-    public void createView(Context context) {
+    private LinearLayout viewGroup;
+
+    public Component(Context context, String title) {
+        this.context = context;
+        this.title = title;
     }
 
-    public View getView() {
+    @Nullable
+    protected View getInnerView() {
         return null;
     }
 
-    public void setFromValue(CardData cardData) {
+    public View getView() {
+        if (viewGroup == null && (title != null || getInnerView() != null)) {
+            viewGroup = new LinearLayout(context);
+            viewGroup.setOrientation(LinearLayout.VERTICAL);
+
+            if (title != null) {
+                TextView titleView = new TextView(context);
+                titleView.setText(title);
+                viewGroup.addView(titleView);
+            }
+
+            if (getInnerView() != null)
+                viewGroup.addView(getInnerView());
+        }
+
+        return viewGroup;
     }
 
-    public void setFromInstanceState(Bundle savedInstanceState) {
+    public boolean isValid() {
+        return true;
     }
 
-    public boolean hasError() {
-        return false;
-    }
-
-    public Set<Integer> getAlertMessages() {
+    public Set<String> getProblems() {
         return new HashSet<>();
     }
 
-    abstract void applyToValue(CardData cardData);
+    public void restoreInstanceState(Bundle savedInstanceState) {
+    }
 
     public void saveInstanceState(Bundle outState) {
     }
@@ -62,8 +83,9 @@ abstract public class Component {
         this.onComponentChangeCallback = onComponentChangeCallback;
     }
 
-    interface OnComponentChangeCallback {
+    public interface OnComponentChangeCallback {
         @SuppressWarnings("unused")
         void onComponentChange(Component component);
     }
+
 }

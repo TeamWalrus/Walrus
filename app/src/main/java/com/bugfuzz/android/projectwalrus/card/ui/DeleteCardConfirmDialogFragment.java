@@ -19,9 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus.card.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,15 +31,13 @@ import com.bugfuzz.android.projectwalrus.R;
 
 public class DeleteCardConfirmDialogFragment extends DialogFragment {
 
-    public static DeleteCardConfirmDialogFragment show(Activity activity, String fragmentTag,
-                                                       int callbackId) {
+    public static DeleteCardConfirmDialogFragment create(int callbackId) {
         DeleteCardConfirmDialogFragment dialog = new DeleteCardConfirmDialogFragment();
 
         Bundle args = new Bundle();
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 
-        dialog.show(activity.getFragmentManager(), fragmentTag);
         return dialog;
     }
 

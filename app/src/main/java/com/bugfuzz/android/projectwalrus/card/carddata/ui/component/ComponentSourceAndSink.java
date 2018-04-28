@@ -17,24 +17,13 @@
  * along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bugfuzz.android.projectwalrus.util;
+package com.bugfuzz.android.projectwalrus.card.carddata.ui.component;
 
-import android.os.Parcel;
+import android.content.Context;
 
-import org.parceler.ParcelConverter;
+public interface ComponentSourceAndSink {
 
-public class MiscUtils {
+    Component createComponent(Context context, boolean editable);
 
-    public static class ShortParcelConverter implements ParcelConverter<Short> {
-
-        @Override
-        public void toParcel(Short input, Parcel parcel) {
-            parcel.writeInt(input);
-        }
-
-        @Override
-        public Short fromParcel(Parcel parcel) {
-            return (short) parcel.readInt();
-        }
-    }
+    void apply(Component component);
 }

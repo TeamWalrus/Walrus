@@ -19,23 +19,14 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3.ui;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
 
 public class Proxmark3TuneDialogFragment extends DialogFragment {
-
-    @SuppressWarnings("UnusedReturnValue")
-    public static Proxmark3TuneDialogFragment show(Activity activity, String fragmentTag) {
-        Proxmark3TuneDialogFragment dialog = new Proxmark3TuneDialogFragment();
-
-        dialog.show(activity.getFragmentManager(), fragmentTag);
-        return dialog;
-    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

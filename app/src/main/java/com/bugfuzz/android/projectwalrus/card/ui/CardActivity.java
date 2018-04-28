@@ -22,9 +22,9 @@ package com.bugfuzz.android.projectwalrus.card.ui;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +49,8 @@ import com.bugfuzz.android.projectwalrus.card.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.card.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.PickCardDataClassDialogFragment;
 import com.bugfuzz.android.projectwalrus.card.QueryUtils;
+import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentDialogFragment;
+import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentSourceAndSink;
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
@@ -77,7 +79,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         implements OnMapReadyCallback, DeleteCardConfirmDialogFragment.OnDeleteCardConfirmCallback,
         PickCardDataSourceDialogFragment.OnCardDataSourceClickCallback,
         PickCardDataClassDialogFragment.OnCardDataClassClickCallback,
-        ReadCardDataFragment.OnCardDataCallback, CardData.OnEditedCardDataCallback {
+        ReadCardDataFragment.OnCardDataCallback, ComponentDialogFragment.OnEditedCallback {
 
     private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.card.ui.CardActivity.EXTRA_MODE";
     private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.card.ui.CardActivity.EXTRA_CARD";
@@ -241,12 +243,16 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                         R.id.locationMap);
         TextView locationUnknown = findViewById(R.id.locationUnknown);
         if (card.cardLocationLat != null && card.cardLocationLng != null) {
-            getSupportFragmentManager().beginTransaction().show(locationMap).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .show(locationMap)
+                    .commit();
             locationMap.getMapAsync(this);
 
             locationUnknown.setVisibility(View.GONE);
         } else {
-            getSupportFragmentManager().beginTransaction().hide(locationMap).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .hide(locationMap)
+                    .commit();
 
             locationUnknown.setVisibility(View.VISIBLE);
         }
@@ -324,7 +330,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 return true;
 
             case R.id.deleteCard:
-                DeleteCardConfirmDialogFragment.show(this, "delete_card_confirm_dialog", 0);
+                DeleteCardConfirmDialogFragment.create(0).show(getSupportFragmentManager(),
+                        "delete_card_confirm_dialog");
                 return true;
 
             case R.id.save:
@@ -358,10 +365,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         if (card.cardData == null)
             return;
 
-        Class<? extends DialogFragment> viewDialogFragmentClass =
-                card.cardData.getClass().getAnnotation(CardData.Metadata.class)
-                        .viewDialogFragment();
+        CardData.Metadata cardDataMetadata = card.cardData.getClass().getAnnotation(
+                CardData.Metadata.class);
 
+        Class<? extends DialogFragment> viewDialogFragmentClass =
+                cardDataMetadata.viewDialogFragmentClass();
         if (viewDialogFragmentClass == DialogFragment.class) {
             Toast.makeText(CardActivity.this, R.string.no_view_card_dialog,
                     Toast.LENGTH_SHORT).show();
@@ -371,16 +379,17 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         DialogFragment viewDialogFragment;
         try {
             viewDialogFragment = viewDialogFragmentClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException ignored) {
-            return;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
 
         Bundle args = new Bundle();
-        args.putParcelable("card_data", Parcels.wrap(card.cardData));
-        args.putBoolean("edit", false);
+        args.putString("title", getString(R.string.view_card_data_title, cardDataMetadata.name()));
+        args.putParcelable("source_and_sink", Parcels.wrap(card.cardData));
+        args.putBoolean("editable", false);
         viewDialogFragment.setArguments(args);
 
-        viewDialogFragment.show(getFragmentManager(), "card_data_view_dialog");
+        viewDialogFragment.show(getSupportFragmentManager(), "card_data_view_dialog");
     }
 
     public void onReadCardDataClick(View view) {
@@ -388,8 +397,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     }
 
     private void startReadCardDataSetup() {
-        PickCardDataSourceDialogFragment.show(this, PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG, null,
-                null, mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE, 0);
+        PickCardDataSourceDialogFragment.create(null, null,
+                mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE, 0).show(getSupportFragmentManager(),
+                PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
     }
 
     public void onWriteCardDataClick(View view) {
@@ -427,22 +437,23 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             return;
         }
 
-        PickCardDataSourceDialogFragment.show(
-                this,
-                PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG,
+        PickCardDataSourceDialogFragment.create(
                 card.cardData.getClass(),
                 write ? CardDeviceAdapter.FilterMode.WRITABLE :
                         CardDeviceAdapter.FilterMode.EMULATABLE,
                 false,
-                write ? 1 : 2);
+                write ? 1 : 2).show(getSupportFragmentManager(),
+                PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
     }
 
     private void dismissPickCardSourceDialogFragment() {
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment pickCardDeviceDialogFragment = fragmentManager.findFragmentByTag(
                 PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
         if (pickCardDeviceDialogFragment != null)
-            fragmentManager.beginTransaction().remove(pickCardDeviceDialogFragment).commit();
+            fragmentManager.beginTransaction()
+                    .remove(pickCardDeviceDialogFragment)
+                    .commit();
     }
 
     @Override
@@ -451,12 +462,12 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         Set<Class<? extends CardData>> cardDataClasses = new HashSet<>();
         for (Class<? extends CardData> cardDataClass : CardData.getCardDataClasses())
-            if (cardDataClass.getAnnotation(CardData.Metadata.class).editDialogFragment() !=
+            if (cardDataClass.getAnnotation(CardData.Metadata.class).editDialogFragmentClass() !=
                     DialogFragment.class)
                 cardDataClasses.add(cardDataClass);
 
-        PickCardDataClassDialogFragment.show(this,
-                PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG, cardDataClasses, -1);
+        PickCardDataClassDialogFragment.create(cardDataClasses, -1).show(
+                getSupportFragmentManager(), PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG);
     }
 
     @Override
@@ -465,55 +476,80 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         switch (callbackId) {
             case 0:
-                PickCardDataClassDialogFragment.show(
-                        this,
-                        PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG,
+                PickCardDataClassDialogFragment.create(
                         new HashSet<>(Arrays.asList(
                                 cardDevice.getClass().getAnnotation(CardDevice.Metadata.class)
                                         .supportsRead())),
-                        cardDevice.getId());
+                        cardDevice.getId()).show(getSupportFragmentManager(),
+                        PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG);
                 break;
 
             case 1:
             case 2:
-                WriteOrEmulateCardDataFragment.show(this, "write_or_emulate_card_data", cardDevice,
-                        card.cardData, callbackId == 1, 0);
+                getSupportFragmentManager().beginTransaction()
+                        .add(WriteOrEmulateCardDataFragment.create(cardDevice, card.cardData,
+                                callbackId == 1, 0), "write_or_emulate_card_data")
+                        .commit();
                 break;
         }
     }
 
     @Override
     public void onCardDataClassClick(Class<? extends CardData> cardDataClass, int callbackId) {
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment pickCardDataSourceDialogFragment = fragmentManager.findFragmentByTag(
                 PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG);
         if (pickCardDataSourceDialogFragment != null)
-            fragmentManager.beginTransaction().remove(pickCardDataSourceDialogFragment).commit();
+            fragmentManager.beginTransaction()
+                    .remove(pickCardDataSourceDialogFragment)
+                    .commit();
 
         if (callbackId == -1) {
+            Class<? extends DialogFragment> editDialogFragmentClass =
+                    cardDataClass.getAnnotation(CardData.Metadata.class).editDialogFragmentClass();
             DialogFragment editDialogFragment;
             try {
-                editDialogFragment = cardDataClass.getAnnotation(CardData.Metadata.class)
-                        .editDialogFragment().newInstance();
-            } catch (InstantiationException | IllegalAccessException ignored) {
-                return;
+                editDialogFragment = editDialogFragmentClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
 
+            CardData cardData;
+            if (card.cardData != null && card.cardData.getClass() == cardDataClass)
+                try {
+                    cardData = (CardData) card.cardData.clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException(e);
+                }
+            else
+                try {
+                    cardData = cardDataClass.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+
+            CardData.Metadata cardDataMetadata = cardData.getClass().getAnnotation(
+                    CardData.Metadata.class);
+
             Bundle args = new Bundle();
-            args.putParcelable("card_data",
-                    Parcels.wrap(cardDataClass.isInstance(card.cardData) ? card.cardData : null));
-            args.putBoolean("edit", true);
+            args.putString("title", getString(R.string.edit_card_data_title,
+                    cardDataMetadata.name()));
+            args.putParcelable("source_and_sink", Parcels.wrap(cardData));
+            args.putBoolean("editable", true);
             args.putInt("callback_id", 0);
             editDialogFragment.setArguments(args);
 
-            editDialogFragment.show(getFragmentManager(), "card_data_edit_dialog");
+            editDialogFragment.show(fragmentManager, "card_data_edit_dialog");
         } else {
             CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(callbackId);
             if (cardDevice == null)
                 return;
 
             if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
-                ReadCardDataFragment.show(this, "read_card_data", cardDevice, cardDataClass, 0);
+                getSupportFragmentManager().beginTransaction()
+                        .add(ReadCardDataFragment.create(cardDevice, cardDataClass, 0),
+                                "read_card_data")
+                        .commit();
             else {
                 BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
                 supportFinishAfterTransition();
@@ -522,8 +558,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     }
 
     @Override
-    public void onEditedCardData(CardData cardData, int callbackId) {
-        onCardData(cardData, callbackId);
+    public void onEdited(ComponentSourceAndSink componentSourceAndSink, int callbackId) {
+        onCardData((CardData) componentSourceAndSink, callbackId);
     }
 
     @Override

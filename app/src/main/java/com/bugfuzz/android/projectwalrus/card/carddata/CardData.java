@@ -19,9 +19,9 @@
 
 package com.bugfuzz.android.projectwalrus.card.carddata;
 
-import android.app.DialogFragment;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 
 import java.io.Serializable;
 import java.lang.annotation.ElementType;
@@ -29,7 +29,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public abstract class CardData implements Serializable {
+public abstract class CardData implements Serializable, Cloneable {
 
     public static Class<? extends CardData>[] getCardDataClasses() {
         // noinspection unchecked
@@ -46,6 +46,11 @@ public abstract class CardData implements Serializable {
 
     public abstract String getHumanReadableText();
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Metadata {
@@ -53,12 +58,8 @@ public abstract class CardData implements Serializable {
 
         @DrawableRes int icon();
 
-        Class<? extends DialogFragment> viewDialogFragment() default DialogFragment.class;
+        Class<? extends DialogFragment> viewDialogFragmentClass() default DialogFragment.class;
 
-        Class<? extends DialogFragment> editDialogFragment() default DialogFragment.class;
-    }
-
-    public interface OnEditedCardDataCallback {
-        void onEditedCardData(CardData cardData, int callbackId);
+        Class<? extends DialogFragment> editDialogFragmentClass() default DialogFragment.class;
     }
 }

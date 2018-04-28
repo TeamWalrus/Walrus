@@ -19,71 +19,71 @@
 
 package com.bugfuzz.android.projectwalrus.card.carddata.ui.component;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 
-import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
-
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class ContainerComponent extends Component {
 
-    protected abstract Collection<Component> getChildren();
+    ContainerComponent(Context context, String title) {
+        super(context, title);
+    }
 
-    @Override
-    @CallSuper
-    public void setFromValue(CardData cardData) {
-        for (Component child : getChildren())
-            child.setFromValue(cardData);
+    protected abstract List<Component> getChildren();
+
+    List<Component> getVisibleChildren() {
+        return getChildren();
     }
 
     @Override
     @CallSuper
-    public void setFromInstanceState(Bundle savedInstanceState) {
+    public void restoreInstanceState(Bundle savedInstanceState) {
+        Bundle childStates = savedInstanceState.getBundle("children");
+        if (childStates == null)
+            return;
+
         int i = 0;
         for (Component child : getChildren())
-            child.setFromInstanceState(savedInstanceState.getBundle("child_" + i++));
-    }
-
-    protected abstract Collection<Component> getApplicableChildren();
-
-    @Override
-    public boolean hasError() {
-        for (Component child : getApplicableChildren())
-            if (child.hasError())
-                return true;
-
-        return false;
-    }
-
-    @Override
-    public Set<Integer> getAlertMessages() {
-        Set<Integer> alertMessages = new HashSet<>();
-
-        for (Component child : getApplicableChildren())
-            alertMessages.addAll(child.getAlertMessages());
-
-        return alertMessages;
+            child.restoreInstanceState(childStates.getBundle("" + i++));
     }
 
     @Override
     @CallSuper
-    void applyToValue(CardData cardData) {
-        for (Component child : getApplicableChildren())
-            child.applyToValue(cardData);
+    public boolean isValid() {
+        for (Component child : getVisibleChildren())
+            if (!child.isValid())
+                return false;
+
+        return true;
+    }
+
+    @Override
+    @CallSuper
+    public Set<String> getProblems() {
+        Set<String> problems = new HashSet<>();
+
+        for (Component child : getVisibleChildren())
+            problems.addAll(child.getProblems());
+
+        return problems;
     }
 
     @Override
     @CallSuper
     public void saveInstanceState(Bundle outState) {
+        Bundle childStates = new Bundle();
         int i = 0;
         for (Component child : getChildren()) {
             Bundle bundle = new Bundle();
             child.saveInstanceState(bundle);
-            outState.putBundle("child_" + i++, bundle);
+            childStates.putBundle("" + i++, bundle);
         }
+
+        outState.putBundle("children", childStates);
     }
 
     @Override

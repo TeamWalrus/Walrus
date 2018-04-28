@@ -20,45 +20,38 @@
 package com.bugfuzz.android.projectwalrus.card.carddata.ui.component;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import java.util.Collection;
 import java.util.List;
 
 public class MultiComponent extends ContainerComponent {
 
     private final List<Component> children;
-    private LinearLayout viewGroup;
+    private final LinearLayout viewGroup;
 
-    public MultiComponent(List<Component> children) {
+    public MultiComponent(Context context, String title, List<Component> children) {
+        super(context, title);
+
         this.children = children;
-    }
 
-    @Override
-    protected Collection<Component> getChildren() {
-        return children;
-    }
-
-    @Override
-    public void createView(Context context) {
         viewGroup = new LinearLayout(context);
         viewGroup.setOrientation(LinearLayout.VERTICAL);
 
-        for (Component child : getChildren()) {
-            child.createView(context);
+        for (Component child : children)
             if (child.getView() != null)
                 viewGroup.addView(child.getView());
-        }
     }
 
+    @Nullable
     @Override
-    public View getView() {
+    protected View getInnerView() {
         return viewGroup;
     }
 
     @Override
-    protected Collection<Component> getApplicableChildren() {
-        return getChildren();
+    public List<Component> getChildren() {
+        return children;
     }
 }
