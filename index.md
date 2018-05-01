@@ -9,7 +9,7 @@ layout: home
 
 {% include play-store-badge.html %}
 
-Walrus enables you to use your existing contactless card cloning devices with your Android device. Using a simple interface, cards can be read into a wallet to be written or emulated later.
+Walrus is an Android app that enables you to use contactless card cloning devices with your Android device. Using a simple interface in the style of Google Pay, cards can be read into a wallet to be written or emulated later.
 
 Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.
 
