@@ -6,7 +6,7 @@ Walrus enables you to use your existing contactless card cloning devices with yo
 
 Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.
 
-**For end-user information such as what Walrus is, how to install it and how to use it, check out the [Walrus website](http://project-walrus.io/)! This readme outlines information intended for developers.**
+**For end-user information such as what Walrus is, how to install it and how to use it, check out the [Walrus website](https://project-walrus.io/)! This readme outlines information intended for developers.**
 
 ## Licensing
 
