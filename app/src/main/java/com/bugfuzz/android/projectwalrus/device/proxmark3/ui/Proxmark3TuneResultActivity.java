@@ -38,6 +38,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
 
     public static void startActivity(Context context, Proxmark3Device.TuneResult tuneResult) {
         Intent intent = new Intent(context, Proxmark3TuneResultActivity.class);
-        intent.putExtra(EXTRA_TUNE_RESULT, tuneResult);
+        intent.putExtra(EXTRA_TUNE_RESULT, Parcels.wrap(tuneResult));
         context.startActivity(intent);
     }
 
@@ -57,8 +59,8 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_proxmark3_tune_results);
 
-        Proxmark3Device.TuneResult tuneResult =
-                (Proxmark3Device.TuneResult) getIntent().getSerializableExtra(EXTRA_TUNE_RESULT);
+        Proxmark3Device.TuneResult tuneResult = Parcels.unwrap(getIntent().getParcelableExtra(
+                EXTRA_TUNE_RESULT));
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ActionBar actionBar = getSupportActionBar();
@@ -66,20 +68,20 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
 
         if (tuneResult.lf) {
-            setResultInfo(tuneResult.peak_v, 2.948f, 14.730f, R.id.lfOk);
+            setResultInfo(tuneResult.peakV, 2.948f, 14.730f, R.id.lfOk);
             ((TextView) findViewById(R.id.lf125)).setText(
-                    getResources().getString(R.string.tune_voltage, tuneResult.v_125));
+                    getResources().getString(R.string.tune_voltage, tuneResult.v125));
             ((TextView) findViewById(R.id.lf134)).setText(
-                    getResources().getString(R.string.tune_voltage, tuneResult.v_134));
+                    getResources().getString(R.string.tune_voltage, tuneResult.v134));
             ((TextView) findViewById(R.id.lfOptimal)).setText(
-                    getResources().getString(R.string.tune_peak_voltage, tuneResult.peak_v,
-                            (tuneResult.peak_f / 1000)));
+                    getResources().getString(R.string.tune_peak_voltage, tuneResult.peakV,
+                            (tuneResult.peakF / 1000)));
 
             LineChart lfChart = findViewById(R.id.lfChart);
-            if (tuneResult.v_LF != null) {
+            if (tuneResult.vLF != null) {
                 List<Entry> entries = new ArrayList<>();
                 for (int i = 255; i >= 19; --i)
-                    entries.add(new Entry(12e6f / (i + 1) / 1e3f, tuneResult.v_LF[i]));
+                    entries.add(new Entry(12e6f / (i + 1) / 1e3f, tuneResult.vLF[i]));
 
                 LineDataSet lineDataSet = new LineDataSet(entries, getString(R.string.lf));
                 lineDataSet.setColor(Color.BLACK);
@@ -99,9 +101,9 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
             findViewById(R.id.lf).setVisibility(View.GONE);
 
         if (tuneResult.hf) {
-            setResultInfo(tuneResult.v_HF, 3.167f, 7.917f, R.id.hfOk);
+            setResultInfo(tuneResult.vHF, 3.167f, 7.917f, R.id.hfOk);
             ((TextView) findViewById(R.id.hfV)).setText(
-                    getResources().getString(R.string.tune_voltage, tuneResult.v_HF));
+                    getResources().getString(R.string.tune_voltage, tuneResult.vHF));
         } else
             findViewById(R.id.hf).setVisibility(View.GONE);
     }
