@@ -31,7 +31,7 @@ import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
-import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.Card;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
@@ -103,7 +103,7 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
         final Card card = Card.copyOf(cardTemplate);
         //noinspection NonAtomicOperationOnVolatileField
         card.name += " (" + ++numberOfCardsRead + ")";
-        card.setCardData(cardData, ProjectWalrusApplication.getCurrentBestLocation());
+        card.setCardData(cardData, WalrusApplication.getCurrentBestLocation());
 
         new Handler(context.getMainLooper()).post(new Runnable() {
             @Override

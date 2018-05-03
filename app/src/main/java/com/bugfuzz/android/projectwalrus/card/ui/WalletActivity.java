@@ -41,7 +41,7 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.SearchView;
 
-import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.Card;
 import com.bugfuzz.android.projectwalrus.card.DatabaseHelper;
@@ -157,7 +157,7 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     @AfterPermissionGranted(LOCATION_REQUEST_CODE)
     private void gotLocationPermissions() {
-        ProjectWalrusApplication.startLocationUpdates();
+        WalrusApplication.startLocationUpdates();
     }
 
     @Override

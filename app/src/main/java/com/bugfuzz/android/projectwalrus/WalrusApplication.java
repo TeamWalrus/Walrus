@@ -47,7 +47,7 @@ import com.squareup.leakcanary.LeakCanary;
 
 import static android.os.Build.VERSION_CODES.O;
 
-public class ProjectWalrusApplication extends Application {
+public class WalrusApplication extends Application {
 
     @SuppressLint("StaticFieldLeak")
     private static Context context;
@@ -118,7 +118,7 @@ public class ProjectWalrusApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                CardDeviceManager.INSTANCE.scanForDevices(ProjectWalrusApplication.this);
+                CardDeviceManager.INSTANCE.scanForDevices(WalrusApplication.this);
             }
         }).start();
     }

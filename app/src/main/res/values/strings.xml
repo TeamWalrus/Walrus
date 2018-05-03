@@ -456,17 +456,6 @@
 
 
     <!--
-        ProjectWalrusApplication
-    -->
-
-    <!-- Toast message shown when a card device is connected -->
-    <string name="device_disconnected"><xliff:g id="device">%1$s</xliff:g> disconnected</string>
-
-    <!-- Toast message shown when a card device is disconnected -->
-    <string name="device_connected"><xliff:g id="device">%1$s</xliff:g> connected</string>
-
-
-    <!--
         Proxmark3Activity
     -->
 
@@ -602,6 +591,17 @@
 
     <!-- Shown before requesting location permissions -->
     <string name="location_rationale">Walrus can (optionally) use your device\'s location to allow the location of captured cards to be recorded.</string>
+
+
+    <!--
+        WalrusApplication
+    -->
+
+    <!-- Toast message shown when a card device is connected -->
+    <string name="device_disconnected"><xliff:g id="device">%1$s</xliff:g> disconnected</string>
+
+    <!-- Toast message shown when a card device is disconnected -->
+    <string name="device_connected"><xliff:g id="device">%1$s</xliff:g> connected</string>
 
 
     <!--

@@ -41,7 +41,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bugfuzz.android.projectwalrus.ProjectWalrusApplication;
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.Card;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
@@ -531,7 +531,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         if (cardData.equals(card.cardData))
             return;
 
-        card.setCardData(cardData, ProjectWalrusApplication.getCurrentBestLocation());
+        card.setCardData(cardData, WalrusApplication.getCurrentBestLocation());
         dirty = true;
         updateUI();
     }
