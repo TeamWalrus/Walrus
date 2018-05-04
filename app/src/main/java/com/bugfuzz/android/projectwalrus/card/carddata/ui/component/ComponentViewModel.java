@@ -46,8 +46,9 @@ class ComponentViewModel extends ViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass != ComponentViewModel.class)
+            if (modelClass != ComponentViewModel.class) {
                 throw new RuntimeException("Invalid view model class requested");
+            }
 
             // noinspection unchecked
             return (T) new ComponentViewModel(componentSourceAndSink);

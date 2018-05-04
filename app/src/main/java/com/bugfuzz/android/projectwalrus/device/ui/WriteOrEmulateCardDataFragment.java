@@ -19,12 +19,12 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
@@ -37,14 +37,15 @@ import java.io.IOException;
 public class WriteOrEmulateCardDataFragment extends Fragment
         implements CardDevice.CardDataOperationCallbacks {
 
-    private static final String SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG = "write_or_emulate_card_data_single_card_data_io_dialog";
+    private static final String SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG =
+            "write_or_emulate_card_data_single_card_data_io_dialog";
 
     private CardData cardData;
 
     private volatile boolean stop;
 
     public static WriteOrEmulateCardDataFragment create(CardDevice cardDevice, CardData cardData,
-                                                        boolean write, int callbackId) {
+            boolean write, int callbackId) {
         WriteOrEmulateCardDataFragment fragment = new WriteOrEmulateCardDataFragment();
         fragment.setCardData(cardData);
 
@@ -63,16 +64,18 @@ public class WriteOrEmulateCardDataFragment extends Fragment
 
         CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(
                 getArguments().getInt("card_device_id"));
-        if (cardDevice == null)
+        if (cardDevice == null) {
             return;
+        }
 
         boolean write = getArguments().getBoolean("write");
 
         try {
-            if (write)
+            if (write) {
                 cardDevice.writeCardData(cardData, this);
-            else
+            } else {
                 cardDevice.emulateCardData(cardData, this);
+            }
         } catch (IOException e) {
             Toast.makeText(getActivity(),
                     getActivity().getString(
@@ -131,10 +134,11 @@ public class WriteOrEmulateCardDataFragment extends Fragment
         FragmentManager fragmentManager = getChildFragmentManager();
         Fragment dialogFragment = fragmentManager.findFragmentByTag(
                 SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG);
-        if (dialogFragment != null)
+        if (dialogFragment != null) {
             fragmentManager.beginTransaction()
                     .remove(dialogFragment)
                     .commit();
+        }
     }
 
     private void setCardData(CardData cardData) {

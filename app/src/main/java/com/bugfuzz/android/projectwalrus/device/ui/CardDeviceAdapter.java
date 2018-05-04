@@ -43,8 +43,9 @@ public class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.Vi
     private final OnCardDeviceClickCallback onCardDeviceClickCallback;
     private final int startEndPadding;
 
-    private CardDeviceAdapter(Class<? extends CardData> cardDataFilterClass, FilterMode cardDataFilterMode,
-                              OnCardDeviceClickCallback onCardDeviceClickCallback, int startEndPadding) {
+    private CardDeviceAdapter(Class<? extends CardData> cardDataFilterClass,
+            FilterMode cardDataFilterMode,
+            OnCardDeviceClickCallback onCardDeviceClickCallback, int startEndPadding) {
         this.cardDataFilterClass = cardDataFilterClass;
         this.cardDataFilterMode = cardDataFilterMode;
         this.onCardDeviceClickCallback = onCardDeviceClickCallback;
@@ -52,7 +53,7 @@ public class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.Vi
     }
 
     CardDeviceAdapter(Class<? extends CardData> cardDataFilterClass, FilterMode cardDataFilterMode,
-                      OnCardDeviceClickCallback onCardDeviceClickCallback) {
+            OnCardDeviceClickCallback onCardDeviceClickCallback) {
         this(cardDataFilterClass, cardDataFilterMode, onCardDeviceClickCallback, 0);
     }
 
@@ -87,8 +88,9 @@ public class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.Vi
     }
 
     private List<CardDevice> getFilteredCardDevices() {
-        if (cardDataFilterClass == null)
+        if (cardDataFilterClass == null) {
             return new ArrayList<>(CardDeviceManager.INSTANCE.getCardDevices().values());
+        }
 
         List<CardDevice> cardDevices = new ArrayList<>();
         for (CardDevice cardDevice : CardDeviceManager.INSTANCE.getCardDevices().values()) {
@@ -110,8 +112,9 @@ public class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.Vi
                     break;
             }
 
-            if (Arrays.asList(array).contains(cardDataFilterClass))
+            if (Arrays.asList(array).contains(cardDataFilterClass)) {
                 cardDevices.add(cardDevice);
+            }
         }
 
         return cardDevices;

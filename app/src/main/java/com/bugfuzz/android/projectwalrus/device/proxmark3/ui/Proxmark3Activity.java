@@ -19,10 +19,10 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3.ui;
 
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -41,7 +41,8 @@ public class Proxmark3Activity extends AppCompatActivity
         implements FindVersionFragment.OnFindVersionCallback,
         Proxmark3TuneFragment.OnTuneResultCallback {
 
-    private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
+    private static final String EXTRA_DEVICE =
+            "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Activity.EXTRA_DEVICE";
 
     private static final String PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG = "proxmark3_tune_dialog";
 
@@ -111,10 +112,11 @@ public class Proxmark3Activity extends AppCompatActivity
     private void removeTuneDialog() {
         Fragment proxmark3TuneDialogFragment =
                 getSupportFragmentManager().findFragmentByTag(PROXMARK3_TUNE_DIALOG_FRAGMENT_TAG);
-        if (proxmark3TuneDialogFragment != null)
+        if (proxmark3TuneDialogFragment != null) {
             getSupportFragmentManager().beginTransaction()
                     .remove(proxmark3TuneDialogFragment)
                     .commit();
+        }
     }
 
     @Override

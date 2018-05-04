@@ -20,7 +20,6 @@
 package com.bugfuzz.android.projectwalrus.device.ui;
 
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -30,6 +29,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -48,8 +48,9 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
                 public void onReceive(Context context, Intent intent) {
                     if (getSink() == null) {
                         Dialog dialog = getDialog();
-                        if (dialog != null)
+                        if (dialog != null) {
                             dialog.cancel();
+                        }
                     }
                 }
             };
@@ -59,10 +60,11 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     BulkReadCardDataSink sink = getSink();
-                    if (sink != null)
+                    if (sink != null) {
                         cardDataIOView.setStatus(getResources().getQuantityString(
                                 R.plurals.num_cards_read, sink.getNumberOfCardsRead(),
                                 sink.getNumberOfCardsRead()));
+                    }
                 }
             };
     private final ServiceConnection bulkReadCardsServiceConnection = new ServiceConnection() {
@@ -85,8 +87,9 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
             bulkReadCardsServiceBinder = null;
 
             Dialog dialog = getDialog();
-            if (dialog != null)
+            if (dialog != null) {
                 dialog.cancel();
+            }
         }
     };
 
@@ -113,10 +116,11 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog,
-                                        @NonNull DialogAction which) {
+                            @NonNull DialogAction which) {
                         BulkReadCardDataSink sink = getSink();
-                        if (sink != null)
+                        if (sink != null) {
                             sink.stopReading();
+                        }
                     }
                 })
                 .build();

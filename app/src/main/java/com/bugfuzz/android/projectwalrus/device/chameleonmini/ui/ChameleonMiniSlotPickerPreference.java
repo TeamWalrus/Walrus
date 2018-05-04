@@ -44,7 +44,7 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
     }
 
     public ChameleonMiniSlotPickerPreference(Context context, AttributeSet attrs,
-                                             int defStyleAttr) {
+            int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

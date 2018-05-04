@@ -137,16 +137,19 @@ public class WalrusCardView extends FrameLayout {
                 throw new IllegalArgumentException();
         }
 
-        if (width < getSuggestedMinimumWidth())
+        if (width < getSuggestedMinimumWidth()) {
             width = getSuggestedMinimumWidth();
-        if (height < getSuggestedMinimumHeight())
+        }
+        if (height < getSuggestedMinimumHeight()) {
             height = getSuggestedMinimumHeight();
+        }
 
         final double ratio = (double) maxSize.first / maxSize.second;
-        if (width >= height)
+        if (width >= height) {
             height = (int) (width / ratio);
-        else
+        } else {
             width = (int) (height * ratio);
+        }
 
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));

@@ -19,9 +19,9 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3.ui;
 
-import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
@@ -50,8 +50,9 @@ public class Proxmark3TuneFragment extends Fragment {
         Proxmark3Device proxmark3Device =
                 (Proxmark3Device) CardDeviceManager.INSTANCE.getCardDevices().get(
                         getArguments().getInt("proxmark3_device_id"));
-        if (proxmark3Device == null)
+        if (proxmark3Device == null) {
             return;
+        }
 
         setRetainInstance(true);
 
@@ -72,7 +73,7 @@ public class Proxmark3TuneFragment extends Fragment {
         private final boolean lf;
 
         TuneTask(Proxmark3TuneFragment proxmark3TuneFragmentWeakReference,
-                 Proxmark3Device proxmark3Device, boolean lf) {
+                Proxmark3Device proxmark3Device, boolean lf) {
             this.proxmark3TuneFragmentWeakReference = new WeakReference<>(
                     proxmark3TuneFragmentWeakReference);
             this.proxmark3Device = proxmark3Device;
@@ -92,23 +93,27 @@ public class Proxmark3TuneFragment extends Fragment {
         protected void onPostExecute(Pair<Proxmark3Device.TuneResult, IOException> result) {
             super.onPostExecute(result);
 
-            if (result == null)
+            if (result == null) {
                 return;
+            }
 
             Proxmark3TuneFragment proxmark3TuneFragment =
                     proxmark3TuneFragmentWeakReference.get();
-            if (proxmark3TuneFragment == null)
+            if (proxmark3TuneFragment == null) {
                 return;
+            }
 
             OnTuneResultCallback onTuneResultCallback =
                     (OnTuneResultCallback) proxmark3TuneFragment.getActivity();
-            if (onTuneResultCallback == null)
+            if (onTuneResultCallback == null) {
                 return;
-            
-            if (result.first != null)
+            }
+
+            if (result.first != null) {
                 onTuneResultCallback.onTuneResult(result.first);
-            else
+            } else {
                 onTuneResultCallback.onTuneError(result.second);
+            }
         }
     }
 }

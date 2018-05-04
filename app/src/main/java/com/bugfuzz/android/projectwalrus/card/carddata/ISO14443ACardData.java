@@ -127,14 +127,16 @@ public class ISO14443ACardData extends CardData {
         Set<Type> types = new TreeSet<>();
         for (TypeMatcher typeMatcher : TYPE_MATCHERS) {
             Type type = typeMatcher.match(this);
-            if (type != null)
+            if (type != null) {
                 types.add(type);
+            }
         }
 
         StringBuilder result = new StringBuilder();
         for (Type type : types) {
-            if (result.length() > 0)
+            if (result.length() > 0) {
                 result.append(" or ");
+            }
             result.append(type);
         }
 
@@ -148,11 +150,13 @@ public class ISO14443ACardData extends CardData {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
+        }
 
-        if (o == null || getClass() != o.getClass())
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         ISO14443ACardData that = (ISO14443ACardData) o;
 
@@ -202,8 +206,9 @@ public class ISO14443ACardData extends CardData {
 
         @Override
         public int compareTo(@NonNull Object o) {
-            if (this == o)
+            if (this == o) {
                 return 0;
+            }
 
             Type that = (Type) o;
 
@@ -221,8 +226,8 @@ public class ISO14443ACardData extends CardData {
         private final Byte sak;
 
         StaticTypeMatcher(Type type, @IntRange(from = 0, to = 65535) int atqa,
-                          @IntRange(from = 0, to = 65535) int atqaMask,
-                          @IntRange(from = 0, to = 255) Integer sak) {
+                @IntRange(from = 0, to = 65535) int atqaMask,
+                @IntRange(from = 0, to = 255) Integer sak) {
             this.type = type;
             this.atqa = (short) atqa;
             this.atqaMask = (short) atqaMask;
@@ -230,7 +235,7 @@ public class ISO14443ACardData extends CardData {
         }
 
         StaticTypeMatcher(Type type, @IntRange(from = 0, to = 65535) int atqa,
-                          @IntRange(from = 0, to = 255) Integer sak) {
+                @IntRange(from = 0, to = 255) Integer sak) {
             this(type, atqa, 0xffff, sak);
         }
 

@@ -45,8 +45,9 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         super(context, usbDevice);
 
         usbSerialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice, usbDeviceConnection);
-        if (!usbSerialDevice.open())
+        if (!usbSerialDevice.open()) {
             throw new IOException(context.getString(R.string.failed_open_usb_serial_device));
+        }
 
         setupSerialParams(usbSerialDevice);
 
@@ -57,16 +58,18 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
                 for (; ; ) {
                     Pair<T, Integer> sliced = sliceIncoming(buffer);
-                    if (sliced == null)
+                    if (sliced == null) {
                         break;
+                    }
 
                     buffer = ArrayUtils.subarray(buffer, sliced.second, buffer.length);
 
-                    if (receiving)
+                    if (receiving) {
                         try {
                             receiveQueue.put(sliced.first);
                         } catch (InterruptedException ignored) {
                         }
+                    }
                 }
             }
         });
@@ -84,8 +87,9 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     }
 
     protected void setReceiving(boolean receiving) {
-        if (receiving)
+        if (receiving) {
             receiveQueue.clear();
+        }
 
         this.receiving = receiving;
     }
@@ -95,8 +99,9 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     abstract protected byte[] formatOutgoing(T out);
 
     private T receive(long timeout) {
-        if (!receiving)
+        if (!receiving) {
             throw new RuntimeException("Not receiving");
+        }
 
         try {
             return receiveQueue.poll(timeout, TimeUnit.MILLISECONDS);
@@ -107,8 +112,9 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
     protected void send(T out) {
         byte[] bytes = formatOutgoing(out);
-        if (bytes == null)
+        if (bytes == null) {
             throw new RuntimeException("Failed to format outgoing");
+        }
 
         usbSerialDevice.write(bytes);
     }
@@ -118,16 +124,18 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     }
 
     private <O> O receive(ReceiveSink<T, O> receiveSink,
-                          @SuppressWarnings("SameParameterValue") long internalTimeout)
+            @SuppressWarnings("SameParameterValue") long internalTimeout)
             throws IOException {
         while (receiveSink.wantsMore()) {
             T in = receive(internalTimeout);
-            if (in == null)
+            if (in == null) {
                 continue;
+            }
 
             O result = receiveSink.onReceived(in);
-            if (result != null)
+            if (result != null) {
                 return result;
+            }
         }
 
         return null;

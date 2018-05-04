@@ -84,8 +84,9 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
     @Override
     protected Pair<Proxmark3Command, Integer> sliceIncoming(byte[] in) {
-        if (in.length < Proxmark3Command.getByteLength())
+        if (in.length < Proxmark3Command.getByteLength()) {
             return null;
+        }
 
         return new Pair<>(Proxmark3Command.fromBytes(in), Proxmark3Command.getByteLength());
     }
@@ -97,8 +98,9 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean tryAcquireAndSetStatus(String status) {
-        if (!semaphore.tryAcquire())
+        if (!semaphore.tryAcquire()) {
             return false;
+        }
 
         setStatus(status);
 
@@ -111,7 +113,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
     }
 
     private <O> O sendThenReceiveCommands(Proxmark3Command out,
-                                          ReceiveSink<Proxmark3Command, O> receiveSink)
+            ReceiveSink<Proxmark3Command, O> receiveSink)
             throws IOException {
         setReceiving(true);
 
@@ -125,9 +127,10 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
     @Override
     public void readCardData(Class<? extends CardData> cardDataClass,
-                             final CardDataSink cardDataSink) throws IOException {
-        if (!tryAcquireAndSetStatus(context.getString(R.string.reading)))
+            final CardDataSink cardDataSink) throws IOException {
+        if (!tryAcquireAndSetStatus(context.getString(R.string.reading))) {
             throw new IOException(context.getString(R.string.device_busy));
+        }
 
         cardDataSink.onStarting();
 
@@ -147,18 +150,21 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                         receive(new ReceiveSink<Proxmark3Command, Boolean>() {
                             @Override
                             public Boolean onReceived(Proxmark3Command in) {
-                                if (in.op != Proxmark3Command.DEBUG_PRINT_STRING)
+                                if (in.op != Proxmark3Command.DEBUG_PRINT_STRING) {
                                     return null;
+                                }
 
                                 String dataAsString = in.dataAsString();
 
-                                if (dataAsString.equals("Stopped"))
+                                if (dataAsString.equals("Stopped")) {
                                     return true;
+                                }
 
                                 Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
-                                if (matcher.find())
+                                if (matcher.find()) {
                                     cardDataSink.onCardData(new HIDCardData(new BigInteger(
                                             matcher.group(1), 16)));
+                                }
 
                                 return null;
                             }
@@ -188,8 +194,9 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
     @Override
     public void writeCardData(final CardData cardData, final CardDataOperationCallbacks callbacks)
             throws IOException {
-        if (!tryAcquireAndSetStatus(context.getString(R.string.writing)))
+        if (!tryAcquireAndSetStatus(context.getString(R.string.writing))) {
             throw new IOException(context.getString(R.string.device_busy));
+        }
 
         callbacks.onStarting();
 
@@ -215,8 +222,9 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                                     return in.op == Proxmark3Command.DEBUG_PRINT_STRING &&
                                             in.dataAsString().equals("DONE!") ? true : null;
                                 }
-                            }))
+                            })) {
                         throw new IOException(context.getString(R.string.write_card_timeout));
+                    }
                 } catch (IOException exception) {
                     callbacks.onError(exception.getMessage());
                     return;
@@ -236,15 +244,17 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
     @Override
     public String getVersion() throws IOException {
-        if (!tryAcquireAndSetStatus(context.getString(R.string.getting_version)))
+        if (!tryAcquireAndSetStatus(context.getString(R.string.getting_version))) {
             throw new IOException(context.getString(R.string.device_busy));
+        }
 
         try {
             Proxmark3Command version = sendThenReceiveCommands(
                     new Proxmark3Command(Proxmark3Command.VERSION),
                     new CommandWaiter(Proxmark3Command.ACK, DEFAULT_TIMEOUT));
-            if (version == null)
+            if (version == null) {
                 throw new IOException(context.getString(R.string.get_version_timeout));
+            }
 
             return version.dataAsString();
         } finally {
@@ -253,28 +263,34 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
     }
 
     public TuneResult tune(boolean lf, boolean hf) throws IOException {
-        if (!tryAcquireAndSetStatus(context.getString(R.string.tuning)))
+        if (!tryAcquireAndSetStatus(context.getString(R.string.tuning))) {
             throw new IOException(context.getString(R.string.device_busy));
+        }
 
         try {
             long arg = 0;
-            if (lf)
+            if (lf) {
                 arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF;
-            if (hf)
+            }
+            if (hf) {
                 arg |= Proxmark3Command.MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF;
-            if (arg == 0)
+            }
+            if (arg == 0) {
                 throw new IllegalArgumentException("Must tune LF or HF");
+            }
 
             Proxmark3Command result = sendThenReceiveCommands(
                     new Proxmark3Command(Proxmark3Command.MEASURE_ANTENNA_TUNING,
                             new long[]{arg, 0, 0}),
                     new CommandWaiter(Proxmark3Command.MEASURED_ANTENNA_TUNING, DEFAULT_TIMEOUT));
-            if (result == null)
+            if (result == null) {
                 throw new IOException(context.getString(R.string.tune_timeout));
+            }
 
             float[] vLF = new float[256];
-            for (int i = 0; i < 256; ++i)
+            for (int i = 0; i < 256; ++i) {
                 vLF[i] = ((result.data[i] & 0xff) << 8) / 1e3f;
+            }
 
             return new TuneResult(
                     lf, hf,
@@ -316,7 +332,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
         @ParcelConstructor
         TuneResult(boolean lf, boolean hf, float[] vLF, Float v125, Float v134, Float peakF,
-                   Float peakV, Float vHF) {
+                Float peakV, Float vHF) {
             this.lf = lf;
             this.hf = hf;
 

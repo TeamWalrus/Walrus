@@ -19,6 +19,8 @@
 
 package com.bugfuzz.android.projectwalrus;
 
+import static android.os.Build.VERSION_CODES.O;
+
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -45,8 +47,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.squareup.leakcanary.LeakCanary;
-
-import static android.os.Build.VERSION_CODES.O;
 
 public class WalrusApplication extends Application {
 
@@ -77,8 +77,9 @@ public class WalrusApplication extends Application {
                         @Override
                         public void onSuccess(Location location) {
                             if (currentBestLocation == null ||
-                                    GeoUtils.isBetterLocation(location, currentBestLocation))
+                                    GeoUtils.isBetterLocation(location, currentBestLocation)) {
                                 currentBestLocation = location;
+                            }
                         }
                     });
 
@@ -88,8 +89,9 @@ public class WalrusApplication extends Application {
                         public void onLocationResult(LocationResult locationResult) {
                             for (Location location : locationResult.getLocations()) {
                                 if (currentBestLocation == null ||
-                                        GeoUtils.isBetterLocation(location, currentBestLocation))
+                                        GeoUtils.isBetterLocation(location, currentBestLocation)) {
                                     currentBestLocation = location;
+                                }
                             }
                         }
                     }, null);
@@ -101,8 +103,9 @@ public class WalrusApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        if (LeakCanary.isInAnalyzerProcess(this))
+        if (LeakCanary.isInAnalyzerProcess(this)) {
             return;
+        }
         LeakCanary.install(this);
 
         context = getApplicationContext();
@@ -115,8 +118,9 @@ public class WalrusApplication extends Application {
                 new DeviceChangedBroadcastHandler(),
                 new IntentFilter(CardDeviceManager.ACTION_UPDATE));
 
-        if (BuildConfig.DEBUG)
+        if (BuildConfig.DEBUG) {
             CardDeviceManager.INSTANCE.addDebugDevice(this);
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -137,8 +141,9 @@ public class WalrusApplication extends Application {
             if (intent.getBooleanExtra(CardDeviceManager.EXTRA_DEVICE_WAS_ADDED, false)) {
                 CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(
                         intent.getIntExtra(CardDeviceManager.EXTRA_DEVICE_ID, -1));
-                if (cardDevice == null)
+                if (cardDevice == null) {
                     return;
+                }
 
                 toast = getString(R.string.device_connected,
                         cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
@@ -161,10 +166,11 @@ public class WalrusApplication extends Application {
             if (sharedPref.getBoolean("pref_key_on_device_connected_vibrate", true)) {
                 Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
                 if (vibrator != null) {
-                    if (android.os.Build.VERSION.SDK_INT >= O)
+                    if (android.os.Build.VERSION.SDK_INT >= O) {
                         vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
-                    else
+                    } else {
                         vibrator.vibrate(singleTiming);
+                    }
                 }
             }
         }

@@ -38,7 +38,7 @@ public class ParityElement extends BinaryFormat.Element {
     private final boolean even;
 
     public ParityElement(String id, String name, int startPos, Integer length, int parityStartPos,
-                         int parityRunLength, int paritySkipLength, int parityLength, boolean even) {
+            int parityRunLength, int paritySkipLength, int parityLength, boolean even) {
         super(id, name, startPos, length);
 
         this.parityStartPos = parityStartPos;
@@ -50,14 +50,15 @@ public class ParityElement extends BinaryFormat.Element {
 
     @Override
     public Component createComponent(final Context context, final BigInteger value,
-                                     final boolean editable) {
+            final boolean editable) {
         return new Component(context, name) {
             @Override
             public Set<String> getProblems() {
                 Set<String> problems = new HashSet<>();
 
-                if (!editable && !extractValueAtMyPos(value).equals(calculate(value)))
+                if (!editable && !extractValueAtMyPos(value).equals(calculate(value))) {
                     problems.add(context.getString(R.string.invalid_parity));
+                }
 
                 return problems;
             }
@@ -78,13 +79,15 @@ public class ParityElement extends BinaryFormat.Element {
         boolean parity = true;
         int p = parityStartPos;
         for (int i = 0; i < parityLength; ++i) {
-            if (p >= startPos && (length == null || p < startPos + length))
+            if (p >= startPos && (length == null || p < startPos + length)) {
                 throw new RuntimeException("Calculating parity over itself");
+            }
 
             parity ^= value.testBit(p);
 
-            if ((i + 1) % parityRunLength == 0)
+            if ((i + 1) % parityRunLength == 0) {
                 p += paritySkipLength;
+            }
             ++p;
         }
 

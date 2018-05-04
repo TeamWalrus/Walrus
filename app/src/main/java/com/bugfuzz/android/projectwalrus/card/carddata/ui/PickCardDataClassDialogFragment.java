@@ -20,9 +20,9 @@
 package com.bugfuzz.android.projectwalrus.card.carddata.ui;
 
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
@@ -40,8 +40,9 @@ public class PickCardDataClassDialogFragment extends DialogFragment
 
         String[] cardDataClassNames = new String[cardDataClasses.size()];
         int i = 0;
-        for (Class<? extends CardData> cardDataClass : cardDataClasses)
+        for (Class<? extends CardData> cardDataClass : cardDataClasses) {
             cardDataClassNames[i++] = cardDataClass.getName();
+        }
 
         Bundle args = new Bundle();
         args.putStringArray("card_data_class_names", cardDataClassNames);
@@ -55,8 +56,9 @@ public class PickCardDataClassDialogFragment extends DialogFragment
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (!(context instanceof OnCardDataClassClickCallback))
+        if (!(context instanceof OnCardDataClassClickCallback)) {
             throw new RuntimeException("Parent doesn't implement fragment callback interface");
+        }
     }
 
     @Override
@@ -64,14 +66,16 @@ public class PickCardDataClassDialogFragment extends DialogFragment
         Set<Class<? extends CardData>> cardDataClasses = new HashSet<>();
         String[] cardDataClassNames = getArguments().getStringArray(
                 "card_data_class_names");
-        if (cardDataClassNames != null)
-            for (String cardDataClassName : cardDataClassNames)
+        if (cardDataClassNames != null) {
+            for (String cardDataClassName : cardDataClassNames) {
                 try {
                     // noinspection unchecked
                     cardDataClasses.add(
                             (Class<? extends CardData>) Class.forName(cardDataClassName));
                 } catch (ClassNotFoundException ignored) {
                 }
+            }
+        }
 
         return new MaterialDialog.Builder(getActivity())
                 .title(R.string.choose_card_type)

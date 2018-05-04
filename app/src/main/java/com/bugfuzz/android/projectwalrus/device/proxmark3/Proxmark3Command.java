@@ -54,12 +54,14 @@ class Proxmark3Command {
     Proxmark3Command(@Opcode long op, @Size(3) long[] args, @Size(max = 512) byte[] data) {
         this.op = op;
 
-        if (args.length != 3)
+        if (args.length != 3) {
             throw new IllegalArgumentException("Invalid number of args");
+        }
         this.args = args;
 
-        if (data.length > 512)
+        if (data.length > 512) {
             throw new IllegalArgumentException("Data too long");
+        }
         this.data = Arrays.copyOf(data, 512);
     }
 
@@ -82,8 +84,9 @@ class Proxmark3Command {
         long op = bb.getLong();
 
         long[] args = new long[3];
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < 3; ++i) {
             args[i] = bb.getLong();
+        }
 
         byte[] data = new byte[512];
         bb.get(data);
@@ -97,8 +100,9 @@ class Proxmark3Command {
 
         bb.putLong(op);
 
-        for (long arg : args)
+        for (long arg : args) {
             bb.putLong(arg);
+        }
 
         bb.put(data);
 

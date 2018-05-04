@@ -70,8 +70,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean tryAcquireAndSetStatus(String status) {
-        if (!semaphore.tryAcquire())
+        if (!semaphore.tryAcquire()) {
             return false;
+        }
 
         setStatus(status);
         return true;
@@ -84,11 +85,12 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 
     @Override
     public void readCardData(Class<? extends CardData> cardDataClass,
-                             final CardDataSink cardDataSink) throws IOException {
+            final CardDataSink cardDataSink) throws IOException {
         // TODO: use cardDataClass
 
-        if (!tryAcquireAndSetStatus(context.getString(R.string.reading)))
+        if (!tryAcquireAndSetStatus(context.getString(R.string.reading))) {
             throw new IOException(context.getString(R.string.device_busy));
+        }
 
         cardDataSink.onStarting();
 
@@ -112,9 +114,10 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                             public Void onReceived(String in) throws IOException {
                                 switch (state) {
                                     case 0:
-                                        if (!in.equals("100:OK"))
+                                        if (!in.equals("100:OK")) {
                                             throw new IOException(context.getString(
                                                     R.string.command_error, "CONFIG=", in));
+                                        }
 
                                         send("TIMEOUT=2");
 
@@ -122,9 +125,10 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         break;
 
                                     case 1:
-                                        if (!in.equals("100:OK"))
+                                        if (!in.equals("100:OK")) {
                                             throw new IOException(context.getString(
                                                     R.string.command_error, "TIMEOUT=", in));
+                                        }
 
                                         send("IDENTIFY");
 
@@ -174,8 +178,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         cardDataSink.onCardData(
                                                 new ISO14443ACardData(atqa, uid, sak, null));
 
-                                        if (!cardDataSink.shouldContinue())
+                                        if (!cardDataSink.shouldContinue()) {
                                             break;
+                                        }
 
                                         resetWatchdog();
 
@@ -213,8 +218,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
             throws IOException {
         // TODO: ask what slot if not specified in settings here
 
-        if (!tryAcquireAndSetStatus(context.getString(R.string.emulating)))
+        if (!tryAcquireAndSetStatus(context.getString(R.string.emulating))) {
             throw new IOException(context.getString(R.string.device_busy));
+        }
 
         callbacks.onStarting();
 
@@ -236,22 +242,24 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                             public Boolean onReceived(String in) throws IOException {
                                 switch (state) {
                                     case 0:
-                                        if (!in.equals("100:OK"))
+                                        if (!in.equals("100:OK")) {
                                             throw new IOException(context.getString(
                                                     R.string.command_error, "CONFIG=", in));
+                                        }
 
                                         int slot = PreferenceManager.getDefaultSharedPreferences(
                                                 context).getInt(
-                                                        ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
+                                                ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
                                         send("SETTING=" + slot);
 
                                         ++state;
                                         break;
 
                                     case 1:
-                                        if (!in.equals("100:OK"))
+                                        if (!in.equals("100:OK")) {
                                             throw new IOException(context.getString(
                                                     R.string.command_error, "SETTING=", in));
+                                        }
 
                                         ISO14443ACardData iso14443ACardData =
                                                 (ISO14443ACardData) cardData;
@@ -261,9 +269,10 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         break;
 
                                     case 2:
-                                        if (!in.equals("100:OK"))
+                                        if (!in.equals("100:OK")) {
                                             throw new IOException(context.getString(
                                                     R.string.command_error, "UID=", in));
+                                        }
 
                                         return true;
                                 }
@@ -298,8 +307,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 
     @Override
     public String getVersion() throws IOException {
-        if (!tryAcquireAndSetStatus(context.getString(R.string.getting_version)))
+        if (!tryAcquireAndSetStatus(context.getString(R.string.getting_version))) {
             throw new IOException(context.getString(R.string.device_busy));
+        }
 
         try {
             setReceiving(true);
@@ -314,9 +324,10 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                     public String onReceived(String in) throws IOException {
                         switch (state) {
                             case 0:
-                                if (!in.equals("101:OK WITH TEXT"))
+                                if (!in.equals("101:OK WITH TEXT")) {
                                     throw new IOException(context.getString(
                                             R.string.command_error, "VERSION?", in));
+                                }
                                 ++state;
                                 break;
 
@@ -327,8 +338,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                     }
                 });
 
-                if (version == null)
+                if (version == null) {
                     throw new IOException(context.getString(R.string.get_version_timeout));
+                }
 
                 return version;
             } finally {

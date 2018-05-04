@@ -21,8 +21,8 @@ package com.bugfuzz.android.projectwalrus.card;
 
 import android.location.Location;
 
-import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -65,7 +65,7 @@ public class Card {
     }
 
     public Card(String name, CardData cardData, Date cardCreated, Date cardDataAcquired,
-                String notes, Double cardLocationLat, Double cardLocationLng) {
+            String notes, Double cardLocationLat, Double cardLocationLng) {
         this.name = name;
         this.cardData = cardData;
         this.cardCreated = cardCreated;
@@ -94,7 +94,8 @@ public class Card {
         if (location != null) {
             cardLocationLat = location.getLatitude();
             cardLocationLng = location.getLongitude();
-        } else
+        } else {
             cardLocationLat = cardLocationLng = null;
+        }
     }
 }

@@ -46,7 +46,7 @@ public class DebugDevice extends CardDevice {
 
     @Override
     public void readCardData(final Class<? extends CardData> cardDataClass,
-                             final CardDataSink cardDataSink) {
+            final CardDataSink cardDataSink) {
         cardDataSink.onStarting();
 
         new Thread(new Runnable() {

@@ -40,7 +40,9 @@ public class ChameleonMiniActivity extends AppCompatActivity
         implements FindVersionFragment.OnFindVersionCallback {
 
     public static final String DEFAULT_SLOT_KEY = "default_chameleon_cardslot";
-    private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity.EXTRA_DEVICE";
+    private static final String EXTRA_DEVICE =
+            "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity"
+                    + ".EXTRA_DEVICE";
 
     public static Intent getStartActivityIntent(Context context, ChameleonMiniDevice device) {
         Intent intent = new Intent(context, ChameleonMiniActivity.class);
@@ -58,8 +60,9 @@ public class ChameleonMiniActivity extends AppCompatActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(
                 getIntent().getIntExtra(EXTRA_DEVICE, -1));

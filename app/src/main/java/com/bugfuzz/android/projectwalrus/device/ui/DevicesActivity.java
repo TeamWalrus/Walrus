@@ -56,8 +56,9 @@ public class DevicesActivity extends AppCompatActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         RecyclerView recyclerView = findViewById(R.id.card_device_list);
         recyclerView.setHasFixedSize(true);
@@ -85,9 +86,10 @@ public class DevicesActivity extends AppCompatActivity
     public void onCardDeviceClick(CardDevice cardDevice) {
         Intent intent = cardDevice.getDeviceActivityIntent(this);
 
-        if (intent != null)
+        if (intent != null) {
             startActivity(intent);
-        else
+        } else {
             Toast.makeText(this, R.string.device_has_no_settings, Toast.LENGTH_SHORT).show();
+        }
     }
 }

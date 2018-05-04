@@ -81,8 +81,9 @@ public class BulkReadCardsActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         threadsView = findViewById(R.id.threads);
         threadsView.setHasFixedSize(true);

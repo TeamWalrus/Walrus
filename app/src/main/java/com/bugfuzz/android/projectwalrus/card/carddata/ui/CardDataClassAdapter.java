@@ -42,14 +42,14 @@ class CardDataClassAdapter extends RecyclerView.Adapter<CardDataClassAdapter.Vie
     private final Set<Class<? extends CardData>> cardDataClasses;
 
     CardDataClassAdapter(OnCardDataClassClickCallback onCardDataClassClickCallback,
-                         Set<Class<? extends CardData>> cardDataClasses, int startEndPadding) {
+            Set<Class<? extends CardData>> cardDataClasses, int startEndPadding) {
         this.onCardDataClassClickCallback = onCardDataClassClickCallback;
         this.cardDataClasses = cardDataClasses;
         this.startEndPadding = startEndPadding;
     }
 
     CardDataClassAdapter(OnCardDataClassClickCallback onCardDataClassClickCallback,
-                         Set<Class<? extends CardData>> cardDataClasses) {
+            Set<Class<? extends CardData>> cardDataClasses) {
         this(onCardDataClassClickCallback, cardDataClasses, 0);
     }
 

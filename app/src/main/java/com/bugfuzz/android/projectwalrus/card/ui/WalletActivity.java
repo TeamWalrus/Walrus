@@ -41,8 +41,8 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.SearchView;
 
-import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.card.Card;
 import com.bugfuzz.android.projectwalrus.card.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.card.OrmLiteBaseAppCompatActivity;
@@ -93,8 +93,9 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (recyclerView.getAdapter() != null)
+                if (recyclerView.getAdapter() != null) {
                     recyclerView.getAdapter().notifyDataSetChanged();
+                }
                 return false;
             }
         });
@@ -142,16 +143,17 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         LocalBroadcastManager.getInstance(this).registerReceiver(walletUpdateBroadcastReceiver,
                 new IntentFilter(QueryUtils.ACTION_WALLET_UPDATE));
 
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION))
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
             gotLocationPermissions();
-        else
+        } else {
             EasyPermissions.requestPermissions(this, getString(R.string.location_rationale),
                     LOCATION_REQUEST_CODE, Manifest.permission.ACCESS_FINE_LOCATION);
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
@@ -196,8 +198,9 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         if (sv.getVisibility() != View.GONE) {
             sv.setIconified(true);
             sv.setVisibility(View.GONE);
-        } else
+        } else {
             super.onBackPressed();
+        }
     }
 
     @Override

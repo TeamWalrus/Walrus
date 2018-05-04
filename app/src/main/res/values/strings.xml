@@ -36,7 +36,9 @@
     -->
 
     <!-- Toast displayed when bulk card reading fails with an error -->
-    <string name="failed_bulk_reading">Failed while bulk reading cards: <xliff:g id="amount">%1$s</xliff:g></string>
+    <string name="failed_bulk_reading">Failed while bulk reading cards:
+        <xliff:g id="amount">%1$s</xliff:g>
+    </string>
 
 
     <!--
@@ -54,8 +56,14 @@
 
     <!-- Used in status line of a bulk read list item -->
     <plurals name="num_cards_read">
-        <item quantity="one"><xliff:g id="amount">%1$d</xliff:g> card read</item>
-        <item quantity="other"><xliff:g id="amount">%1$d</xliff:g> cards read</item>
+        <item quantity="one">
+            <xliff:g id="amount">%1$d</xliff:g>
+            card read
+        </item>
+        <item quantity="other">
+            <xliff:g id="amount">%1$d</xliff:g>
+            cards read
+        </item>
     </plurals>
 
     <!-- Dialog title -->
@@ -67,15 +75,19 @@
     -->
 
     <!-- Toast displayed when bulk card reading fails with an error -->
-    <string name="failed_start_bulk_reading">Failed to start bulk reading cards: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_start_bulk_reading">Failed to start bulk reading cards:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
 
     <!-- Name for bulk read notification channel -->
     <string name="bulk_read_notification_channel_name">Bulk card reads</string>
 
     <!-- Used in notification context title -->
     <plurals name="bulk_reading_from">
-        <item quantity="one">Reading cards from <xliff:g id="amount">%1$d</xliff:g> device</item>
-        <item quantity="other">Reading cards from <xliff:g id="amount">%1$d</xliff:g> devices</item>
+        <item quantity="one">Reading cards from <xliff:g id="amount">%1$d</xliff:g> device
+        </item>
+        <item quantity="other">Reading cards from <xliff:g id="amount">%1$d</xliff:g> devices
+        </item>
     </plurals>
 
 
@@ -140,13 +152,16 @@
     <string name="card_name_required">Card name is required</string>
 
     <!-- Name for newly duplicated cards -->
-    <string name="copy_of">Copy of <xliff:g id="name">%1$s</xliff:g></string>
+    <string name="copy_of">Copy of
+        <xliff:g id="name">%1$s</xliff:g>
+    </string>
 
     <!-- Dialog title -->
     <string name="delete_card">Delete card</string>
 
     <!-- Warning when a user deletes a card -->
-    <string name="delete_message">This action cannot be undone. Are you sure you want to continue?</string>
+    <string name="delete_message">This action cannot be undone. Are you sure you want to continue?
+    </string>
 
     <!-- Displayed as a button -->
     <string name="cancel_button">Cancel</string>
@@ -166,13 +181,19 @@
     <string name="choose_card_type">Choose card type</string>
 
     <!-- Toast displayed when card writing fails with an error -->
-    <string name="failed_to_write">Failed to write card: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_to_write">Failed to write card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
 
     <!-- Toast displayed when card emulation fails with an error -->
-    <string name="failed_to_emulate">Failed to emulate card: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_to_emulate">Failed to emulate card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
 
     <!-- Toast displayed when card reading fails with an error -->
-    <string name="failed_to_read">Failed to read card: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_to_read">Failed to read card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
 
     <!-- Dialog message -->
     <string name="discard_card_changes">Discard changes?</string>
@@ -199,10 +220,15 @@
     <string name="no_view_card_dialog">This type of card doesn\'t have a detailed view</string>
 
     <!-- Dialog title -->
-    <string name="edit_card_data_title">Manual <xliff:g id="card_data_class">%1$s</xliff:g> data entry</string>
+    <string name="edit_card_data_title">Manual <xliff:g id="card_data_class">%1$s</xliff:g> data
+        entry
+    </string>
 
     <!-- Dialog title -->
-    <string name="view_card_data_title"><xliff:g id="card_data_class">%1$s</xliff:g> data</string>
+    <string name="view_card_data_title">
+        <xliff:g id="card_data_class">%1$s</xliff:g>
+        data
+    </string>
 
 
     <!--
@@ -217,7 +243,9 @@
     <string name="retrieving">Retrieving…</string>
 
     <!-- Toast displayed when getting a device's version fails with an error -->
-    <string name="failed_get_version">Failed to get version: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_get_version">Failed to get version:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
 
 
     <!--
@@ -257,7 +285,9 @@
     -->
 
     <!-- Shown in error message -->
-    <string name="command_error">Unexpected response to <xliff:g id="command">%1$s</xliff:g> command: <xliff:g id="error">%2$s</xliff:g></string>
+    <string name="command_error">Unexpected response to <xliff:g id="command">%1$s</xliff:g> command:
+        <xliff:g id="error">%2$s</xliff:g>
+    </string>
 
     <!-- Card device status -->
     <string name="emulating">Emulating</string>
@@ -271,7 +301,9 @@
     <string name="warning">Warning!</string>
 
     <!-- Warning when user deletes all cards -->
-    <string name="delete_all_cards">All cards will be deleted. This action cannot be undone. Are you sure you want to continue?</string>
+    <string name="delete_all_cards">All cards will be deleted. This action cannot be undone. Are you
+        sure you want to continue?
+    </string>
 
     <!-- Toast message shown after all cards have been deleted -->
     <string name="all_cards_deleted">All cards deleted</string>
@@ -447,7 +479,9 @@
     <string name="default_card_slot_preference">Default Card Slot</string>
 
     <!-- Preference message -->
-    <string name="default_card_slot_preference_message">Default <xliff:g>Chameleon Mini</xliff:g> card slot to be used for emulation</string>
+    <string name="default_card_slot_preference_message">Default <xliff:g>Chameleon Mini</xliff:g> card
+        slot to be used for emulation
+    </string>
 
 
     <!--
@@ -474,7 +508,9 @@
     <string name="tuning_progress">Tuning…</string>
 
     <!-- Toast displayed when Proxmark3 tuning fails with an error -->
-    <string name="failed_to_tune">Failed to tune: <xliff:g id="error">%1$s</xliff:g></string>
+    <string name="failed_to_tune">Failed to tune:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
 
 
     <!--
@@ -499,7 +535,10 @@
     -->
 
     <!-- Activity title -->
-    <string name="proxmark3_tune_result_activity_name"><xliff:g>Proxmark3</xliff:g> - Tune Results</string>
+    <string name="proxmark3_tune_result_activity_name">
+        <xliff:g>Proxmark3</xliff:g>
+        - Tune Results
+    </string>
 
     <!-- Used in tune results table. LF = Low Frequency -->
     <string name="lf">LF</string>
@@ -518,7 +557,9 @@
 
     <!-- Used in tune results table. Shows the peak voltage reached and what frequency it was
          reached at during tuning -->
-    <string name="tune_peak_voltage"><xliff:g id="voltage">%1$.3fV</xliff:g>, reached at <xliff:g id="frequency">%2$.3fkHz</xliff:g></string>
+    <string name="tune_peak_voltage"><xliff:g id="voltage">%1$.3fV</xliff:g>, reached at
+        <xliff:g id="frequency">%2$.3fkHz</xliff:g>
+    </string>
 
     <!-- Used in tune results table -->
     <string name="v" translatable="false">V</string>
@@ -585,7 +626,9 @@
     -->
 
     <!-- Shown before requesting location permissions -->
-    <string name="location_rationale">Walrus can (optionally) use your device\'s location to allow the location of captured cards to be recorded.</string>
+    <string name="location_rationale">Walrus can (optionally) use your device\'s location to allow
+        the location of captured cards to be recorded.
+    </string>
 
 
     <!--
@@ -593,16 +636,23 @@
     -->
 
     <!-- Toast message shown when a card device is connected -->
-    <string name="device_disconnected"><xliff:g id="device">%1$s</xliff:g> disconnected</string>
+    <string name="device_disconnected">
+        <xliff:g id="device">%1$s</xliff:g>
+        disconnected
+    </string>
 
     <!-- Toast message shown when a card device is disconnected -->
-    <string name="device_connected"><xliff:g id="device">%1$s</xliff:g> connected</string>
+    <string name="device_connected">
+        <xliff:g id="device">%1$s</xliff:g>
+        connected
+    </string>
 
 
     <!--
         Unsorted stuff falls here...
     -->
-    <string name="dummy_to_catch_unsorted_stuff" tools:keep="@string/dummy_to_catch_unsorted_stuff"/>
+    <string name="dummy_to_catch_unsorted_stuff"
+            tools:keep="@string/dummy_to_catch_unsorted_stuff"/>
 
 
 </resources>

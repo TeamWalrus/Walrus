@@ -47,12 +47,13 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
     private final Spinner choiceSpinner;
 
     public BinaryFormatChooserComponent(final Context context, String title, int choice,
-                                        BigInteger value, List<BinaryFormat> binaryFormats,
-                                        boolean editable) {
+            BigInteger value, List<BinaryFormat> binaryFormats,
+            boolean editable) {
         super(context, title);
 
-        for (BinaryFormat binaryFormat : binaryFormats)
+        for (BinaryFormat binaryFormat : binaryFormats) {
             formatComponents.add(binaryFormat.createComponent(context, null, value, editable));
+        }
 
         viewGroup = new LinearLayout(context);
         viewGroup.setOrientation(LinearLayout.VERTICAL);
@@ -69,20 +70,22 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
         choiceSpinner.setPadding(0, 0, 0, 24);
 
         List<String> childChoiceNames = new ArrayList<>();
-        for (BinaryFormat binaryFormat : binaryFormats)
+        for (BinaryFormat binaryFormat : binaryFormats) {
             childChoiceNames.add(binaryFormat.getName());
+        }
 
         ArrayAdapter<String> formatAdapter = new ArrayAdapter<String>(context,
                 R.layout.layout_multiline_spinner_item, childChoiceNames) {
             @Override
             public View getDropDownView(int position, @Nullable View convertView,
-                                        @NonNull ViewGroup parent) {
+                    @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
 
-                if (view instanceof TextView)
+                if (view instanceof TextView) {
                     ((TextView) view).setTextColor(context.getResources().getColor(
                             formatComponents.get(position).getProblems().isEmpty() ?
                                     android.R.color.black : android.R.color.holo_red_light));
+                }
 
                 return view;
             }
@@ -96,11 +99,13 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
                 choiceViewGroup.removeAllViews();
 
                 View formatView = getChoiceComponent().getView();
-                if (formatView != null)
+                if (formatView != null) {
                     choiceViewGroup.addView(formatView);
+                }
 
-                if (onComponentChangeCallback != null)
+                if (onComponentChangeCallback != null) {
                     onComponentChangeCallback.onComponentChange(BinaryFormatChooserComponent.this);
+                }
             }
 
             @Override

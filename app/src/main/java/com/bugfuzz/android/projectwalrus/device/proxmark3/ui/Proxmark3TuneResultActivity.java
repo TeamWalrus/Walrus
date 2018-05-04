@@ -45,7 +45,9 @@ import java.util.List;
 
 public class Proxmark3TuneResultActivity extends AppCompatActivity {
 
-    private static final String EXTRA_TUNE_RESULT = "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3TuneResultActivity.TUNE_RESULT";
+    private static final String EXTRA_TUNE_RESULT =
+            "com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3TuneResultActivity"
+                    + ".TUNE_RESULT";
 
     public static void startActivity(Context context, Proxmark3Device.TuneResult tuneResult) {
         Intent intent = new Intent(context, Proxmark3TuneResultActivity.class);
@@ -64,8 +66,9 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if (tuneResult.lf) {
             setResultInfo(tuneResult.peakV, 2.948f, 14.730f, R.id.lfOk);
@@ -80,8 +83,9 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
             LineChart lfChart = findViewById(R.id.lfChart);
             if (tuneResult.vLF != null) {
                 List<Entry> entries = new ArrayList<>();
-                for (int i = 255; i >= 19; --i)
+                for (int i = 255; i >= 19; --i) {
                     entries.add(new Entry(12e6f / (i + 1) / 1e3f, tuneResult.vLF[i]));
+                }
 
                 LineDataSet lineDataSet = new LineDataSet(entries, getString(R.string.lf));
                 lineDataSet.setColor(Color.BLACK);
@@ -95,17 +99,20 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
                 lfChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
                 lfChart.getAxisRight().setEnabled(false);
                 lfChart.invalidate();
-            } else
+            } else {
                 lfChart.setVisibility(View.GONE);
-        } else
+            }
+        } else {
             findViewById(R.id.lf).setVisibility(View.GONE);
+        }
 
         if (tuneResult.hf) {
             setResultInfo(tuneResult.vHF, 3.167f, 7.917f, R.id.hfOk);
             ((TextView) findViewById(R.id.hfV)).setText(
                     getResources().getString(R.string.tune_voltage, tuneResult.vHF));
-        } else
+        } else {
             findViewById(R.id.hf).setVisibility(View.GONE);
+        }
     }
 
     private void setResultInfo(float value, float marginal, float ok, @IdRes int id) {

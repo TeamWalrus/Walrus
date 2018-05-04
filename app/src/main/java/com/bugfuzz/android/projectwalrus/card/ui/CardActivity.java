@@ -22,12 +22,12 @@ package com.bugfuzz.android.projectwalrus.card.ui;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
@@ -41,14 +41,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.card.Card;
-import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.card.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.card.OrmLiteBaseAppCompatActivity;
-import com.bugfuzz.android.projectwalrus.card.carddata.ui.PickCardDataClassDialogFragment;
 import com.bugfuzz.android.projectwalrus.card.QueryUtils;
+import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.ui.PickCardDataClassDialogFragment;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentDialogFragment;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentSourceAndSink;
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
@@ -81,11 +81,14 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         PickCardDataClassDialogFragment.OnCardDataClassClickCallback,
         ReadCardDataFragment.OnCardDataCallback, ComponentDialogFragment.OnEditedCallback {
 
-    private static final String EXTRA_MODE = "com.bugfuzz.android.projectwalrus.card.ui.CardActivity.EXTRA_MODE";
-    private static final String EXTRA_CARD = "com.bugfuzz.android.projectwalrus.card.ui.CardActivity.EXTRA_CARD";
+    private static final String EXTRA_MODE =
+            "com.bugfuzz.android.projectwalrus.card.ui.CardActivity.EXTRA_MODE";
+    private static final String EXTRA_CARD =
+            "com.bugfuzz.android.projectwalrus.card.ui.CardActivity.EXTRA_CARD";
 
     private static final String PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG = "pick_card_device_dialog";
-    private static final String PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG = "pick_card_data_class_dialog";
+    private static final String PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG =
+            "pick_card_data_class_dialog";
 
     private final UIUtils.TextChangeWatcher notesEditorDirtier = new TextChangeDirtier(),
             walrusCardViewNameDirtier = new TextChangeDirtier();
@@ -112,15 +115,18 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             List<Pair<View, String>> sharedElements = new ArrayList<>();
 
             View view = activity.findViewById(android.R.id.statusBarBackground);
-            if (view != null)
+            if (view != null) {
                 sharedElements.add(new Pair<>(view, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME));
+            }
             view = activity.findViewById(android.R.id.navigationBarBackground);
-            if (view != null)
+            if (view != null) {
                 sharedElements.add(new Pair<>(view,
                         Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME));
+            }
             view = activity.findViewById(R.id.toolbar);
-            if (view != null)
+            if (view != null) {
                 sharedElements.add(new Pair<>(view, "toolbar"));
+            }
 
             sharedElements.add(new Pair<>(transitionView, "card"));
 
@@ -129,8 +135,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                     (Pair<View, String>[]) sharedElements.toArray(new Pair[sharedElements.size()]));
 
             activity.startActivity(intent, activityOptions.toBundle());
-        } else
+        } else {
             activity.startActivity(intent);
+        }
     }
 
     @Override
@@ -146,10 +153,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         if (savedInstanceState == null) {
             card = Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD));
 
-            if (card == null)
+            if (card == null) {
                 card = new Card();
-            else if (card.id == 0)
+            } else if (card.id == 0) {
                 dirty = true;
+            }
         } else {
             card = Parcels.unwrap(savedInstanceState.getParcelable("card"));
             dirty = savedInstanceState.getBoolean("dirty");
@@ -174,9 +182,10 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            if (mode != Mode.VIEW)
+            if (mode != Mode.VIEW) {
                 actionBar.setHomeAsUpIndicator(
                         ContextCompat.getDrawable(this, R.drawable.ic_close_white_24px));
+            }
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -362,8 +371,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     }
 
     public void onViewCardDataClick(View view) {
-        if (card.cardData == null)
+        if (card.cardData == null) {
             return;
+        }
 
         CardData.Metadata cardDataMetadata = card.cardData.getClass().getAnnotation(
                 CardData.Metadata.class);
@@ -426,8 +436,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             CardDevice.Metadata metadata = cardDevice.getClass().getAnnotation(
                     CardDevice.Metadata.class);
             if (ArrayUtils.contains(write ? metadata.supportsWrite() : metadata.supportsEmulate(),
-                    card.cardData.getClass()))
+                    card.cardData.getClass())) {
                 cardDevices.add(cardDevice);
+            }
         }
 
         if (cardDevices.isEmpty()) {
@@ -450,10 +461,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment pickCardDeviceDialogFragment = fragmentManager.findFragmentByTag(
                 PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
-        if (pickCardDeviceDialogFragment != null)
+        if (pickCardDeviceDialogFragment != null) {
             fragmentManager.beginTransaction()
                     .remove(pickCardDeviceDialogFragment)
                     .commit();
+        }
     }
 
     @Override
@@ -461,10 +473,12 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         dismissPickCardSourceDialogFragment();
 
         Set<Class<? extends CardData>> cardDataClasses = new HashSet<>();
-        for (Class<? extends CardData> cardDataClass : CardData.getCardDataClasses())
+        for (Class<? extends CardData> cardDataClass : CardData.getCardDataClasses()) {
             if (cardDataClass.getAnnotation(CardData.Metadata.class).editDialogFragmentClass() !=
-                    DialogFragment.class)
+                    DialogFragment.class) {
                 cardDataClasses.add(cardDataClass);
+            }
+        }
 
         PickCardDataClassDialogFragment.create(cardDataClasses, -1).show(
                 getSupportFragmentManager(), PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG);
@@ -499,10 +513,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment pickCardDataSourceDialogFragment = fragmentManager.findFragmentByTag(
                 PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG);
-        if (pickCardDataSourceDialogFragment != null)
+        if (pickCardDataSourceDialogFragment != null) {
             fragmentManager.beginTransaction()
                     .remove(pickCardDataSourceDialogFragment)
                     .commit();
+        }
 
         if (callbackId == -1) {
             Class<? extends DialogFragment> editDialogFragmentClass =
@@ -515,18 +530,19 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             }
 
             CardData cardData;
-            if (card.cardData != null && card.cardData.getClass() == cardDataClass)
+            if (card.cardData != null && card.cardData.getClass() == cardDataClass) {
                 try {
                     cardData = (CardData) card.cardData.clone();
                 } catch (CloneNotSupportedException e) {
                     throw new RuntimeException(e);
                 }
-            else
+            } else {
                 try {
                     cardData = cardDataClass.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
+            }
 
             CardData.Metadata cardDataMetadata = cardData.getClass().getAnnotation(
                     CardData.Metadata.class);
@@ -542,15 +558,16 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             editDialogFragment.show(fragmentManager, "card_data_edit_dialog");
         } else {
             CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(callbackId);
-            if (cardDevice == null)
+            if (cardDevice == null) {
                 return;
+            }
 
-            if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE)
+            if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE) {
                 getSupportFragmentManager().beginTransaction()
                         .add(ReadCardDataFragment.create(cardDevice, cardDataClass, 0),
                                 "read_card_data")
                         .commit();
-            else {
+            } else {
                 BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
                 supportFinishAfterTransition();
             }
@@ -564,8 +581,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     @Override
     public void onCardData(CardData cardData, int callbackId) {
-        if (cardData.equals(card.cardData))
+        if (cardData.equals(card.cardData)) {
             return;
+        }
 
         card.setCardData(cardData, WalrusApplication.getCurrentBestLocation());
         dirty = true;
@@ -574,7 +592,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     @Override
     public void onBackPressed() {
-        if (mode != Mode.VIEW && dirty)
+        if (mode != Mode.VIEW && dirty) {
             new AlertDialog.Builder(this).setMessage(mode == Mode.EDIT ?
                     R.string.discard_card_changes : R.string.discard_bulk_read_changes)
                     .setCancelable(true)
@@ -582,7 +600,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
+                                        int whichButton) {
                                     finish();
                                     dialog.dismiss();
                                 }
@@ -591,13 +609,14 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
+                                        int whichButton) {
                                     dialog.dismiss();
                                 }
                             })
                     .show();
-        else
+        } else {
             supportFinishAfterTransition();
+        }
     }
 
     public enum Mode {

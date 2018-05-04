@@ -74,13 +74,14 @@ public class ComponentDialogFragment extends DialogFragment
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog,
-                                            @NonNull DialogAction which) {
+                                @NonNull DialogAction which) {
                             viewModel.getComponentSourceAndSink().apply(component);
 
-                            if (getActivity() instanceof OnEditedCallback)
+                            if (getActivity() instanceof OnEditedCallback) {
                                 ((OnEditedCallback) getActivity()).onEdited(
                                         viewModel.getComponentSourceAndSink(),
                                         getArguments().getInt("callback_id"));
+                            }
 
                             dismiss();
                         }
@@ -94,7 +95,7 @@ public class ComponentDialogFragment extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+            @Nullable Bundle savedInstanceState) {
         View result = super.onCreateView(inflater, container, savedInstanceState);
 
         ViewGroup viewGroup = (ViewGroup) ((MaterialDialog) getDialog()).getCustomView();
@@ -104,8 +105,9 @@ public class ComponentDialogFragment extends DialogFragment
                 getArguments().getBoolean("editable"));
         viewGroup.addView(component.getView());
 
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             component.restoreInstanceState(savedInstanceState.getBundle("component"));
+        }
 
         problemViewGroup = new LinearLayout(getActivity());
         viewGroup.addView(problemViewGroup);
@@ -120,9 +122,10 @@ public class ComponentDialogFragment extends DialogFragment
 
     @Override
     public void onComponentChange(Component changedComponent) {
-        if (getArguments().getBoolean("editable"))
+        if (getArguments().getBoolean("editable")) {
             ((MaterialDialog) getDialog()).getActionButton(DialogAction.POSITIVE).setEnabled(
                     component.isValid());
+        }
 
         problemViewGroup.removeAllViews();
         for (String problem : new TreeSet<>(component.getProblems())) {

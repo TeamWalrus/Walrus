@@ -43,20 +43,24 @@ public abstract class ContainerComponent extends Component {
     @CallSuper
     public void restoreInstanceState(Bundle savedInstanceState) {
         Bundle childStates = savedInstanceState.getBundle("children");
-        if (childStates == null)
+        if (childStates == null) {
             return;
+        }
 
         int i = 0;
-        for (Component child : getChildren())
+        for (Component child : getChildren()) {
             child.restoreInstanceState(childStates.getBundle("" + i++));
+        }
     }
 
     @Override
     @CallSuper
     public boolean isValid() {
-        for (Component child : getVisibleChildren())
-            if (!child.isValid())
+        for (Component child : getVisibleChildren()) {
+            if (!child.isValid()) {
                 return false;
+            }
+        }
 
         return true;
     }
@@ -66,8 +70,9 @@ public abstract class ContainerComponent extends Component {
     public Set<String> getProblems() {
         Set<String> problems = new HashSet<>();
 
-        for (Component child : getVisibleChildren())
+        for (Component child : getVisibleChildren()) {
             problems.addAll(child.getProblems());
+        }
 
         return problems;
     }
@@ -90,7 +95,8 @@ public abstract class ContainerComponent extends Component {
     public void setOnComponentChangeCallback(OnComponentChangeCallback onComponentChangeCallback) {
         super.setOnComponentChangeCallback(onComponentChangeCallback);
 
-        for (Component child : getChildren())
+        for (Component child : getChildren()) {
             child.setOnComponentChangeCallback(onComponentChangeCallback);
+        }
     }
 }

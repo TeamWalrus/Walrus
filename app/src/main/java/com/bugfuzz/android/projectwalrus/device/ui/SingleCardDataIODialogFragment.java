@@ -20,11 +20,11 @@
 package com.bugfuzz.android.projectwalrus.device.ui;
 
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.app.DialogFragment;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -37,8 +37,8 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
     private OnCancelCallback onCancelCallback;
 
     public static SingleCardDataIODialogFragment create(Class<? extends CardDevice> cardDeviceClass,
-                                                        Class<? extends CardData> cardDataClass,
-                                                        Mode mode, int callbackId) {
+            Class<? extends CardData> cardDataClass,
+            Mode mode, int callbackId) {
         SingleCardDataIODialogFragment dialog = new SingleCardDataIODialogFragment();
 
         Bundle args = new Bundle();
@@ -95,7 +95,7 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog,
-                                        @NonNull DialogAction which) {
+                            @NonNull DialogAction which) {
                         dialog.cancel();
                     }
                 })
@@ -106,8 +106,9 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
 
-        if (onCancelCallback != null)
+        if (onCancelCallback != null) {
             onCancelCallback.onCancelClick(getArguments().getInt("callback_id"));
+        }
     }
 
     public void setOnCancelCallback(OnCancelCallback onCancelCallback) {

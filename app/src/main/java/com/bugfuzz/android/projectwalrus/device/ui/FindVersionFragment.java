@@ -19,9 +19,9 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
@@ -49,8 +49,9 @@ public class FindVersionFragment extends Fragment {
         CardDevice.Versioned versionedCardDevice =
                 (CardDevice.Versioned) CardDeviceManager.INSTANCE.getCardDevices().get(
                         getArguments().getInt("versioned_device_id"));
-        if (versionedCardDevice == null)
+        if (versionedCardDevice == null) {
             return;
+        }
 
         setRetainInstance(true);
 
@@ -69,7 +70,7 @@ public class FindVersionFragment extends Fragment {
         private final CardDevice.Versioned versionedCardDevice;
 
         FindVersionTask(FindVersionFragment findVersionFragment,
-                        CardDevice.Versioned versionedCardDevice) {
+                CardDevice.Versioned versionedCardDevice) {
             this.findVersionFragmentWeakReference = new WeakReference<>(findVersionFragment);
 
             this.versionedCardDevice = versionedCardDevice;
@@ -86,22 +87,26 @@ public class FindVersionFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Pair<String, IOException> result) {
-            if (result == null)
+            if (result == null) {
                 return;
+            }
 
             FindVersionFragment findVersionFragment = findVersionFragmentWeakReference.get();
-            if (findVersionFragment == null)
+            if (findVersionFragment == null) {
                 return;
+            }
 
             OnFindVersionCallback onFindVersionCallback =
                     (OnFindVersionCallback) findVersionFragment.getActivity();
-            if (onFindVersionCallback == null)
+            if (onFindVersionCallback == null) {
                 return;
+            }
 
-            if (result.first != null)
+            if (result.first != null) {
                 onFindVersionCallback.onVersionResult(result.first);
-            else
+            } else {
                 onFindVersionCallback.onVersionError(result.second);
+            }
         }
     }
 }

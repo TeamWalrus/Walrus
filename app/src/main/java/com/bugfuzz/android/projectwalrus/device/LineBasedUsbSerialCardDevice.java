@@ -31,7 +31,7 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
     private final String delimiter, charsetName;
 
     protected LineBasedUsbSerialCardDevice(Context context, UsbDevice usbDevice, String delimiter,
-                                           String charsetName) throws IOException {
+            String charsetName) throws IOException {
         super(context, usbDevice);
 
         this.delimiter = delimiter;
@@ -48,8 +48,9 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
         }
 
         int index = string.indexOf(delimiter);
-        if (index == -1)
+        if (index == -1) {
             return null;
+        }
 
         // TODO FIXME: this is assuming 1 char == 1 byte
         return new Pair<>(string.substring(0, index), index + delimiter.length());

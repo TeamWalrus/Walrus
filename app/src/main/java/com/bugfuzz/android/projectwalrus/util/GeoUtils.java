@@ -31,10 +31,11 @@ public class GeoUtils {
         boolean isSignificantlyOlder = timeDelta < -ONE_MINUTE;
         boolean isNewer = timeDelta > 0;
 
-        if (isSignificantlyNewer)
+        if (isSignificantlyNewer) {
             return true;
-        else if (isSignificantlyOlder)
+        } else if (isSignificantlyOlder) {
             return false;
+        }
 
         int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
         boolean isLessAccurate = accuracyDelta > 0;

@@ -45,38 +45,42 @@ public class BinaryFormat {
 
     @Nullable
     public Element getElementById(String id) {
-        for (Element element : elements)
-            if (element.getId() != null && element.getId().equals(id))
+        for (Element element : elements) {
+            if (element.getId() != null && element.getId().equals(id)) {
                 return element;
+            }
+        }
 
         return null;
     }
 
     public Component createComponent(Context context, String title, BigInteger value,
-                                     boolean editable) {
+            boolean editable) {
         List<Component> components = new ArrayList<>();
 
-        for (Element element : elements)
+        for (Element element : elements) {
             components.add(element.createComponent(context, value, editable));
+        }
 
         return new MultiComponent(context, title, components);
     }
 
     public BigInteger applyComponent(BigInteger target, Component component) {
         int i = 0;
-        for (Element element : elements)
+        for (Element element : elements) {
             target = element.applyComponent(target,
                     ((MultiComponent) component).getChildren().get(i++));
+        }
 
         return target;
     }
 
     public abstract static class Element {
 
-        final String id;
         protected final String name;
         protected final int startPos;
         protected final Integer length;
+        final String id;
 
         protected Element(String id, String name, int startPos, Integer length) {
             this.id = id;
@@ -93,14 +97,15 @@ public class BinaryFormat {
         public abstract BigInteger extractValue(BigInteger source);
 
         protected abstract Component createComponent(Context context, BigInteger value,
-                                                     boolean editable);
+                boolean editable);
 
         protected abstract BigInteger applyComponent(BigInteger target, Component component);
 
         protected BigInteger extractValueAtMyPos(BigInteger source) {
             BigInteger value = source.shiftRight(startPos);
-            if (length != null)
+            if (length != null) {
                 value = value.and(lengthMask());
+            }
 
             return value;
         }

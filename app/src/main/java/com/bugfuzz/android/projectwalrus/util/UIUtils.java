@@ -38,12 +38,13 @@ public class UIUtils {
 
         @SuppressWarnings("unused")
         public abstract void onNotIgnoredTextChanged(CharSequence charSequence, int i, int i1,
-                                                     int i2);
+                int i2);
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            if (!ignoringNext)
+            if (!ignoringNext) {
                 onNotIgnoredTextChanged(charSequence, i, i1, i2);
+            }
             ignoringNext = false;
         }
 

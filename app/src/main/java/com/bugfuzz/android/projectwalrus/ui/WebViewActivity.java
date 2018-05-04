@@ -26,7 +26,8 @@ import android.webkit.WebView;
 
 public class WebViewActivity extends AppCompatActivity {
 
-    private static final String EXTRA_URL = "com.bugfuzz.android.projectwalrus.ui.WebViewActivity.EXTRA_URL";
+    private static final String EXTRA_URL =
+            "com.bugfuzz.android.projectwalrus.ui.WebViewActivity.EXTRA_URL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

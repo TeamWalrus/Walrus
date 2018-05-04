@@ -20,13 +20,13 @@
 package com.bugfuzz.android.projectwalrus.device.ui;
 
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -45,8 +45,9 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
     private final BroadcastReceiver deviceUpdateBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (adapter != null)
+            if (adapter != null) {
                 adapter.notifyDataSetChanged();
+            }
         }
     };
 
@@ -72,8 +73,9 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (!(context instanceof OnCardDataSourceClickCallback))
+        if (!(context instanceof OnCardDataSourceClickCallback)) {
             throw new RuntimeException("Parent doesn't implement fragment callback interface");
+        }
     }
 
     @Override
@@ -95,12 +97,13 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         adapter = new CardDeviceAdapter(cardDataFilterClass, cardDataFilterMode, this);
 
         @StringRes int title;
-        if (cardDataFilterMode == null)
+        if (cardDataFilterMode == null) {
             title = R.string.choose_source;
-        else if (cardDataFilterMode == CardDeviceAdapter.FilterMode.WRITABLE)
+        } else if (cardDataFilterMode == CardDeviceAdapter.FilterMode.WRITABLE) {
             title = R.string.choose_sink;
-        else
+        } else {
             title = R.string.choose_target;
+        }
 
         return new MaterialDialog.Builder(getActivity())
                 .title(title)
@@ -118,7 +121,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         ((RecyclerView) dialogView.findViewById(R.id.card_device_list)).setAdapter(adapter);
 
         View manualEntryView = dialogView.findViewById(R.id.manual_entry);
-        if (getArguments().getBoolean("allow_manual_entry"))
+        if (getArguments().getBoolean("allow_manual_entry")) {
             manualEntryView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -126,8 +129,9 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
                             getArguments().getInt("callback_id"));
                 }
             });
-        else
+        } else {
             manualEntryView.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -19,6 +19,9 @@
 
 package com.bugfuzz.android.projectwalrus.device;
 
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static android.os.Build.VERSION_CODES.O;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -46,15 +49,16 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
-import static android.os.Build.VERSION_CODES.O;
-
 public class BulkReadCardsService extends Service {
 
-    public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.ACTION_UPDATE";
-    private static final String EXTRA_DEVICE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_DEVICE";
-    private static final String EXTRA_CARD_DATA_CLASS = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_DATA_CLASS";
-    private static final String EXTRA_CARD_TEMPLATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_TEMPLATE";
+    public static final String ACTION_UPDATE =
+            "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.ACTION_UPDATE";
+    private static final String EXTRA_DEVICE =
+            "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_DEVICE";
+    private static final String EXTRA_CARD_DATA_CLASS =
+            "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_DATA_CLASS";
+    private static final String EXTRA_CARD_TEMPLATE =
+            "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_TEMPLATE";
 
     private static final String CHANNEL_ID = "bulk_read_cards";
     private static final int NOTIFICATION_ID = 1;
@@ -67,7 +71,7 @@ public class BulkReadCardsService extends Service {
             new NotificationCompat.Builder(this, CHANNEL_ID);
 
     public static void startService(Context context, CardDevice cardDevice,
-                                    Class<? extends CardData> cardDataClass, Card cardTemplate) {
+            Class<? extends CardData> cardDataClass, Card cardTemplate) {
         Intent intent = new Intent(context, BulkReadCardsService.class);
 
         intent.putExtra(EXTRA_DEVICE, cardDevice.getId());
@@ -81,8 +85,9 @@ public class BulkReadCardsService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         handleStartCommand(intent);
 
-        if (sinks.isEmpty())
+        if (sinks.isEmpty()) {
             stopSelf(startId);
+        }
 
         return START_NOT_STICKY;
     }
@@ -93,8 +98,9 @@ public class BulkReadCardsService extends Service {
 
         CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(
                 intent.getIntExtra(EXTRA_DEVICE, -1));
-        if (cardDevice == null)
+        if (cardDevice == null) {
             return;
+        }
 
         // noinspection unchecked
         Class<? extends CardData> cardDataClass =
@@ -116,11 +122,13 @@ public class BulkReadCardsService extends Service {
                                         .sendBroadcast(new Intent(ACTION_UPDATE));
 
                                 if (!sinks.isEmpty()) {
-                                    if (notificationManager != null)
+                                    if (notificationManager != null) {
                                         notificationManager.notify(NOTIFICATION_ID,
                                                 getNotification());
-                                } else
+                                    }
+                                } else {
                                     stopSelf();
+                                }
                             }
                         });
                     }
@@ -146,11 +154,12 @@ public class BulkReadCardsService extends Service {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (notificationManager != null && android.os.Build.VERSION.SDK_INT >= O &&
-                notificationManager.getNotificationChannel(CHANNEL_ID) == null)
+                notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
             notificationManager.createNotificationChannel(
                     new NotificationChannel(CHANNEL_ID,
                             getString(R.string.bulk_read_notification_channel_name),
                             NotificationManager.IMPORTANCE_LOW));
+        }
 
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_notification)
@@ -162,8 +171,9 @@ public class BulkReadCardsService extends Service {
                 .setContentIntent(TaskStackBuilder.create(this)
                         .addNextIntentWithParentStack(new Intent(this, BulkReadCardsActivity.class))
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
-        if (android.os.Build.VERSION.SDK_INT >= LOLLIPOP)
+        if (android.os.Build.VERSION.SDK_INT >= LOLLIPOP) {
             notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
+        }
 
         return notificationBuilder.build();
     }

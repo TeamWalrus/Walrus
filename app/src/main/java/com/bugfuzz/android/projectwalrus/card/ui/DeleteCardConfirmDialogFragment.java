@@ -20,10 +20,10 @@
 package com.bugfuzz.android.projectwalrus.card.ui;
 
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -45,8 +45,9 @@ public class DeleteCardConfirmDialogFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (!(context instanceof OnDeleteCardConfirmCallback))
+        if (!(context instanceof OnDeleteCardConfirmCallback)) {
             throw new RuntimeException("Parent doesn't implement fragment callback interface");
+        }
     }
 
     @Override
@@ -58,7 +59,7 @@ public class DeleteCardConfirmDialogFragment extends DialogFragment {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog,
-                                        @NonNull DialogAction which) {
+                            @NonNull DialogAction which) {
                         ((OnDeleteCardConfirmCallback) getActivity()).onDeleteCardConfirm(
                                 getArguments().getInt("callback_id"));
                         dialog.dismiss();
@@ -68,7 +69,7 @@ public class DeleteCardConfirmDialogFragment extends DialogFragment {
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog,
-                                        @NonNull DialogAction which) {
+                            @NonNull DialogAction which) {
                         dialog.dismiss();
                     }
                 })

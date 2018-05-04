@@ -53,7 +53,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion,
-                          int newVersion) {
+            int newVersion) {
     }
 
     @Override
@@ -63,12 +63,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     public RuntimeExceptionDao<Card, Integer> getCardDao() {
-        if (cardDao == null)
+        if (cardDao == null) {
             try {
                 cardDao = RuntimeExceptionDao.createDao(getConnectionSource(), Card.class);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
 
         return cardDao;
     }

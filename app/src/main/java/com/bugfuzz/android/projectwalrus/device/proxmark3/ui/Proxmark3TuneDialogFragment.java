@@ -20,8 +20,8 @@
 package com.bugfuzz.android.projectwalrus.device.proxmark3.ui;
 
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;

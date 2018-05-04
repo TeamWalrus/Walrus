@@ -39,9 +39,11 @@ public class MultiComponent extends ContainerComponent {
         viewGroup = new LinearLayout(context);
         viewGroup.setOrientation(LinearLayout.VERTICAL);
 
-        for (Component child : children)
-            if (child.getView() != null)
+        for (Component child : children) {
+            if (child.getView() != null) {
                 viewGroup.addView(child.getView());
+            }
+        }
     }
 
     @Nullable

@@ -34,7 +34,7 @@ public class FixedElement extends BinaryFormat.Element {
     private final BigInteger fixedValue;
 
     public FixedElement(String id, String name, int startPos, Integer length,
-                        BigInteger fixedValue) {
+            BigInteger fixedValue) {
         super(id, name, startPos, length);
 
         this.fixedValue = fixedValue;
@@ -42,14 +42,15 @@ public class FixedElement extends BinaryFormat.Element {
 
     @Override
     public Component createComponent(final Context context, final BigInteger value,
-                                     final boolean editable) {
+            final boolean editable) {
         return new Component(context, name) {
             @Override
             public Set<String> getProblems() {
                 Set<String> problems = new HashSet<>();
 
-                if (!editable && !extractValueAtMyPos(value).equals(fixedValue))
+                if (!editable && !extractValueAtMyPos(value).equals(fixedValue)) {
                     problems.add(context.getString(R.string.invalid_fixed_value));
+                }
 
                 return problems;
             }

@@ -80,21 +80,23 @@ public class OpaqueElement extends BinaryFormat.Element {
                 final EditText editText = new EditText(context);
                 view = editText;
 
-                if (!hex)
+                if (!hex) {
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                }
 
                 editText.addTextChangedListener(new UIUtils.TextChangeWatcher() {
                     @Override
                     public void onNotIgnoredTextChanged(CharSequence s, int start, int before,
-                                                        int count) {
+                            int count) {
                         @StringRes Integer error = validateEditTextString();
 
                         editText.setError(error != null ? view.getContext().getString(error) :
                                 null);
 
-                        if (OpaqueComponent.this.onComponentChangeCallback != null)
+                        if (OpaqueComponent.this.onComponentChangeCallback != null) {
                             OpaqueComponent.this.onComponentChangeCallback
                                     .onComponentChange(OpaqueComponent.this);
+                        }
                     }
                 });
             } else {
@@ -106,10 +108,11 @@ public class OpaqueElement extends BinaryFormat.Element {
             }
 
             String text = value.toString(hex ? 16 : 10);
-            if (editable)
+            if (editable) {
                 ((EditText) view).setText(text);
-            else
+            } else {
                 ((TextView) view).setText(text);
+            }
         }
 
         @Nullable
@@ -127,10 +130,11 @@ public class OpaqueElement extends BinaryFormat.Element {
         public void restoreInstanceState(Bundle savedInstanceState) {
             String text = savedInstanceState.getString("text");
 
-            if (editable)
+            if (editable) {
                 ((EditText) view).setText(text);
-            else
+            } else {
                 ((TextView) view).setText(text);
+            }
         }
 
         @Override
@@ -143,14 +147,17 @@ public class OpaqueElement extends BinaryFormat.Element {
         private Integer validateEditTextString() {
             String s = ((EditText) view).getText().toString();
 
-            if (s.length() == 0)
+            if (s.length() == 0) {
                 return R.string.cant_be_empty;
+            }
 
-            if (hex && !HEX_VALUE.matcher(s).matches())
+            if (hex && !HEX_VALUE.matcher(s).matches()) {
                 return R.string.invalid_hex_value;
+            }
 
-            if (length != null && new BigInteger(s, hex ? 16 : 10).bitLength() > length)
+            if (length != null && new BigInteger(s, hex ? 16 : 10).bitLength() > length) {
                 return R.string.too_many_bits;
+            }
 
             return null;
         }

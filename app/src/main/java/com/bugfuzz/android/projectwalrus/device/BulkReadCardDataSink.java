@@ -19,6 +19,9 @@
 
 package com.bugfuzz.android.projectwalrus.device;
 
+import static android.content.Context.VIBRATOR_SERVICE;
+import static android.os.Build.VERSION_CODES.O;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,24 +34,20 @@ import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
-import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.card.Card;
-import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.card.DatabaseHelper;
 import com.bugfuzz.android.projectwalrus.card.QueryUtils;
+import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-
-import static android.content.Context.VIBRATOR_SERVICE;
-import static android.os.Build.VERSION_CODES.O;
 
 public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
-    public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
-
-    private final int id;
+    public static final String ACTION_UPDATE =
+            "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
     private static int nextId;
-
+    private final int id;
     private final Context context;
 
     private final CardDevice cardDevice;
@@ -65,8 +64,8 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     private volatile boolean stop;
 
     public BulkReadCardDataSink(Context context, CardDevice cardDevice,
-                                Class<? extends CardData> cardDataClass, Card cardTemplate,
-                                OnStopCallback onStopCallback) {
+            Class<? extends CardData> cardDataClass, Card cardTemplate,
+            OnStopCallback onStopCallback) {
         this.context = context;
         this.cardDevice = cardDevice;
         this.cardDataClass = cardDataClass;
@@ -85,18 +84,20 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     @Override
     @WorkerThread
     public void onCardData(CardData cardData) {
-        if (cardData.equals(lastCardData))
+        if (cardData.equals(lastCardData)) {
             return;
+        }
         lastCardData = cardData;
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         if (sharedPref.getBoolean("pref_key_bulk_read_vibrate", true)) {
             Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
             if (vibrator != null) {
-                if (android.os.Build.VERSION.SDK_INT >= O)
+                if (android.os.Build.VERSION.SDK_INT >= O) {
                     vibrator.vibrate(VibrationEffect.createOneShot(300, 255));
-                else
+                } else {
                     vibrator.vibrate(300);
+                }
             }
         }
 

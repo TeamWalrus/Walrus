@@ -43,12 +43,14 @@ public abstract class UsbCardDevice extends CardDevice {
         this.usbDevice = usbDevice;
 
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-        if (usbManager == null)
+        if (usbManager == null) {
             throw new IOException(context.getString(R.string.failed_open_usb_connection));
+        }
 
         usbDeviceConnection = usbManager.openDevice(usbDevice);
-        if (usbDeviceConnection == null)
+        if (usbDeviceConnection == null) {
             throw new IOException(context.getString(R.string.failed_open_usb_connection));
+        }
     }
 
     public UsbDevice getUsbDevice() {

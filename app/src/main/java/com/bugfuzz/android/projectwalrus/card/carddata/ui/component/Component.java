@@ -58,8 +58,9 @@ public abstract class Component {
                 viewGroup.addView(titleView);
             }
 
-            if (getInnerView() != null)
+            if (getInnerView() != null) {
                 viewGroup.addView(getInnerView());
+            }
         }
 
         return viewGroup;

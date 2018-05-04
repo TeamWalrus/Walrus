@@ -44,12 +44,18 @@ import java.util.Set;
 public enum CardDeviceManager {
     INSTANCE;
 
-    public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_UPDATE";
-    public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
-    public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
-    public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
+    public static final String ACTION_UPDATE =
+            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_UPDATE";
+    public static final String EXTRA_DEVICE_WAS_ADDED =
+            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
+    public static final String EXTRA_DEVICE_ID =
+            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
+    public static final String EXTRA_DEVICE_NAME =
+            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
 
-    private static final String ACTION_USB_PERMISSION_RESULT = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_USB_PERMISSION_RESULT";
+    private static final String ACTION_USB_PERMISSION_RESULT =
+            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager"
+                    + ".ACTION_USB_PERMISSION_RESULT";
 
     private static final Set<Class<? extends UsbCardDevice>> usbCardDeviceClasses =
             new HashSet<Class<? extends UsbCardDevice>>(Arrays.asList(
@@ -64,30 +70,34 @@ public enum CardDeviceManager {
 
     public void scanForDevices(Context context) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-        if (usbManager != null)
-            for (UsbDevice usbDevice : usbManager.getDeviceList().values())
+        if (usbManager != null) {
+            for (UsbDevice usbDevice : usbManager.getDeviceList().values()) {
                 handleUsbDeviceAttached(context, usbDevice);
+            }
+        }
     }
 
     private synchronized void handleUsbDeviceAttached(Context context, UsbDevice usbDevice) {
         UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-        if (usbManager == null)
+        if (usbManager == null) {
             return;
+        }
 
-        if (askingForUsbPermission || seenUsbDevices.contains(usbDevice))
+        if (askingForUsbPermission || seenUsbDevices.contains(usbDevice)) {
             return;
+        }
 
         seenUsbDevices.add(usbDevice);
 
         for (Class<? extends UsbCardDevice> klass : usbCardDeviceClasses) {
             UsbCardDevice.UsbIds usbIds = klass.getAnnotation(
                     UsbCardDevice.UsbIds.class);
-            for (UsbCardDevice.UsbIds.Ids ids : usbIds.value())
+            for (UsbCardDevice.UsbIds.Ids ids : usbIds.value()) {
                 if (ids.vendorId() == usbDevice.getVendorId() &&
                         ids.productId() == usbDevice.getProductId()) {
-                    if (usbManager.hasPermission(usbDevice))
+                    if (usbManager.hasPermission(usbDevice)) {
                         new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
-                    else {
+                    } else {
                         Intent permissionIntent = new Intent(ACTION_USB_PERMISSION_RESULT);
                         permissionIntent.setClass(context, UsbPermissionReceiver.class);
                         usbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(
@@ -98,6 +108,7 @@ public enum CardDeviceManager {
 
                     break;
                 }
+            }
         }
     }
 
@@ -106,13 +117,15 @@ public enum CardDeviceManager {
         while (it.hasNext()) {
             final CardDevice cardDevice = it.next().getValue();
 
-            if (!(cardDevice instanceof UsbCardDevice))
+            if (!(cardDevice instanceof UsbCardDevice)) {
                 continue;
+            }
 
             UsbCardDevice usbCardDevice = (UsbCardDevice) cardDevice;
 
-            if (!usbCardDevice.getUsbDevice().equals(usbDevice))
+            if (!usbCardDevice.getUsbDevice().equals(usbDevice)) {
                 continue;
+            }
 
             it.remove();
 
@@ -151,8 +164,9 @@ public enum CardDeviceManager {
 
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            if (intent.getAction() == null)
+            if (intent.getAction() == null) {
                 return;
+            }
 
             switch (intent.getAction()) {
                 case UsbManager.ACTION_USB_DEVICE_ATTACHED:
@@ -160,14 +174,16 @@ public enum CardDeviceManager {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                            UsbDevice usbDevice = intent.getParcelableExtra(
+                                    UsbManager.EXTRA_DEVICE);
 
-                            if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED))
+                            if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
                                 CardDeviceManager.INSTANCE.handleUsbDeviceAttached(context,
                                         usbDevice);
-                            else
+                            } else {
                                 CardDeviceManager.INSTANCE.handleUsbDeviceDetached(context,
                                         usbDevice);
+                            }
                         }
                     }).start();
                     break;
@@ -181,10 +197,11 @@ public enum CardDeviceManager {
 
             UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
-            if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false))
+            if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                 new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
-            else
+            } else {
                 CardDeviceManager.INSTANCE.scanForDevices(context);
+            }
         }
     }
 

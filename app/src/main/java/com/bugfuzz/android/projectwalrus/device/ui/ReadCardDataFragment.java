@@ -19,13 +19,13 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
@@ -37,13 +37,14 @@ import java.io.IOException;
 
 public class ReadCardDataFragment extends Fragment implements CardDevice.CardDataSink {
 
-    private static final String SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG = "read_card_data_single_card_data_io_dialog";
+    private static final String SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG =
+            "read_card_data_single_card_data_io_dialog";
 
     private volatile boolean stop;
 
     public static ReadCardDataFragment create(CardDevice cardDevice,
-                                              Class<? extends CardData> cardDataClass,
-                                              int callbackId) {
+            Class<? extends CardData> cardDataClass,
+            int callbackId) {
         ReadCardDataFragment fragment = new ReadCardDataFragment();
 
         Bundle args = new Bundle();
@@ -59,8 +60,9 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (!(context instanceof OnCardDataCallback))
+        if (!(context instanceof OnCardDataCallback)) {
             throw new RuntimeException("Parent doesn't implement fragment callback interface");
+        }
     }
 
     @Override
@@ -69,8 +71,9 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
 
         CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(
                 getArguments().getInt("card_device_id"));
-        if (cardDevice == null)
+        if (cardDevice == null) {
             return;
+        }
 
         Class<? extends CardData> cardDataClass;
         try {
@@ -149,10 +152,11 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
         FragmentManager fragmentManager = getChildFragmentManager();
         Fragment dialogFragment = fragmentManager.findFragmentByTag(
                 SINGLE_CARD_DATA_IO_DIALOG_FRAGMENT_TAG);
-        if (dialogFragment != null)
+        if (dialogFragment != null) {
             fragmentManager.beginTransaction()
                     .remove(dialogFragment)
                     .commit();
+        }
     }
 
     public interface OnCardDataCallback {
