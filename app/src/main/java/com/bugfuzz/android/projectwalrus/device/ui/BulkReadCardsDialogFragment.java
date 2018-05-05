@@ -69,8 +69,8 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
             };
     private final ServiceConnection bulkReadCardsServiceConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            bulkReadCardsServiceBinder = (BulkReadCardsService.ServiceBinder) iBinder;
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            bulkReadCardsServiceBinder = (BulkReadCardsService.ServiceBinder) binder;
 
             BulkReadCardDataSink sink = getSink();
             if (sink != null) {

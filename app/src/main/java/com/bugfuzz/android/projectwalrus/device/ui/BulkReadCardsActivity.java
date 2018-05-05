@@ -60,8 +60,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
     private BulkReadCardsService.ServiceBinder bulkReadCardsServiceBinder;
     private final ServiceConnection bulkReadCardsServiceConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            bulkReadCardsServiceBinder = (BulkReadCardsService.ServiceBinder) iBinder;
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            bulkReadCardsServiceBinder = (BulkReadCardsService.ServiceBinder) binder;
             threadsView.getAdapter().notifyDataSetChanged();
         }
 
