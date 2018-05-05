@@ -44,7 +44,7 @@ public abstract class CardDevice {
     private static final String EXTRA_STATUS =
             "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_STATUS";
 
-    static private int nextId;
+    private static int nextId;
 
     protected final Context context;
 

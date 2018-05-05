@@ -94,9 +94,9 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         this.receiving = receiving;
     }
 
-    abstract protected Pair<T, Integer> sliceIncoming(byte[] in);
+    protected abstract Pair<T, Integer> sliceIncoming(byte[] in);
 
-    abstract protected byte[] formatOutgoing(T out);
+    protected abstract byte[] formatOutgoing(T out);
 
     private T receive(long timeout) {
         if (!receiving) {
