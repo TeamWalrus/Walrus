@@ -35,10 +35,12 @@ public class BinaryFormat {
 
     private final String name;
     private final List<Element> elements;
+    private final String formatString;
 
-    public BinaryFormat(String name, List<Element> elements) {
+    public BinaryFormat(String name, List<Element> elements, String formatString) {
         this.name = name;
         this.elements = elements;
+        this.formatString = formatString;
     }
 
     public String getName() {
@@ -54,6 +56,16 @@ public class BinaryFormat {
         }
 
         return null;
+    }
+
+    public String format(BigInteger source) {
+        List<BigInteger> values = new ArrayList<>();
+
+        for (Element element : elements) {
+            values.add(element.extractValue(source));
+        }
+
+        return String.format(formatString, values.toArray());
     }
 
     public Set<String> getProblems(BigInteger value) {
