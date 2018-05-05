@@ -62,14 +62,16 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
             cardDataIOView.setCardDeviceClass(
                     (Class<? extends CardDevice>) Class.forName(
                             getArguments().getString("card_device_class")));
-        } catch (ClassNotFoundException ignored) {
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         try {
             // noinspection unchecked
             cardDataIOView.setCardDataClass(
                     (Class<? extends CardData>) Class.forName(
                             getArguments().getString("card_data_class")));
-        } catch (ClassNotFoundException ignored) {
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         cardDataIOView.setDirection(mode == Mode.READ);
 

@@ -88,7 +88,8 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
                 // noinspection unchecked
                 cardDataFilterClass = (Class<? extends CardData>) Class.forName(
                         cardDataFilterClassName);
-            } catch (ClassNotFoundException ignored) {
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
             cardDataFilterMode = CardDeviceAdapter.FilterMode.values()[
                     getArguments().getInt("card_data_filter_mode")];

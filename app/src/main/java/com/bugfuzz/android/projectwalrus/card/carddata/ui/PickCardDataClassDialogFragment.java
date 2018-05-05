@@ -72,7 +72,8 @@ public class PickCardDataClassDialogFragment extends DialogFragment
                     // noinspection unchecked
                     cardDataClasses.add(
                             (Class<? extends CardData>) Class.forName(cardDataClassName));
-                } catch (ClassNotFoundException ignored) {
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
