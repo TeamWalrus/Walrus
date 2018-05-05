@@ -51,6 +51,11 @@ public class OpaqueElement extends BinaryFormat.Element {
     }
 
     @Override
+    public BigInteger extractValue(BigInteger source) {
+        return extractValueAtMyPos(source);
+    }
+
+    @Override
     public Set<String> getProblems(BigInteger source) {
         return new HashSet<>();
     }
@@ -58,11 +63,6 @@ public class OpaqueElement extends BinaryFormat.Element {
     @Override
     public Component createComponent(Context context, BigInteger value, boolean editable) {
         return new OpaqueComponent(context, extractValue(value), hex, editable);
-    }
-
-    @Override
-    public BigInteger extractValue(BigInteger source) {
-        return extractValueAtMyPos(source);
     }
 
     @Override
