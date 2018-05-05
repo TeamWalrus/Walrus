@@ -19,51 +19,23 @@
 
 package com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.elements;
 
-import android.content.Context;
-
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
-import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.Component;
 
 import java.math.BigInteger;
-import java.util.HashSet;
-import java.util.Set;
 
-public class FixedElement extends BinaryFormat.Element {
+public class FixedElement extends CalculatedElement {
 
     private final BigInteger fixedValue;
 
     public FixedElement(String id, String name, int startPos, Integer length,
             BigInteger fixedValue) {
-        super(id, name, startPos, length);
+        super(id, name, startPos, length, R.string.invalid_fixed_value);
 
         this.fixedValue = fixedValue;
     }
 
     @Override
-    public Component createComponent(final Context context, final BigInteger value,
-            final boolean editable) {
-        return new Component(context, name) {
-            @Override
-            public Set<String> getProblems() {
-                Set<String> problems = new HashSet<>();
-
-                if (!editable && !extractValueAtMyPos(value).equals(fixedValue)) {
-                    problems.add(context.getString(R.string.invalid_fixed_value));
-                }
-
-                return problems;
-            }
-        };
-    }
-
-    @Override
     public BigInteger extractValue(BigInteger source) {
         return fixedValue;
-    }
-
-    @Override
-    public BigInteger applyComponent(BigInteger value, Component component) {
-        return applyAtMyPos(value, fixedValue);
     }
 }

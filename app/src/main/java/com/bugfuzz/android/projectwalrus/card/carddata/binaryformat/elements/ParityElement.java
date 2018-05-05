@@ -19,17 +19,11 @@
 
 package com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.elements;
 
-import android.content.Context;
-
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
-import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.Component;
 
 import java.math.BigInteger;
-import java.util.HashSet;
-import java.util.Set;
 
-public class ParityElement extends BinaryFormat.Element {
+public class ParityElement extends CalculatedElement {
 
     private final int parityStartPos;
     private final int parityRunLength;
@@ -39,7 +33,7 @@ public class ParityElement extends BinaryFormat.Element {
 
     public ParityElement(String id, String name, int startPos, Integer length, int parityStartPos,
             int parityRunLength, int paritySkipLength, int parityLength, boolean even) {
-        super(id, name, startPos, length);
+        super(id, name, startPos, length, R.string.invalid_parity);
 
         this.parityStartPos = parityStartPos;
         this.parityRunLength = parityRunLength;
@@ -48,34 +42,7 @@ public class ParityElement extends BinaryFormat.Element {
         this.even = even;
     }
 
-    @Override
-    public Component createComponent(final Context context, final BigInteger value,
-            final boolean editable) {
-        return new Component(context, name) {
-            @Override
-            public Set<String> getProblems() {
-                Set<String> problems = new HashSet<>();
-
-                if (!editable && !extractValueAtMyPos(value).equals(calculate(value))) {
-                    problems.add(context.getString(R.string.invalid_parity));
-                }
-
-                return problems;
-            }
-        };
-    }
-
-    @Override
     public BigInteger extractValue(BigInteger source) {
-        return calculate(source);
-    }
-
-    @Override
-    public BigInteger applyComponent(BigInteger target, Component component) {
-        return applyAtMyPos(target, calculate(target));
-    }
-
-    private BigInteger calculate(BigInteger value) {
         boolean parity = true;
         int p = parityStartPos;
         for (int i = 0; i < parityLength; ++i) {
@@ -83,7 +50,7 @@ public class ParityElement extends BinaryFormat.Element {
                 throw new RuntimeException("Calculating parity over itself");
             }
 
-            parity ^= value.testBit(p);
+            parity ^= source.testBit(p);
 
             if ((i + 1) % parityRunLength == 0) {
                 p += paritySkipLength;
