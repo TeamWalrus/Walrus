@@ -45,9 +45,9 @@ public class QueryUtils {
         try {
             return dao.queryBuilder()
                     .where()
-                    .raw(Card.NAME_FIELD_NAME + " LIKE '%" +
-                            searchParameter.replaceAll("[\\\\%_]", "\\\\$0").replace("'", "''") +
-                            "%' ESCAPE '\\'")
+                    .raw(Card.NAME_FIELD_NAME + " LIKE '%"
+                            + searchParameter.replaceAll("[\\\\%_]", "\\\\$0").replace("'", "''")
+                            + "%' ESCAPE '\\'")
                     .query();
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -90,12 +90,13 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     private static final String PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG =
             "pick_card_data_class_dialog";
 
-    private final UIUtils.TextChangeWatcher notesEditorDirtier = new TextChangeDirtier(),
-            walrusCardViewNameDirtier = new TextChangeDirtier();
+    private final UIUtils.TextChangeWatcher notesEditorDirtier = new TextChangeDirtier();
+    private final UIUtils.TextChangeWatcher walrusCardViewNameDirtier = new TextChangeDirtier();
 
     private Mode mode;
     private Card card;
-    private boolean firstResume = true, dirty;
+    private boolean firstResume = true;
+    private boolean dirty;
     private WalrusCardView walrusCardView;
     private TextView notes;
     private EditText notesEditor;
@@ -110,8 +111,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         intent.putExtra(EXTRA_MODE, mode);
         intent.putExtra(EXTRA_CARD, Parcels.wrap(card));
 
-        if (transitionView != null &&
-                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (transitionView != null
+                && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             List<Pair<View, String>> sharedElements = new ArrayList<>();
 
             View view = activity.findViewById(android.R.id.statusBarBackground);
@@ -244,8 +245,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         findViewById(R.id.viewData).setEnabled(card.cardData != null);
 
-        ((TextView) findViewById(R.id.dateAcquired)).setText(card.cardDataAcquired != null ?
-                card.cardDataAcquired.toString() : getString(R.string.unknown));
+        ((TextView) findViewById(R.id.dateAcquired)).setText(card.cardDataAcquired != null
+                ? card.cardDataAcquired.toString() : getString(R.string.unknown));
 
         SupportMapFragment locationMap =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(
@@ -474,8 +475,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
         Set<Class<? extends CardData>> cardDataClasses = new HashSet<>();
         for (Class<? extends CardData> cardDataClass : CardData.getCardDataClasses()) {
-            if (cardDataClass.getAnnotation(CardData.Metadata.class).editDialogFragmentClass() !=
-                    DialogFragment.class) {
+            if (cardDataClass.getAnnotation(CardData.Metadata.class).editDialogFragmentClass()
+                    != DialogFragment.class) {
                 cardDataClasses.add(cardDataClass);
             }
         }
@@ -593,8 +594,8 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     @Override
     public void onBackPressed() {
         if (mode != Mode.VIEW && dirty) {
-            new AlertDialog.Builder(this).setMessage(mode == Mode.EDIT ?
-                    R.string.discard_card_changes : R.string.discard_bulk_read_changes)
+            new AlertDialog.Builder(this).setMessage(mode == Mode.EDIT
+                    ? R.string.discard_card_changes : R.string.discard_bulk_read_changes)
                     .setCancelable(true)
                     .setPositiveButton(R.string.discard_button,
                             new DialogInterface.OnClickListener() {

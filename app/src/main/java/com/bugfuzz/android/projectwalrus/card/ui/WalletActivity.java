@@ -111,9 +111,9 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                         int span = (int) (recyclerView.getWidth() / (WalrusCardView.getMaxSize(
                                 getResources().getDisplayMetrics()).first * 0.8));
 
-                        recyclerView.setLayoutManager(span > 1 ?
-                                new GridLayoutManager(WalletActivity.this, span) :
-                                new LinearLayoutManager(WalletActivity.this));
+                        recyclerView.setLayoutManager(span > 1
+                                ? new GridLayoutManager(WalletActivity.this, span)
+                                : new LinearLayoutManager(WalletActivity.this));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(new CardAdapter());
                         recyclerView.setVisibility(View.VISIBLE);

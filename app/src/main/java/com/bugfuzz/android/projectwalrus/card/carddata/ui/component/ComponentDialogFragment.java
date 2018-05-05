@@ -96,7 +96,7 @@ public class ComponentDialogFragment extends DialogFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
-        View result = super.onCreateView(inflater, container, savedInstanceState);
+        final View result = super.onCreateView(inflater, container, savedInstanceState);
 
         ViewGroup viewGroup = (ViewGroup) ((MaterialDialog) getDialog()).getCustomView();
         assert viewGroup != null;

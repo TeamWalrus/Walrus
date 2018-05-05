@@ -101,7 +101,8 @@ public class WalrusCardView extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width, height;
+        int width;
+        int height;
 
         switch (MeasureSpec.getMode(widthMeasureSpec)) {
             case MeasureSpec.UNSPECIFIED:

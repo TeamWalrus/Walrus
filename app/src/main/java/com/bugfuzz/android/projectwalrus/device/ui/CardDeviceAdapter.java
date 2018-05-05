@@ -125,9 +125,8 @@ public class CardDeviceAdapter extends RecyclerView.Adapter<CardDeviceAdapter.Vi
         Collections.sort(cardDevices, new Comparator<CardDevice>() {
             @Override
             public int compare(CardDevice a, CardDevice b) {
-                CardDevice.Metadata
-                        ma = a.getClass().getAnnotation(CardDevice.Metadata.class),
-                        mb = b.getClass().getAnnotation(CardDevice.Metadata.class);
+                CardDevice.Metadata ma = a.getClass().getAnnotation(CardDevice.Metadata.class);
+                CardDevice.Metadata mb = b.getClass().getAnnotation(CardDevice.Metadata.class);
                 return ma.name().compareTo(mb.name());
             }
         });

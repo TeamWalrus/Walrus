@@ -158,7 +158,8 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
     }
 
     private BulkReadCardDataSink getSink() {
-        return bulkReadCardsServiceBinder != null ?
-                bulkReadCardsServiceBinder.getSinks().get(getArguments().getInt("sink_id")) : null;
+        return bulkReadCardsServiceBinder != null
+                ? bulkReadCardsServiceBinder.getSinks().get(getArguments().getInt("sink_id"))
+                : null;
     }
 }

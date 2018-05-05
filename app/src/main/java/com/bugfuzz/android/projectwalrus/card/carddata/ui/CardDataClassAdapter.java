@@ -90,9 +90,8 @@ class CardDataClassAdapter extends RecyclerView.Adapter<CardDataClassAdapter.Vie
         Collections.sort(sortedCardDataClasses, new Comparator<Class<? extends CardData>>() {
             @Override
             public int compare(Class<? extends CardData> a, Class<? extends CardData> b) {
-                CardData.Metadata
-                        ma = a.getAnnotation(CardData.Metadata.class),
-                        mb = b.getAnnotation(CardData.Metadata.class);
+                CardData.Metadata ma = a.getAnnotation(CardData.Metadata.class);
+                CardData.Metadata mb = b.getAnnotation(CardData.Metadata.class);
                 return ma.name().compareTo(mb.name());
             }
         });

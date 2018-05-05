@@ -93,8 +93,8 @@ public enum CardDeviceManager {
             UsbCardDevice.UsbIds usbIds = klass.getAnnotation(
                     UsbCardDevice.UsbIds.class);
             for (UsbCardDevice.UsbIds.Ids ids : usbIds.value()) {
-                if (ids.vendorId() == usbDevice.getVendorId() &&
-                        ids.productId() == usbDevice.getProductId()) {
+                if (ids.vendorId() == usbDevice.getVendorId()
+                        && ids.productId() == usbDevice.getProductId()) {
                     if (usbManager.hasPermission(usbDevice)) {
                         new Thread(new CreateUsbDeviceRunnable(context, usbDevice)).start();
                     } else {
@@ -141,7 +141,8 @@ public enum CardDeviceManager {
                 @Override
                 public void run() {
                     // noinspection StatementWithEmptyBody
-                    while (cardDevices.values().remove(cardDevice)) ;
+                    while (cardDevices.values().remove(cardDevice)) {
+                    }
                 }
             });
 
@@ -221,8 +222,8 @@ public enum CardDeviceManager {
                 UsbCardDevice.UsbIds usbIds = klass.getAnnotation(
                         UsbCardDevice.UsbIds.class);
                 for (UsbCardDevice.UsbIds.Ids ids : usbIds.value()) {
-                    if (ids.vendorId() == usbDevice.getVendorId() &&
-                            ids.productId() == usbDevice.getProductId()) {
+                    if (ids.vendorId() == usbDevice.getVendorId()
+                            && ids.productId() == usbDevice.getProductId()) {
                         Constructor<? extends UsbCardDevice> constructor;
                         try {
                             constructor = klass.getConstructor(Context.class, UsbDevice.class);
@@ -233,8 +234,8 @@ public enum CardDeviceManager {
                         final UsbCardDevice cardDevice;
                         try {
                             cardDevice = constructor.newInstance(context, usbDevice);
-                        } catch (InstantiationException | InvocationTargetException |
-                                IllegalAccessException e) {
+                        } catch (InstantiationException | InvocationTargetException
+                                | IllegalAccessException e) {
                             continue;
                         }
 

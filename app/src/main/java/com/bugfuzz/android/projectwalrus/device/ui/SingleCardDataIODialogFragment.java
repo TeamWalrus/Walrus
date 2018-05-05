@@ -39,7 +39,7 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
     public static SingleCardDataIODialogFragment create(Class<? extends CardDevice> cardDeviceClass,
             Class<? extends CardData> cardDataClass,
             Mode mode, int callbackId) {
-        SingleCardDataIODialogFragment dialog = new SingleCardDataIODialogFragment();
+        final SingleCardDataIODialogFragment dialog = new SingleCardDataIODialogFragment();
 
         Bundle args = new Bundle();
         args.putString("card_device_class", cardDeviceClass.getName());
@@ -53,7 +53,7 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Mode mode = Mode.values()[getArguments().getInt("mode")];
+        final Mode mode = Mode.values()[getArguments().getInt("mode")];
 
         CardDataIOView cardDataIOView = new CardDataIOView(getActivity());
         cardDataIOView.setPadding(0, 60, 0, 10);

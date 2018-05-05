@@ -68,7 +68,8 @@ public class OpaqueElement extends BinaryFormat.Element {
     public class OpaqueComponent extends Component {
 
         private final View view;
-        private final boolean hex, editable;
+        private final boolean hex;
+        private final boolean editable;
 
         OpaqueComponent(Context context, BigInteger value, boolean hex, boolean editable) {
             super(context, name);

@@ -157,23 +157,23 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         break;
 
                                     case 4:
-                                        String line_atqa[] = in.split(":");
+                                        String[] lineAtqa = in.split(":");
                                         atqa = Short.reverseBytes(
-                                                (short) Integer.parseInt(line_atqa[1].trim(), 16));
+                                                (short) Integer.parseInt(lineAtqa[1].trim(), 16));
 
                                         ++state;
                                         break;
 
                                     case 5:
-                                        String line_uid[] = in.split(":");
-                                        uid = new BigInteger(line_uid[1].trim(), 16);
+                                        String[] lineUid = in.split(":");
+                                        uid = new BigInteger(lineUid[1].trim(), 16);
 
                                         ++state;
                                         break;
 
                                     case 6:
-                                        String line_sak[] = in.split(":");
-                                        sak = (byte) Integer.parseInt(line_sak[1].trim(), 16);
+                                        String[] lineSak = in.split(":");
+                                        sak = (byte) Integer.parseInt(lineSak[1].trim(), 16);
 
                                         cardDataSink.onCardData(
                                                 new ISO14443ACardData(atqa, uid, sak, null));

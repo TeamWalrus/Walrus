@@ -81,10 +81,10 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
                             (tuneResult.peakF / 1000)));
 
             LineChart lfChart = findViewById(R.id.lfChart);
-            if (tuneResult.vLF != null) {
+            if (tuneResult.lfVoltages != null) {
                 List<Entry> entries = new ArrayList<>();
                 for (int i = 255; i >= 19; --i) {
-                    entries.add(new Entry(12e6f / (i + 1) / 1e3f, tuneResult.vLF[i]));
+                    entries.add(new Entry(12e6f / (i + 1) / 1e3f, tuneResult.lfVoltages[i]));
                 }
 
                 LineDataSet lineDataSet = new LineDataSet(entries, getString(R.string.lf));
@@ -107,9 +107,9 @@ public class Proxmark3TuneResultActivity extends AppCompatActivity {
         }
 
         if (tuneResult.hf) {
-            setResultInfo(tuneResult.vHF, 3.167f, 7.917f, R.id.hfOk);
+            setResultInfo(tuneResult.hfVoltage, 3.167f, 7.917f, R.id.hfOk);
             ((TextView) findViewById(R.id.hfV)).setText(
-                    getResources().getString(R.string.tune_voltage, tuneResult.vHF));
+                    getResources().getString(R.string.tune_voltage, tuneResult.hfVoltage));
         } else {
             findViewById(R.id.hf).setVisibility(View.GONE);
         }

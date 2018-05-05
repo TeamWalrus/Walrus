@@ -28,7 +28,8 @@ import java.io.UnsupportedEncodingException;
 
 public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<String> {
 
-    private final String delimiter, charsetName;
+    private final String delimiter;
+    private final String charsetName;
 
     protected LineBasedUsbSerialCardDevice(Context context, UsbDevice usbDevice, String delimiter,
             String charsetName) throws IOException {

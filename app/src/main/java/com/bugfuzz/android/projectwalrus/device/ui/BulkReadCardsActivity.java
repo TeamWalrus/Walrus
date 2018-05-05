@@ -147,8 +147,8 @@ public class BulkReadCardsActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return bulkReadCardsServiceBinder != null ?
-                    bulkReadCardsServiceBinder.getSinks().size() : 0;
+            return bulkReadCardsServiceBinder != null
+                    ? bulkReadCardsServiceBinder.getSinks().size() : 0;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

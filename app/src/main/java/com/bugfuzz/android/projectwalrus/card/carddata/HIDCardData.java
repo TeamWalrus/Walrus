@@ -68,8 +68,8 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
     }
 
     public static void setup(Context context) {
-        String facilityCode = context.getString(R.string.hid_facility_code),
-                cardNumber = context.getString(R.string.hid_card_number);
+        String facilityCode = context.getString(R.string.hid_facility_code);
+        String cardNumber = context.getString(R.string.hid_card_number);
 
         FORMATS = new BinaryFormat[]{
                 new BinaryFormat(context.getString(R.string.hid_raw),

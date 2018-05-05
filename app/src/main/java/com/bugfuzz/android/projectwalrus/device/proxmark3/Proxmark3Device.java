@@ -219,8 +219,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                             new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
                                 @Override
                                 public Boolean onReceived(Proxmark3Command in) {
-                                    return in.op == Proxmark3Command.DEBUG_PRINT_STRING &&
-                                            in.dataAsString().equals("DONE!") ? true : null;
+                                    return in.op == Proxmark3Command.DEBUG_PRINT_STRING
+                                            && in.dataAsString().equals("DONE!") ? true : null;
                                 }
                             })) {
                         throw new IOException(context.getString(R.string.write_card_timeout));
@@ -287,14 +287,14 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                 throw new IOException(context.getString(R.string.tune_timeout));
             }
 
-            float[] vLF = new float[256];
+            float[] lfVoltages = new float[256];
             for (int i = 0; i < 256; ++i) {
-                vLF[i] = ((result.data[i] & 0xff) << 8) / 1e3f;
+                lfVoltages[i] = ((result.data[i] & 0xff) << 8) / 1e3f;
             }
 
             return new TuneResult(
                     lf, hf,
-                    lf ? vLF : null,
+                    lf ? lfVoltages : null,
                     lf ? (result.args[0] & 0xffff) / 1e3f : null,
                     lf ? (result.args[0] >> 16) / 1e3f : null,
                     lf ? 12e6f / ((result.args[2] & 0xffff) + 1) : null,
@@ -325,24 +325,29 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
     @Parcel
     public static class TuneResult {
 
-        public final boolean lf, hf;
+        public final boolean lf;
+        public final boolean hf;
 
-        public final float[] vLF;
-        public final Float v125, v134, peakF, peakV, vHF;
+        public final float[] lfVoltages;
+        public final Float v125;
+        public final Float v134;
+        public final Float peakF;
+        public final Float peakV;
+        public final Float hfVoltage;
 
         @ParcelConstructor
-        TuneResult(boolean lf, boolean hf, float[] vLF, Float v125, Float v134, Float peakF,
-                Float peakV, Float vHF) {
+        TuneResult(boolean lf, boolean hf, float[] lfVoltages, Float v125, Float v134, Float peakF,
+                Float peakV, Float hfVoltage) {
             this.lf = lf;
             this.hf = hf;
 
-            this.vLF = vLF;
+            this.lfVoltages = lfVoltages;
             this.v125 = v125;
             this.v134 = v134;
             this.peakF = peakF;
             this.peakV = peakV;
 
-            this.vHF = vHF;
+            this.hfVoltage = hfVoltage;
         }
     }
 }

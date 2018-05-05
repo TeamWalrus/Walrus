@@ -153,8 +153,8 @@ public class BulkReadCardsService extends Service {
         final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (notificationManager != null && android.os.Build.VERSION.SDK_INT >= O &&
-                notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
+        if (notificationManager != null && android.os.Build.VERSION.SDK_INT >= O
+                && notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
             notificationManager.createNotificationChannel(
                     new NotificationChannel(CHANNEL_ID,
                             getString(R.string.bulk_read_notification_channel_name),

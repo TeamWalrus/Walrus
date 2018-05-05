@@ -57,8 +57,8 @@ public class DebugDevice extends CardDevice {
                         cardDataSink.onCardData(
                                 (CardData) cardDataClass.getMethod("newDebugInstance")
                                         .invoke(null));
-                    } catch (IllegalAccessException | InvocationTargetException |
-                            NoSuchMethodException e) {
+                    } catch (IllegalAccessException | InvocationTargetException
+                            | NoSuchMethodException e) {
                         return;
                     }
 

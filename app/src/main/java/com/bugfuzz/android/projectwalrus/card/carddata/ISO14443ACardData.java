@@ -37,7 +37,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "checkstyle:abbreviationaswordinname"})
 @Parcel
 @CardData.Metadata(
         name = "ISO 14443A",
@@ -184,7 +184,8 @@ public class ISO14443ACardData extends CardData {
 
     public static class Type implements Comparable {
 
-        private final String manufacturer, product;
+        private final String manufacturer;
+        private final String product;
 
         public Type(String manufacturer, String product) {
             this.manufacturer = manufacturer;
@@ -222,7 +223,8 @@ public class ISO14443ACardData extends CardData {
     private static class StaticTypeMatcher implements TypeMatcher {
 
         private final Type type;
-        private final short atqa, atqaMask;
+        private final short atqa;
+        private final short atqaMask;
         private final Byte sak;
 
         StaticTypeMatcher(Type type, @IntRange(from = 0, to = 65535) int atqa,
@@ -241,9 +243,9 @@ public class ISO14443ACardData extends CardData {
 
         @Override
         public Type match(ISO14443ACardData cardData) {
-            return (cardData.atqa & atqaMask) == (atqa & atqaMask) &&
-                    (sak == null || cardData.sak == sak) ?
-                    type : null;
+            return (cardData.atqa & atqaMask) == (atqa & atqaMask)
+                    && (sak == null || cardData.sak == sak)
+                    ? type : null;
         }
     }
 }

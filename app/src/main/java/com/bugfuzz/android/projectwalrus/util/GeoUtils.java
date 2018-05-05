@@ -45,9 +45,9 @@ public class GeoUtils {
         boolean isFromSameProvider = isSameProvider(location.getProvider(),
                 currentBestLocation.getProvider());
 
-        return isMoreAccurate ||
-                (isNewer && !isLessAccurate) ||
-                (isNewer && !isSignificantlyLessAccurate && isFromSameProvider);
+        return isMoreAccurate
+                || (isNewer && !isLessAccurate)
+                || (isNewer && !isSignificantlyLessAccurate && isFromSameProvider);
     }
 
     private static boolean isSameProvider(String provider1, String provider2) {

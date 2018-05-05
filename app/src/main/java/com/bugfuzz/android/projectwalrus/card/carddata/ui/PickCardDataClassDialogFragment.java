@@ -36,7 +36,7 @@ public class PickCardDataClassDialogFragment extends DialogFragment
 
     public static PickCardDataClassDialogFragment create(
             Set<Class<? extends CardData>> cardDataClasses, int callbackId) {
-        PickCardDataClassDialogFragment dialog = new PickCardDataClassDialogFragment();
+        final PickCardDataClassDialogFragment dialog = new PickCardDataClassDialogFragment();
 
         String[] cardDataClassNames = new String[cardDataClasses.size()];
         int i = 0;

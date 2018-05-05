@@ -83,8 +83,8 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
 
                 if (view instanceof TextView) {
                     ((TextView) view).setTextColor(context.getResources().getColor(
-                            formatComponents.get(position).getProblems().isEmpty() ?
-                                    android.R.color.black : android.R.color.holo_red_light));
+                            formatComponents.get(position).getProblems().isEmpty()
+                                    ? android.R.color.black : android.R.color.holo_red_light));
                 }
 
                 return view;

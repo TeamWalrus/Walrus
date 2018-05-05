@@ -42,9 +42,8 @@ class Proxmark3Command {
     public static final long MEASURE_ANTENNA_TUNING = 0x400;
     public static final long MEASURED_ANTENNA_TUNING = 0x410;
 
-    static final long
-            MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1,
-            MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
+    static final long MEASURE_ANTENNA_TUNING_FLAG_TUNE_LF = 1;
+    static final long MEASURE_ANTENNA_TUNING_FLAG_TUNE_HF = 2;
 
     @Opcode
     final long op;
@@ -115,8 +114,8 @@ class Proxmark3Command {
 
     @Override
     public String toString() {
-        return "<Proxmark3Command " + op + ", args " + Arrays.toString(args) + ", data " +
-                Arrays.toString(data) + ">";
+        return "<Proxmark3Command " + op + ", args " + Arrays.toString(args) + ", data "
+                + Arrays.toString(data) + ">";
     }
 
     public String dataAsString() {

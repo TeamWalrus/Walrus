@@ -55,7 +55,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
             Class<? extends CardData> cardDataFilterClass,
             CardDeviceAdapter.FilterMode cardDataFilterMode, boolean allowManualEntry,
             int callbackId) {
-        PickCardDataSourceDialogFragment dialog = new PickCardDataSourceDialogFragment();
+        final PickCardDataSourceDialogFragment dialog = new PickCardDataSourceDialogFragment();
 
         Bundle args = new Bundle();
         if (cardDataFilterClass != null) {

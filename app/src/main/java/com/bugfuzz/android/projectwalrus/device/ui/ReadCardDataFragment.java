@@ -45,7 +45,7 @@ public class ReadCardDataFragment extends Fragment implements CardDevice.CardDat
     public static ReadCardDataFragment create(CardDevice cardDevice,
             Class<? extends CardData> cardDataClass,
             int callbackId) {
-        ReadCardDataFragment fragment = new ReadCardDataFragment();
+        final ReadCardDataFragment fragment = new ReadCardDataFragment();
 
         Bundle args = new Bundle();
         args.putInt("card_device_id", cardDevice.getId());

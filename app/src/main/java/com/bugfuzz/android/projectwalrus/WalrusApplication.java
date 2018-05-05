@@ -71,13 +71,14 @@ public class WalrusApplication extends Application {
         locationRequest.setInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+        // CHECKSTYLE:OFF EmptyCatchBlock
         try {
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(
                     new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-                            if (currentBestLocation == null ||
-                                    GeoUtils.isBetterLocation(location, currentBestLocation)) {
+                            if (currentBestLocation == null
+                                    || GeoUtils.isBetterLocation(location, currentBestLocation)) {
                                 currentBestLocation = location;
                             }
                         }
@@ -88,8 +89,9 @@ public class WalrusApplication extends Application {
                         @Override
                         public void onLocationResult(LocationResult locationResult) {
                             for (Location location : locationResult.getLocations()) {
-                                if (currentBestLocation == null ||
-                                        GeoUtils.isBetterLocation(location, currentBestLocation)) {
+                                if (currentBestLocation == null
+                                        || GeoUtils.isBetterLocation(location,
+                                        currentBestLocation)) {
                                     currentBestLocation = location;
                                 }
                             }
@@ -97,6 +99,7 @@ public class WalrusApplication extends Application {
                     }, null);
         } catch (SecurityException ignored) {
         }
+        // CHECKSTYLE:ON EmptyCatchBlock
     }
 
     @Override

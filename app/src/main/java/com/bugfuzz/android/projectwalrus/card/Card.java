@@ -49,14 +49,15 @@ public class Card {
     public CardData cardData;
 
     @DatabaseField
-    public Date cardCreated = new Date(), cardDataAcquired;
+    public Date cardCreated = new Date();
+    @DatabaseField
+    public Date cardDataAcquired;
 
     @DatabaseField
     public String notes = "";
 
     @DatabaseField
     public Double cardLocationLat;
-
     @DatabaseField
     public Double cardLocationLng;
 
