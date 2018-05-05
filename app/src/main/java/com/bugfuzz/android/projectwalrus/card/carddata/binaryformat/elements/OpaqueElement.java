@@ -34,6 +34,8 @@ import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.Component;
 import com.bugfuzz.android.projectwalrus.util.UIUtils;
 
 import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class OpaqueElement extends BinaryFormat.Element {
@@ -46,6 +48,11 @@ public class OpaqueElement extends BinaryFormat.Element {
         super(id, name, startPos, length);
 
         this.hex = hex;
+    }
+
+    @Override
+    public Set<String> getProblems(BigInteger source) {
+        return new HashSet<>();
     }
 
     @Override

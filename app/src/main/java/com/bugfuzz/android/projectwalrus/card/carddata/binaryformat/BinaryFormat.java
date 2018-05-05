@@ -27,7 +27,9 @@ import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.MultiCompone
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BinaryFormat {
 
@@ -52,6 +54,16 @@ public class BinaryFormat {
         }
 
         return null;
+    }
+
+    public Set<String> getProblems(BigInteger value) {
+        Set<String> problems = new HashSet<>();
+
+        for (Element element : elements) {
+            problems.addAll(element.getProblems(value));
+        }
+
+        return problems;
     }
 
     public Component createComponent(Context context, String title, BigInteger value,
@@ -95,6 +107,8 @@ public class BinaryFormat {
         }
 
         public abstract BigInteger extractValue(BigInteger source);
+
+        public abstract Set<String> getProblems(BigInteger source);
 
         protected abstract Component createComponent(Context context, BigInteger value,
                 boolean editable);

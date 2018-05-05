@@ -22,6 +22,7 @@ package com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.elements;
 import android.content.Context;
 import android.support.annotation.StringRes;
 
+import com.bugfuzz.android.projectwalrus.WalrusApplication;
 import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.Component;
 
@@ -42,18 +43,24 @@ abstract class CalculatedElement extends BinaryFormat.Element {
     }
 
     @Override
+    public Set<String> getProblems(BigInteger source) {
+        Set<String> problems = new HashSet<>();
+
+        if (!extractValueAtMyPos(source).equals(extractValue(source))) {
+            problems.add(WalrusApplication.getContext().getString(errorMessageId));
+        }
+
+        return problems;
+    }
+
+    @Override
     public Component createComponent(final Context context, final BigInteger value,
             final boolean editable) {
         return new Component(context, name) {
             @Override
             public Set<String> getProblems() {
-                Set<String> problems = new HashSet<>();
-
-                if (!editable && !extractValueAtMyPos(value).equals(extractValue(value))) {
-                    problems.add(context.getString(errorMessageId));
-                }
-
-                return problems;
+                return !editable ? CalculatedElement.this.getProblems(value)
+                        : new HashSet<String>();
             }
         };
     }

@@ -20,6 +20,7 @@
 package com.bugfuzz.android.projectwalrus.card.carddata;
 
 import android.content.Context;
+import android.support.annotation.IntRange;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
@@ -53,16 +54,29 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
 
     public BigInteger data;
     public int dataBinaryFormatId;
+    public boolean dataBinaryFormatAutodetected;
 
     public HIDCardData() {
         data = BigInteger.ZERO;
     }
 
     public HIDCardData(BigInteger data) {
-        this(data, 0);
+        this.data = data;
+
+        for (int i = FORMATS.length - 1; i > 0; --i) {
+            if (FORMATS[i].getProblems(data).isEmpty()) {
+                dataBinaryFormatId = i;
+                dataBinaryFormatAutodetected = true;
+                break;
+            }
+        }
     }
 
-    public HIDCardData(BigInteger data, int dataBinaryFormatId) {
+    public HIDCardData(BigInteger data, @IntRange(from = 0) int dataBinaryFormatId) {
+        if (dataBinaryFormatId < 0 || dataBinaryFormatId >= FORMATS.length) {
+            throw new IllegalArgumentException("Invalid data binary format ID");
+        }
+
         this.data = data;
         this.dataBinaryFormatId = dataBinaryFormatId;
     }
