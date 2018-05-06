@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import java.util.Set;
 
 public abstract class Component {
 
-    private final Context context;
+    protected final Context context;
     private final String title;
     protected OnComponentChangeCallback onComponentChangeCallback;
 
@@ -47,6 +48,7 @@ public abstract class Component {
         return null;
     }
 
+    @Nullable
     public View getView() {
         if (viewGroup == null && (title != null || getInnerView() != null)) {
             viewGroup = new LinearLayout(context);

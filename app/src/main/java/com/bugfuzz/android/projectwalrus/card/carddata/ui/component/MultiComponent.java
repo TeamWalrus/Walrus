@@ -23,10 +23,13 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Space;
 
 import java.util.List;
 
 public class MultiComponent extends ContainerComponent {
+
+    public static final int VERTICAL_SPACE_PX = 40;
 
     private final List<Component> children;
     private final LinearLayout viewGroup;
@@ -39,9 +42,17 @@ public class MultiComponent extends ContainerComponent {
         viewGroup = new LinearLayout(context);
         viewGroup.setOrientation(LinearLayout.VERTICAL);
 
+        boolean first = true;
         for (Component child : children) {
             if (child.getView() != null) {
+                if (!first) {
+                    Space space = new Space(context);
+                    space.setMinimumHeight(VERTICAL_SPACE_PX);
+                    viewGroup.addView(space);
+                }
+
                 viewGroup.addView(child.getView());
+                first = false;
             }
         }
     }

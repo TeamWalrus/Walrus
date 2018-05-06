@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -57,19 +58,19 @@ public class ChoiceComponent extends ContainerComponent {
         spinner = new Spinner(context);
         viewGroup.addView(spinner);
 
+        Space space = new Space(context);
+        space.setMinimumHeight(MultiComponent.VERTICAL_SPACE_PX);
+        viewGroup.addView(space);
+
         final ViewGroup choiceViewGroup = new FrameLayout(context);
         viewGroup.addView(choiceViewGroup);
 
-        ViewGroup.LayoutParams layoutParams = spinner.getLayoutParams();
-        layoutParams.height = (int) (136 * 1.25);
-        spinner.setLayoutParams(layoutParams);
-        spinner.setPadding(0, 0, 0, 24);
+        spinner.setPadding(0, 24, 0, 0);
 
         List<String> choiceNames = new ArrayList<>();
         for (Choice choice : choices) {
             choiceNames.add(choice.name);
         }
-
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(context,
                 R.layout.layout_multiline_spinner_item, choiceNames) {
             @Override

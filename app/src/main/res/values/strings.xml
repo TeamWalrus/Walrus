@@ -329,7 +329,7 @@
 
 
     <!--
-        HIDCardDataDialogFragment
+        HIDCardData
     -->
 
     <!-- Component label -->
@@ -361,6 +361,9 @@
 
     <!-- Component label -->
     <string name="hid_card_number">Card Number</string>
+
+    <!-- Message -->
+    <string name="hid_format_autodetected">This format was autodetected</string>
 
 
     <!--

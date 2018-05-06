@@ -21,7 +21,10 @@ package com.bugfuzz.android.projectwalrus.card.carddata;
 
 import android.content.Context;
 import android.support.annotation.IntRange;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
@@ -32,6 +35,7 @@ import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ChoiceCompon
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.Component;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentDialogFragment;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentSourceAndSink;
+import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.MultiComponent;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -185,12 +189,36 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
     public Component createComponent(Context context, boolean clean, boolean editable) {
         List<ChoiceComponent.Choice> choices = new ArrayList<>();
 
+        int i = 0;
         for (BinaryFormat format : FORMATS) {
+            List<Component> components = new ArrayList<>();
+
+            if (dataBinaryFormatId == i && dataBinaryFormatAutodetected) {
+                components.add(new Component(context, null) {
+                    TextView textView;
+
+                    @Nullable
+                    @Override
+                    protected View getInnerView() {
+                        if (textView == null) {
+                            textView = new TextView(this.context);
+                            textView.setText(R.string.hid_format_autodetected);
+                        }
+
+                        return textView;
+                    }
+                });
+            }
+
+            components.add(format.createComponent(context, null, clean ? null : data, editable));
+
             choices.add(new ChoiceComponent.Choice(
                     format.getName(),
                     ContextCompat.getColor(context, editable || format.getProblems(data).isEmpty()
                             ? android.R.color.black : android.R.color.holo_red_light),
-                    format.createComponent(context, null, clean ? null : data, editable)));
+                    new MultiComponent(context, null, components)));
+
+            ++i;
         }
 
         return new ChoiceComponent(context, context.getString(R.string.hid_format), choices,
@@ -202,7 +230,10 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
         ChoiceComponent choiceComponent = (ChoiceComponent) component;
 
         dataBinaryFormatId = choiceComponent.getChoicePosition();
+
+        List<Component> components =
+                ((MultiComponent) choiceComponent.getChoiceComponent()).getChildren();
         data = FORMATS[dataBinaryFormatId].applyComponent(BigInteger.ZERO,
-                choiceComponent.getChoiceComponent());
+                components.get(components.size() - 1));
     }
 }

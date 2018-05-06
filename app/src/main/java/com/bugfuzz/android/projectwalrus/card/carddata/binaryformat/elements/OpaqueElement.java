@@ -111,7 +111,7 @@ public class OpaqueElement extends BinaryFormat.Element {
                 TextView textView = new TextView(context);
                 view = textView;
 
-                textView.setPadding(22, 24, 22, 24);
+                textView.setPadding(23, 24, 23, 0);
                 textView.setTextAppearance(context, android.R.style.TextAppearance_Widget_EditText);
             }
 

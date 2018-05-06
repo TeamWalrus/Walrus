@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -128,14 +129,21 @@ public class ComponentDialogFragment extends DialogFragment
         }
 
         problemViewGroup.removeAllViews();
-        for (String problem : new TreeSet<>(component.getProblems())) {
-            TextView problemMessageView = new TextView(getActivity());
-            problemViewGroup.addView(problemMessageView);
 
-            problemMessageView.setPadding(0, 8, 0, 8);
-            problemMessageView.setText(problem);
-            problemMessageView.setTextColor(ContextCompat.getColor(getActivity(),
-                    android.R.color.holo_red_light));
+        if (!component.getProblems().isEmpty()) {
+            Space space = new Space(getActivity());
+            space.setMinimumHeight(MultiComponent.VERTICAL_SPACE_PX);
+            problemViewGroup.addView(space);
+
+            for (String problem : new TreeSet<>(component.getProblems())) {
+                TextView problemMessageView = new TextView(getActivity());
+                problemViewGroup.addView(problemMessageView);
+
+                problemMessageView.setPadding(0, 8, 0, 8);
+                problemMessageView.setText(problem);
+                problemMessageView.setTextColor(ContextCompat.getColor(getActivity(),
+                        android.R.color.holo_red_light));
+            }
         }
     }
 
