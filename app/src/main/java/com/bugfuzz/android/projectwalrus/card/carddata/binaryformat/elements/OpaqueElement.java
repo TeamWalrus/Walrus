@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -111,7 +112,9 @@ public class OpaqueElement extends BinaryFormat.Element {
                 TextView textView = new TextView(context);
                 view = textView;
 
-                textView.setPadding(23, 24, 23, 0);
+                int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
+                        context.getResources().getDisplayMetrics());
+                textView.setPadding(padding, padding, padding, 0);
                 textView.setTextAppearance(context, android.R.style.TextAppearance_Widget_EditText);
             }
 

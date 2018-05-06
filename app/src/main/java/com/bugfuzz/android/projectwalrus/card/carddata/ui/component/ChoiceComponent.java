@@ -23,6 +23,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -58,14 +59,13 @@ public class ChoiceComponent extends ContainerComponent {
         spinner = new Spinner(context);
         viewGroup.addView(spinner);
 
-        Space space = new Space(context);
-        space.setMinimumHeight(MultiComponent.VERTICAL_SPACE_PX);
-        viewGroup.addView(space);
+        viewGroup.addView(MultiComponent.createSpacer(context));
 
         final ViewGroup choiceViewGroup = new FrameLayout(context);
         viewGroup.addView(choiceViewGroup);
 
-        spinner.setPadding(0, 24, 0, 0);
+        spinner.setPadding(0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
+                spinner.getResources().getDisplayMetrics()), 0, 0);
 
         List<String> choiceNames = new ArrayList<>();
         for (Choice choice : choices) {

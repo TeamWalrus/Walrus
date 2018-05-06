@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
+import android.util.TypedValue;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -56,7 +57,13 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
         final Mode mode = Mode.values()[getArguments().getInt("mode")];
 
         CardDataIOView cardDataIOView = new CardDataIOView(getActivity());
-        cardDataIOView.setPadding(0, 60, 0, 10);
+
+        int topPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20,
+                getActivity().getResources().getDisplayMetrics());
+        int bottomPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2,
+                getActivity().getResources().getDisplayMetrics());
+        cardDataIOView.setPadding(0, topPadding, 0, bottomPadding);
+
         try {
             // noinspection unchecked
             cardDataIOView.setCardDeviceClass(

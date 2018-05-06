@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,15 +132,15 @@ public class ComponentDialogFragment extends DialogFragment
         problemViewGroup.removeAllViews();
 
         if (!component.getProblems().isEmpty()) {
-            Space space = new Space(getActivity());
-            space.setMinimumHeight(MultiComponent.VERTICAL_SPACE_PX);
-            problemViewGroup.addView(space);
+            problemViewGroup.addView(MultiComponent.createSpacer(getActivity()));
 
             for (String problem : new TreeSet<>(component.getProblems())) {
                 TextView problemMessageView = new TextView(getActivity());
                 problemViewGroup.addView(problemMessageView);
 
-                problemMessageView.setPadding(0, 8, 0, 8);
+                int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2,
+                        getActivity().getResources().getDisplayMetrics());
+                problemMessageView.setPadding(0, padding, 0, padding);
                 problemMessageView.setText(problem);
                 problemMessageView.setTextColor(ContextCompat.getColor(getActivity(),
                         android.R.color.holo_red_light));
