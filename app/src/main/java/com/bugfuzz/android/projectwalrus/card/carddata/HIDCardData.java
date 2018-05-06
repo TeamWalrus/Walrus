@@ -182,7 +182,7 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
     }
 
     @Override
-    public Component createComponent(Context context, boolean editable) {
+    public Component createComponent(Context context, boolean clean, boolean editable) {
         List<ChoiceComponent.Choice> choices = new ArrayList<>();
 
         for (BinaryFormat format : FORMATS) {
@@ -190,7 +190,7 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
                     format.getName(),
                     ContextCompat.getColor(context, editable || format.getProblems(data).isEmpty()
                             ? android.R.color.black : android.R.color.holo_red_light),
-                    format.createComponent(context, null, data, editable)));
+                    format.createComponent(context, null, clean ? null : data, editable)));
         }
 
         return new ChoiceComponent(context, context.getString(R.string.hid_format), choices,

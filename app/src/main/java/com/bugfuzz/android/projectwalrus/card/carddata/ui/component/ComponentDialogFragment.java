@@ -102,7 +102,7 @@ public class ComponentDialogFragment extends DialogFragment
         assert viewGroup != null;
 
         component = viewModel.getComponentSourceAndSink().createComponent(getActivity(),
-                getArguments().getBoolean("editable"));
+                getArguments().getBoolean("clean"), getArguments().getBoolean("editable"));
         viewGroup.addView(component.getView());
 
         if (savedInstanceState != null) {

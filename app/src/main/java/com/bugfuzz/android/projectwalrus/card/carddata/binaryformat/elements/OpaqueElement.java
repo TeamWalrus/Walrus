@@ -62,7 +62,7 @@ public class OpaqueElement extends BinaryFormat.Element {
 
     @Override
     public Component createComponent(Context context, BigInteger value, boolean editable) {
-        return new OpaqueComponent(context, extractValue(value), hex, editable);
+        return new OpaqueComponent(context, value, hex, editable);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class OpaqueElement extends BinaryFormat.Element {
                 textView.setTextAppearance(context, android.R.style.TextAppearance_Widget_EditText);
             }
 
-            String text = value.toString(hex ? 16 : 10);
+            String text = value != null ? extractValue(value).toString(hex ? 16 : 10) : "";
             if (editable) {
                 ((EditText) view).setText(text);
             } else {

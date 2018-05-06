@@ -530,8 +530,10 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 throw new RuntimeException(e);
             }
 
+            boolean clean = card.cardData == null || card.cardData.getClass() != cardDataClass;
+
             CardData cardData;
-            if (card.cardData != null && card.cardData.getClass() == cardDataClass) {
+            if (!clean) {
                 try {
                     cardData = (CardData) card.cardData.clone();
                 } catch (CloneNotSupportedException e) {
@@ -552,6 +554,7 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             args.putString("title", getString(R.string.edit_card_data_title,
                     cardDataMetadata.name()));
             args.putParcelable("source_and_sink", Parcels.wrap(cardData));
+            args.putBoolean("clean", clean);
             args.putBoolean("editable", true);
             args.putInt("callback_id", 0);
             editDialogFragment.setArguments(args);

@@ -23,7 +23,7 @@ import android.content.Context;
 
 public interface ComponentSourceAndSink {
 
-    Component createComponent(Context context, boolean editable);
+    Component createComponent(Context context, boolean clean, boolean editable);
 
     void applyComponent(Component component);
 }
