@@ -102,7 +102,7 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
         }
 
         final Card card = Card.copyOf(cardTemplate);
-        //noinspection NonAtomicOperationOnVolatileField
+        // noinspection NonAtomicOperationOnVolatileField
         card.name += " (" + ++numberOfCardsRead + ")";
         card.setCardData(cardData, WalrusApplication.getCurrentBestLocation());
 
