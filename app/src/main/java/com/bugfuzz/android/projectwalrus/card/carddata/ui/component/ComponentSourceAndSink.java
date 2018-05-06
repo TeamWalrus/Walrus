@@ -25,5 +25,5 @@ public interface ComponentSourceAndSink {
 
     Component createComponent(Context context, boolean editable);
 
-    void apply(Component component);
+    void applyComponent(Component component);
 }

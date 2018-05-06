@@ -21,13 +21,14 @@ package com.bugfuzz.android.projectwalrus.card.carddata;
 
 import android.content.Context;
 import android.support.annotation.IntRange;
+import android.support.v4.content.ContextCompat;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
 import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.elements.FixedElement;
 import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.elements.OpaqueElement;
 import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.elements.ParityElement;
-import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.BinaryFormatChooserComponent;
+import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ChoiceComponent;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.Component;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentDialogFragment;
 import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentSourceAndSink;
@@ -37,8 +38,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.parceler.Parcel;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 @Parcel
@@ -180,17 +183,26 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
 
     @Override
     public Component createComponent(Context context, boolean editable) {
-        return new BinaryFormatChooserComponent(context, context.getString(R.string.hid_format),
-                dataBinaryFormatId, data, Arrays.asList(FORMATS), editable);
+        List<ChoiceComponent.Choice> choices = new ArrayList<>();
+
+        for (BinaryFormat format : FORMATS) {
+            choices.add(new ChoiceComponent.Choice(
+                    format.getName(),
+                    ContextCompat.getColor(context, editable || format.getProblems(data).isEmpty()
+                            ? android.R.color.black : android.R.color.holo_red_light),
+                    format.createComponent(context, null, data, editable)));
+        }
+
+        return new ChoiceComponent(context, context.getString(R.string.hid_format), choices,
+                dataBinaryFormatId);
     }
 
     @Override
-    public void apply(Component component) {
-        BinaryFormatChooserComponent binaryFormatChooserComponent =
-                (BinaryFormatChooserComponent) component;
+    public void applyComponent(Component component) {
+        ChoiceComponent choiceComponent = (ChoiceComponent) component;
 
-        dataBinaryFormatId = binaryFormatChooserComponent.getChoicePosition();
+        dataBinaryFormatId = choiceComponent.getChoicePosition();
         data = FORMATS[dataBinaryFormatId].applyComponent(BigInteger.ZERO,
-                binaryFormatChooserComponent.getChoiceComponent());
+                choiceComponent.getChoiceComponent());
     }
 }

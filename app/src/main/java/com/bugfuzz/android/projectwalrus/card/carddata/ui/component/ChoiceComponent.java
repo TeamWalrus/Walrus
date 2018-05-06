@@ -33,78 +33,73 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.card.carddata.binaryformat.BinaryFormat;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BinaryFormatChooserComponent extends ContainerComponent {
+public class ChoiceComponent extends ContainerComponent {
 
-    private final List<Component> formatComponents = new ArrayList<>();
+    private final List<Choice> choices;
+
     private final LinearLayout viewGroup;
-    private final Spinner choiceSpinner;
+    private final Spinner spinner;
 
-    public BinaryFormatChooserComponent(final Context context, String title, int choice,
-            BigInteger value, List<BinaryFormat> binaryFormats,
-            boolean editable) {
+    public ChoiceComponent(final Context context, String title, List<Choice> choices,
+            int initialChoice) {
         super(context, title);
 
-        for (BinaryFormat binaryFormat : binaryFormats) {
-            formatComponents.add(binaryFormat.createComponent(context, null, value, editable));
-        }
+        this.choices = choices;
 
         viewGroup = new LinearLayout(context);
         viewGroup.setOrientation(LinearLayout.VERTICAL);
 
-        choiceSpinner = new Spinner(context);
-        viewGroup.addView(choiceSpinner);
+        spinner = new Spinner(context);
+        viewGroup.addView(spinner);
 
         final ViewGroup choiceViewGroup = new FrameLayout(context);
         viewGroup.addView(choiceViewGroup);
 
-        ViewGroup.LayoutParams layoutParams = choiceSpinner.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = spinner.getLayoutParams();
         layoutParams.height = (int) (136 * 1.25);
-        choiceSpinner.setLayoutParams(layoutParams);
-        choiceSpinner.setPadding(0, 0, 0, 24);
+        spinner.setLayoutParams(layoutParams);
+        spinner.setPadding(0, 0, 0, 24);
 
-        List<String> childChoiceNames = new ArrayList<>();
-        for (BinaryFormat binaryFormat : binaryFormats) {
-            childChoiceNames.add(binaryFormat.getName());
+        List<String> choiceNames = new ArrayList<>();
+        for (Choice choice : choices) {
+            choiceNames.add(choice.name);
         }
 
-        ArrayAdapter<String> formatAdapter = new ArrayAdapter<String>(context,
-                R.layout.layout_multiline_spinner_item, childChoiceNames) {
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(context,
+                R.layout.layout_multiline_spinner_item, choiceNames) {
             @Override
             public View getDropDownView(int position, @Nullable View convertView,
                     @NonNull ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
 
                 if (view instanceof TextView) {
-                    ((TextView) view).setTextColor(context.getResources().getColor(
-                            formatComponents.get(position).getProblems().isEmpty()
-                                    ? android.R.color.black : android.R.color.holo_red_light));
+                    ((TextView) view).setTextColor(
+                            ChoiceComponent.this.choices.get(position).color);
                 }
 
                 return view;
             }
         };
-        formatAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        choiceSpinner.setAdapter(formatAdapter);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
 
-        choiceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 choiceViewGroup.removeAllViews();
 
-                View formatView = getChoiceComponent().getView();
-                if (formatView != null) {
-                    choiceViewGroup.addView(formatView);
+                View choiceView = getChoiceComponent().getView();
+                if (choiceView != null) {
+                    choiceViewGroup.addView(choiceView);
                 }
 
                 if (onComponentChangeCallback != null) {
-                    onComponentChangeCallback.onComponentChange(BinaryFormatChooserComponent.this);
+                    onComponentChangeCallback.onComponentChange(ChoiceComponent.this);
                 }
             }
 
@@ -112,7 +107,7 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-        choiceSpinner.setSelection(choice);
+        spinner.setSelection(initialChoice);
     }
 
     @Nullable
@@ -123,7 +118,13 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
 
     @Override
     public List<Component> getChildren() {
-        return formatComponents;
+        List<Component> children = new ArrayList<>();
+
+        for (Choice choice : choices) {
+            children.add(choice.component);
+        }
+
+        return children;
     }
 
     @Override
@@ -135,7 +136,7 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
     public void restoreInstanceState(Bundle savedInstanceState) {
         super.restoreInstanceState(savedInstanceState);
 
-        choiceSpinner.setSelection(savedInstanceState.getInt("choice"));
+        spinner.setSelection(savedInstanceState.getInt("choice"));
     }
 
     @Override
@@ -146,10 +147,23 @@ public class BinaryFormatChooserComponent extends ContainerComponent {
     }
 
     public int getChoicePosition() {
-        return choiceSpinner.getSelectedItemPosition();
+        return spinner.getSelectedItemPosition();
     }
 
     public Component getChoiceComponent() {
-        return formatComponents.get(getChoicePosition());
+        return choices.get(getChoicePosition()).component;
+    }
+
+    public static class Choice {
+
+        private final String name;
+        private final int color;
+        private final Component component;
+
+        public Choice(String name, int color, Component component) {
+            this.name = name;
+            this.color = color;
+            this.component = component;
+        }
     }
 }

@@ -75,7 +75,7 @@ public class ComponentDialogFragment extends DialogFragment
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog,
                                 @NonNull DialogAction which) {
-                            viewModel.getComponentSourceAndSink().apply(component);
+                            viewModel.getComponentSourceAndSink().applyComponent(component);
 
                             if (getActivity() instanceof OnEditedCallback) {
                                 ((OnEditedCallback) getActivity()).onEdited(
