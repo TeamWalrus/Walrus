@@ -26,7 +26,7 @@ import android.preference.PreferenceManager;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
-import com.bugfuzz.android.projectwalrus.card.carddata.ISO14443ACardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.MifareCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
@@ -41,9 +41,9 @@ import java.util.concurrent.Semaphore;
 @CardDevice.Metadata(
         name = "Chameleon Mini",
         iconId = R.drawable.drawable_chameleon_mini,
-        supportsRead = {ISO14443ACardData.class},
+        supportsRead = {MifareCardData.class},
         supportsWrite = {},
-        supportsEmulate = {ISO14443ACardData.class}
+        supportsEmulate = {MifareCardData.class}
 )
 @UsbCardDevice.UsbIds({@UsbCardDevice.UsbIds.Ids(vendorId = 0x16d0, productId = 0x4b2)})
 public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
@@ -176,7 +176,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         sak = (byte) Integer.parseInt(lineSak[1].trim(), 16);
 
                                         cardDataSink.onCardData(
-                                                new ISO14443ACardData(atqa, uid, sak, null));
+                                                new MifareCardData(atqa, uid, sak, null, null, 0));
 
                                         if (!cardDataSink.shouldContinue()) {
                                             break;
@@ -261,9 +261,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                                     R.string.command_error, "SETTING=", in));
                                         }
 
-                                        ISO14443ACardData iso14443ACardData =
-                                                (ISO14443ACardData) cardData;
-                                        send("UID=" + String.format("%08x", iso14443ACardData.uid));
+                                        MifareCardData mifareCardData =
+                                                (MifareCardData) cardData;
+                                        send("UID=" + String.format("%08x", mifareCardData.uid));
 
                                         ++state;
                                         break;

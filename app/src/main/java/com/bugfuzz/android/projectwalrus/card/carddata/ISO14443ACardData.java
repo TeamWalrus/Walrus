@@ -39,10 +39,6 @@ import java.util.TreeSet;
 
 @SuppressWarnings({"WeakerAccess", "checkstyle:abbreviationaswordinname"})
 @Parcel
-@CardData.Metadata(
-        name = "ISO 14443A",
-        iconId = R.drawable.drawable_mifare
-)
 public class ISO14443ACardData extends CardData {
 
     private static final TypeMatcher[] TYPE_MATCHERS;
@@ -101,24 +97,18 @@ public class ISO14443ACardData extends CardData {
     public short atqa;
     public BigInteger uid;
     public byte sak;
-    public int[] ats;
+    public byte[] ats;
 
     public ISO14443ACardData() {
         uid = BigInteger.ZERO;
-        ats = new int[]{};
+        ats = new byte[]{};
     }
 
-    public ISO14443ACardData(short atqa, BigInteger uid, byte sak, int[] ats) {
+    public ISO14443ACardData(short atqa, BigInteger uid, byte sak, byte[] ats) {
         this.atqa = atqa;
         this.uid = uid;
         this.sak = sak;
         this.ats = ats;
-    }
-
-    @SuppressWarnings("unused")
-    public static ISO14443ACardData newDebugInstance() {
-        return new ISO14443ACardData((short) 0x0004, new BigInteger(32, new Random()), (byte) 0x08,
-                new int[]{});
     }
 
     @Nullable

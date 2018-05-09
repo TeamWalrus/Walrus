@@ -25,16 +25,16 @@ import android.os.SystemClock;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
-import com.bugfuzz.android.projectwalrus.card.carddata.ISO14443ACardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.MifareCardData;
 
 import java.lang.reflect.InvocationTargetException;
 
 @CardDevice.Metadata(
         name = "_Debug Device",
         iconId = R.drawable.drawable_debug_device,
-        supportsRead = {HIDCardData.class, ISO14443ACardData.class},
-        supportsWrite = {HIDCardData.class, ISO14443ACardData.class},
-        supportsEmulate = {HIDCardData.class, ISO14443ACardData.class}
+        supportsRead = {HIDCardData.class, MifareCardData.class},
+        supportsWrite = {HIDCardData.class, MifareCardData.class},
+        supportsEmulate = {HIDCardData.class, MifareCardData.class}
 )
 public class DebugDevice extends CardDevice {
 
