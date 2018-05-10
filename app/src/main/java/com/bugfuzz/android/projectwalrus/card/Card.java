@@ -28,7 +28,6 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.parceler.Parcel;
 
 import java.util.Date;
@@ -77,14 +76,19 @@ public class Card {
     }
 
     public static Card copyOf(Card other) {
-        return new Card(
-                other.name,
-                SerializationUtils.clone(other.cardData),
-                other.cardCreated != null ? new Date(other.cardCreated.getTime()) : null,
-                other.cardDataAcquired != null ? new Date(other.cardDataAcquired.getTime()) : null,
-                other.notes,
-                other.cardLocationLat,
-                other.cardLocationLng);
+        try {
+            return new Card(
+                    other.name,
+                    other.cardData != null ? (CardData) other.cardData.clone() : null,
+                    other.cardCreated != null ? new Date(other.cardCreated.getTime()) : null,
+                    other.cardDataAcquired != null
+                            ? new Date(other.cardDataAcquired.getTime()) : null,
+                    other.notes,
+                    other.cardLocationLat,
+                    other.cardLocationLng);
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setCardData(CardData cardData, Location location) {
