@@ -27,7 +27,7 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.annotation.UiThread;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
@@ -40,16 +40,19 @@ import com.bugfuzz.android.projectwalrus.card.QueryUtils;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-public class BulkReadCardDataSink implements CardDevice.CardDataSink {
+import java.io.IOException;
+
+public class BulkReadCardDataOperationRunner implements Runnable,
+        CardDeviceOperation.ShouldContinueCallback, ReadCardDataOperation.ResultSink {
 
     public static final String ACTION_UPDATE =
-            "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
+            "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataOperationRunner"
+                    + ".ACTION_UPDATE";
     private static int nextId;
     private final int id;
     private final Context context;
 
-    private final CardDevice cardDevice;
-    private final Class<? extends CardData> cardDataClass;
+    private final ReadCardDataOperation readCardDataOperation;
     private final Card cardTemplate;
 
     private final OnStopCallback onStopCallback;
@@ -61,27 +64,43 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
     private volatile boolean stop;
 
-    public BulkReadCardDataSink(Context context, CardDevice cardDevice,
-            Class<? extends CardData> cardDataClass, Card cardTemplate,
+    public BulkReadCardDataOperationRunner(Context context,
+            ReadCardDataOperation readCardDataOperation, Card cardTemplate,
             OnStopCallback onStopCallback) {
         this.context = context;
-        this.cardDevice = cardDevice;
-        this.cardDataClass = cardDataClass;
+        this.readCardDataOperation = readCardDataOperation;
         this.cardTemplate = cardTemplate;
         this.onStopCallback = onStopCallback;
 
         id = nextId++;
     }
 
+    // TODO XXX: use AsyncTask like tuning? (or make tuning use thread like this?)
     @Override
-    @UiThread
-    public void onStarting() {
+    public void run() {
         databaseHelper = OpenHelperManager.getHelper(context, DatabaseHelper.class);
+
+        try {
+            readCardDataOperation.execute(context, this, this);
+        } catch (final IOException exception) {
+            new Handler(context.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context,
+                            context.getString(R.string.failed_bulk_reading, exception.getMessage()),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        OpenHelperManager.releaseHelper();
+
+        onStopCallback.onStop(this);
     }
 
     @Override
     @WorkerThread
-    public void onCardData(CardData cardData) {
+    public void onResult(CardData cardData) {
         if (cardData.equals(lastCardData)) {
             return;
         }
@@ -124,34 +143,13 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
         return !stop;
     }
 
-    @Override
-    @WorkerThread
-    public void onError(final String message) {
-        new Handler(context.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, context.getString(R.string.failed_bulk_reading, message),
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-
-        onFinish();
-    }
-
-    @Override
-    @WorkerThread
-    public void onFinish() {
-        OpenHelperManager.releaseHelper();
-
-        onStopCallback.onStop(this);
-    }
-
+    @Nullable
     public CardDevice getCardDevice() {
-        return cardDevice;
+        return readCardDataOperation.getCardDevice();
     }
 
     public Class<? extends CardData> getCardDataClass() {
-        return cardDataClass;
+        return readCardDataOperation.getCardDataClass();
     }
 
     public int getNumberOfCardsRead() {
@@ -167,6 +165,6 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     }
 
     public interface OnStopCallback {
-        void onStop(BulkReadCardDataSink sink);
+        void onStop(BulkReadCardDataOperationRunner runner);
     }
 }

@@ -51,7 +51,8 @@ public class CardDataIOView extends FrameLayout {
                 ContextCompat.getDrawable(getContext(),
                         R.drawable.drawable_card_data_io_direction));
         directionImage.setRotation(90 + (reading ? 180 : 0));
-        directionImage.setContentDescription(reading ? "Reading" : "Writing");
+        directionImage.setContentDescription(getContext().getString(
+                reading ? R.string.read_description : R.string.write_description));
     }
 
     public void setCardDataClass(Class<? extends CardData> cardDataClass) {

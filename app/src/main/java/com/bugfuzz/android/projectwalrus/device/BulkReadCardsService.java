@@ -33,16 +33,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.Card;
-import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.device.ui.BulkReadCardsActivity;
 
 import org.parceler.Parcels;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,10 +48,10 @@ public class BulkReadCardsService extends Service {
 
     public static final String ACTION_UPDATE =
             "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.ACTION_UPDATE";
-    private static final String EXTRA_DEVICE =
-            "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_DEVICE";
-    private static final String EXTRA_CARD_DATA_CLASS =
-            "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_DATA_CLASS";
+
+    private static final String EXTRA_READ_CARD_DATA_OPERATION =
+            "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService"
+                    + ".EXTRA_READ_CARD_DATA_OPERATION";
     private static final String EXTRA_CARD_TEMPLATE =
             "com.bugfuzz.android.projectwalrus.device.BulkReadCardsService.EXTRA_CARD_TEMPLATE";
 
@@ -63,17 +60,16 @@ public class BulkReadCardsService extends Service {
 
     private final Binder binder = new ServiceBinder();
 
-    private final Map<Integer, BulkReadCardDataSink> sinks = new LinkedHashMap<>();
+    private final Map<Integer, BulkReadCardDataOperationRunner> runners = new LinkedHashMap<>();
 
     private final NotificationCompat.Builder notificationBuilder =
             new NotificationCompat.Builder(this, CHANNEL_ID);
 
-    public static void startService(Context context, CardDevice cardDevice,
-            Class<? extends CardData> cardDataClass, Card cardTemplate) {
+    public static void startService(Context context, ReadCardDataOperation readCardDataOperation,
+            Card cardTemplate) {
         Intent intent = new Intent(context, BulkReadCardsService.class);
 
-        intent.putExtra(EXTRA_DEVICE, cardDevice.getId());
-        intent.putExtra(EXTRA_CARD_DATA_CLASS, cardDataClass);
+        intent.putExtra(EXTRA_READ_CARD_DATA_OPERATION, readCardDataOperation);
         intent.putExtra(EXTRA_CARD_TEMPLATE, Parcels.wrap(cardTemplate));
 
         context.startService(intent);
@@ -83,7 +79,7 @@ public class BulkReadCardsService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         handleStartCommand(intent);
 
-        if (sinks.isEmpty()) {
+        if (runners.isEmpty()) {
             stopSelf(startId);
         }
 
@@ -94,32 +90,22 @@ public class BulkReadCardsService extends Service {
         final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        CardDevice cardDevice = CardDeviceManager.INSTANCE.getCardDevices().get(
-                intent.getIntExtra(EXTRA_DEVICE, -1));
-        if (cardDevice == null) {
-            return;
-        }
-
-        // noinspection unchecked
-        Class<? extends CardData> cardDataClass =
-                (Class<? extends CardData>) intent.getSerializableExtra(EXTRA_CARD_DATA_CLASS);
-
-        BulkReadCardDataSink cardDataSink = new BulkReadCardDataSink(
+        BulkReadCardDataOperationRunner runner = new BulkReadCardDataOperationRunner(
                 this,
-                cardDevice,
-                cardDataClass,
+                (ReadCardDataOperation) intent.getSerializableExtra(
+                        EXTRA_READ_CARD_DATA_OPERATION),
                 (Card) Parcels.unwrap(intent.getParcelableExtra(EXTRA_CARD_TEMPLATE)),
-                new BulkReadCardDataSink.OnStopCallback() {
+                new BulkReadCardDataOperationRunner.OnStopCallback() {
                     @Override
-                    public void onStop(final BulkReadCardDataSink sink) {
+                    public void onStop(final BulkReadCardDataOperationRunner runner) {
                         new Handler(getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                sinks.remove(sink.getId());
+                                runners.remove(runner.getId());
                                 LocalBroadcastManager.getInstance(BulkReadCardsService.this)
                                         .sendBroadcast(new Intent(ACTION_UPDATE));
 
-                                if (!sinks.isEmpty()) {
+                                if (!runners.isEmpty()) {
                                     if (notificationManager != null) {
                                         notificationManager.notify(NOTIFICATION_ID,
                                                 getNotification());
@@ -132,19 +118,13 @@ public class BulkReadCardsService extends Service {
                     }
                 });
 
-        try {
-            cardDevice.readCardData(cardDataClass, cardDataSink);
-        } catch (IOException exception) {
-            Toast.makeText(this, getString(R.string.failed_start_bulk_reading,
-                    exception.getMessage()), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        sinks.put(cardDataSink.getId(), cardDataSink);
+        runners.put(runner.getId(), runner);
         LocalBroadcastManager.getInstance(BulkReadCardsService.this)
                 .sendBroadcast(new Intent(ACTION_UPDATE));
 
         startForeground(NOTIFICATION_ID, getNotification());
+
+        new Thread(runner).start();
     }
 
     private Notification getNotification() {
@@ -162,7 +142,7 @@ public class BulkReadCardsService extends Service {
         notificationBuilder
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getResources().getQuantityString(R.plurals.bulk_reading_from,
-                        sinks.size(), sinks.size()))
+                        runners.size(), runners.size()))
                 .setOngoing(true)
                 .setProgress(0, 0, true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -182,8 +162,8 @@ public class BulkReadCardsService extends Service {
     }
 
     public class ServiceBinder extends Binder {
-        public Map<Integer, BulkReadCardDataSink> getSinks() {
-            return Collections.unmodifiableMap(sinks);
+        public Map<Integer, BulkReadCardDataOperationRunner> getRunners() {
+            return Collections.unmodifiableMap(runners);
         }
     }
 }

@@ -25,6 +25,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -54,10 +55,13 @@ import com.bugfuzz.android.projectwalrus.card.carddata.ui.component.ComponentSou
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
+import com.bugfuzz.android.projectwalrus.device.CardDeviceOperation;
+import com.bugfuzz.android.projectwalrus.device.ReadCardDataOperation;
+import com.bugfuzz.android.projectwalrus.device.WriteOrEmulateCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.ui.CardDeviceAdapter;
-import com.bugfuzz.android.projectwalrus.device.ui.PickCardDataSourceDialogFragment;
-import com.bugfuzz.android.projectwalrus.device.ui.ReadCardDataFragment;
-import com.bugfuzz.android.projectwalrus.device.ui.WriteOrEmulateCardDataFragment;
+import com.bugfuzz.android.projectwalrus.device.ui.PickCardDataTargetDialogFragment;
+import com.bugfuzz.android.projectwalrus.device.ui.ReadCardDataOperationFragment;
+import com.bugfuzz.android.projectwalrus.device.ui.WriteOrEmulateCardDataOperationFragment;
 import com.bugfuzz.android.projectwalrus.util.UIUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -77,9 +81,10 @@ import java.util.Set;
 
 public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         implements OnMapReadyCallback, DeleteCardConfirmDialogFragment.OnDeleteCardConfirmCallback,
-        PickCardDataSourceDialogFragment.OnCardDataSourceClickCallback,
+        PickCardDataTargetDialogFragment.OnCardDataTargetClickCallback,
         PickCardDataClassDialogFragment.OnCardDataClassClickCallback,
-        ReadCardDataFragment.OnCardDataCallback, ComponentDialogFragment.OnEditedCallback {
+        ReadCardDataOperationFragment.OnResultCallback, ComponentDialogFragment.OnEditedCallback,
+        CardDevice.OnOperationCreatedCallback {
 
     private static final String EXTRA_MODE =
             "com.bugfuzz.android.projectwalrus.card.ui.CardActivity.EXTRA_MODE";
@@ -408,9 +413,9 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
     }
 
     private void startReadCardDataSetup() {
-        PickCardDataSourceDialogFragment.create(null, null,
-                mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE, 0).show(getSupportFragmentManager(),
-                PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
+        PickCardDataTargetDialogFragment.create(null, CardDeviceAdapter.CardDataFilterMode.READABLE,
+                mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE, 0).show(
+                getSupportFragmentManager(), PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
     }
 
     public void onWriteCardDataClick(View view) {
@@ -449,13 +454,13 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
             return;
         }
 
-        PickCardDataSourceDialogFragment.create(
+        PickCardDataTargetDialogFragment.create(
                 card.cardData.getClass(),
-                write ? CardDeviceAdapter.FilterMode.WRITABLE :
-                        CardDeviceAdapter.FilterMode.EMULATABLE,
+                write ? CardDeviceAdapter.CardDataFilterMode.WRITABLE :
+                        CardDeviceAdapter.CardDataFilterMode.EMULATABLE,
                 false,
-                write ? 1 : 2).show(getSupportFragmentManager(),
-                PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
+                write ? 1 : 2)
+                .show(getSupportFragmentManager(), PICK_CARD_DEVICE_DIALOG_FRAGMENT_TAG);
     }
 
     private void dismissPickCardSourceDialogFragment() {
@@ -501,16 +506,15 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
             case 1:
             case 2:
-                getSupportFragmentManager().beginTransaction()
-                        .add(WriteOrEmulateCardDataFragment.create(cardDevice, card.cardData,
-                                callbackId == 1, 0), "write_or_emulate_card_data")
-                        .commit();
+                cardDevice.createWriteOrEmulateDataOperation(this, card.cardData, callbackId == 1,
+                        callbackId);
                 break;
         }
     }
 
     @Override
-    public void onCardDataClassClick(Class<? extends CardData> cardDataClass, int callbackId) {
+    public void onCardDataClassClick(final Class<? extends CardData> cardDataClass,
+            int callbackId) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment pickCardDataSourceDialogFragment = fragmentManager.findFragmentByTag(
                 PICK_CARD_DATA_CLASS_DIALOG_FRAGMENT_TAG);
@@ -566,25 +570,41 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
                 return;
             }
 
-            if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE) {
-                getSupportFragmentManager().beginTransaction()
-                        .add(ReadCardDataFragment.create(cardDevice, cardDataClass, 0),
-                                "read_card_data")
-                        .commit();
-            } else {
-                BulkReadCardsService.startService(this, cardDevice, cardDataClass, card);
-                supportFinishAfterTransition();
-            }
+            cardDevice.createReadCardDataOperation(this, cardDataClass, 0);
         }
     }
 
     @Override
-    public void onEdited(ComponentSourceAndSink componentSourceAndSink, int callbackId) {
-        onCardData((CardData) componentSourceAndSink, callbackId);
+    @UiThread
+    public void onOperationCreated(CardDeviceOperation operation, int callbackId) {
+        switch (callbackId) {
+            case 0: {
+                ReadCardDataOperation readCardDataOperation = (ReadCardDataOperation) operation;
+
+                if (mode != Mode.EDIT_BULK_READ_CARD_TEMPLATE) {
+                    getSupportFragmentManager().beginTransaction()
+                            .add(ReadCardDataOperationFragment.create(readCardDataOperation, 0),
+                                    "card_data_io")
+                            .commit();
+                } else {
+                    BulkReadCardsService.startService(this, readCardDataOperation, card);
+                    supportFinishAfterTransition();
+                }
+                break;
+            }
+
+            case 1:
+            case 2:
+                getSupportFragmentManager().beginTransaction()
+                        .add(WriteOrEmulateCardDataOperationFragment.create(
+                                (WriteOrEmulateCardDataOperation) operation, 0), "card_data_io")
+                        .commit();
+                break;
+        }
     }
 
     @Override
-    public void onCardData(CardData cardData, int callbackId) {
+    public void onResult(CardData cardData, int callbackId) {
         if (cardData.equals(card.cardData)) {
             return;
         }
@@ -592,6 +612,11 @@ public class CardActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
         card.setCardData(cardData, WalrusApplication.getCurrentBestLocation());
         dirty = true;
         updateUI();
+    }
+
+    @Override
+    public void onEdited(ComponentSourceAndSink componentSourceAndSink, int callbackId) {
+        onResult((CardData) componentSourceAndSink, callbackId);
     }
 
     @Override

@@ -32,8 +32,8 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
     private final String charsetName;
 
     protected LineBasedUsbSerialCardDevice(Context context, UsbDevice usbDevice, String delimiter,
-            String charsetName) throws IOException {
-        super(context, usbDevice);
+            String charsetName, String status) throws IOException {
+        super(context, usbDevice, status);
 
         this.delimiter = delimiter;
         this.charsetName = charsetName;

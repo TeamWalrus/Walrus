@@ -23,7 +23,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -33,7 +32,6 @@ import org.parceler.Parcel;
 import org.parceler.ParcelPropertyConverter;
 
 import java.math.BigInteger;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 

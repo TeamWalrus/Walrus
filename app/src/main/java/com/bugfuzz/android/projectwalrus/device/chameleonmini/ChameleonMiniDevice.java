@@ -19,17 +19,22 @@
 
 package com.bugfuzz.android.projectwalrus.device.chameleonmini;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.preference.PreferenceManager;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.card.carddata.MifareCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
+import com.bugfuzz.android.projectwalrus.device.ReadCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
+import com.bugfuzz.android.projectwalrus.device.WriteOrEmulateCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniActivity;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
@@ -52,9 +57,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
     private final Semaphore semaphore = new Semaphore(1);
 
     public ChameleonMiniDevice(Context context, UsbDevice usbDevice) throws IOException {
-        super(context, usbDevice, "\r\n", "ISO-8859-1");
-
-        setStatus(context.getString(R.string.idle));
+        super(context, usbDevice, "\r\n", "ISO-8859-1", context.getString(R.string.idle));
     }
 
     @Override
@@ -84,220 +87,23 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
     }
 
     @Override
-    public void readCardData(Class<? extends CardData> cardDataClass,
-            final CardDataSink cardDataSink) throws IOException {
-        // TODO: use cardDataClass
+    @UiThread
+    public void createReadCardDataOperation(Activity activity,
+            Class<? extends CardData> cardDataClass, int callbackId) {
+        ensureOperationCreatedCallbackSupported(activity);
 
-        if (!tryAcquireAndSetStatus(context.getString(R.string.reading))) {
-            throw new IOException(context.getString(R.string.device_busy));
-        }
-
-        cardDataSink.onStarting();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    setReceiving(true);
-
-                    try {
-                        send("CONFIG=ISO14443A_READER");
-
-                        receive(new WatchdogReceiveSink<String, Void>(3000) {
-                            private int state;
-
-                            private short atqa;
-                            private BigInteger uid;
-                            private byte sak;
-
-                            @Override
-                            public Void onReceived(String in) throws IOException {
-                                switch (state) {
-                                    case 0:
-                                        if (!in.equals("100:OK")) {
-                                            throw new IOException(context.getString(
-                                                    R.string.command_error, "CONFIG=", in));
-                                        }
-
-                                        send("TIMEOUT=2");
-
-                                        ++state;
-                                        break;
-
-                                    case 1:
-                                        if (!in.equals("100:OK")) {
-                                            throw new IOException(context.getString(
-                                                    R.string.command_error, "TIMEOUT=", in));
-                                        }
-
-                                        send("IDENTIFY");
-
-                                        ++state;
-                                        break;
-
-                                    case 2:
-                                        switch (in) {
-                                            case "101:OK WITH TEXT":
-                                                ++state;
-                                                break;
-
-                                            case "203:TIMEOUT":
-                                                resetWatchdog();
-                                                send("IDENTIFY");
-                                                break;
-
-                                            default:
-                                                throw new IOException(context.getString(
-                                                        R.string.command_error, "IDENTIFY", in));
-                                        }
-                                        break;
-
-                                    case 3:
-                                        ++state;
-                                        break;
-
-                                    case 4:
-                                        String[] lineAtqa = in.split(":");
-                                        atqa = Short.reverseBytes(
-                                                (short) Integer.parseInt(lineAtqa[1].trim(), 16));
-
-                                        ++state;
-                                        break;
-
-                                    case 5:
-                                        String[] lineUid = in.split(":");
-                                        uid = new BigInteger(lineUid[1].trim(), 16);
-
-                                        ++state;
-                                        break;
-
-                                    case 6:
-                                        String[] lineSak = in.split(":");
-                                        sak = (byte) Integer.parseInt(lineSak[1].trim(), 16);
-
-                                        cardDataSink.onCardData(
-                                                new MifareCardData(atqa, uid, sak, null, null, 0));
-
-                                        if (!cardDataSink.shouldContinue()) {
-                                            break;
-                                        }
-
-                                        resetWatchdog();
-
-                                        send("IDENTIFY");
-
-                                        state = 2;
-                                        break;
-                                }
-
-                                return null;
-                            }
-
-                            @Override
-                            public boolean wantsMore() {
-                                return cardDataSink.shouldContinue();
-                            }
-                        });
-                    } catch (IOException exception) {
-                        cardDataSink.onError(exception.getMessage());
-                        return;
-                    } finally {
-                        setReceiving(false);
-                    }
-                } finally {
-                    releaseAndSetStatus();
-                }
-
-                cardDataSink.onFinish();
-            }
-        }).start();
+        ((OnOperationCreatedCallback) activity).onOperationCreated(new ReadMifareOperation(this),
+                callbackId);
     }
 
     @Override
-    public void emulateCardData(final CardData cardData, final CardDataOperationCallbacks callbacks)
-            throws IOException {
-        // TODO: ask what slot if not specified in settings here
+    @UiThread
+    public void createWriteOrEmulateDataOperation(Activity activity, CardData cardData,
+            boolean write, int callbackId) {
+        ensureOperationCreatedCallbackSupported(activity);
 
-        if (!tryAcquireAndSetStatus(context.getString(R.string.emulating))) {
-            throw new IOException(context.getString(R.string.device_busy));
-        }
-
-        callbacks.onStarting();
-
-        // TODO: the indentation here is lol
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    setReceiving(true);
-
-                    try {
-                        // TODO: use cardData.getClass()
-                        send("CONFIG=MF_CLASSIC_1K");
-
-                        receive(new WatchdogReceiveSink<String, Boolean>(3000) {
-                            private int state;
-
-                            @Override
-                            public Boolean onReceived(String in) throws IOException {
-                                switch (state) {
-                                    case 0:
-                                        if (!in.equals("100:OK")) {
-                                            throw new IOException(context.getString(
-                                                    R.string.command_error, "CONFIG=", in));
-                                        }
-
-                                        int slot = PreferenceManager.getDefaultSharedPreferences(
-                                                context).getInt(
-                                                ChameleonMiniActivity.DEFAULT_SLOT_KEY, 1);
-                                        send("SETTING=" + slot);
-
-                                        ++state;
-                                        break;
-
-                                    case 1:
-                                        if (!in.equals("100:OK")) {
-                                            throw new IOException(context.getString(
-                                                    R.string.command_error, "SETTING=", in));
-                                        }
-
-                                        MifareCardData mifareCardData =
-                                                (MifareCardData) cardData;
-                                        send("UID=" + String.format("%08x", mifareCardData.uid));
-
-                                        ++state;
-                                        break;
-
-                                    case 2:
-                                        if (!in.equals("100:OK")) {
-                                            throw new IOException(context.getString(
-                                                    R.string.command_error, "UID=", in));
-                                        }
-
-                                        return true;
-                                }
-
-                                return null;
-                            }
-
-                            @Override
-                            public boolean wantsMore() {
-                                return callbacks.shouldContinue();
-                            }
-                        });
-                    } catch (IOException exception) {
-                        callbacks.onError(exception.getMessage());
-                        return;
-                    } finally {
-                        setReceiving(false);
-                    }
-                } finally {
-                    releaseAndSetStatus();
-                }
-
-                callbacks.onFinish();
-            }
-        }).start();
+        ((OnOperationCreatedCallback) activity).onOperationCreated(
+                new WriteOrEmulateMifareOperation(this, cardData, write), callbackId);
     }
 
     @Override
@@ -348,6 +154,229 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
             }
         } finally {
             releaseAndSetStatus();
+        }
+    }
+
+    private static class ReadMifareOperation extends ReadCardDataOperation {
+
+        ReadMifareOperation(CardDevice cardDevice) {
+            super(cardDevice);
+        }
+
+        @Override
+        @WorkerThread
+        public void execute(final Context context,
+                final ShouldContinueCallback shouldContinueCallback, final ResultSink resultSink)
+                throws IOException {
+            final ChameleonMiniDevice chameleonMiniDevice =
+                    (ChameleonMiniDevice) getCardDeviceOrThrow();
+
+            if (!chameleonMiniDevice.tryAcquireAndSetStatus(context.getString(R.string.reading))) {
+                throw new IOException(context.getString(R.string.device_busy));
+            }
+
+            try {
+                chameleonMiniDevice.setReceiving(true);
+
+                try {
+                    chameleonMiniDevice.send("CONFIG=ISO14443A_READER");
+
+                    chameleonMiniDevice.receive(new WatchdogReceiveSink<String, Void>(3000) {
+                        private int state;
+
+                        private short atqa;
+                        private BigInteger uid;
+                        private byte sak;
+
+                        @Override
+                        public Void onReceived(String in) throws IOException {
+                            switch (state) {
+                                case 0:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "CONFIG=", in));
+                                    }
+
+                                    chameleonMiniDevice.send("TIMEOUT=2");
+
+                                    ++state;
+                                    break;
+
+                                case 1:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "TIMEOUT=", in));
+                                    }
+
+                                    chameleonMiniDevice.send("IDENTIFY");
+
+                                    ++state;
+                                    break;
+
+                                case 2:
+                                    switch (in) {
+                                        case "101:OK WITH TEXT":
+                                            ++state;
+                                            break;
+
+                                        case "203:TIMEOUT":
+                                            resetWatchdog();
+                                            chameleonMiniDevice.send("IDENTIFY");
+                                            break;
+
+                                        default:
+                                            throw new IOException(context.getString(
+                                                    R.string.command_error, "IDENTIFY", in));
+                                    }
+                                    break;
+
+                                case 3:
+                                    ++state;
+                                    break;
+
+                                case 4:
+                                    String[] lineAtqa = in.split(":");
+                                    atqa = Short.reverseBytes((short) Integer.parseInt(
+                                            lineAtqa[1].trim(), 16));
+
+                                    ++state;
+                                    break;
+
+                                case 5:
+                                    String[] lineUid = in.split(":");
+                                    uid = new BigInteger(lineUid[1].trim(), 16);
+
+                                    ++state;
+                                    break;
+
+                                case 6:
+                                    String[] lineSak = in.split(":");
+                                    sak = (byte) Integer.parseInt(lineSak[1].trim(), 16);
+
+                                    if (resultSink != null) {
+                                        resultSink.onResult(
+                                                new MifareCardData(atqa, uid, sak, null, null, 0));
+                                    }
+
+                                    if (!shouldContinueCallback.shouldContinue()) {
+                                        break;
+                                    }
+
+                                    resetWatchdog();
+
+                                    chameleonMiniDevice.send("IDENTIFY");
+
+                                    state = 2;
+                                    break;
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        public boolean wantsMore() {
+                            return shouldContinueCallback.shouldContinue();
+                        }
+                    });
+                } finally {
+                    chameleonMiniDevice.setReceiving(false);
+                }
+            } finally {
+                chameleonMiniDevice.releaseAndSetStatus();
+            }
+        }
+
+        @Override
+        public Class<? extends CardData> getCardDataClass() {
+            return MifareCardData.class;
+        }
+    }
+
+    private static class WriteOrEmulateMifareOperation extends WriteOrEmulateCardDataOperation {
+
+        WriteOrEmulateMifareOperation(CardDevice cardDevice, CardData cardData, boolean write) {
+            super(cardDevice, cardData, write);
+        }
+
+        @Override
+        @WorkerThread
+        public void execute(final Context context,
+                final ShouldContinueCallback shouldContinueCallback) throws IOException {
+            if (isWrite()) {
+                throw new RuntimeException("Can't write");
+            }
+
+            final ChameleonMiniDevice chameleonMiniDevice =
+                    (ChameleonMiniDevice) getCardDeviceOrThrow();
+
+            if (!chameleonMiniDevice.tryAcquireAndSetStatus(
+                    context.getString(R.string.emulating))) {
+                throw new IOException(context.getString(R.string.device_busy));
+            }
+
+            try {
+                chameleonMiniDevice.setReceiving(true);
+
+                try {
+                    chameleonMiniDevice.send("CONFIG=MF_CLASSIC_1K");
+
+                    chameleonMiniDevice.receive(new WatchdogReceiveSink<String, Boolean>(3000) {
+                        private int state;
+
+                        @Override
+                        public Boolean onReceived(String in) throws IOException {
+                            switch (state) {
+                                case 0:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "CONFIG=", in));
+                                    }
+
+                                    int slot =
+                                            PreferenceManager.getDefaultSharedPreferences(context)
+                                                    .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY,
+                                                            1);
+                                    chameleonMiniDevice.send("SETTING=" + slot);
+
+                                    ++state;
+                                    break;
+
+                                case 1:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "SETTING=", in));
+                                    }
+
+                                    MifareCardData mifareCardData = (MifareCardData) getCardData();
+                                    chameleonMiniDevice.send(
+                                            "UID=" + String.format("%08x", mifareCardData.uid));
+
+                                    ++state;
+                                    break;
+
+                                case 2:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "UID=", in));
+                                    }
+
+                                    return true;
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        public boolean wantsMore() {
+                            return shouldContinueCallback.shouldContinue();
+                        }
+                    });
+                } finally {
+                    chameleonMiniDevice.setReceiving(false);
+                }
+            } finally {
+                chameleonMiniDevice.releaseAndSetStatus();
+            }
         }
     }
 }

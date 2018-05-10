@@ -42,7 +42,7 @@ import android.widget.TextView;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
-import com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink;
+import com.bugfuzz.android.projectwalrus.device.BulkReadCardDataOperationRunner;
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 
@@ -93,7 +93,7 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                 0);
 
         IntentFilter intentFilter = new IntentFilter(BulkReadCardsService.ACTION_UPDATE);
-        intentFilter.addAction(BulkReadCardDataSink.ACTION_UPDATE);
+        intentFilter.addAction(BulkReadCardDataOperationRunner.ACTION_UPDATE);
         LocalBroadcastManager.getInstance(this).registerReceiver(bulkReadChangeBroadcastReceiver,
                 intentFilter);
     }
@@ -118,42 +118,56 @@ public class BulkReadCardsActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.sink = new ArrayList<>(bulkReadCardsServiceBinder.getSinks().values())
+            holder.runner = new ArrayList<>(bulkReadCardsServiceBinder.getRunners().values())
                     .get(position);
-
-            CardDevice.Metadata cardDeviceMetadata = holder.sink.getCardDevice().getClass()
-                    .getAnnotation(CardDevice.Metadata.class);
-            CardData.Metadata cardDataClassMetadata = holder.sink.getCardDataClass()
-                    .getAnnotation(CardData.Metadata.class);
 
             View view = holder.itemView;
 
             ImageView device = view.findViewById(R.id.device);
-            device.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
-                    cardDeviceMetadata.iconId()));
-            device.setContentDescription(cardDeviceMetadata.name());
-
             ImageView cardDeviceClass = view.findViewById(R.id.card_data_class);
-            cardDeviceClass.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
-                    cardDataClassMetadata.iconId()));
-            cardDeviceClass.setContentDescription(cardDataClassMetadata.name());
+            TextView name = view.findViewById(R.id.name);
+            TextView status = view.findViewById(R.id.status);
 
-            ((TextView) view.findViewById(R.id.name)).setText(cardDeviceMetadata.name());
-            ((TextView) view.findViewById(R.id.status)).setText(
-                    getResources().getQuantityString(R.plurals.num_cards_read,
-                            holder.sink.getNumberOfCardsRead(),
-                            holder.sink.getNumberOfCardsRead()));
+            CardDevice cardDevice = holder.runner.getCardDevice();
+            if (cardDevice != null) {
+                CardDevice.Metadata cardDeviceMetadata = cardDevice.getClass()
+                        .getAnnotation(CardDevice.Metadata.class);
+                CardData.Metadata cardDataClassMetadata = holder.runner.getCardDataClass()
+                        .getAnnotation(CardData.Metadata.class);
+
+                device.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
+                        cardDeviceMetadata.iconId()));
+                device.setContentDescription(cardDeviceMetadata.name());
+
+                cardDeviceClass.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
+                        cardDataClassMetadata.iconId()));
+                cardDeviceClass.setContentDescription(cardDataClassMetadata.name());
+
+                name.setText(cardDeviceMetadata.name());
+                status.setText(getResources().getQuantityString(R.plurals.num_cards_read,
+                        holder.runner.getNumberOfCardsRead(),
+                        holder.runner.getNumberOfCardsRead()));
+            } else {
+                device.setImageDrawable(null);
+                device.setContentDescription(null);
+
+                cardDeviceClass.setImageDrawable(null);
+                cardDeviceClass.setContentDescription(null);
+
+                name.setText(R.string.device_gone);
+                status.setText("");
+            }
         }
 
         @Override
         public int getItemCount() {
             return bulkReadCardsServiceBinder != null
-                    ? bulkReadCardsServiceBinder.getSinks().size() : 0;
+                    ? bulkReadCardsServiceBinder.getRunners().size() : 0;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            private BulkReadCardDataSink sink;
+            private BulkReadCardDataOperationRunner runner;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -161,7 +175,7 @@ public class BulkReadCardsActivity extends AppCompatActivity {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        BulkReadCardsDialogFragment.create(sink, 0).show(
+                        BulkReadCardsDialogFragment.create(runner, 0).show(
                                 getSupportFragmentManager(), "card_data_io_dialog");
                     }
                 });

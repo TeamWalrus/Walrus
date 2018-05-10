@@ -37,8 +37,8 @@ public abstract class UsbCardDevice extends CardDevice {
     private final UsbDevice usbDevice;
     UsbDeviceConnection usbDeviceConnection;
 
-    UsbCardDevice(Context context, UsbDevice usbDevice) throws IOException {
-        super(context);
+    UsbCardDevice(Context context, UsbDevice usbDevice, String status) throws IOException {
+        super(context, status);
 
         this.usbDevice = usbDevice;
 

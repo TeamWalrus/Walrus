@@ -19,8 +19,11 @@
 
 package com.bugfuzz.android.projectwalrus.device;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.SystemClock;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
@@ -39,60 +42,86 @@ import java.lang.reflect.InvocationTargetException;
 public class DebugDevice extends CardDevice {
 
     public DebugDevice(Context context) {
-        super(context);
-
-        setStatus(context.getString(R.string.idle));
+        super(context, context.getString(R.string.idle));
     }
 
     @Override
-    public void readCardData(final Class<? extends CardData> cardDataClass,
-            final CardDataSink cardDataSink) {
-        cardDataSink.onStarting();
+    @UiThread
+    public void createReadCardDataOperation(Activity activity,
+            Class<? extends CardData> cardDataClass, int callbackId) {
+        ensureOperationCreatedCallbackSupported(activity);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (cardDataSink.shouldContinue()) {
+        ((OnOperationCreatedCallback) activity).onOperationCreated(
+                new ReadAnyOperation(this, cardDataClass), callbackId);
+    }
+
+    @Override
+    @UiThread
+    public void createWriteOrEmulateDataOperation(Activity activity, CardData cardData,
+            boolean write, int callbackId) {
+        ensureOperationCreatedCallbackSupported(activity);
+
+        ((OnOperationCreatedCallback) activity).onOperationCreated(
+                new WriteOrEmulateAnyOperation(this, cardData, write), callbackId);
+    }
+
+    private static class ReadAnyOperation extends ReadCardDataOperation {
+
+        private final Class<? extends CardData> cardDataClass;
+
+        ReadAnyOperation(CardDevice cardDevice, Class<? extends CardData> cardDataClass) {
+            super(cardDevice);
+
+            this.cardDataClass = cardDataClass;
+        }
+
+        @Override
+        @WorkerThread
+        public void execute(Context context, final ShouldContinueCallback shouldContinueCallback,
+                final ResultSink resultSink) {
+            int numSleeps = 0;
+            for (; ; ) {
+                SystemClock.sleep(100);
+                ++numSleeps;
+
+                if (!shouldContinueCallback.shouldContinue()) {
+                    break;
+                }
+
+                if (numSleeps % 10 == 0) {
                     try {
-                        cardDataSink.onCardData(
-                                (CardData) cardDataClass.getMethod("newDebugInstance")
-                                        .invoke(null));
+                        if (resultSink != null) {
+                            resultSink.onResult((CardData) getCardDataClass()
+                                    .getMethod("newDebugInstance").invoke(null));
+                        }
                     } catch (IllegalAccessException | InvocationTargetException
                             | NoSuchMethodException e) {
                         return;
                     }
-
-                    SystemClock.sleep(1000);
                 }
-
-                cardDataSink.onFinish();
             }
-        }).start();
+        }
+
+        @Override
+        public Class<? extends CardData> getCardDataClass() {
+            return cardDataClass;
+        }
     }
 
-    @Override
-    public void writeCardData(CardData cardData, final CardDataOperationCallbacks callbacks) {
-        callbacks.onStarting();
+    private static class WriteOrEmulateAnyOperation extends WriteOrEmulateCardDataOperation {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SystemClock.sleep(1000);
-                callbacks.onFinish();
-            }
-        }).start();
-    }
+        WriteOrEmulateAnyOperation(CardDevice cardDevice, CardData cardData, boolean write) {
+            super(cardDevice, cardData, write);
+        }
 
-    @Override
-    public void emulateCardData(CardData cardData, final CardDataOperationCallbacks callbacks) {
-        callbacks.onStarting();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SystemClock.sleep(1000);
-                callbacks.onFinish();
-            }
-        }).start();
+        @Override
+        @WorkerThread
+        public void execute(Context context, ShouldContinueCallback shouldContinueCallback) {
+            int numSleeps = 0;
+            do {
+                SystemClock.sleep(100);
+                ++numSleeps;
+            } while (shouldContinueCallback.shouldContinue() && !(isWrite() && numSleeps >= 10));
+        }
     }
 }

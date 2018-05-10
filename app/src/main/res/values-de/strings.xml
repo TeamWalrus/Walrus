@@ -36,10 +36,6 @@
         </item>
     </plurals>
     <string name="bulk_reading_cards">Mehrfacheinlesen von Karten</string>
-    <string name="failed_start_bulk_reading">Mehrfacheinlesen der Karten konnte nicht gestartet
-        werden:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
     <string name="bulk_read_notification_channel_name">Mehrfacheinlesen von Karten</string>
     <plurals name="bulk_reading_from">
         <item quantity="one">Lese Karten von <xliff:g id="amount">%1$d</xliff:g> Gerät ein

@@ -35,50 +35,48 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
-import com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink;
+import com.bugfuzz.android.projectwalrus.device.BulkReadCardDataOperationRunner;
 import com.bugfuzz.android.projectwalrus.device.BulkReadCardsService;
 
 public class BulkReadCardsDialogFragment extends DialogFragment {
 
     private BulkReadCardsService.ServiceBinder bulkReadCardsServiceBinder;
 
-    private final BroadcastReceiver bulkReadCardsServiceUpdateNotificationHandler =
-            new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (getSink() == null) {
-                        Dialog dialog = getDialog();
-                        if (dialog != null) {
-                            dialog.cancel();
-                        }
-                    }
+    private final BroadcastReceiver serviceUpdateBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (getRunner() == null) {
+                Dialog dialog = getDialog();
+                if (dialog != null) {
+                    dialog.cancel();
                 }
-            };
+            }
+        }
+    };
     private CardDataIOView cardDataIOView;
-    private final BroadcastReceiver bulkReadCardDataSinkUpdateBroadcastReceiver =
-            new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    BulkReadCardDataSink sink = getSink();
-                    if (sink != null) {
-                        cardDataIOView.setStatus(getResources().getQuantityString(
-                                R.plurals.num_cards_read, sink.getNumberOfCardsRead(),
-                                sink.getNumberOfCardsRead()));
-                    }
-                }
-            };
+    private final BroadcastReceiver runnerUpdateBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            BulkReadCardDataOperationRunner runner = getRunner();
+            if (runner != null) {
+                cardDataIOView.setStatus(getResources().getQuantityString(
+                        R.plurals.num_cards_read, runner.getNumberOfCardsRead(),
+                        runner.getNumberOfCardsRead()));
+            }
+        }
+    };
     private final ServiceConnection bulkReadCardsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder binder) {
             bulkReadCardsServiceBinder = (BulkReadCardsService.ServiceBinder) binder;
 
-            BulkReadCardDataSink sink = getSink();
-            if (sink != null) {
-                cardDataIOView.setCardDeviceClass(sink.getCardDevice().getClass());
-                cardDataIOView.setCardDataClass(sink.getCardDataClass());
+            BulkReadCardDataOperationRunner runner = getRunner();
+            if (runner != null) {
+                cardDataIOView.setCardDeviceClass(runner.getCardDevice().getClass());
+                cardDataIOView.setCardDataClass(runner.getCardDataClass());
                 cardDataIOView.setStatus(getResources().getQuantityString(
-                        R.plurals.num_cards_read, sink.getNumberOfCardsRead(),
-                        sink.getNumberOfCardsRead()));
+                        R.plurals.num_cards_read, runner.getNumberOfCardsRead(),
+                        runner.getNumberOfCardsRead()));
             }
         }
 
@@ -93,11 +91,12 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         }
     };
 
-    public static BulkReadCardsDialogFragment create(BulkReadCardDataSink sink, int callbackId) {
+    public static BulkReadCardsDialogFragment create(BulkReadCardDataOperationRunner runner,
+            int callbackId) {
         BulkReadCardsDialogFragment dialog = new BulkReadCardsDialogFragment();
 
         Bundle args = new Bundle();
-        args.putInt("sink_id", sink.getId());
+        args.putInt("runner_id", runner.getId());
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
 
@@ -118,9 +117,9 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog,
                             @NonNull DialogAction which) {
-                        BulkReadCardDataSink sink = getSink();
-                        if (sink != null) {
-                            sink.stopReading();
+                        BulkReadCardDataOperationRunner runner = getRunner();
+                        if (runner != null) {
+                            runner.stopReading();
                         }
                     }
                 })
@@ -137,10 +136,10 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(
                 getActivity());
         localBroadcastManager.registerReceiver(
-                bulkReadCardDataSinkUpdateBroadcastReceiver,
-                new IntentFilter(BulkReadCardDataSink.ACTION_UPDATE));
+                runnerUpdateBroadcastReceiver,
+                new IntentFilter(BulkReadCardDataOperationRunner.ACTION_UPDATE));
         localBroadcastManager.registerReceiver(
-                bulkReadCardsServiceUpdateNotificationHandler,
+                serviceUpdateBroadcastReceiver,
                 new IntentFilter(BulkReadCardsService.ACTION_UPDATE));
     }
 
@@ -150,17 +149,15 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
 
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(
                 getActivity());
-        localBroadcastManager.unregisterReceiver(
-                bulkReadCardsServiceUpdateNotificationHandler);
-        localBroadcastManager.unregisterReceiver(
-                bulkReadCardDataSinkUpdateBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(serviceUpdateBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(runnerUpdateBroadcastReceiver);
 
         getActivity().unbindService(bulkReadCardsServiceConnection);
     }
 
-    private BulkReadCardDataSink getSink() {
+    private BulkReadCardDataOperationRunner getRunner() {
         return bulkReadCardsServiceBinder != null
-                ? bulkReadCardsServiceBinder.getSinks().get(getArguments().getInt("sink_id"))
+                ? bulkReadCardsServiceBinder.getRunners().get(getArguments().getInt("runner_id"))
                 : null;
     }
 }

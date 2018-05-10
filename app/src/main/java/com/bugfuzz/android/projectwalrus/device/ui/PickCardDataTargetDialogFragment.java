@@ -38,7 +38,7 @@ import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
 
-public class PickCardDataSourceDialogFragment extends DialogFragment
+public class PickCardDataTargetDialogFragment extends DialogFragment
         implements CardDeviceAdapter.OnCardDeviceClickCallback {
 
     private RecyclerView.Adapter adapter;
@@ -52,17 +52,15 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
         }
     };
 
-    public static PickCardDataSourceDialogFragment create(
+    public static PickCardDataTargetDialogFragment create(
             Class<? extends CardData> cardDataFilterClass,
-            CardDeviceAdapter.FilterMode cardDataFilterMode, boolean allowManualEntry,
+            CardDeviceAdapter.CardDataFilterMode cardDataFilterMode, boolean allowManualEntry,
             int callbackId) {
-        final PickCardDataSourceDialogFragment dialog = new PickCardDataSourceDialogFragment();
+        final PickCardDataTargetDialogFragment dialog = new PickCardDataTargetDialogFragment();
 
         Bundle args = new Bundle();
-        if (cardDataFilterClass != null) {
-            args.putString("card_data_filter_class", cardDataFilterClass.getName());
-            args.putInt("card_data_filter_mode", cardDataFilterMode.ordinal());
-        }
+        args.putSerializable("card_data_filter_class", cardDataFilterClass);
+        args.putInt("card_data_filter_mode", cardDataFilterMode.ordinal());
         args.putBoolean("allow_manual_entry", allowManualEntry);
         args.putInt("callback_id", callbackId);
         dialog.setArguments(args);
@@ -74,7 +72,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (!(context instanceof OnCardDataSourceClickCallback)) {
+        if (!(context instanceof OnCardDataTargetClickCallback)) {
             throw new RuntimeException("Parent doesn't implement fragment callback interface");
         }
     }
@@ -82,35 +80,32 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        String cardDataFilterClassName = getArguments().getString("card_data_filter_class");
-        Class<? extends CardData> cardDataFilterClass = null;
-        CardDeviceAdapter.FilterMode cardDataFilterMode = null;
-        if (cardDataFilterClassName != null) {
-            try {
-                // noinspection unchecked
-                cardDataFilterClass = (Class<? extends CardData>) Class.forName(
-                        cardDataFilterClassName);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            cardDataFilterMode = CardDeviceAdapter.FilterMode.values()[
-                    getArguments().getInt("card_data_filter_mode")];
-        }
+        // noinspection unchecked
+        Class<? extends CardData> cardDataFilterClass =
+                (Class<? extends CardData>) getArguments().getSerializable(
+                        "card_data_filter_class");
+        CardDeviceAdapter.CardDataFilterMode cardDataFilterMode =
+                CardDeviceAdapter.CardDataFilterMode.values()[
+                        getArguments().getInt("card_data_filter_mode")];
 
         adapter = new CardDeviceAdapter(cardDataFilterClass, cardDataFilterMode, this);
 
         @StringRes int titleId;
-        if (cardDataFilterMode == null) {
-            titleId = R.string.choose_source;
-        } else if (cardDataFilterMode == CardDeviceAdapter.FilterMode.WRITABLE) {
-            titleId = R.string.choose_sink;
-        } else {
-            titleId = R.string.choose_target;
+        switch (cardDataFilterMode) {
+            case READABLE:
+                titleId = R.string.choose_source;
+                break;
+            case WRITABLE:
+                titleId = R.string.choose_sink;
+                break;
+            default:
+                titleId = R.string.choose_target;
+                break;
         }
 
         return new MaterialDialog.Builder(getActivity())
                 .title(titleId)
-                .customView(R.layout.dialog_pick_card_data_source, false)
+                .customView(R.layout.dialog_pick_card_data_target, false)
                 .build();
     }
 
@@ -128,7 +123,7 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
             manualEntryView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((OnCardDataSourceClickCallback) getActivity()).onManualEntryClick(
+                    ((OnCardDataTargetClickCallback) getActivity()).onManualEntryClick(
                             getArguments().getInt("callback_id"));
                 }
             });
@@ -157,11 +152,12 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
 
     @Override
     public void onCardDeviceClick(CardDevice cardDevice) {
-        ((OnCardDataSourceClickCallback) getActivity()).onCardDeviceClick(cardDevice,
+        ((OnCardDataTargetClickCallback) getActivity()).onCardDeviceClick(cardDevice,
                 getArguments().getInt("callback_id"));
     }
 
-    public interface OnCardDataSourceClickCallback {
+    public interface OnCardDataTargetClickCallback {
+        @SuppressWarnings("unused")
         void onManualEntryClick(int callbackId);
 
         void onCardDeviceClick(CardDevice cardDevice, int callbackId);

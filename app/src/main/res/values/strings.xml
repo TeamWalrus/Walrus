@@ -32,7 +32,7 @@
 
 
     <!--
-        BulkReadCardDataSink
+        BulkReadCardDataOperationRunner
     -->
 
     <!-- Toast displayed when bulk card reading fails with an error -->
@@ -69,15 +69,13 @@
     <!-- Dialog title -->
     <string name="bulk_reading_cards">Bulk reading cards</string>
 
+    <!-- Shown for operations with devices that have gone -->
+    <string name="device_gone">Disconnected device</string>
+
 
     <!--
         BulkReadCardsService
     -->
-
-    <!-- Toast displayed when bulk card reading fails with an error -->
-    <string name="failed_start_bulk_reading">Failed to start bulk reading cards:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
 
     <!-- Name for bulk read notification channel -->
     <string name="bulk_read_notification_channel_name">Bulk card reads</string>
@@ -180,21 +178,6 @@
     <!-- Dialog title -->
     <string name="choose_card_type">Choose card type</string>
 
-    <!-- Toast displayed when card writing fails with an error -->
-    <string name="failed_to_write">Failed to write card:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
-
-    <!-- Toast displayed when card emulation fails with an error -->
-    <string name="failed_to_emulate">Failed to emulate card:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
-
-    <!-- Toast displayed when card reading fails with an error -->
-    <string name="failed_to_read">Failed to read card:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
-
     <!-- Dialog message -->
     <string name="discard_card_changes">Discard changes?</string>
 
@@ -209,6 +192,9 @@
 
     <!-- Card device status -->
     <string name="emulating_card">Emulating card</string>
+
+    <!-- Card device status -->
+    <string name="performing_operation">Performing operation</string>
 
     <!-- Card device status -->
     <string name="waiting_for_card">Waiting for card</string>
@@ -228,6 +214,42 @@
     <string name="view_card_data_title">
         <xliff:g id="card_data_class">%1$s</xliff:g>
         data
+    </string>
+
+
+    <!--
+        CardDataIOView
+    -->
+
+    <!-- Textual description of read image -->
+    <string name="read_description">Reading</string>
+
+    <!-- Textual description of write image -->
+    <string name="write_description">Writing</string>
+
+
+    <!--
+        CardDataIOOperationFragment
+    -->
+
+    <!-- Toast displayed when card writing fails with an error -->
+    <string name="failed_to_write">Failed to write card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when card emulation fails with an error -->
+    <string name="failed_to_emulate">Failed to emulate card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when card reading fails with an error -->
+    <string name="failed_to_read">Failed to read card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when some other card operation fails with an error -->
+    <string name="failed_to_perform_operation">Failed to perform operation:
+        <xliff:g id="error">%1$s</xliff:g>
     </string>
 
 
@@ -278,6 +300,9 @@
 
     <!-- Shown in error message -->
     <string name="get_version_timeout">Timed out while getting version</string>
+
+    <!-- Error message when operation performed on device that has already gone -->
+    <string name="device_is_gone">Device is gone</string>
 
 
     <!--
@@ -429,7 +454,7 @@
 
 
     <!--
-        PickCardDataSourceDialogFragment
+        PickCardDataTargetDialogFragment
     -->
 
     <!-- Dialog title -->
@@ -656,6 +681,5 @@
     -->
     <string name="dummy_to_catch_unsorted_stuff"
             tools:keep="@string/dummy_to_catch_unsorted_stuff"/>
-
 
 </resources>

@@ -19,17 +19,22 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
+import com.bugfuzz.android.projectwalrus.device.ReadCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbSerialCardDevice;
+import com.bugfuzz.android.projectwalrus.device.WriteOrEmulateCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.ui.Proxmark3Activity;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
@@ -64,11 +69,9 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
     private final Semaphore semaphore = new Semaphore(1);
 
     public Proxmark3Device(Context context, UsbDevice usbDevice) throws IOException {
-        super(context, usbDevice);
+        super(context, usbDevice, context.getString(R.string.idle));
 
         send(new Proxmark3Command(Proxmark3Command.VERSION));
-
-        setStatus(context.getString(R.string.idle));
     }
 
     @Override
@@ -113,8 +116,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
     }
 
     private <O> O sendThenReceiveCommands(Proxmark3Command out,
-            ReceiveSink<Proxmark3Command, O> receiveSink)
-            throws IOException {
+            ReceiveSink<Proxmark3Command, O> receiveSink) throws IOException {
         setReceiving(true);
 
         try {
@@ -126,115 +128,23 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
     }
 
     @Override
-    public void readCardData(Class<? extends CardData> cardDataClass,
-            final CardDataSink cardDataSink) throws IOException {
-        if (!tryAcquireAndSetStatus(context.getString(R.string.reading))) {
-            throw new IOException(context.getString(R.string.device_busy));
-        }
+    @UiThread
+    public void createReadCardDataOperation(Activity activity,
+            Class<? extends CardData> cardDataClass, int callbackId) {
+        ensureOperationCreatedCallbackSupported(activity);
 
-        cardDataSink.onStarting();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    setReceiving(true);
-
-                    try {
-                        // TODO: use cardDataClass
-                        send(new Proxmark3Command(Proxmark3Command.HID_DEMOD_FSK,
-                                new long[]{0, 0, 0}));
-
-                        // TODO: do periodic VERSION-based device-aliveness checking like Chameleon
-                        // Mini will/does
-                        receive(new ReceiveSink<Proxmark3Command, Boolean>() {
-                            @Override
-                            public Boolean onReceived(Proxmark3Command in) {
-                                if (in.op != Proxmark3Command.DEBUG_PRINT_STRING) {
-                                    return null;
-                                }
-
-                                String dataAsString = in.dataAsString();
-
-                                if (dataAsString.equals("Stopped")) {
-                                    return true;
-                                }
-
-                                Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
-                                if (matcher.find()) {
-                                    cardDataSink.onCardData(new HIDCardData(new BigInteger(
-                                            matcher.group(1), 16)));
-                                }
-
-                                return null;
-                            }
-
-                            @Override
-                            public boolean wantsMore() {
-                                return cardDataSink.shouldContinue();
-                            }
-                        });
-                    } finally {
-                        setReceiving(false);
-                    }
-
-                    send(new Proxmark3Command(Proxmark3Command.VERSION));
-                } catch (IOException exception) {
-                    cardDataSink.onError(exception.getMessage());
-                    return;
-                } finally {
-                    releaseAndSetStatus();
-                }
-
-                cardDataSink.onFinish();
-            }
-        }).start();
+        ((OnOperationCreatedCallback) activity).onOperationCreated(new ReadHIDOperation(this),
+                callbackId);
     }
 
     @Override
-    public void writeCardData(final CardData cardData, final CardDataOperationCallbacks callbacks)
-            throws IOException {
-        if (!tryAcquireAndSetStatus(context.getString(R.string.writing))) {
-            throw new IOException(context.getString(R.string.device_busy));
-        }
+    @UiThread
+    public void createWriteOrEmulateDataOperation(Activity activity, CardData cardData,
+            boolean write, int callbackId) {
+        ensureOperationCreatedCallbackSupported(activity);
 
-        callbacks.onStarting();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // TODO: use cardDataClass
-                    HIDCardData hidCardData = (HIDCardData) cardData;
-
-                    if (!sendThenReceiveCommands(
-                            new Proxmark3Command(
-                                    Proxmark3Command.HID_CLONE_TAG,
-                                    new long[]{
-                                            hidCardData.data.shiftRight(64).intValue(),
-                                            hidCardData.data.shiftRight(32).intValue(),
-                                            hidCardData.data.intValue()
-                                    },
-                                    new byte[]{hidCardData.data.bitLength() > 44 ? (byte) 1 : 0}),
-                            new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
-                                @Override
-                                public Boolean onReceived(Proxmark3Command in) {
-                                    return in.op == Proxmark3Command.DEBUG_PRINT_STRING
-                                            && in.dataAsString().equals("DONE!") ? true : null;
-                                }
-                            })) {
-                        throw new IOException(context.getString(R.string.write_card_timeout));
-                    }
-                } catch (IOException exception) {
-                    callbacks.onError(exception.getMessage());
-                    return;
-                } finally {
-                    releaseAndSetStatus();
-                }
-
-                callbacks.onFinish();
-            }
-        }).start();
+        ((OnOperationCreatedCallback) activity).onOperationCreated(
+                new WriteOrEmulateHIDOperation(this, cardData, write), callbackId);
     }
 
     @Override
@@ -302,6 +212,121 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                     hf ? (result.args[1] & 0xffff) / 1e3f : null);
         } finally {
             releaseAndSetStatus();
+        }
+    }
+
+    private static class ReadHIDOperation extends ReadCardDataOperation {
+
+        ReadHIDOperation(CardDevice cardDevice) {
+            super(cardDevice);
+        }
+
+        @Override
+        @WorkerThread
+        public void execute(Context context, final ShouldContinueCallback shouldContinueCallback,
+                final ResultSink resultSink) throws IOException {
+            Proxmark3Device proxmark3Device = (Proxmark3Device) getCardDeviceOrThrow();
+
+            if (!proxmark3Device.tryAcquireAndSetStatus(context.getString(R.string.reading))) {
+                throw new IOException(context.getString(R.string.device_busy));
+            }
+
+            try {
+                proxmark3Device.setReceiving(true);
+
+                try {
+                    proxmark3Device.send(new Proxmark3Command(Proxmark3Command.HID_DEMOD_FSK,
+                            new long[]{0, 0, 0}));
+
+                    // TODO: do periodic VERSION-based device-aliveness checking like Chameleon
+                    // Mini will/does
+                    proxmark3Device.receive(new ReceiveSink<Proxmark3Command, Boolean>() {
+                        @Override
+                        public Boolean onReceived(Proxmark3Command in) {
+                            if (in.op != Proxmark3Command.DEBUG_PRINT_STRING) {
+                                return null;
+                            }
+
+                            String dataAsString = in.dataAsString();
+
+                            if (dataAsString.equals("Stopped")) {
+                                return true;
+                            }
+
+                            Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
+                            if (matcher.find() && resultSink != null) {
+                                resultSink.onResult(new HIDCardData(new BigInteger(
+                                        matcher.group(1), 16)));
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        public boolean wantsMore() {
+                            return shouldContinueCallback.shouldContinue();
+                        }
+                    });
+                } finally {
+                    proxmark3Device.setReceiving(false);
+                }
+
+                proxmark3Device.send(new Proxmark3Command(Proxmark3Command.VERSION));
+            } finally {
+                proxmark3Device.releaseAndSetStatus();
+            }
+        }
+
+        @Override
+        public Class<? extends CardData> getCardDataClass() {
+            return HIDCardData.class;
+        }
+    }
+
+    private static class WriteOrEmulateHIDOperation extends WriteOrEmulateCardDataOperation {
+
+        WriteOrEmulateHIDOperation(CardDevice cardDevice, CardData cardData, boolean write) {
+            super(cardDevice, cardData, write);
+        }
+
+        @Override
+        @WorkerThread
+        public void execute(Context context, ShouldContinueCallback shouldContinueCallback)
+                throws IOException {
+            if (!isWrite()) {
+                throw new RuntimeException("Can't emulate");
+            }
+
+            Proxmark3Device proxmark3Device = (Proxmark3Device) getCardDeviceOrThrow();
+
+            if (!proxmark3Device.tryAcquireAndSetStatus(context.getString(R.string.writing))) {
+                throw new IOException(context.getString(R.string.device_busy));
+            }
+
+            try {
+                HIDCardData hidCardData = (HIDCardData) getCardData();
+
+                if (!proxmark3Device.sendThenReceiveCommands(
+                        new Proxmark3Command(
+                                Proxmark3Command.HID_CLONE_TAG,
+                                new long[]{
+                                        hidCardData.data.shiftRight(64).intValue(),
+                                        hidCardData.data.shiftRight(32).intValue(),
+                                        hidCardData.data.intValue()
+                                },
+                                new byte[]{hidCardData.data.bitLength() > 44 ? (byte) 1 : 0}),
+                        new WatchdogReceiveSink<Proxmark3Command, Boolean>(DEFAULT_TIMEOUT) {
+                            @Override
+                            public Boolean onReceived(Proxmark3Command in) {
+                                return in.op == Proxmark3Command.DEBUG_PRINT_STRING
+                                        && in.dataAsString().equals("DONE!") ? true : null;
+                            }
+                        })) {
+                    throw new IOException(context.getString(R.string.write_card_timeout));
+                }
+            } finally {
+                proxmark3Device.releaseAndSetStatus();
+            }
         }
     }
 

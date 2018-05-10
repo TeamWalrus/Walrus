@@ -41,8 +41,9 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     private volatile boolean receiving;
     private byte[] buffer = new byte[0];
 
-    protected UsbSerialCardDevice(Context context, UsbDevice usbDevice) throws IOException {
-        super(context, usbDevice);
+    protected UsbSerialCardDevice(Context context, UsbDevice usbDevice, String status)
+            throws IOException {
+        super(context, usbDevice, status);
 
         usbSerialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice, usbDeviceConnection);
         if (!usbSerialDevice.open()) {
