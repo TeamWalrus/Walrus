@@ -19,12 +19,10 @@
 
 package com.bugfuzz.android.projectwalrus.device;
 
-import static android.content.Context.VIBRATOR_SERVICE;
-import static android.os.Build.VERSION_CODES.O;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -91,9 +89,9 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         if (sharedPref.getBoolean("pref_key_bulk_read_vibrate", true)) {
-            Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null) {
-                if (android.os.Build.VERSION.SDK_INT >= O) {
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     vibrator.vibrate(VibrationEffect.createOneShot(300, 255));
                 } else {
                     vibrator.vibrate(300);

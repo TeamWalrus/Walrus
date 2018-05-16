@@ -19,8 +19,6 @@
 
 package com.bugfuzz.android.projectwalrus;
 
-import static android.os.Build.VERSION_CODES.O;
-
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -29,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -169,7 +168,7 @@ public class WalrusApplication extends Application {
             if (sharedPref.getBoolean("pref_key_on_device_connected_vibrate", true)) {
                 Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
                 if (vibrator != null) {
-                    if (android.os.Build.VERSION.SDK_INT >= O) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1));
                     } else {
                         vibrator.vibrate(singleTiming);

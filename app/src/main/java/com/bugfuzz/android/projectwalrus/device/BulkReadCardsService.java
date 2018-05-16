@@ -19,9 +19,6 @@
 
 package com.bugfuzz.android.projectwalrus.device;
 
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
-import static android.os.Build.VERSION_CODES.O;
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -31,6 +28,7 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -153,7 +151,7 @@ public class BulkReadCardsService extends Service {
         final NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (notificationManager != null && android.os.Build.VERSION.SDK_INT >= O
+        if (notificationManager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 && notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
             notificationManager.createNotificationChannel(
                     new NotificationChannel(CHANNEL_ID,
@@ -171,7 +169,7 @@ public class BulkReadCardsService extends Service {
                 .setContentIntent(TaskStackBuilder.create(this)
                         .addNextIntentWithParentStack(new Intent(this, BulkReadCardsActivity.class))
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
-        if (android.os.Build.VERSION.SDK_INT >= LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
         }
 
