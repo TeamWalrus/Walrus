@@ -10,7 +10,7 @@ Designed for physical security assessors, Walrus has features that will help you
 
 ## Licensing
 
-Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](mailto:team@project-walrus.io)!) and is [open source](https://github.com/megabug/Walrus), released under the [GNU General Public License v3.0](https://github.com/megabug/Walrus/blob/master/LICENSE).
+Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](mailto:team@project-walrus.io)!) and is [open source](https://github.com/TeamWalrus/Walrus), released under the [GNU General Public License v3.0](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE).
 
 ## Building
 
@@ -48,8 +48,8 @@ The current layout of Walrus's source code is as follows:
 
 ## Contributing
 
-We welcome all kinds of contributions and bug reports, big or small! Development takes place at our [GitHub repository](https://github.com/megabug/Walrus). There you can file issues (both bugs and enhancement requests) and submit pull requests.
+We welcome all kinds of contributions and bug reports, big or small! Development takes place at our [GitHub repository](https://github.com/TeamWalrus/Walrus). There you can file issues (both bugs and enhancement requests) and submit pull requests.
 
 During the initial development of Walrus, changes to the codebase are likely to be frequent and wide-ranging, so if you want to work on a feature, it's wise to reach out first to ensure that your hard work won't be soon obsoleted. After our first full release we hope to gain stability and bring in some of the additional resources expected of a project today, such as a proper test suite and continuous integration.
 
-One area we'd love your help with is contributing translations! If you think you can help us out translating our [Android string resources](https://github.com/megabug/Walrus/blob/master/app/src/main/res/values/strings.xml) to another language, please get in touch!
+One area we'd love your help with is contributing translations! If you think you can help us out translating our [Android string resources](https://github.com/TeamWalrus/Walrus/blob/master/app/src/main/res/values/strings.xml) to another language, please get in touch!
