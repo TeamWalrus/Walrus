@@ -52,6 +52,7 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
         return dialog;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Mode mode = Mode.values()[getArguments().getInt("mode")];

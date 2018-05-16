@@ -50,6 +50,7 @@ public class DeleteCardConfirmDialogFragment extends DialogFragment {
         }
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         return new MaterialDialog.Builder(getActivity())

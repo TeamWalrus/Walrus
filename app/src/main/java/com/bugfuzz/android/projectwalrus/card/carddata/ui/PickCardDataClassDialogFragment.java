@@ -22,6 +22,7 @@ package com.bugfuzz.android.projectwalrus.card.carddata.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -61,6 +62,7 @@ public class PickCardDataClassDialogFragment extends DialogFragment
         }
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         Set<Class<? extends CardData>> cardDataClasses = new HashSet<>();

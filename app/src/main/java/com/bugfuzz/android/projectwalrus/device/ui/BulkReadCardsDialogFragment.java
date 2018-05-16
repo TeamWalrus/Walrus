@@ -104,6 +104,7 @@ public class BulkReadCardsDialogFragment extends DialogFragment {
         return dialog;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         cardDataIOView = new CardDataIOView(getActivity());
