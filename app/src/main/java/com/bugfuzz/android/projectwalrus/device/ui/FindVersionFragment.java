@@ -19,6 +19,7 @@
 
 package com.bugfuzz.android.projectwalrus.device.ui;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,16 @@ public class FindVersionFragment extends Fragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (!(context instanceof OnFindVersionCallback)) {
+            throw new RuntimeException("Parent doesn't implement fragment callback interface");
+        }
     }
 
     @Override
