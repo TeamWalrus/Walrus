@@ -13,7 +13,7 @@ Walrus is an Android app that enables you to use contactless card cloning device
 
 Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.
 
-Walrus is [open source](https://github.com/megabug/Walrus), released under the [GNU General Public License v3.0](https://github.com/megabug/Walrus/blob/master/LICENSE).
+Walrus is [open source](https://github.com/TeamWalrus/Walrus), released under the [GNU General Public License v3.0](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE).
 
 ## Demo
 
@@ -58,4 +58,4 @@ Check out the [Getting Started](/docs/getting-started/) page!
 
 ## Want to help?
 
-Check out our [GitHub repository](https://github.com/megabug/Walrus)!
+Check out our [GitHub repository](https://github.com/TeamWalrus/Walrus)!
