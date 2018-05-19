@@ -26,6 +26,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 
@@ -62,13 +63,14 @@ public abstract class CardDevice {
     }
 
     @UiThread
-    public abstract void createReadCardDataOperation(Activity activity,
+    public abstract void createReadCardDataOperation(AppCompatActivity activity,
             Class<? extends CardData> cardDataClass, int callbackId);
 
     @UiThread
-    public abstract void createWriteOrEmulateDataOperation(Activity activity, CardData cardData,
-            boolean write, int callbackId);
+    public abstract void createWriteOrEmulateDataOperation(AppCompatActivity activity,
+            CardData cardData, boolean write, int callbackId);
 
+    // TODO: use LiveData instead (and elsewhere)?
     protected void setStatus(String status) {
         this.status = status;
 

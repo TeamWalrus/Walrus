@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -105,7 +106,7 @@ public class PickCardDataTargetDialogFragment extends DialogFragment
 
         return new MaterialDialog.Builder(getActivity())
                 .title(titleId)
-                .customView(R.layout.dialog_pick_card_data_target, false)
+                .customView(R.layout.dialog_pick_card_data_target, true)
                 .build();
     }
 
@@ -116,7 +117,15 @@ public class PickCardDataTargetDialogFragment extends DialogFragment
         View dialogView = ((MaterialDialog) getDialog()).getCustomView();
         assert dialogView != null;
 
-        ((RecyclerView) dialogView.findViewById(R.id.card_device_list)).setAdapter(adapter);
+        RecyclerView cardDeviceList = dialogView.findViewById(R.id.card_device_list);
+        cardDeviceList.setAdapter(adapter);
+        cardDeviceList.setNestedScrollingEnabled(false);
+        cardDeviceList.setLayoutManager(new LinearLayoutManager(getActivity()) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
 
         View manualEntryView = dialogView.findViewById(R.id.manual_entry);
         if (getArguments().getBoolean("allow_manual_entry")) {

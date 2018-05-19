@@ -45,8 +45,11 @@ public class ISO14443ACardData extends CardData {
         /*
            Scraped from:
                https://www.nxp.com/docs/en/application-note/AN10833.pdf
+                   (https://web.archive.org/web/20170823151734/https://www.nxp.com/docs/en/application-note/AN10833.pdf)
                http://nfc-tools.org/index.php/ISO14443A
+                   (https://web.archive.org/web/20180607101049/http://nfc-tools.org/index.php/ISO14443A)
                Proxmark3 client's CmdHF14AInfo
+                   (as of commit 2bb7f7e327df13f288b2b98a71bb390c516cc982)
         */
         TYPE_MATCHERS = new TypeMatcher[]{
                 new StaticTypeMatcher(new Type("NXP", "MIFARE Ultralight"), 0x0044, 0x00),
@@ -102,6 +105,10 @@ public class ISO14443ACardData extends CardData {
         ats = new byte[]{};
     }
 
+    public ISO14443ACardData(ISO14443ACardData other) {
+        this(other.atqa, other.uid, other.sak, other.ats);
+    }
+
     public ISO14443ACardData(short atqa, BigInteger uid, byte sak, byte[] ats) {
         this.atqa = atqa;
         this.uid = uid;
@@ -133,7 +140,7 @@ public class ISO14443ACardData extends CardData {
 
     @Override
     public String getHumanReadableText() {
-        return uid.toString(16);
+        return "UID " + MiscUtils.bytesToHex(uid.toByteArray(), false);
     }
 
     @Override

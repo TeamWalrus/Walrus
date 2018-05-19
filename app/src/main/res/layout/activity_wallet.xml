@@ -64,7 +64,7 @@
         app:elevation="8dp"
         app:fabBackgroundTint="@color/secondaryColor"
         app:fabGravity="bottom_end"
-        app:fabMenu="@menu/menu_mywallet_fab"
+        app:fabMenu="@menu/menu_wallet_fab"
         app:miniFabBackgroundTint="@android:color/white"/>
 
 </RelativeLayout>

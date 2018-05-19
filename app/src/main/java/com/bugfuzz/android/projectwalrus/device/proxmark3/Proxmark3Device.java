@@ -19,17 +19,23 @@
 
 package com.bugfuzz.android.projectwalrus.device.proxmark3;
 
-import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.ISO14443ACardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.MifareCardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.MifareReadStep;
+import com.bugfuzz.android.projectwalrus.card.carddata.ui.MifareReadSetupDialogFragment;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.ReadCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
@@ -39,19 +45,25 @@ import com.bugfuzz.android.projectwalrus.device.proxmark3.ui.Proxmark3Activity;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: do periodic VERSION-based device-aliveness checking like Chameleon Mini will/does
+
 @CardDevice.Metadata(
         name = "Proxmark3",
         iconId = R.drawable.drawable_proxmark3,
-        supportsRead = {HIDCardData.class},
+        supportsRead = {HIDCardData.class, MifareCardData.class},
         supportsWrite = {HIDCardData.class},
         supportsEmulate = {}
 )
@@ -61,10 +73,10 @@ import java.util.regex.Pattern;
         @UsbCardDevice.UsbIds.Ids(vendorId = 0x502d, productId = 0x502d)  // Proxmark3 Easy(?)
 })
 public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
-        implements CardDevice.Versioned {
+        implements CardDevice.Versioned, MifareReadStep.BlockSource {
 
     private static final long DEFAULT_TIMEOUT = 20 * 1000;
-    private static final Pattern TAG_ID_PATTERN = Pattern.compile("TAG ID: ([0-9a-fA-F]+)");
+    private static final Pattern TAG_ID = Pattern.compile("TAG ID: ([0-9a-fA-F]+)");
 
     private final Semaphore semaphore = new Semaphore(1);
 
@@ -129,17 +141,64 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
     @Override
     @UiThread
-    public void createReadCardDataOperation(Activity activity,
-            Class<? extends CardData> cardDataClass, int callbackId) {
+    public void createReadCardDataOperation(final AppCompatActivity activity,
+            Class<? extends CardData> cardDataClass, final int callbackId) {
         ensureOperationCreatedCallbackSupported(activity);
 
-        ((OnOperationCreatedCallback) activity).onOperationCreated(new ReadHIDOperation(this),
-                callbackId);
+        if (cardDataClass == HIDCardData.class) {
+            ((OnOperationCreatedCallback) activity).onOperationCreated(new ReadHIDOperation(this),
+                    callbackId);
+        } else if (cardDataClass == MifareCardData.class) {
+            MifareReadSetupDialogFragment dialog = MifareReadSetupDialogFragment.create(callbackId);
+
+            dialog.show(activity.getSupportFragmentManager(),
+                    "proxmark3_device_mifare_read_setup_dialog");
+            activity.getSupportFragmentManager().executePendingTransactions();
+
+            dialog.getViewModel().getSelectedReadSteps().observeForever(
+                    new Observer<List<MifareReadStep>>() {
+                        @Override
+                        public void onChanged(@Nullable List<MifareReadStep> readSteps) {
+                            ((OnOperationCreatedCallback) activity).onOperationCreated(
+                                    new ReadMifareOperation(Proxmark3Device.this, readSteps),
+                                    callbackId);
+                        }
+                    });
+        } else {
+            throw new RuntimeException("Invalid card data class");
+        }
+    }
+
+    @Override
+    public MifareCardData.Block readMifareBlock(int blockNumber, MifareCardData.Key key,
+            MifareCardData.KeySlot keySlot) throws IOException {
+        Pair<Boolean, MifareCardData.Block> result = sendThenReceiveCommands(
+                new Proxmark3Command(
+                        Proxmark3Command.MIFARE_READBL,
+                        new long[]{blockNumber, keySlot == MifareCardData.KeySlot.A ? 0 : 1, 0},
+                        key.key),
+                new ReceiveSink<Proxmark3Command, Pair<Boolean, MifareCardData.Block>>() {
+                    @Override
+                    public Pair<Boolean, MifareCardData.Block> onReceived(Proxmark3Command in) {
+                        if (in.op != Proxmark3Command.ACK) {
+                            return null;
+                        }
+
+                        if ((in.args[0] & 0xff) == 0) {
+                            return new Pair<>(false, null);
+                        }
+
+                        return new Pair<>(true, new MifareCardData.Block(ArrayUtils.subarray(
+                                in.data, 0, MifareCardData.Block.SIZE)));
+                    }
+                });
+
+        return result != null ? result.second : null;
     }
 
     @Override
     @UiThread
-    public void createWriteOrEmulateDataOperation(Activity activity, CardData cardData,
+    public void createWriteOrEmulateDataOperation(AppCompatActivity activity, CardData cardData,
             boolean write, int callbackId) {
         ensureOperationCreatedCallbackSupported(activity);
 
@@ -206,9 +265,9 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                     lf, hf,
                     lf ? lfVoltages : null,
                     lf ? (result.args[0] & 0xffff) / 1e3f : null,
-                    lf ? (result.args[0] >> 16) / 1e3f : null,
+                    lf ? (result.args[0] >>> 16) / 1e3f : null,
                     lf ? 12e6f / ((result.args[2] & 0xffff) + 1) : null,
-                    lf ? (result.args[2] >> 16) / 1e3f : null,
+                    lf ? (result.args[2] >>> 16) / 1e3f : null,
                     hf ? (result.args[1] & 0xffff) / 1e3f : null);
         } finally {
             releaseAndSetStatus();
@@ -238,8 +297,6 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                     proxmark3Device.send(new Proxmark3Command(Proxmark3Command.HID_DEMOD_FSK,
                             new long[]{0, 0, 0}));
 
-                    // TODO: do periodic VERSION-based device-aliveness checking like Chameleon
-                    // Mini will/does
                     proxmark3Device.receive(new ReceiveSink<Proxmark3Command, Boolean>() {
                         @Override
                         public Boolean onReceived(Proxmark3Command in) {
@@ -253,8 +310,8 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                                 return true;
                             }
 
-                            Matcher matcher = TAG_ID_PATTERN.matcher(dataAsString);
-                            if (matcher.find() && resultSink != null) {
+                            Matcher matcher = TAG_ID.matcher(dataAsString);
+                            if (matcher.find()) {
                                 resultSink.onResult(new HIDCardData(new BigInteger(
                                         matcher.group(1), 16)));
                             }
@@ -330,6 +387,91 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
         }
     }
 
+    private static class ReadMifareOperation extends ReadCardDataOperation {
+
+        private final List<MifareReadStep> readSteps;
+
+        ReadMifareOperation(CardDevice cardDevice, List<MifareReadStep> readSteps) {
+            super(cardDevice);
+
+            this.readSteps = readSteps;
+        }
+
+        @Override
+        @WorkerThread
+        public void execute(Context context, ShouldContinueCallback shouldContinueCallback,
+                ResultSink resultSink) throws IOException {
+            Proxmark3Device proxmark3Device = (Proxmark3Device) getCardDeviceOrThrow();
+
+            if (!proxmark3Device.tryAcquireAndSetStatus(context.getString(R.string.reading))) {
+                throw new IOException(context.getString(R.string.device_busy));
+            }
+
+            try {
+                ISO14443ACardData lastIso14443APart = null;
+
+                while (shouldContinueCallback.shouldContinue()) {
+                    // TODO: configurable ratelimiting?
+                    Proxmark3Command result = proxmark3Device.sendThenReceiveCommands(
+                            new Proxmark3Command(Proxmark3Command.READER_ISO_14443A,
+                                    new long[]{Proxmark3Command.ISO14A_CONNECT, 0, 0}),
+                            new CommandWaiter(Proxmark3Command.ACK, DEFAULT_TIMEOUT));
+
+                    if (result == null) {
+                        break;
+                    }
+
+                    if (result.args[0] == 0) {
+                        continue;
+                    }
+
+                    ISO14443ACardData iso14443APart = new ISO14443ACardData();
+
+                    ByteBuffer bb = ByteBuffer.wrap(result.data);
+                    bb.order(ByteOrder.LITTLE_ENDIAN);
+
+                    byte[] uidBytes = new byte[10];
+                    bb.get(uidBytes);
+                    iso14443APart.uid = new BigInteger(ArrayUtils.subarray(uidBytes, 0, bb.get()));
+                    iso14443APart.atqa = bb.getShort();
+                    iso14443APart.sak = bb.get();
+                    iso14443APart.ats = new byte[bb.get()];
+                    bb.get(iso14443APart.ats);
+
+                    if (!iso14443APart.equals(lastIso14443APart)) {
+                        MifareCardData mifareCardData = new MifareCardData(iso14443APart, null);
+
+                        int i = 1;
+                        for (MifareReadStep readStep : readSteps) {
+                            if (!shouldContinueCallback.shouldContinue()) {
+                                break;
+                            }
+
+                            proxmark3Device.setStatus("Reading - step #" + i++ + " of "
+                                    + readSteps.size());
+
+                            readStep.execute(mifareCardData, proxmark3Device,
+                                    shouldContinueCallback);
+                        }
+
+                        proxmark3Device.setStatus(context.getString(R.string.reading));
+
+                        resultSink.onResult(mifareCardData);
+                    }
+
+                    lastIso14443APart = iso14443APart;
+                }
+            } finally {
+                proxmark3Device.releaseAndSetStatus();
+            }
+        }
+
+        @Override
+        public Class<? extends CardData> getCardDataClass() {
+            return MifareCardData.class;
+        }
+    }
+
     private static class CommandWaiter
             extends WatchdogReceiveSink<Proxmark3Command, Proxmark3Command> {
 
@@ -352,7 +494,6 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
         public final boolean lf;
         public final boolean hf;
-
         public final float[] lfVoltages;
         public final Float v125;
         public final Float v134;
@@ -365,13 +506,11 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
                 Float peakV, Float hfVoltage) {
             this.lf = lf;
             this.hf = hf;
-
             this.lfVoltages = lfVoltages;
             this.v125 = v125;
             this.v134 = v134;
             this.peakF = peakF;
             this.peakV = peakV;
-
             this.hfVoltage = hfVoltage;
         }
     }

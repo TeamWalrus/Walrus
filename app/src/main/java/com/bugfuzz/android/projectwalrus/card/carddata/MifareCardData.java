@@ -19,49 +19,68 @@
 
 package com.bugfuzz.android.projectwalrus.card.carddata;
 
-import android.support.annotation.IntRange;
+import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.util.MiscUtils;
+import com.google.common.io.BaseEncoding;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+// TODO XXX: check all checks made on all constructors here
 @CardData.Metadata(
         name = "MIFARE",
         iconId = R.drawable.drawable_mifare
 )
 public class MifareCardData extends ISO14443ACardData {
 
-    public final Map<Integer, Sector> sectors;
-    public int maxSector;
+    public final List<HistoricalReadStep> readStepHistory;
+    private final Map<Integer, Block> blocks;
 
     public MifareCardData() {
-        sectors = new HashMap<>();
-        maxSector = 0;
+        blocks = new HashMap<>();
+        readStepHistory = new ArrayList<>();
     }
 
-    public MifareCardData(short atqa, BigInteger uid, byte sak, byte[] ats,
-            Map<Integer, Sector> sectors, @IntRange(from = 0) int maxSector) {
-        super(atqa, uid, sak, ats);
+    public MifareCardData(MifareCardData other) {
+        this(other, other.blocks);
+    }
 
-        if (maxSector < 0) {
-            throw new IllegalArgumentException("Invalid maximum sector number");
-        }
+    public MifareCardData(ISO14443ACardData iso14443APart, @Nullable Map<Integer, Block> blocks) {
+        super(iso14443APart);
 
-        this.sectors = sectors;
-        this.maxSector = maxSector;
+        this.blocks = blocks != null ? blocks : new HashMap<Integer, Block>();
+
+        readStepHistory = new ArrayList<>();
     }
 
     @SuppressWarnings("unused")
     public static MifareCardData newDebugInstance() {
-        return new MifareCardData((short) 0x0004, new BigInteger(32, new Random()), (byte) 0x08,
-                new byte[]{}, null, 0);
+        return new MifareCardData(new ISO14443ACardData((short) 0x0004,
+                new BigInteger(32, new Random()), (byte) 0x08, new byte[]{}), null);
+    }
+
+    public void setBlock(int blockNumber, Block block) {
+        if (blockNumber < 0 || blockNumber > 255) {
+            throw new RuntimeException("Invalid block number");
+        }
+
+        blocks.put(blockNumber, block);
+    }
+
+    public Map<Integer, Block> getBlocks() {
+        return Collections.unmodifiableMap(blocks);
     }
 
     @Override
@@ -78,7 +97,8 @@ public class MifareCardData extends ISO14443ACardData {
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(sectors, that.sectors)
+                .append(blocks, that.blocks)
+                .append(readStepHistory, that.readStepHistory)
                 .isEquals();
     }
 
@@ -86,20 +106,148 @@ public class MifareCardData extends ISO14443ACardData {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
-                .append(sectors)
+                .append(blocks)
+                .append(readStepHistory)
                 .toHashCode();
     }
 
-    public static class Sector {
+    public enum KeySlot {
+        A,
+        B
+    }
+
+    public static class Block implements Serializable {
+
+        public static final int SIZE = 16;
 
         public final byte[] data;
 
-        public Sector(@Size(64) byte[] data) {
-            if (data.length != 64) {
+        public Block(@Size(SIZE) byte[] data) {
+            if (data.length != SIZE) {
                 throw new IllegalArgumentException("Invalid data length");
             }
 
             this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            return MiscUtils.bytesToHex(data, false);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Block block = (Block) o;
+
+            return new EqualsBuilder()
+                    .append(data, block.data)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(data)
+                    .toHashCode();
+        }
+    }
+
+    public static class Key implements Serializable {
+
+        public final byte[] key;
+
+        public Key(@Size(6) byte[] key) {
+            if (key.length != 6) {
+                throw new IllegalArgumentException("Invalid key length");
+            }
+
+            this.key = key;
+        }
+
+        public static Key fromString(String value) {
+            return new Key(BaseEncoding.base16().decode(value.toUpperCase()));
+        }
+
+        @Override
+        public String toString() {
+            return MiscUtils.bytesToHex(key, false);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            Key key1 = (Key) o;
+
+            return new EqualsBuilder()
+                    .append(key, key1.key)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(key)
+                    .toHashCode();
+        }
+    }
+
+    public static class HistoricalReadStep implements Serializable {
+
+        public final int blockNumber;
+        public final Key key;
+        public final KeySlot keySlot;
+        public final boolean success;
+
+        public HistoricalReadStep(int blockNumber, Key key, KeySlot keySlot, boolean success) {
+            this.blockNumber = blockNumber;
+            this.key = key;
+            this.keySlot = keySlot;
+            this.success = success;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            HistoricalReadStep that = (HistoricalReadStep) o;
+
+            return new EqualsBuilder()
+                    .append(success, that.success)
+                    .append(blockNumber, that.blockNumber)
+                    .append(key, that.key)
+                    .append(keySlot, that.keySlot)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(blockNumber)
+                    .append(key)
+                    .append(keySlot)
+                    .append(success)
+                    .toHashCode();
         }
     }
 }

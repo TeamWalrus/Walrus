@@ -19,11 +19,11 @@
 
 package com.bugfuzz.android.projectwalrus.device;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.v7.app.AppCompatActivity;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
@@ -47,7 +47,7 @@ public class DebugDevice extends CardDevice {
 
     @Override
     @UiThread
-    public void createReadCardDataOperation(Activity activity,
+    public void createReadCardDataOperation(AppCompatActivity activity,
             Class<? extends CardData> cardDataClass, int callbackId) {
         ensureOperationCreatedCallbackSupported(activity);
 
@@ -57,7 +57,7 @@ public class DebugDevice extends CardDevice {
 
     @Override
     @UiThread
-    public void createWriteOrEmulateDataOperation(Activity activity, CardData cardData,
+    public void createWriteOrEmulateDataOperation(AppCompatActivity activity, CardData cardData,
             boolean write, int callbackId) {
         ensureOperationCreatedCallbackSupported(activity);
 
@@ -90,10 +90,8 @@ public class DebugDevice extends CardDevice {
 
                 if (numSleeps % 10 == 0) {
                     try {
-                        if (resultSink != null) {
-                            resultSink.onResult((CardData) getCardDataClass()
-                                    .getMethod("newDebugInstance").invoke(null));
-                        }
+                        resultSink.onResult((CardData) getCardDataClass()
+                                .getMethod("newDebugInstance").invoke(null));
                     } catch (IllegalAccessException | InvocationTargetException
                             | NoSuchMethodException e) {
                         return;

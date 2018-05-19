@@ -408,8 +408,19 @@
 
 
     <!--
-        menu_mywallet
-        menu_mywallet_fab
+        menu_view_card
+    -->
+
+    <!-- Shown in toolbar menu -->
+    <string name="delete">Delete</string>
+
+    <!-- Shown in toolbar menu -->
+    <string name="duplicate">Duplicate</string>
+
+
+    <!--
+        menu_wallet
+        menu_wallet_fab
     -->
 
     <!-- Shown in floating action button speed dial -->
@@ -426,7 +437,7 @@
 
 
     <!--
-        menu_mywallet
+        menu_wallet
         WalletActivity
     -->
 
@@ -435,14 +446,21 @@
 
 
     <!--
-        menu_view_card
+        MifareCardData
     -->
 
-    <!-- Shown in toolbar menu -->
-    <string name="delete">Delete</string>
 
-    <!-- Shown in toolbar menu -->
-    <string name="duplicate">Duplicate</string>
+    <!--
+        MifareReadSetupDialogFragment
+    -->
+
+    <!-- Dialog title -->
+    <string name="setup_mifare_read">Setup MIFARE read</string>
+
+    <!-- Button -->
+    <string name="add">Add</string>
+
+    <string name="read_steps">Read steps</string>
 
 
     <!--
@@ -508,7 +526,7 @@
 
     <!-- Preference message -->
     <string name="default_card_slot_preference_message">Default <xliff:g>Chameleon Mini</xliff:g> card
-        slot to be used for emulation
+        keySlot to be used for emulation
     </string>
 
 
@@ -617,6 +635,29 @@
 
     <!-- Activity title -->
     <string name="settings_activity_name">Settings</string>
+
+
+    <!--
+        StaticKeyMifareReadStepDialogFragment
+    -->
+
+    <!-- Dialog title -->
+    <string name="add_mifare_static_key_read_step">Add static key read step</string>
+
+    <!-- Dialog title -->
+    <string name="edit_mifare_static_key_read_step">Edit static key read step</string>
+
+    <!-- Label -->
+    <string name="blocks_to_read">Block(s) to read</string>
+
+    <!-- Label -->
+    <string name="key">Key</string>
+
+    <!-- Label -->
+    <string name="key_slots">Key slots</string>
+
+    <!-- Shown when both A and B slots are picked -->
+    <string name="both">both</string>
 
 
     <!--

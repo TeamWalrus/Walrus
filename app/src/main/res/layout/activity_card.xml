@@ -130,8 +130,8 @@
                     android:id="@+id/locationUnknown"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:background="@android:color/darker_gray"
-                    android:gravity="center"
                     android:text="@string/unknown"
                     android:textColor="@android:color/white"
                     android:visibility="gone"/>
