@@ -18,10 +18,11 @@
   ~ along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar"/>
 

@@ -18,11 +18,12 @@
   ~ along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:padding="8dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
 
     <ImageView
         android:id="@+id/image"

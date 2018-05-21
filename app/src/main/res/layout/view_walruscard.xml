@@ -35,7 +35,8 @@
         android:shrinkColumns="0"
         android:stretchColumns="0">
 
-        <TableRow android:layout_weight="1">
+        <TableRow
+            android:layout_weight="1">
 
             <FrameLayout>
 
