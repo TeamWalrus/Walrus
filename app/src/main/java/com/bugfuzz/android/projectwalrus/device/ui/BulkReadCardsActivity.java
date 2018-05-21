@@ -130,12 +130,12 @@ public class BulkReadCardsActivity extends AppCompatActivity {
 
             ImageView device = view.findViewById(R.id.device);
             device.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
-                    cardDeviceMetadata.icon()));
+                    cardDeviceMetadata.iconId()));
             device.setContentDescription(cardDeviceMetadata.name());
 
             ImageView cardDeviceClass = view.findViewById(R.id.card_data_class);
             cardDeviceClass.setImageDrawable(ContextCompat.getDrawable(view.getContext(),
-                    cardDataClassMetadata.icon()));
+                    cardDataClassMetadata.iconId()));
             cardDeviceClass.setContentDescription(cardDataClassMetadata.name());
 
             ((TextView) view.findViewById(R.id.name)).setText(cardDeviceMetadata.name());

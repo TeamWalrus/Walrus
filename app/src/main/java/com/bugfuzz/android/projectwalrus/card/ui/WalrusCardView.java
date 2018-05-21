@@ -164,7 +164,7 @@ public class WalrusCardView extends FrameLayout {
         if (card.cardData != null) {
             CardData.Metadata metadata = card.cardData.getClass().getAnnotation(
                     CardData.Metadata.class);
-            logoView.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.icon()));
+            logoView.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.iconId()));
             logoView.setContentDescription(metadata.name());
             humanReadableTextView.setText(card.cardData.getHumanReadableText());
         } else {

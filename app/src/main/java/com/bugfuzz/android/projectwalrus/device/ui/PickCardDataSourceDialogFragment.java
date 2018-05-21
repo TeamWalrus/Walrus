@@ -99,17 +99,17 @@ public class PickCardDataSourceDialogFragment extends DialogFragment
 
         adapter = new CardDeviceAdapter(cardDataFilterClass, cardDataFilterMode, this);
 
-        @StringRes int title;
+        @StringRes int titleId;
         if (cardDataFilterMode == null) {
-            title = R.string.choose_source;
+            titleId = R.string.choose_source;
         } else if (cardDataFilterMode == CardDeviceAdapter.FilterMode.WRITABLE) {
-            title = R.string.choose_sink;
+            titleId = R.string.choose_sink;
         } else {
-            title = R.string.choose_target;
+            titleId = R.string.choose_target;
         }
 
         return new MaterialDialog.Builder(getActivity())
-                .title(title)
+                .title(titleId)
                 .customView(R.layout.dialog_pick_card_data_source, false)
                 .build();
     }

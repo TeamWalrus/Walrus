@@ -41,7 +41,7 @@ public class CardDataIOView extends FrameLayout {
         ImageView device = findViewById(R.id.device);
         CardDevice.Metadata metadata = cardDeviceClass.getAnnotation(CardDevice.Metadata.class);
 
-        device.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.icon()));
+        device.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.iconId()));
         device.setContentDescription(metadata.name());
     }
 
@@ -58,7 +58,7 @@ public class CardDataIOView extends FrameLayout {
         ImageView type = findViewById(R.id.type);
         CardData.Metadata metadata = cardDataClass.getAnnotation(CardData.Metadata.class);
 
-        type.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.icon()));
+        type.setImageDrawable(ContextCompat.getDrawable(getContext(), metadata.iconId()));
         type.setContentDescription(metadata.name());
     }
 

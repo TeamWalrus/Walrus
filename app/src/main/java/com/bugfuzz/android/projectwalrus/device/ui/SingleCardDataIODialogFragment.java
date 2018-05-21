@@ -83,23 +83,23 @@ public class SingleCardDataIODialogFragment extends DialogFragment {
         }
         cardDataIOView.setDirection(mode == Mode.READ);
 
-        @StringRes int title = 0;
+        @StringRes int titleId = 0;
         switch (mode) {
             case READ:
-                title = R.string.waiting_for_card;
+                titleId = R.string.waiting_for_card;
                 break;
 
             case WRITE:
-                title = R.string.writing_card;
+                titleId = R.string.writing_card;
                 break;
 
             case EMULATE:
-                title = R.string.emulating_card;
+                titleId = R.string.emulating_card;
                 break;
         }
 
         return new MaterialDialog.Builder(getActivity())
-                .title(title)
+                .title(titleId)
                 .customView(cardDataIOView, false)
                 .negativeText(R.string.cancel_button)
                 .onNegative(new MaterialDialog.SingleButtonCallback() {

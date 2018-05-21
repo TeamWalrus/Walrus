@@ -51,7 +51,7 @@ import java.util.Random;
 @Parcel
 @CardData.Metadata(
         name = "HID",
-        icon = R.drawable.drawable_hid,
+        iconId = R.drawable.drawable_hid,
         viewDialogFragmentClass = ComponentDialogFragment.class,
         editDialogFragmentClass = ComponentDialogFragment.class
 )

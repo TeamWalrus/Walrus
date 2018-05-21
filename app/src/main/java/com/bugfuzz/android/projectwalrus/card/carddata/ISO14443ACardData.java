@@ -41,7 +41,7 @@ import java.util.TreeSet;
 @Parcel
 @CardData.Metadata(
         name = "ISO 14443A",
-        icon = R.drawable.drawable_mifare
+        iconId = R.drawable.drawable_mifare
 )
 public class ISO14443ACardData extends CardData {
 

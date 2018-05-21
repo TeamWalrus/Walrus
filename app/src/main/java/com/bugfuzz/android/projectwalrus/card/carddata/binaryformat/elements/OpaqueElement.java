@@ -97,9 +97,9 @@ public class OpaqueElement extends BinaryFormat.Element {
                     @Override
                     public void onNotIgnoredTextChanged(CharSequence s, int start, int before,
                             int count) {
-                        @StringRes Integer error = validateEditTextString();
+                        @StringRes Integer errorId = validateEditTextString();
 
-                        editText.setError(error != null ? view.getContext().getString(error) :
+                        editText.setError(errorId != null ? view.getContext().getString(errorId) :
                                 null);
 
                         if (OpaqueComponent.this.onComponentChangeCallback != null) {

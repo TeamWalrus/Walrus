@@ -56,7 +56,7 @@ public abstract class CardData implements Serializable, Cloneable {
     public @interface Metadata {
         String name();
 
-        @DrawableRes int icon();
+        @DrawableRes int iconId();
 
         Class<? extends DialogFragment> viewDialogFragmentClass() default DialogFragment.class;
 

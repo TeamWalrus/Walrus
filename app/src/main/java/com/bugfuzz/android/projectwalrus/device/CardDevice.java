@@ -125,7 +125,7 @@ public abstract class CardDevice {
     public @interface Metadata {
         String name();
 
-        @DrawableRes int icon();
+        @DrawableRes int iconId();
 
         Class<? extends CardData>[] supportsRead();
 
