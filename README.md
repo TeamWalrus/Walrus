@@ -6,11 +6,11 @@ Walrus enables you to use your existing contactless card cloning devices with yo
 
 Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.
 
-**For end-user information such as what Walrus is, how to install it and how to use it, check out the [Walrus website](https://project-walrus.io/)! This readme outlines information intended for developers.**
+**For end-user information such as what Walrus is, how to install it and how to use it, check out the [Walrus website](https://walrus.app/)! This readme outlines information intended for developers.**
 
 ## Licensing
 
-Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](mailto:team@project-walrus.io)!) and is [open source](https://github.com/TeamWalrus/Walrus), released under the [GNU General Public License v3.0](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE).
+Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](mailto:team@walrus.app)!) and is [open source](https://github.com/TeamWalrus/Walrus), released under the [GNU General Public License v3.0](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE).
 
 ## Building
 
