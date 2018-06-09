@@ -150,4 +150,4 @@ As always in alpha software, there's a few known bugs that might bite you.
 - Walrus's handling of device disconnections mid-operations is less than stellar in some cases.
 - You might need to experiment with connecting your device directly vs. using a hub, and so on.
 
-If you have any issues, we want to hear about it! Send us an [email](mailto:team@project-walrus.io) or file an issue on [GitHub](https://github.com/TeamWalrus/Walrus). We're still in alpha so bugs are to be expected, unfortunately 😅. With your help, however, we're committed to squashing all the bugs we can find!
+If you have any issues, we want to hear about it! Send us an [email](mailto:team@walrus.app) or file an issue on [GitHub](https://github.com/TeamWalrus/Walrus). We're still in alpha so bugs are to be expected, unfortunately 😅. With your help, however, we're committed to squashing all the bugs we can find!
