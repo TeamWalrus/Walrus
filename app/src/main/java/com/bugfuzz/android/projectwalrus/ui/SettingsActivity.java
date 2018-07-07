@@ -20,10 +20,13 @@
 package com.bugfuzz.android.projectwalrus.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.card.ui.DeleteAllCardsPreference;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -41,6 +44,18 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.preferences);
+        }
+
+        @Override
+        public void onDisplayPreferenceDialog(Preference preference) {
+            if (preference instanceof DeleteAllCardsPreference) {
+                DialogFragment dialogFragment =
+                        new DeleteAllCardsPreference.ConfirmDialogFragment();
+                dialogFragment.show(this.getChildFragmentManager(),
+                        "settings_dialog");
+            } else {
+                super.onDisplayPreferenceDialog(preference);
+            }
         }
     }
 }
