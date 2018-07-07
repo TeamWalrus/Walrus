@@ -22,7 +22,7 @@ package com.bugfuzz.android.projectwalrus.card.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.preference.DialogPreference;
+import android.support.v7.preference.DialogPreference;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.widget.Toast;
