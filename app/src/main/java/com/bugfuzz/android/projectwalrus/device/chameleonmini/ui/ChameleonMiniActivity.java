@@ -22,8 +22,10 @@ package com.bugfuzz.android.projectwalrus.device.chameleonmini.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
@@ -103,6 +105,18 @@ public class ChameleonMiniActivity extends AppCompatActivity
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.preferences_chameleon_mini);
+        }
+
+        @Override
+        public void onDisplayPreferenceDialog(Preference preference) {
+            if (preference instanceof ChameleonMiniSlotPickerPreference) {
+                DialogFragment dialogFragment =
+                        new ChameleonMiniSlotPickerPreference.NumberPickerFragment();
+                dialogFragment.show(this.getChildFragmentManager(),
+                        "settings_dialog");
+            } else {
+                super.onDisplayPreferenceDialog(preference);
+            }
         }
     }
 }

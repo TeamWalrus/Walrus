@@ -19,19 +19,36 @@
 
 package com.bugfuzz.android.projectwalrus.device.chameleonmini.ui;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.preference.DialogPreference;
+import android.os.Bundle;
+import android.support.v7.preference.DialogPreference;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.NumberPicker;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bugfuzz.android.projectwalrus.R;
 
 public class ChameleonMiniSlotPickerPreference extends DialogPreference {
 
-    private static final int MAX_VALUE = 8;
+    public ChameleonMiniSlotPickerPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public static class NumberPickerFragment extends DialogFragment {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(final Bundle savedInstanceState) {
+            return new MaterialDialog.Builder(getActivity())
+                    .title("Number Picker")
+                    .titleColorRes(R.color.warning)
+                    .build();
+        }
+    }
+
+
+/*    private static final int MAX_VALUE = 8;
     private static final int MIN_VALUE = 1;
 
     private static final boolean WRAP_SELECTOR_WHEEL = true;
@@ -100,5 +117,6 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
     private void setValue(int value) {
         this.value = value;
         persistInt(this.value);
-    }
+    }*/
+
 }
