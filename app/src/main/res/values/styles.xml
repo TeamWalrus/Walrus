@@ -27,6 +27,12 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
+    <style name="AppPreference">
+        <item name="android:layout">@layout/preference_material</item>
+    </style>
+
+    <style name="AppPreference.DialogPreference"/>
+
     <style name="App.WithTransitions"/>
 
     <style name="App.WithTransitions.LauncherActivity">

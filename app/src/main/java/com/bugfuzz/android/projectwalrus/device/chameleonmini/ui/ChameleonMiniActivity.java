@@ -112,6 +112,9 @@ public class ChameleonMiniActivity extends AppCompatActivity
             if (preference instanceof ChameleonMiniSlotPickerPreference) {
                 DialogFragment dialogFragment =
                         new ChameleonMiniSlotPickerPreference.NumberPickerFragment();
+                final Bundle b = new Bundle();
+                b.putString("key", preference.getKey());
+                dialogFragment.setArguments(b);
                 dialogFragment.show(this.getChildFragmentManager(),
                         "settings_dialog");
             } else {
