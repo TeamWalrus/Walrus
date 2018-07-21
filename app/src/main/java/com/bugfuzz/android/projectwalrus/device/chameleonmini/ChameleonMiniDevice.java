@@ -31,12 +31,18 @@ import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniActivity;
+import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
+import com.google.common.primitives.Bytes;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Logger;
+
+import javassist.bytecode.ByteArray;
 
 @CardDevice.Metadata(
         name = "Chameleon Mini",
@@ -317,8 +323,86 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
             try {
                 send("VERSION?");
 
+<<<<<<< HEAD
                 String version = receive(new WatchdogReceiveSink<String, String>(3000) {
                     private int state;
+=======
+                try {
+                    MifareCardData mifareCardData = (MifareCardData) getCardData();
+
+                    byte[] mifare1k = new byte[0];
+                    for (int i = 0; i < 64; ++i) {
+                        MifareCardData.Block block = mifareCardData.getBlocks().get(i);
+                        byte[] toAdd;
+                        if (block != null) {
+                            toAdd = block.data;
+                        } else {
+                            toAdd = new byte[16];
+                        }
+                        mifare1k = Bytes.concat(mifare1k, toAdd);
+                    }
+                    Logger.getAnonymousLogger().info("Mifare1k result: " +
+                            MiscUtils.bytesToHex(mifare1k, false));
+
+                    /*
+
+
+                    chameleonMiniDevice.send("CONFIG=MF_CLASSIC_1K");
+
+                    String line = chameleonMiniDevice.receive(1000);
+
+                    chameleonMiniDevice.setBytewise(true);
+
+                    chameleonMiniDevice.sendByte((byte) 'A');
+
+
+                    byte s = chameleonMiniDevice.receiveByte(1000);
+
+                    /*****/
+
+                    /*chameleonMiniDevice.receive(new WatchdogReceiveSink<String, Boolean>(3000) {
+                        private int state;
+
+                        @Override
+                        public Boolean onReceived(String in) throws IOException {
+                            switch (state) {
+                                case 0:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "CONFIG=", in));
+                                    }
+
+                                    int slot =
+                                            PreferenceManager.getDefaultSharedPreferences(context)
+                                                    .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY,
+                                                            1);
+                                    chameleonMiniDevice.send("SETTING=" + slot);
+
+                                    ++state;
+                                    break;
+
+                                case 1:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "SETTING=", in));
+                                    }
+
+                                    MifareCardData mifareCardData = (MifareCardData) getCardData();
+                                    chameleonMiniDevice.send(
+                                            "UID=" + String.format("%08x", mifareCardData.uid));
+
+                                    ++state;
+                                    break;
+
+                                case 2:
+                                    if (!in.equals("100:OK")) {
+                                        throw new IOException(context.getString(
+                                                R.string.command_error, "UID=", in));
+                                    }
+
+                                    return true;
+                            }
+>>>>>>> e4e4612d... Start work on Chameleon Mini Mifare 1k support
 
                     @Override
                     public String onReceived(String in) throws IOException {
@@ -334,12 +418,18 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                             case 1:
                                 return in;
                         }
+<<<<<<< HEAD
                         return null;
                     }
                 });
 
                 if (version == null) {
                     throw new IOException(context.getString(R.string.get_version_timeout));
+=======
+                    });*/
+                } finally {
+                    chameleonMiniDevice.setReceiving(false);
+>>>>>>> e4e4612d... Start work on Chameleon Mini Mifare 1k support
                 }
 
                 return version;

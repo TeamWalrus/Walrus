@@ -100,7 +100,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
     protected abstract byte[] formatOutgoing(T out);
 
-    private T receive(long timeout) {
+    protected T receive(long timeout) {
         if (!receiving) {
             throw new RuntimeException("Not receiving");
         }

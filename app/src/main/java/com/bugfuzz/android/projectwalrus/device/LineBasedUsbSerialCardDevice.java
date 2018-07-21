@@ -30,6 +30,7 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
 
     private final String delimiter;
     private final String charsetName;
+    private boolean bytewise = false;
 
     protected LineBasedUsbSerialCardDevice(Context context, UsbDevice usbDevice, String delimiter,
             String charsetName) throws IOException {
@@ -41,6 +42,9 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
 
     @Override
     protected Pair<String, Integer> sliceIncoming(byte[] in) {
+        if (bytewise) {
+            return new Pair<>(String.valueOf(in[0]), 1);
+        }
         String string;
         try {
             string = new String(in, charsetName);
@@ -59,10 +63,25 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
 
     @Override
     protected byte[] formatOutgoing(String out) {
+        if (bytewise) {
+            return new byte[] { (byte) out.charAt(0) };
+        }
         try {
             return (out + delimiter).getBytes(charsetName);
         } catch (UnsupportedEncodingException e) {
             return null;
         }
+    }
+
+    protected void setBytewise(boolean bytewise) {
+        this.bytewise = bytewise;
+    }
+
+    protected void sendByte(byte b) {
+        send(new String(new byte[] {b}));
+    }
+
+    protected byte receiveByte(long timeout) {
+        return receive(timeout).getBytes()[0];
     }
 }
