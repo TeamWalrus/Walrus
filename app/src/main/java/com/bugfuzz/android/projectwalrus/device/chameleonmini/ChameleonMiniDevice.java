@@ -41,6 +41,7 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javassist.bytecode.ByteArray;
 
@@ -329,7 +330,42 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 =======
                 try {
                     MifareCardData mifareCardData = (MifareCardData) getCardData();
+                    String cardType = mifareCardData.getTypeDetailInfo();
+                    String chameleonMiniConfig;
+                    String chameleonMiniSetting = "SETTING=";
+                    String chameleonMiniUpload = "UPLOAD";
 
+                    // Set chameleon mini card slot to default value from preferences
+                    // fall back value is 1
+                    // TODO: prompt user for card slot or use default
+                    int slot =
+                            PreferenceManager.getDefaultSharedPreferences(context)
+                                    .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY,
+                                            1);
+                    chameleonMiniDevice.send(chameleonMiniSetting + slot);
+                    String lineSetting = chameleonMiniDevice.receive(1000);
+                    if (!lineSetting.equals("100:OK")) {
+                        throw new IOException(context.getString(
+                                R.string.command_error, chameleonMiniSetting, lineSetting));
+                    }
+
+                    // Check  type of card 1k or 4k.. and Issue chameleon mini config command
+                    // TODO: This will change when mifareCardData can return card type
+                    if (cardType.matches(".*Classic\\s1K.*")) {
+                        chameleonMiniConfig = "CONFIG=MF_CLASSIC_1K";
+                    } else if (cardType.matches(".*Classic\\s4K.*")){
+                        chameleonMiniConfig = "CONFIG=MF_CLASSIC_4K";
+                    } else {
+                        throw new IOException("Failed to set Chameleon Mini card type using CONFIG= command");
+                    }
+                    chameleonMiniDevice.send(chameleonMiniConfig);
+                    String lineConfig = chameleonMiniDevice.receive(1000);
+                    if (!lineConfig.equals("100:OK")) {
+                        throw new IOException(context.getString(
+                                R.string.command_error, chameleonMiniConfig, lineConfig));
+                    }
+
+                    // Flatten card data into Mifare1k blob to send over XModem
                     byte[] mifare1k = new byte[0];
                     for (int i = 0; i < 64; ++i) {
                         MifareCardData.Block block = mifareCardData.getBlocks().get(i);
@@ -344,8 +380,58 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                     Logger.getAnonymousLogger().info("Mifare1k result: " +
                             MiscUtils.bytesToHex(mifare1k, false));
 
-                    /*
+                    // Issue chameleon mini Upload command
+                    chameleonMiniDevice.send(chameleonMiniUpload);
+                    String lineUpload = chameleonMiniDevice.receive(1000);
+                    if (!lineUpload.equals("110:WAITING FOR XMODEM")) {
+                        throw new IOException(context.getString(
+                                R.string.command_error, chameleonMiniUpload, lineUpload));
+                    }
 
+                    // Switch to bytewise mode and send Mifare1k card data to chameleon mini via XModem
+                    chameleonMiniDevice.setBytewise(true);
+                    int currentBlock = 1;
+                    byte[] dataBlock;
+
+                    while(true){
+                        byte result = chameleonMiniDevice.receiveByte(1000);
+
+                        switch (result){
+                            // if 21 = <NAK>
+                            case 21 :
+                                break;
+
+                            // if 6 = <ACK>
+                            case 6 :
+                                currentBlock++;
+                                break;
+
+                            default:
+                                throw new IOException("Unknown byte: " + result);
+                        }
+
+                        // Check if the current block is the last, if it is send EOT
+                        int totalBlocks = mifare1k.length/128;
+                        if (currentBlock - 1 == totalBlocks){
+                            chameleonMiniDevice.sendByte((byte)0x04);
+                            break;
+                        }
+
+                        // Send current block
+                        chameleonMiniDevice.sendByte((byte)0x01);
+                        chameleonMiniDevice.sendByte((byte)currentBlock);
+                        chameleonMiniDevice.sendByte((byte)(255 - currentBlock));
+                        int i;
+                        int checkSum = 0;
+                        for (i=0;i<128;i++){
+                            chameleonMiniDevice.sendByte(mifare1k[(currentBlock-1)*128+i]);
+                            checkSum = checkSum + mifare1k[(currentBlock-1)*128+i];
+                        }
+                        chameleonMiniDevice.sendByte((byte)checkSum);
+                    }
+
+
+                    /*
 
                     chameleonMiniDevice.send("CONFIG=MF_CLASSIC_1K");
 

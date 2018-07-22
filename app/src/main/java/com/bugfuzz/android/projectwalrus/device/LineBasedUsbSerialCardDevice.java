@@ -43,7 +43,9 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
     @Override
     protected Pair<String, Integer> sliceIncoming(byte[] in) {
         if (bytewise) {
-            return new Pair<>(String.valueOf(in[0]), 1);
+            if (in.length == 0)
+                return null;
+            return new Pair<>(new String(new byte[]{in[0]}), 1);
         }
         String string;
         try {
@@ -78,7 +80,10 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
     }
 
     protected void sendByte(byte b) {
-        send(new String(new byte[] {b}));
+        try {
+            send(new String(new byte[]{b}, "ISO-8859-1"));
+        } catch(UnsupportedEncodingException e) {
+        }
     }
 
     protected byte receiveByte(long timeout) {

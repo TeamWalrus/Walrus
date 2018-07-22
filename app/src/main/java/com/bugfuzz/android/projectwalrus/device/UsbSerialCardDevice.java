@@ -24,6 +24,7 @@ import android.hardware.usb.UsbDevice;
 import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.R;
+import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
@@ -54,6 +56,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         usbSerialDevice.read(new UsbSerialInterface.UsbReadCallback() {
             @Override
             public void onReceivedData(byte[] in) {
+                Logger.getAnonymousLogger().info(">>> read: " + new String(in) + " - " + MiscUtils.bytesToHex(in, false));
                 buffer = ArrayUtils.addAll(buffer, in);
 
                 for (; ; ) {
@@ -61,6 +64,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
                     if (sliced == null) {
                         break;
                     }
+                    Logger.getAnonymousLogger().info("sliced: " + sliced.first);
 
                     buffer = ArrayUtils.subarray(buffer, sliced.second, buffer.length);
 
@@ -140,6 +144,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
             throw new RuntimeException("Failed to format outgoing");
         }
 
+        Logger.getAnonymousLogger().info(">>> wrote: " + new String(bytes) + " - " + MiscUtils.bytesToHex(bytes, false));
         usbSerialDevice.write(bytes);
     }
 
