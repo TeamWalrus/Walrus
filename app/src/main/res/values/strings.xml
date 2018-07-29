@@ -232,7 +232,47 @@
 
 
     <!--
+<<<<<<< HEAD
         ChameleonMiniActivity
+=======
+        CardDataIOView
+    -->
+
+    <!-- Textual description of read image -->
+    <string name="read_description">Reading</string>
+
+    <!-- Textual description of write image -->
+    <string name="write_description">Writing</string>
+
+
+    <!--
+        CardDataIOOperationFragment
+    -->
+
+    <!-- Toast displayed when card writing fails with an error -->
+    <string name="failed_to_write">Failed to write card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when card emulation fails with an error -->
+    <string name="failed_to_emulate">Failed to emulate card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when card reading fails with an error -->
+    <string name="failed_to_read">Failed to read card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when some other card operation fails with an error -->
+    <string name="failed_to_perform_operation">Failed to perform operation:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+
+    <!--
+        ChameleonMiniRevGActivity
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support
         Proxmark3Activity
     -->
 
@@ -249,18 +289,21 @@
 
 
     <!--
-        ChameleonMiniActivity
+        ChameleonMiniRevGActivity
     -->
 
     <!-- Activity title -->
-    <string name="chameleon_mini_activity_name" translatable="false">Chameleon Mini</string>
+    <string name="chameleon_mini_rev_g_activity_name" translatable="false">Chameleon Mini Rev.G</string>
+
+    <!-- Activity title -->
+    <string name="chameleon_mini_rev_e_rebooted_activity_name" translatable="false">Chameleon Mini Rev.E Rebooted</string>
 
     <!-- Device name -->
     <string name="chameleon_mini" translatable="false">Chameleon Mini</string>
 
 
     <!--
-        ChameleonMiniDevice
+        ChameleonMiniRevGDevice
         Proxmark3Device
     -->
 
@@ -281,7 +324,7 @@
 
 
     <!--
-        ChameleonMiniDevice
+        ChameleonMiniRevGDevice
     -->
 
     <!-- Shown in error message -->

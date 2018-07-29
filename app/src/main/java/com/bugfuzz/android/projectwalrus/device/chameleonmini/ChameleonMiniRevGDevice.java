@@ -30,38 +30,48 @@ import com.bugfuzz.android.projectwalrus.card.carddata.ISO14443ACardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.LineBasedUsbSerialCardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniActivity;
+=======
+import com.bugfuzz.android.projectwalrus.device.WriteOrEmulateCardDataOperation;
+import com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniRevGActivity;
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 import com.google.common.primitives.Bytes;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-import javassist.bytecode.ByteArray;
 
 @CardDevice.Metadata(
-        name = "Chameleon Mini",
+        name = "Chameleon Mini Rev.G",
         iconId = R.drawable.drawable_chameleon_mini,
         supportsRead = {ISO14443ACardData.class},
         supportsWrite = {},
         supportsEmulate = {ISO14443ACardData.class}
 )
-@UsbCardDevice.UsbIds({@UsbCardDevice.UsbIds.Ids(vendorId = 0x16d0, productId = 0x4b2)})
-public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
+
+@UsbCardDevice.UsbIds({
+        @UsbCardDevice.UsbIds.Ids(vendorId = 0x16d0, productId = 0x4b2), //Chameleon Mini Rev.G
+})
+
+public class ChameleonMiniRevGDevice extends LineBasedUsbSerialCardDevice
         implements CardDevice.Versioned {
 
     private final Semaphore semaphore = new Semaphore(1);
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
     public ChameleonMiniDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice, "\r\n", "ISO-8859-1");
 
         setStatus(context.getString(R.string.idle));
+=======
+    public ChameleonMiniRevGDevice(Context context, UsbDevice usbDevice) throws IOException {
+        super(context, usbDevice, "\r\n", "ISO-8859-1", context.getString(R.string.idle));
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
     }
 
     @Override
@@ -107,8 +117,15 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                 try {
                     setReceiving(true);
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                     try {
                         send("CONFIG=ISO14443A_READER");
+=======
+    @Override
+    public Intent getDeviceActivityIntent(Context context) {
+        return ChameleonMiniRevGActivity.getStartActivityIntent(context, this);
+    }
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
                         receive(new WatchdogReceiveSink<String, Void>(3000) {
                             private int state;
@@ -163,6 +180,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         ++state;
                                         break;
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                                     case 4:
                                         String[] lineAtqa = in.split(":");
                                         atqa = Short.reverseBytes(
@@ -181,6 +199,28 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                     case 6:
                                         String[] lineSak = in.split(":");
                                         sak = (byte) Integer.parseInt(lineSak[1].trim(), 16);
+=======
+        @Override
+        @WorkerThread
+        public void execute(final Context context,
+                final ShouldContinueCallback shouldContinueCallback, final ResultSink resultSink)
+                throws IOException {
+            final ChameleonMiniRevGDevice chameleonMiniRevGDevice =
+                    (ChameleonMiniRevGDevice) getCardDeviceOrThrow();
+
+            if (!chameleonMiniRevGDevice.tryAcquireAndSetStatus(context.getString(R.string.reading))) {
+                throw new IOException(context.getString(R.string.device_busy));
+            }
+
+            try {
+                chameleonMiniRevGDevice.setReceiving(true);
+
+                try {
+                    chameleonMiniRevGDevice.send("CONFIG=ISO14443A_READER");
+
+                    chameleonMiniRevGDevice.receive(new WatchdogReceiveSink<String, Void>(3000) {
+                        private int state;
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
                                         cardDataSink.onCardData(
                                                 new ISO14443ACardData(atqa, uid, sak, null));
@@ -189,7 +229,11 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                             break;
                                         }
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                                         resetWatchdog();
+=======
+                                    chameleonMiniRevGDevice.send("TIMEOUT=2");
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
                                         send("IDENTIFY");
 
@@ -197,8 +241,12 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                         break;
                                 }
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                                 return null;
                             }
+=======
+                                    chameleonMiniRevGDevice.send("IDENTIFY");
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
                             @Override
                             public boolean wantsMore() {
@@ -220,10 +268,17 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
         }).start();
     }
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
     @Override
     public void emulateCardData(final CardData cardData, final CardDataOperationCallbacks callbacks)
             throws IOException {
         // TODO: ask what slot if not specified in settings here
+=======
+                                        case "203:TIMEOUT":
+                                            resetWatchdog();
+                                            chameleonMiniRevGDevice.send("IDENTIFY");
+                                            break;
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
         if (!tryAcquireAndSetStatus(context.getString(R.string.emulating))) {
             throw new IOException(context.getString(R.string.device_busy));
@@ -281,8 +336,12 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                                     R.string.command_error, "UID=", in));
                                         }
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                                         return true;
                                 }
+=======
+                                    chameleonMiniRevGDevice.send("IDENTIFY");
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
                                 return null;
                             }
@@ -299,8 +358,17 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                         setReceiving(false);
                     }
                 } finally {
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                     releaseAndSetStatus();
                 }
+=======
+                    chameleonMiniRevGDevice.setReceiving(false);
+                }
+            } finally {
+                chameleonMiniRevGDevice.releaseAndSetStatus();
+            }
+        }
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
                 callbacks.onFinish();
             }
@@ -318,11 +386,32 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
             throw new IOException(context.getString(R.string.device_busy));
         }
 
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
         try {
             setReceiving(true);
 
             try {
                 send("VERSION?");
+=======
+        @Override
+        @WorkerThread
+        public void execute(final Context context,
+                final ShouldContinueCallback shouldContinueCallback) throws IOException {
+            if (isWrite()) {
+                throw new RuntimeException("Can't write");
+            }
+
+            final ChameleonMiniRevGDevice chameleonMiniRevGDevice =
+                    (ChameleonMiniRevGDevice) getCardDeviceOrThrow();
+
+            if (!chameleonMiniRevGDevice.tryAcquireAndSetStatus(
+                    context.getString(R.string.emulating))) {
+                throw new IOException(context.getString(R.string.device_busy));
+            }
+
+            try {
+                chameleonMiniRevGDevice.setReceiving(true);
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
 
 <<<<<<< HEAD
                 String version = receive(new WatchdogReceiveSink<String, String>(3000) {
@@ -340,11 +429,11 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                     // TODO: prompt user for card slot or use default
                     int slot =
                             PreferenceManager.getDefaultSharedPreferences(context)
-                                    .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY,
+                                    .getInt(ChameleonMiniRevGActivity.DEFAULT_SLOT_KEY,
                                             1);
-                    chameleonMiniDevice.send(chameleonMiniSetting + slot);
-                    String lineSetting = chameleonMiniDevice.receive(1000);
-                    if (!lineSetting.equals("100:OK")) {
+                    chameleonMiniRevGDevice.send(chameleonMiniSetting + slot);
+                    String lineSetting = chameleonMiniRevGDevice.receive(1000);
+                    if (lineSetting == null || !lineSetting.equals("100:OK")) {
                         throw new IOException(context.getString(
                                 R.string.command_error, chameleonMiniSetting, lineSetting));
                     }
@@ -358,9 +447,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                     } else {
                         throw new IOException("Failed to set Chameleon Mini card type using CONFIG= command");
                     }
-                    chameleonMiniDevice.send(chameleonMiniConfig);
-                    String lineConfig = chameleonMiniDevice.receive(1000);
-                    if (!lineConfig.equals("100:OK")) {
+                    chameleonMiniRevGDevice.send(chameleonMiniConfig);
+                    String lineConfig = chameleonMiniRevGDevice.receive(1000);
+                    if (lineConfig == null || !lineConfig.equals("100:OK")) {
                         throw new IOException(context.getString(
                                 R.string.command_error, chameleonMiniConfig, lineConfig));
                     }
@@ -381,20 +470,20 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                             MiscUtils.bytesToHex(mifare1k, false));
 
                     // Issue chameleon mini Upload command
-                    chameleonMiniDevice.send(chameleonMiniUpload);
-                    String lineUpload = chameleonMiniDevice.receive(1000);
-                    if (!lineUpload.equals("110:WAITING FOR XMODEM")) {
+                    chameleonMiniRevGDevice.send(chameleonMiniUpload);
+                    String lineUpload = chameleonMiniRevGDevice.receive(1000);
+                    if (lineUpload == null || !lineUpload.equals("110:WAITING FOR XMODEM")) {
                         throw new IOException(context.getString(
                                 R.string.command_error, chameleonMiniUpload, lineUpload));
                     }
 
                     // Switch to bytewise mode and send Mifare1k card data to chameleon mini via XModem
-                    chameleonMiniDevice.setBytewise(true);
+                    chameleonMiniRevGDevice.setBytewise(true);
                     int currentBlock = 1;
                     byte[] dataBlock;
 
                     while(true){
-                        byte result = chameleonMiniDevice.receiveByte(1000);
+                        byte result = chameleonMiniRevGDevice.receiveByte(1000);
 
                         switch (result){
                             // if 21 = <NAK>
@@ -413,40 +502,40 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                         // Check if the current block is the last, if it is send EOT
                         int totalBlocks = mifare1k.length/128;
                         if (currentBlock - 1 == totalBlocks){
-                            chameleonMiniDevice.sendByte((byte)0x04);
+                            chameleonMiniRevGDevice.sendByte((byte)0x04);
                             break;
                         }
 
                         // Send current block
-                        chameleonMiniDevice.sendByte((byte)0x01);
-                        chameleonMiniDevice.sendByte((byte)currentBlock);
-                        chameleonMiniDevice.sendByte((byte)(255 - currentBlock));
+                        chameleonMiniRevGDevice.sendByte((byte)0x01);
+                        chameleonMiniRevGDevice.sendByte((byte)currentBlock);
+                        chameleonMiniRevGDevice.sendByte((byte)(255 - currentBlock));
                         int i;
                         int checkSum = 0;
                         for (i=0;i<128;i++){
-                            chameleonMiniDevice.sendByte(mifare1k[(currentBlock-1)*128+i]);
+                            chameleonMiniRevGDevice.sendByte(mifare1k[(currentBlock-1)*128+i]);
                             checkSum = checkSum + mifare1k[(currentBlock-1)*128+i];
                         }
-                        chameleonMiniDevice.sendByte((byte)checkSum);
+                        chameleonMiniRevGDevice.sendByte((byte)checkSum);
                     }
 
 
                     /*
 
-                    chameleonMiniDevice.send("CONFIG=MF_CLASSIC_1K");
+                    chameleonMiniRevGDevice.send("CONFIG=MF_CLASSIC_1K");
 
-                    String line = chameleonMiniDevice.receive(1000);
+                    String line = chameleonMiniRevGDevice.receive(1000);
 
-                    chameleonMiniDevice.setBytewise(true);
+                    chameleonMiniRevGDevice.setBytewise(true);
 
-                    chameleonMiniDevice.sendByte((byte) 'A');
+                    chameleonMiniRevGDevice.sendByte((byte) 'A');
 
 
-                    byte s = chameleonMiniDevice.receiveByte(1000);
+                    byte s = chameleonMiniRevGDevice.receiveByte(1000);
 
                     /*****/
 
-                    /*chameleonMiniDevice.receive(new WatchdogReceiveSink<String, Boolean>(3000) {
+                    /*chameleonMiniRevGDevice.receive(new WatchdogReceiveSink<String, Boolean>(3000) {
                         private int state;
 
                         @Override
@@ -460,9 +549,9 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 
                                     int slot =
                                             PreferenceManager.getDefaultSharedPreferences(context)
-                                                    .getInt(ChameleonMiniActivity.DEFAULT_SLOT_KEY,
+                                                    .getInt(ChameleonMiniRevGActivity.DEFAULT_SLOT_KEY,
                                                             1);
-                                    chameleonMiniDevice.send("SETTING=" + slot);
+                                    chameleonMiniRevGDevice.send("SETTING=" + slot);
 
                                     ++state;
                                     break;
@@ -474,7 +563,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
                                     }
 
                                     MifareCardData mifareCardData = (MifareCardData) getCardData();
-                                    chameleonMiniDevice.send(
+                                    chameleonMiniRevGDevice.send(
                                             "UID=" + String.format("%08x", mifareCardData.uid));
 
                                     ++state;
@@ -514,13 +603,21 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 =======
                     });*/
                 } finally {
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                     chameleonMiniDevice.setReceiving(false);
 >>>>>>> e4e4612d... Start work on Chameleon Mini Mifare 1k support
+=======
+                    chameleonMiniRevGDevice.setReceiving(false);
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
                 }
 
                 return version;
             } finally {
+<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                 setReceiving(false);
+=======
+                chameleonMiniRevGDevice.releaseAndSetStatus();
+>>>>>>> ad9457cd... Initial Rev E Rebooted Support:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniRevGDevice.java
             }
         } finally {
             releaseAndSetStatus();

@@ -28,7 +28,8 @@ import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
+import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevERebootedDevice;
+import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevGDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
 import java.lang.reflect.Constructor;
@@ -60,7 +61,8 @@ public enum CardDeviceManager {
     private static final Set<Class<? extends UsbCardDevice>> usbCardDeviceClasses =
             new HashSet<Class<? extends UsbCardDevice>>(Arrays.asList(
                     Proxmark3Device.class,
-                    ChameleonMiniDevice.class));
+                    ChameleonMiniRevGDevice.class,
+                    ChameleonMiniRevERebootedDevice.class));
 
     private final Map<Integer, CardDevice> cardDevices = new LinkedHashMap<>();
 

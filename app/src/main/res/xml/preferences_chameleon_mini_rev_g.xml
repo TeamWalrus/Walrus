@@ -18,15 +18,17 @@
   ~ along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <declare-styleable name="WalrusCardView">
-        <attr name="editable" format="boolean"/>
-    </declare-styleable>
+    <com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniSlotPickerPreference
+        android:defaultValue="1"
+        android:key="default_chameleon_mini_rev_g_cardslot"
+        android:summary="@string/default_card_slot_preference_message"
+        android:title="@string/default_card_slot_preference"
+        style="@style/AppPreference.DialogPreference"
+        app:minSlot="1"
+        app:maxSlot="8"/>
 
-    <declare-styleable name="ChameleonMiniSlotPickerPreference">
-        <attr name="minSlot" format="integer"/>
-        <attr name="maxSlot" format="integer"/>
-    </declare-styleable>
-
-</resources>
+</android.support.v7.preference.PreferenceScreen>
