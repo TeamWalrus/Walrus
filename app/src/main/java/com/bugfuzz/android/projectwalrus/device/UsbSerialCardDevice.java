@@ -43,8 +43,41 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
     private volatile boolean receiving;
     private byte[] buffer = new byte[0];
 
+<<<<<<< HEAD
     protected UsbSerialCardDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice);
+=======
+    protected UsbSerialDevice.UsbReadCallback readCallback = new UsbSerialInterface.UsbReadCallback() {
+        @Override
+        public void onReceivedData(byte[] in) {
+            Logger.getAnonymousLogger().info(">>> read: " + new String(in) + " - " + MiscUtils.bytesToHex(in, false));
+            buffer = ArrayUtils.addAll(buffer, in);
+
+            for (; ; ) {
+                Pair<T, Integer> sliced = sliceIncoming(buffer);
+                if (sliced == null) {
+                    break;
+                }
+                Logger.getAnonymousLogger().info("sliced: " + sliced.first);
+
+                buffer = ArrayUtils.subarray(buffer, sliced.second, buffer.length);
+
+                if (receiving) {
+                    // CHECKSTYLE:OFF EmptyCatchBlock
+                    try {
+                        receiveQueue.put(sliced.first);
+                    } catch (InterruptedException ignored) {
+                    }
+                    // CHECKSTYLE:ON EmptyCatchBlock
+                }
+            }
+        }
+    };
+
+    protected UsbSerialCardDevice(Context context, UsbDevice usbDevice, String status)
+            throws IOException {
+        super(context, usbDevice, status);
+>>>>>>> 2db42faf... Fixes Chameleon Mini switching between stream and byte mode (#104)
 
         usbSerialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice, usbDeviceConnection);
         if (!usbSerialDevice.open()) {
@@ -53,32 +86,7 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
 
         setupSerialParams(usbSerialDevice);
 
-        usbSerialDevice.read(new UsbSerialInterface.UsbReadCallback() {
-            @Override
-            public void onReceivedData(byte[] in) {
-                Logger.getAnonymousLogger().info(">>> read: " + new String(in) + " - " + MiscUtils.bytesToHex(in, false));
-                buffer = ArrayUtils.addAll(buffer, in);
-
-                for (; ; ) {
-                    Pair<T, Integer> sliced = sliceIncoming(buffer);
-                    if (sliced == null) {
-                        break;
-                    }
-                    Logger.getAnonymousLogger().info("sliced: " + sliced.first);
-
-                    buffer = ArrayUtils.subarray(buffer, sliced.second, buffer.length);
-
-                    if (receiving) {
-                        // CHECKSTYLE:OFF EmptyCatchBlock
-                        try {
-                            receiveQueue.put(sliced.first);
-                        } catch (InterruptedException ignored) {
-                        }
-                        // CHECKSTYLE:ON EmptyCatchBlock
-                    }
-                }
-            }
-        });
+        usbSerialDevice.read(readCallback);
     }
 
     protected void setupSerialParams(UsbSerialDevice usbSerialDevice) {

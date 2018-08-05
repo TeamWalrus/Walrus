@@ -251,46 +251,53 @@ public class ChameleonMiniRevERebootedDevice extends LineBasedUsbSerialCardDevic
 
                     // Switch to bytewise mode and send Mifare1k card data to chameleon mini via XModem
                     ChameleonMiniRevERebootedDevice.setBytewise(true);
-                    int currentBlock = 1;
-                    byte[] dataBlock;
+                    try {
+                        int currentBlock = 1;
 
-                    while(true){
-                        byte result = ChameleonMiniRevERebootedDevice.receiveByte(1000);
+                        byte[] dataBlock;
 
-                        switch (result){
-                            // if 21 = <NAK>
-                            case 21 :
+                        while (true) {
+                            byte result = ChameleonMiniRevERebootedDevice.receiveByte(1000);
+
+                            switch (result) {
+                                // if 21 = <NAK>
+                                case 21:
+                                    break;
+
+                                // if 6 = <ACK>
+                                case 6:
+                                    currentBlock++;
+                                    break;
+
+                                default:
+                                    throw new IOException("Unknown byte: " + result);
+                            }
+
+                            // Check if the current block is the last, if it is send EOT
+                            int totalBlocks = mifare1k.length / 128;
+                            if (currentBlock - 1 == totalBlocks) {
+                                ChameleonMiniRevERebootedDevice.sendByte((byte) 0x04);
+                                continue;
+                            } else if (currentBlock - 1 >= totalBlocks) {
                                 break;
+                            }
 
-                            // if 6 = <ACK>
-                            case 6 :
-                                currentBlock++;
-                                break;
-
-                            default:
-                                throw new IOException("Unknown byte: " + result);
+                            // Send current block
+                            ChameleonMiniRevERebootedDevice.sendByte((byte) 0x01);
+                            ChameleonMiniRevERebootedDevice.sendByte((byte) currentBlock);
+                            ChameleonMiniRevERebootedDevice.sendByte((byte) (255 - currentBlock));
+                            int i;
+                            int checkSum = 0;
+                            for (i = 0; i < 128; i++) {
+                                ChameleonMiniRevERebootedDevice.sendByte(
+                                        mifare1k[(currentBlock - 1) * 128 + i]);
+                                checkSum = checkSum + mifare1k[(currentBlock - 1) * 128 + i];
+                            }
+                            ChameleonMiniRevERebootedDevice.sendByte((byte) checkSum);
                         }
-
-                        // Check if the current block is the last, if it is send EOT
-                        int totalBlocks = mifare1k.length/128;
-                        if (currentBlock - 1 == totalBlocks){
-                            ChameleonMiniRevERebootedDevice.sendByte((byte)0x04);
-                            break;
-                        }
-
-                        // Send current block
-                        ChameleonMiniRevERebootedDevice.sendByte((byte)0x01);
-                        ChameleonMiniRevERebootedDevice.sendByte((byte)currentBlock);
-                        ChameleonMiniRevERebootedDevice.sendByte((byte)(255 - currentBlock));
-                        int i;
-                        int checkSum = 0;
-                        for (i=0;i<128;i++){
-                            ChameleonMiniRevERebootedDevice.sendByte(mifare1k[(currentBlock-1)*128+i]);
-                            checkSum = checkSum + mifare1k[(currentBlock-1)*128+i];
-                        }
-                        ChameleonMiniRevERebootedDevice.sendByte((byte)checkSum);
+                    } finally {
+                        ChameleonMiniRevERebootedDevice.setBytewise(false);
                     }
-
                 } finally {
                     ChameleonMiniRevERebootedDevice.setReceiving(false);
                 }

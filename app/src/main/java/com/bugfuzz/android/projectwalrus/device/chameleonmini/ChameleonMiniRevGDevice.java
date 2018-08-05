@@ -479,106 +479,31 @@ public class ChameleonMiniRevGDevice extends LineBasedUsbSerialCardDevice
 
                     // Switch to bytewise mode and send Mifare1k card data to chameleon mini via XModem
                     chameleonMiniRevGDevice.setBytewise(true);
-                    int currentBlock = 1;
-                    byte[] dataBlock;
-
-                    while(true){
-                        byte result = chameleonMiniRevGDevice.receiveByte(1000);
-
-                        switch (result){
-                            // if 21 = <NAK>
-                            case 21 :
-                                break;
-
-                            // if 6 = <ACK>
-                            case 6 :
-                                currentBlock++;
-                                break;
-
-                            default:
-                                throw new IOException("Unknown byte: " + result);
-                        }
-
-                        // Check if the current block is the last, if it is send EOT
-                        int totalBlocks = mifare1k.length/128;
-                        if (currentBlock - 1 == totalBlocks){
-                            chameleonMiniRevGDevice.sendByte((byte)0x04);
-                            break;
-                        }
-
-                        // Send current block
-                        chameleonMiniRevGDevice.sendByte((byte)0x01);
-                        chameleonMiniRevGDevice.sendByte((byte)currentBlock);
-                        chameleonMiniRevGDevice.sendByte((byte)(255 - currentBlock));
-                        int i;
-                        int checkSum = 0;
-                        for (i=0;i<128;i++){
-                            chameleonMiniRevGDevice.sendByte(mifare1k[(currentBlock-1)*128+i]);
-                            checkSum = checkSum + mifare1k[(currentBlock-1)*128+i];
-                        }
-                        chameleonMiniRevGDevice.sendByte((byte)checkSum);
-                    }
+                    try {
+                        int currentBlock = 1;
 
 
-                    /*
+                        byte[] dataBlock;
 
-                    chameleonMiniRevGDevice.send("CONFIG=MF_CLASSIC_1K");
+                        while (true) {
+                            byte result = chameleonMiniRevGDevice.receiveByte(1000);
 
-                    String line = chameleonMiniRevGDevice.receive(1000);
-
-                    chameleonMiniRevGDevice.setBytewise(true);
-
-                    chameleonMiniRevGDevice.sendByte((byte) 'A');
-
-
-                    byte s = chameleonMiniRevGDevice.receiveByte(1000);
-
-                    /*****/
-
-                    /*chameleonMiniRevGDevice.receive(new WatchdogReceiveSink<String, Boolean>(3000) {
-                        private int state;
-
-                        @Override
-                        public Boolean onReceived(String in) throws IOException {
-                            switch (state) {
-                                case 0:
-                                    if (!in.equals("100:OK")) {
-                                        throw new IOException(context.getString(
-                                                R.string.command_error, "CONFIG=", in));
-                                    }
-
-                                    int slot =
-                                            PreferenceManager.getDefaultSharedPreferences(context)
-                                                    .getInt(ChameleonMiniRevGActivity.DEFAULT_SLOT_KEY,
-                                                            1);
-                                    chameleonMiniRevGDevice.send("SETTING=" + slot);
-
-                                    ++state;
+                            switch (result) {
+                                // if 21 = <NAK>
+                                case 21:
                                     break;
 
-                                case 1:
-                                    if (!in.equals("100:OK")) {
-                                        throw new IOException(context.getString(
-                                                R.string.command_error, "SETTING=", in));
-                                    }
-
-                                    MifareCardData mifareCardData = (MifareCardData) getCardData();
-                                    chameleonMiniRevGDevice.send(
-                                            "UID=" + String.format("%08x", mifareCardData.uid));
-
-                                    ++state;
+                                // if 6 = <ACK>
+                                case 6:
+                                    currentBlock++;
                                     break;
 
-                                case 2:
-                                    if (!in.equals("100:OK")) {
-                                        throw new IOException(context.getString(
-                                                R.string.command_error, "UID=", in));
-                                    }
-
-                                    return true;
+                                default:
+                                    throw new IOException("Unknown byte: " + result);
                             }
 >>>>>>> e4e4612d... Start work on Chameleon Mini Mifare 1k support
 
+<<<<<<< HEAD
                     @Override
                     public String onReceived(String in) throws IOException {
                         switch (state) {
@@ -602,6 +527,33 @@ public class ChameleonMiniRevGDevice extends LineBasedUsbSerialCardDevice
                     throw new IOException(context.getString(R.string.get_version_timeout));
 =======
                     });*/
+=======
+                            // Check if the current block is the last, if it is send EOT
+                            int totalBlocks = mifare1k.length / 128;
+                            if (currentBlock - 1 == totalBlocks) {
+                                chameleonMiniRevGDevice.sendByte((byte) 0x04);
+                                continue;
+                            } else if (currentBlock - 1 >= totalBlocks) {
+                                break;
+                            }
+
+                            // Send current block
+                            chameleonMiniRevGDevice.sendByte((byte) 0x01);
+                            chameleonMiniRevGDevice.sendByte((byte) currentBlock);
+                            chameleonMiniRevGDevice.sendByte((byte) (255 - currentBlock));
+                            int i;
+                            int checkSum = 0;
+                            for (i = 0; i < 128; i++) {
+                                chameleonMiniRevGDevice.sendByte(
+                                        mifare1k[(currentBlock - 1) * 128 + i]);
+                                checkSum = checkSum + mifare1k[(currentBlock - 1) * 128 + i];
+                            }
+                            chameleonMiniRevGDevice.sendByte((byte) checkSum);
+                        }
+                    } finally {
+                        chameleonMiniRevGDevice.setBytewise(false);
+                    }
+>>>>>>> 2db42faf... Fixes Chameleon Mini switching between stream and byte mode (#104)
                 } finally {
 <<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/chameleonmini/ChameleonMiniDevice.java
                     chameleonMiniDevice.setReceiving(false);
