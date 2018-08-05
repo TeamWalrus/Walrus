@@ -30,6 +30,23 @@
     <!-- Application name -->
     <string name="app_name" translatable="false">Walrus</string>
 
+    <!--
+        WalletActivity
+    -->
+
+    <!--
+        Update Notification Dialog
+    -->
+
+    <!-- Update notification title displayed when the application starts -->
+    <string name="update_notification_title">Important Notification</string>
+
+    <!-- Update notification message displayed when the application starts -->
+    <string name="update_notification_message">Hi Alpha Testers! ❤️\n\nSome upcoming releases will contain new features such as extended device and card support and general bugfixes. However, future releases will most likely also contain database schema as well as architecture changes to an extent where it is difficult for us to correctly migrate databases across. This means any existing cards will be lost between future releases until we leave alpha or we notify otherwise.\n\nWe recommend you manually store card information in the meantime and apologize for any inconvenience caused!\n\n- Team Walrus</string>
+
+    <!-- Update notification button text-->
+    <string name="update_notification_neutral_button">OK</string>
+
 
     <!--
         BulkReadCardDataSink
