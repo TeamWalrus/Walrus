@@ -53,7 +53,7 @@ public class DeleteAllCardsPreference extends DialogPreference {
         public Dialog onCreateDialog(final Bundle savedInstanceState) {
             return new MaterialDialog.Builder(getActivity())
                     .title(R.string.warning)
-                    .titleColorRes(R.color.warning)
+                    .titleColorRes(R.color.secondaryColor)
                     .content(R.string.delete_all_cards)
                     .positiveText(R.string.delete_button)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
