@@ -37,15 +37,14 @@
         tools:ignore="AlwaysShowAction"/>
 
     <item
-        android:id="@+id/devices"
-        android:icon="@drawable/ic_device_hub_white_24px"
-        android:title="@string/devices"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction"/>
-
-    <item
         android:id="@+id/settings"
+        android:orderInCategory="1"
         android:title="@string/settings"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/devices"
+        android:orderInCategory="2"
+        android:title="@string/devices"
+        app:showAsAction="never"/>
 </menu>
