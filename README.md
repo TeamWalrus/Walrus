@@ -1,7 +1,8 @@
 # Walrus
 [![Build Status](https://img.shields.io/badge/status-alpha-orange.svg)](https://play.google.com/store/apps/details?id=com.bugfuzz.android.projectwalrus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
-[![GitHub release](https://img.shields.io/badge/release-v0.1-blue.svg)](https://github.com/TeamWalrus/Walrus/releases/)
+[![GitHub release](https://img.shields.io/badge/release-v0.1.1-blue.svg)](https://github.com/TeamWalrus/Walrus/releases/)
 [![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE)
+[![Slack invite](https://img.shields.io/badge/chat-on%20slack-00aac1.svg)](https://join.slack.com/t/walrusapp/shared_invite/enQtNDI0NDc1MDMzNDk0LTk5MTdhNWE4ZjBkNDBkOTkzY2EzMWE0ZWU3MDEwZjYzZmViZDFlZDQ5NDU1ZmZkZTdkMWVjMDVjYzkxZDFjODA)
 
 ## Intro
 
@@ -61,20 +62,21 @@ Here’s a table of the current devices / card type pairs we support and in what
 
 **Key**: R = reading, W = writing, E = emulating, WIP = work in progress, NSY = Not Supported Yet (by hardware)
 
-|                        | Proxmark3 | Chameleon Mini Rev.G|
-|------------------------|:---------:|:-------------------:|
-| **HID Prox**           | R / W     | -                   |
-| **ISO14443A - UID**    | WIP       | R / E               |
-| **Mifare Ultralight**  | WIP       | WIP                 |
-| **Mifare Classic 1K**  | WIP       | R=NSY / E=WIP       |
-| **Mifare Classic 4K**  | WIP       | R=NSY / E=WIP       |
-| **Mifare Classic 4B**  | WIP       | R=NSY / E=WIP       |
-| **Mifare Classic 7B**  | WIP       | R=NSY / E=WIP       |
-| **Mifare DESFire**     | NSY       | NSY                 |
+|                        | Proxmark3 | Chameleon Mini (Rev.G/Rev.E Rebooted)|
+|------------------------|:---------:|:------------------------------------:|
+| **HID Prox**           | R / W     | -                                    |
+| **ISO14443A - UID**    | WIP       | E                                    |
+| **Mifare Ultralight**  | WIP       | WIP                                  |
+| **Mifare Classic 1K**  | WIP       | E=WIP                                |
+| **Mifare Classic 4K**  | WIP       | E=WIP                                |
+| **Mifare Classic 4B**  | WIP       | E=WIP                                |
+| **Mifare Classic 7B**  | WIP       | E=WIP                                |
+| **Mifare DESFire**     | NSY       | NSY                                  |
 
 ## Contributing
 
 We welcome all kinds of contributions and bug reports, big or small! Development takes place at our [GitHub repository](https://github.com/TeamWalrus/Walrus). There you can file issues (both bugs and enhancement requests) and submit pull requests.
+Feel free to join our [Slack channel](https://join.slack.com/t/walrusapp/shared_invite/enQtNDI0NDc1MDMzNDk0LTk5MTdhNWE4ZjBkNDBkOTkzY2EzMWE0ZWU3MDEwZjYzZmViZDFlZDQ5NDU1ZmZkZTdkMWVjMDVjYzkxZDFjODA). 
 
 During the initial development of Walrus, changes to the codebase are likely to be frequent and wide-ranging, so if you want to work on a feature, it's wise to reach out first to ensure that your hard work won't be soon obsoleted. After our first full release we hope to gain stability and bring in some of the additional resources expected of a project today, such as a proper test suite and continuous integration.
 
