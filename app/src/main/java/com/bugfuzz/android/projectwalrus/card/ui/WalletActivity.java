@@ -78,6 +78,7 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.App_WithTransitions);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_mywallet);

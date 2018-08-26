@@ -18,18 +18,13 @@
   ~ along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
 
-    <color name="primaryColor">#00aac1</color>
-    <color name="primaryLightColor">#5ddcf4</color>
-    <color name="primaryDarkColor">#007a91</color>
-    <color name="secondaryColor">#c11700</color>
-    <color name="secondaryLightColor">#fc542f</color>
-    <color name="secondaryDarkColor">#890000</color>
+    <item android:drawable="@color/primaryColor"/>
 
-    <color name="primaryCardTextColor">#212121</color>
-    <color name="primaryCardBackground">#cfd8dc</color>
-    <color name="secondaryCardTextColor">#e0e0e0</color>
-    <color name="secondaryCardBackground">#374c4f</color>
+    <item>
+    <bitmap android:src="@drawable/drawable_splashscreen"
+            android:gravity="center"/>
+    </item>
 
-</resources>
+</layer-list>
