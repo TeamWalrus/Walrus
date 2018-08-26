@@ -32,4 +32,6 @@
     <color name="secondaryCardTextColor">#e0e0e0</color>
     <color name="secondaryCardBackground">#374c4f</color>
 
+    <color name="ic_launcher_background">#00AAC1</color>
+
 </resources>

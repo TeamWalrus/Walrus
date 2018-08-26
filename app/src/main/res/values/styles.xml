@@ -38,7 +38,7 @@
     <style name="App.WithTransitions.LauncherActivity">
         <item name="android:windowBackground">@drawable/drawable_launch_screen</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:colorBackground">@color/primaryColor</item>
+        <item name="android:colorBackground">@color/ic_launcher_background</item>
     </style>
 
 </resources>
