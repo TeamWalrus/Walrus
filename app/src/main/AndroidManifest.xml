@@ -103,7 +103,8 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_activity_name"
-            android:parentActivityName=".card.ui.WalletActivity"/>
+            android:parentActivityName=".card.ui.WalletActivity"
+            android:theme="@style/AppPreference.SettingActivity"/>
 
         <activity
             android:name=".ui.WebViewActivity"
