@@ -34,6 +34,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.bugfuzz.android.projectwalrus.card.carddata.EMCardData;
 import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
@@ -115,13 +116,14 @@ public class WalrusApplication extends Application {
         PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini, false);
 
         HIDCardData.setup(context);
+        EMCardData.setup(context);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 new DeviceChangedBroadcastHandler(),
                 new IntentFilter(CardDeviceManager.ACTION_UPDATE));
 
         if (BuildConfig.DEBUG) {
-            CardDeviceManager.INSTANCE.addDebugDevice(this);
+            //CardDeviceManager.INSTANCE.addDebugDevice(this);
         }
 
         new Thread(new Runnable() {
@@ -147,15 +149,13 @@ public class WalrusApplication extends Application {
                     return;
                 }
 
-                toast = getString(R.string.device_connected,
-                        cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
+                toast = getString(R.string.device_connected, cardDevice.getClass().getAnnotation(UsbCardDevice.Metadata.class).name());
 
                 timings = new long[]{200, 200, 200, 200, 200};
                 amplitudes = new int[]{255, 0, 255, 0, 255};
                 singleTiming = 300;
             } else {
-                toast = getString(R.string.device_disconnected,
-                        intent.getStringExtra(CardDeviceManager.EXTRA_DEVICE_NAME));
+                toast = getString(R.string.device_disconnected, intent.getStringExtra(CardDeviceManager.EXTRA_DEVICE_NAME));
 
                 timings = new long[]{500, 200, 500, 200, 500};
                 amplitudes = new int[]{255, 0, 255, 0, 255};

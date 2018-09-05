@@ -45,9 +45,19 @@ public abstract class UsbSerialCardDevice<T> extends UsbCardDevice {
         super(context, usbDevice);
 
         usbSerialDevice = UsbSerialDevice.createUsbSerialDevice(usbDevice, usbDeviceConnection);
-        if (!usbSerialDevice.open()) {
+        try{
+            boolean res = usbSerialDevice.open();
+            if (res){
+                throw new IOException(context.getString(R.string.failed_open_usb_serial_device));
+            }
+        }
+        catch(Exception e){
+
             throw new IOException(context.getString(R.string.failed_open_usb_serial_device));
         }
+       // if (!usbSerialDevice.open()) {
+           // throw new IOException(context.getString(R.string.failed_open_usb_serial_device));
+
 
         setupSerialParams(usbSerialDevice);
 

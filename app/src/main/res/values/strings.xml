@@ -367,6 +367,36 @@
 
 
     <!--
+        EMCardData
+    -->
+
+    <!-- Component label -->
+    <string name="em_format">Format</string>
+
+    <!-- Format type -->
+    <string name="em_raw">Raw</string>
+
+    <!-- Format type -->
+    <string name="em_26_bit">Test HID 26-bit (H10301)</string>
+
+    <!-- Format type -->
+    <string name="em_34_bit">Test HID 34-bit (H10306)</string>
+
+    <!-- Component label -->
+    <string name="em_data">Data (hex)</string>
+
+    <!-- Component label -->
+    <string name="em_card_number">Card Number</string>
+
+    <!-- Message -->
+    <string name="em_format_autodetected">This format was autodetected</string>
+
+
+
+
+
+
+    <!--
         menu_bulk_read_card
     -->
 

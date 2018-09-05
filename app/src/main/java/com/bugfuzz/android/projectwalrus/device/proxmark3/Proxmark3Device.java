@@ -26,6 +26,7 @@ import android.util.Pair;
 
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
+import com.bugfuzz.android.projectwalrus.card.carddata.EMCardData;
 import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
@@ -46,8 +47,8 @@ import java.util.regex.Pattern;
 @CardDevice.Metadata(
         name = "Proxmark3",
         iconId = R.drawable.drawable_proxmark3,
-        supportsRead = {HIDCardData.class},
-        supportsWrite = {HIDCardData.class},
+        supportsRead = {HIDCardData.class, EMCardData.class},
+        supportsWrite = {HIDCardData.class, EMCardData.class},
         supportsEmulate = {}
 )
 @UsbCardDevice.UsbIds({
