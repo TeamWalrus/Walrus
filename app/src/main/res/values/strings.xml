@@ -377,10 +377,7 @@
     <string name="em_raw">Raw</string>
 
     <!-- Format type -->
-    <string name="em_26_bit">Test HID 26-bit (H10301)</string>
-
-    <!-- Format type -->
-    <string name="em_34_bit">Test HID 34-bit (H10306)</string>
+    <string name="em_40_bit">EM 40-bit</string>
 
     <!-- Component label -->
     <string name="em_data">Data (hex)</string>

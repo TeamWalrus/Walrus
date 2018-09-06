@@ -50,8 +50,8 @@ import java.util.Random;
 
 @Parcel
 @CardData.Metadata(
-        name = "EM",
-        iconId = R.drawable.drawable_hid,
+        name = "Em Marine",
+        iconId = R.drawable.drawable_em,
         viewDialogFragmentClass = ComponentDialogFragment.class,
         editDialogFragmentClass = ComponentDialogFragment.class
 )
@@ -62,6 +62,7 @@ public class EMCardData extends CardData implements ComponentSourceAndSink {
     public BigInteger data;
     public int dataBinaryFormatId;
     public boolean dataBinaryFormatAutodetected;
+
 
     public EMCardData() {
         data = BigInteger.ZERO;
@@ -89,7 +90,6 @@ public class EMCardData extends CardData implements ComponentSourceAndSink {
     }
 
     public static void setup(Context context) {
-        //String facilityCode = context.getString(R.string.hid_facility_code);
         String cardNumber = context.getString(R.string.em_card_number);
 
         FORMATS = new BinaryFormat[]{
@@ -98,7 +98,6 @@ public class EMCardData extends CardData implements ComponentSourceAndSink {
                                 new OpaqueElement(null, context.getString(R.string.em_data), 0,
                                         null, true)
                         ), "%x")
-
 
         };
     }
@@ -143,6 +142,7 @@ public class EMCardData extends CardData implements ComponentSourceAndSink {
     @Override
     public Component createComponent(Context context, boolean clean, boolean editable) {
         List<ChoiceComponent.Choice> choices = new ArrayList<>();
+
 
         int i = 0;
         for (BinaryFormat format : FORMATS) {
