@@ -132,7 +132,7 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
 
                 new BinaryFormat(context.getString(R.string.hid_37_bit),
                         Arrays.asList(
-                                new FixedElement(null, null, 37, null, BigInteger.ONE),
+                                new FixedElement(null, null, 37, null, BigInteger.ZERO),
                                 new OpaqueElement("card_number", cardNumber, 1, 35, false),
                                 new ParityElement(null, null, 36, 1, 18, 1, 0, 18, true),
                                 new ParityElement(null, null, 0, 1, 1, 1, 0, 18, false)
@@ -140,7 +140,7 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
 
                 new BinaryFormat(context.getString(R.string.hid_37_bit_with_facility_code),
                         Arrays.asList(
-                                new FixedElement(null, null, 37, null, BigInteger.ONE),
+                                new FixedElement(null, null, 37, null, BigInteger.ZERO),
                                 new OpaqueElement("facility_code", facilityCode, 1 + 19, 16, false),
                                 new OpaqueElement("card_number", cardNumber, 1, 19, false),
                                 new ParityElement(null, null, 36, 1, 18, 1, 0, 18, true),
