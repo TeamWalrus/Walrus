@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.preference.PreferenceManager;
+import android.support.annotation.Keep;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +58,7 @@ public class ChameleonMiniDevice extends LineBasedUsbSerialCardDevice
 
     private final Semaphore semaphore = new Semaphore(1);
 
+    @Keep
     public ChameleonMiniDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice, "\r\n", "ISO-8859-1", context.getString(R.string.idle));
     }

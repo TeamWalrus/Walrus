@@ -23,6 +23,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
@@ -80,6 +81,7 @@ public class Proxmark3Device extends UsbSerialCardDevice<Proxmark3Command>
 
     private final Semaphore semaphore = new Semaphore(1);
 
+    @Keep
     public Proxmark3Device(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice, context.getString(R.string.idle));
 
