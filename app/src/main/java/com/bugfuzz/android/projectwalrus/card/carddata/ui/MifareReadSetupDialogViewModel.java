@@ -28,6 +28,7 @@ import com.bugfuzz.android.projectwalrus.card.carddata.MifareCardData;
 import com.bugfuzz.android.projectwalrus.card.carddata.MifareReadStep;
 import com.bugfuzz.android.projectwalrus.card.carddata.StaticKeyMifareReadStep;
 import com.bugfuzz.android.projectwalrus.ui.SimpleBindingListAdapter;
+import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
@@ -52,26 +53,12 @@ public class MifareReadSetupDialogViewModel extends ViewModel {
     public MifareReadSetupDialogViewModel() {
         readStepItems.setValue(new ArrayList<ReadStepItem>());
 
-        // TODO XXX: remove vvv
         onNewReadStep(new StaticKeyMifareReadStep(
-                new LinkedHashSet<>(Arrays.asList(1 * 4 + 3, 6 * 4 + 3)),
+                MiscUtils.parseIntRanges("0-40"),
                 new MifareCardData.Key(
-                        new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, (byte) 0x22,
-                                (byte) 0x22}),
-                MifareReadStep.KeySlotAttempts.A), -1);
-        onNewReadStep(new StaticKeyMifareReadStep(
-                new LinkedHashSet<>(Arrays.asList(2 * 4 + 3, 6 * 4 + 3)),
-                new MifareCardData.Key(
-                        new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, (byte) 0x33,
-                                (byte) 0x33}),
-                MifareReadStep.KeySlotAttempts.A), -1);
-        onNewReadStep(new StaticKeyMifareReadStep(
-                new LinkedHashSet<>(Arrays.asList(6 * 4 + 3)),
-                new MifareCardData.Key(
-                        new byte[]{(byte) 0xde, (byte) 0xad, (byte) 0xbe, (byte) 0xef, (byte) 0x6b,
-                                (byte) 0x6b}),
+                        new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+                                (byte) 0xFF}),
                 MifareReadStep.KeySlotAttempts.BOTH), -1);
-        // TODO XXX: remove ^^^
     }
 
     public LiveData<List<ReadStepItem>> getReadStepItems() {
