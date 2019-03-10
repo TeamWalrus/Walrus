@@ -28,6 +28,11 @@
     !static final <fields>;
 }
 
+# Parceler library
+-keep interface org.parceler.Parcel
+-keep @org.parceler.Parcel class * { *; }
+-keep class **$$Parcelable { *; }
+
 # Don't warn about these being referenced but not found
 -dontwarn com.google.errorprone.**
 -dontwarn com.google.gson.**
