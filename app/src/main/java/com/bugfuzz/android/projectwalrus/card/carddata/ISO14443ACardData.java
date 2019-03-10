@@ -32,6 +32,7 @@ import org.parceler.Parcel;
 import org.parceler.ParcelPropertyConverter;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -140,7 +141,12 @@ public class ISO14443ACardData extends CardData {
 
     @Override
     public String getHumanReadableText() {
-        return "UID " + MiscUtils.bytesToHex(uid.toByteArray(), false);
+        byte[] uidArray = uid.toByteArray();
+        if (uidArray[0] == 0x00) {
+            return "UID " + MiscUtils.bytesToHex(Arrays.copyOfRange(uidArray,1,uidArray.length), false);
+        } else {
+            return "UID " + MiscUtils.bytesToHex(uidArray, false);
+        }
     }
 
     @Override
