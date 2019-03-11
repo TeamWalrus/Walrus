@@ -1,6 +1,6 @@
 # Walrus
 [![Build Status](https://img.shields.io/badge/status-alpha-orange.svg)](https://play.google.com/store/apps/details?id=com.bugfuzz.android.projectwalrus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
-[![GitHub release](https://img.shields.io/badge/release-v0.1.1-blue.svg)](https://github.com/TeamWalrus/Walrus/releases/)
+[![GitHub release](https://img.shields.io/badge/release-v0.2.1-blue.svg)](https://github.com/TeamWalrus/Walrus/releases/)
 [![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE)
 [![Slack invite](https://img.shields.io/badge/chat-on%20slack-00aac1.svg)](https://join.slack.com/t/walrusapp/shared_invite/enQtNDI0NDc1MDMzNDk0LTk5MTdhNWE4ZjBkNDBkOTkzY2EzMWE0ZWU3MDEwZjYzZmViZDFlZDQ5NDU1ZmZkZTdkMWVjMDVjYzkxZDFjODA)
 
@@ -18,6 +18,7 @@ Designed for physical security assessors during red team engagements, Walrus sup
 
 [Documentation and Getting Started](https://walrus.app/docs/getting-started/). For end-user information such as what Walrus is, and how it can be used in the field, check out the [Walrus website](https://walrus.app/)!
 
+
 ## Development
 
 Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](mailto:team@walrus.app)!) and is [![Open Source](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE)
@@ -27,10 +28,6 @@ Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](m
 Walrus is a standard Android Studio project. At this stage there are no unusual dependencies or build steps beyond the usual cloning of the repository and opening the project in Android Studio.
 
 TODO: When we refresh and remove the current Google Maps API key from the repo, we'll need to point out that this needs to be generated and set manually if maps are needed.
-
-## Testing
-
-We don't currently have a test suite, we're naughty ;\_;
 
 ## Codebase
 
@@ -60,18 +57,18 @@ The current layout of Walrus's source code is as follows:
 ## Device Support
 Here’s a table of the current devices / card type pairs we support and in what manner.
 
-**Key**: R = reading, W = writing, E = emulating, WIP = work in progress, NSY = Not Supported Yet (by hardware)
+**Key**: R = reading, W = writing, E = emulating, WIP = work in progress
 
-|                        | Proxmark3 | Chameleon Mini (Rev.G/Rev.E Rebooted)|
-|------------------------|:---------:|:------------------------------------:|
-| **HID Prox**           | R / W     | -                                    |
-| **ISO14443A - UID**    | WIP       | E                                    |
-| **Mifare Ultralight**  | WIP       | WIP                                  |
-| **Mifare Classic 1K**  | WIP       | E=WIP                                |
-| **Mifare Classic 4K**  | WIP       | E=WIP                                |
-| **Mifare Classic 4B**  | WIP       | E=WIP                                |
-| **Mifare Classic 7B**  | WIP       | E=WIP                                |
-| **Mifare DESFire**     | NSY       | NSY                                  |
+|                        | Proxmark3 | Pm3 Evo | Pm3 RDV4 | Iceman Fork | Chameleon Mini Rev.G | Rev.E Rebooted |
+|------------------------|:---------:|:-------:|:--------:|:-----------:|:--------------------:|:--------------:|
+| **HID Prox**           | R / W     | R / W   | R / W    | R / W       | -                    | -              |
+| **ISO14443A - UID**    | -         | -       | -        |  -          | R / E                | WIP            |
+| **Mifare Ultralight**  | -         | -       | -        |  -          | WIP                  | WIP            |
+| **Mifare Classic 1K**  | R / W     | R / W   | R / W    | R / W       | WIP                  | WIP            |
+| **Mifare Classic 4K**  | ?         | ?       | ?        | ?           | ?                    | ?              |
+| **Mifare Classic 4B**  | ?         | ?       | ?        | ?           | ?                    | ?              |
+| **Mifare Classic 7B**  | ?         | ?       | ?        | ?           | ?                    | ?              |
+| **Mifare DESFire**     | ?         | ?       | ?        | ?           | ?                    | ?              |
 
 ## Contributing
 
@@ -81,3 +78,17 @@ Feel free to join our [Slack channel](https://join.slack.com/t/walrusapp/shared_
 During the initial development of Walrus, changes to the codebase are likely to be frequent and wide-ranging, so if you want to work on a feature, it's wise to reach out first to ensure that your hard work won't be soon obsoleted. After our first full release we hope to gain stability and bring in some of the additional resources expected of a project today, such as a proper test suite and continuous integration.
 
 One area we'd love your help with is contributing translations! If you think you can help us out translating our [Android string resources](https://github.com/TeamWalrus/Walrus/blob/master/app/src/main/res/values/strings.xml) to another language, please get in touch!
+
+
+## FAQ
+
+### App was working before the update!?
+If the app crashes after the update, please try clear the app cache and app data. We have some made pretty big changes in release __0.2.1__ which include database scheme changes. Unfortunately - this means that you will lose the cards currently stored in the database. This sucks, we know - sorry! We are working on a way to make future updates not do this.
+
+
+This can be done in your Android Settings as follows:
+ *Step 1: Open the Android Settings menu.
+ *Step 2: Find Apps (or Applications, depending on your device) in the Settings menu, then locate the Walrus app.
+ *Step 3: Tap on Storage, and then tap the "Clear Data" and "Clear Cache" buttons.
+
+![clear-app-data](https://pbs.twimg.com/media/D1XRwBaU4AAZK5j.jpg:small)
