@@ -59,16 +59,16 @@ Here’s a table of the current devices / card type pairs we support and in what
 
 **Key**: R = reading, W = writing, E = emulating, WIP = work in progress
 
-|                        | Proxmark3 | Pm3 Evo | Pm3 RDV4 | Iceman Fork | Chameleon Mini Rev.G | Rev.E Rebooted |
-|------------------------|:---------:|:-------:|:--------:|:-----------:|:--------------------:|:--------------:|
-| **HID Prox**           | R / W     | R / W   | R / W    | R / W       | -                    | -              |
-| **ISO14443A - UID**    | -         | -       | -        |  -          | R / E                | WIP            |
-| **Mifare Ultralight**  | -         | -       | -        |  -          | WIP                  | WIP            |
-| **Mifare Classic 1K**  | R / W     | R / W   | R / W    | R / W       | WIP                  | WIP            |
-| **Mifare Classic 4K**  | ?         | ?       | ?        | ?           | ?                    | ?              |
-| **Mifare Classic 4B**  | ?         | ?       | ?        | ?           | ?                    | ?              |
-| **Mifare Classic 7B**  | ?         | ?       | ?        | ?           | ?                    | ?              |
-| **Mifare DESFire**     | ?         | ?       | ?        | ?           | ?                    | ?              |
+|                   | Proxmark3 Original | Pm3 Evo | Pm3 RDV4 | Pm3 Iceman Fork | Chameleon Mini Rev.G | C.M Rev.E Rebooted |
+|-----------------------|:------------------:|:-------:|:--------:|:---------------:|:--------------------:|:--------------:|
+| **HID Prox**          | R / W              | R / W   | R / W    | R / W           | -                    | -              |
+| **ISO14443A - UID**   | -                  | -       | -        |  -              | R / E                | WIP            |
+| **Mifare Ultralight** | -                  | -       | -        |  -              | WIP                  | WIP            |
+| **Mifare Classic 1K** | R / W              | R / W   | R / W    | R / W           | WIP                  | WIP            |
+| **Mifare Classic 4K** | ?                  | ?       | ?        | ?               | ?                    | ?              |
+| **Mifare Classic 4B** | ?                  | ?       | ?        | ?               | ?                    | ?              |
+| **Mifare Classic 7B** | ?                  | ?       | ?        | ?               | ?                    | ?              |
+| **Mifare DESFire**    | ?                  | ?       | ?        | ?               | ?                    | ?              |
 
 ## Contributing
 
@@ -87,8 +87,8 @@ If the app crashes after the update, please try clear the app cache and app data
 
 
 This can be done in your Android Settings as follows:
- *Step 1: Open the Android Settings menu.
- *Step 2: Find Apps (or Applications, depending on your device) in the Settings menu, then locate the Walrus app.
- *Step 3: Tap on Storage, and then tap the "Clear Data" and "Clear Cache" buttons.
+ 1. Open the Android Settings menu.
+ 2. Find Apps (or Applications, depending on your device) in the Settings menu, then locate the Walrus app.
+ 3. Tap on Storage, and then tap the "Clear Data" and "Clear Cache" buttons.
 
 ![clear-app-data](https://pbs.twimg.com/media/D1XRwBaU4AAZK5j.jpg:small)
