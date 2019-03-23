@@ -271,7 +271,7 @@
 
 
     <!--
-        ChameleonMiniActivity
+        ChameleonMiniRevGActivity
         Proxmark3Activity
     -->
 
@@ -288,18 +288,18 @@
 
 
     <!--
-        ChameleonMiniActivity
+        ChameleonMiniRevGActivity
     -->
 
     <!-- Activity title -->
-    <string name="chameleon_mini_activity_name" translatable="false">Chameleon Mini</string>
+    <string name="chameleon_mini_activity_name" translatable="false">Chameleon Mini Rev.G</string>
 
     <!-- Device name -->
     <string name="chameleon_mini" translatable="false">Chameleon Mini</string>
 
 
     <!--
-        ChameleonMiniDevice
+        ChameleonMiniRevGDevice
         Proxmark3Device
     -->
 
@@ -323,7 +323,7 @@
 
 
     <!--
-        ChameleonMiniDevice
+        ChameleonMiniRevGDevice
     -->
 
     <!-- Shown in error message -->

@@ -33,21 +33,21 @@ import android.widget.TextView;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
+import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevGDevice;
 import com.bugfuzz.android.projectwalrus.device.ui.FindVersionFragment;
 
 import java.io.IOException;
 
-public class ChameleonMiniActivity extends AppCompatActivity
+public class ChameleonMiniRevGActivity extends AppCompatActivity
         implements FindVersionFragment.OnFindVersionCallback {
 
     public static final String DEFAULT_SLOT_KEY = "default_chameleon_cardslot";
     private static final String EXTRA_DEVICE =
-            "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniActivity"
+            "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevGActivity"
                     + ".EXTRA_DEVICE";
 
-    public static Intent getStartActivityIntent(Context context, ChameleonMiniDevice device) {
-        Intent intent = new Intent(context, ChameleonMiniActivity.class);
+    public static Intent getStartActivityIntent(Context context, ChameleonMiniRevGDevice device) {
+        Intent intent = new Intent(context, ChameleonMiniRevGActivity.class);
 
         intent.putExtra(EXTRA_DEVICE, device.getId());
 
@@ -72,20 +72,20 @@ public class ChameleonMiniActivity extends AppCompatActivity
             finish();
             return;
         }
-        ChameleonMiniDevice chameleonMiniDevice;
+        ChameleonMiniRevGDevice chameleonMiniRevGDevice;
         try {
-            chameleonMiniDevice = (ChameleonMiniDevice) cardDevice;
+            chameleonMiniRevGDevice = (ChameleonMiniRevGDevice) cardDevice;
         } catch (ClassCastException e) {
             finish();
             return;
         }
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings, new ChameleonMiniActivity.SettingsFragment())
+                .replace(R.id.settings, new ChameleonMiniRevGActivity.SettingsFragment())
                 .commit();
 
         getSupportFragmentManager().beginTransaction()
-                .add(FindVersionFragment.show(chameleonMiniDevice), "find_version_fragment_id")
+                .add(FindVersionFragment.show(chameleonMiniRevGDevice), "find_version_fragment_id")
                 .commit();
     }
 

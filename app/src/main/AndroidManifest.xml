@@ -96,7 +96,7 @@
             android:parentActivityName=".device.proxmark3.ui.Proxmark3Activity"/>
 
         <activity
-            android:name=".device.chameleonmini.ui.ChameleonMiniActivity"
+            android:name=".device.chameleonmini.ui.ChameleonMiniRevGActivity"
             android:label="@string/chameleon_mini_activity_name"
             android:parentActivityName=".device.ui.DevicesActivity"/>
 
