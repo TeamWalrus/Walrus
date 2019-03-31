@@ -27,10 +27,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.DialogPreference;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.util.AttributeSet;
 import android.widget.NumberPicker;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -42,7 +40,7 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
     private int value;
     private static final int MAX_VALUE = 8;
     private static final int MIN_VALUE = 1;
-    private int mDialogLayoutResId = R.xml.preferences_chameleon_mini;
+    private int mDialogLayoutResId = R.xml.preferences_chameleon_mini_rev_g;
 
     public ChameleonMiniSlotPickerPreference(Context context) {
         this(context, null);

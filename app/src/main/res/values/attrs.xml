@@ -24,4 +24,9 @@
         <attr name="editable" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="ChameleonMiniSlotPickerPreference">
+        <attr name="minSlot" format="integer"/>
+        <attr name="maxSlot" format="integer"/>
+    </declare-styleable>
+
 </resources>

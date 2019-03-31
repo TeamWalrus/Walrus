@@ -38,15 +38,18 @@ import com.bugfuzz.android.projectwalrus.device.ReadCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.UsbCardDevice;
 import com.bugfuzz.android.projectwalrus.device.WriteOrEmulateCardDataOperation;
 import com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniRevGActivity;
+import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
+import com.google.common.primitives.Bytes;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Logger;
 
 @CardDevice.Metadata(
-        name = "Chameleon Mini",
+        name = "Chameleon Mini Rev.G",
         iconId = R.drawable.drawable_chameleon_mini,
         supportsRead = {MifareCardData.class},
         supportsWrite = {},
@@ -320,59 +323,113 @@ public class ChameleonMiniRevGDevice extends LineBasedUsbSerialCardDevice
                 chameleonMiniRevGDevice.setReceiving(true);
 
                 try {
-                    chameleonMiniRevGDevice.send("CONFIG=MF_CLASSIC_1K");
+                    MifareCardData mifareCardData = (MifareCardData) getCardData();
+                    String cardType = mifareCardData.getTypeDetailInfo();
+                    String chameleonMiniRevGConfig;
+                    String chameleonMiniRevGSetting = "SETTING=";
+                    String chameleonMiniRevGUpload = "UPLOAD";
 
-                    chameleonMiniRevGDevice.receive(new WatchdogReceiveSink<String, Boolean>(3000) {
-                        private int state;
+                    // Set chameleon mini card slot to default value from preferences
+                    // fall back value is 1
+                    // TODO: prompt user for card slot or use default
+                    int slot =
+                            PreferenceManager.getDefaultSharedPreferences(context)
+                                    .getInt(ChameleonMiniRevGActivity.DEFAULT_SLOT_KEY,
+                                            1);
+                    chameleonMiniRevGDevice.send(chameleonMiniRevGSetting + slot);
+                    String lineSetting = chameleonMiniRevGDevice.receive(1000);
+                    if (lineSetting == null || !lineSetting.equals("100:OK")) {
+                        throw new IOException(context.getString(
+                                R.string.command_error, chameleonMiniRevGSetting, lineSetting));
+                    }
 
-                        @Override
-                        public Boolean onReceived(String in) throws IOException {
-                            switch (state) {
-                                case 0:
-                                    if (!in.equals("100:OK")) {
-                                        throw new IOException(context.getString(
-                                                R.string.command_error, "CONFIG=", in));
-                                    }
+                    // Check  type of card 1k or 4k.. and Issue chameleon mini config command
+                    // TODO: This will change when mifareCardData can return card type
+                    if (cardType.matches(".*Classic\\s1K.*")) {
+                        chameleonMiniRevGConfig = "CONFIG=MF_CLASSIC_1K";
+                    } else if (cardType.matches(".*Classic\\s4K.*")){
+                        chameleonMiniRevGConfig = "CONFIG=MF_CLASSIC_4K";
+                    } else {
+                        throw new IOException("Failed to set Chameleon Mini Rev G card type using CONFIG= command");
+                    }
+                    chameleonMiniRevGDevice.send(chameleonMiniRevGConfig);
+                    String lineConfig = chameleonMiniRevGDevice.receive(1000);
+                    Logger.getAnonymousLogger().info("Response: " + lineConfig);
+                    if (lineConfig == null || !lineConfig.equals("100:OK")) {
+                        throw new IOException(context.getString(
+                                R.string.command_error, chameleonMiniRevGConfig, lineConfig));
+                    }
 
-                                    int slot =
-                                            PreferenceManager.getDefaultSharedPreferences(context)
-                                                    .getInt(ChameleonMiniRevGActivity.DEFAULT_SLOT_KEY,
-                                                            1);
-                                    chameleonMiniRevGDevice.send("SETTING=" + slot);
+                    // Flatten card data into Mifare1k blob to send over XModem
+                    byte[] mifare1k = new byte[0];
+                    for (int i = 0; i < 64; ++i) {
+                        MifareCardData.Block block = mifareCardData.getBlocks().get(i);
+                        byte[] toAdd;
+                        if (block != null) {
+                            toAdd = block.data;
+                        } else {
+                            toAdd = new byte[16];
+                        }
+                        mifare1k = Bytes.concat(mifare1k, toAdd);
+                    }
+                    Logger.getAnonymousLogger().info("Mifare1k result: "
+                            + MiscUtils.bytesToHex(mifare1k, false));
 
-                                    ++state;
+                    // Issue chameleon mini Upload command
+                    chameleonMiniRevGDevice.send(chameleonMiniRevGUpload);
+                    String lineUpload = chameleonMiniRevGDevice.receive(1000);
+                    if (lineUpload == null || !lineUpload.equals("110:WAITING FOR XMODEM")) {
+                        throw new IOException(context.getString(
+                                R.string.command_error, chameleonMiniRevGUpload, lineUpload));
+                    }
+
+                    // Switch to bytewise mode and send Mifare1k card data to chameleon mini via XModem
+                    chameleonMiniRevGDevice.setBytewise(true);
+                    try {
+                        int currentBlock = 1;
+                        byte[] dataBlock;
+
+                        while(true){
+                            byte result = chameleonMiniRevGDevice.receiveByte(1000);
+
+                            switch (result){
+                                // if 21 = <NAK>
+                                case 21 :
                                     break;
 
-                                case 1:
-                                    if (!in.equals("100:OK")) {
-                                        throw new IOException(context.getString(
-                                                R.string.command_error, "SETTING=", in));
-                                    }
-
-                                    MifareCardData mifareCardData = (MifareCardData) getCardData();
-                                    chameleonMiniRevGDevice.send(
-                                            "UID=" + String.format("%08x", mifareCardData.uid));
-
-                                    ++state;
+                                // if 6 = <ACK>
+                                case 6 :
+                                    currentBlock++;
                                     break;
 
-                                case 2:
-                                    if (!in.equals("100:OK")) {
-                                        throw new IOException(context.getString(
-                                                R.string.command_error, "UID=", in));
-                                    }
-
-                                    return true;
+                                default:
+                                    throw new IOException("Unknown byte: " + result);
                             }
 
-                            return null;
-                        }
+                            // Check if the current block is the last, if it is send EOT
+                            int totalBlocks = mifare1k.length / 128;
+                            if (currentBlock - 1 == totalBlocks) {
+                                chameleonMiniRevGDevice.sendByte((byte) 0x04);
+                                continue;
+                            } else if (currentBlock - 1 >= totalBlocks) {
+                                break;
+                            }
 
-                        @Override
-                        public boolean wantsMore() {
-                            return shouldContinueCallback.shouldContinue();
+                            // Send current block
+                            chameleonMiniRevGDevice.sendByte((byte)0x01);
+                            chameleonMiniRevGDevice.sendByte((byte)currentBlock);
+                            chameleonMiniRevGDevice.sendByte((byte)(255 - currentBlock));
+                            int i;
+                            int checkSum = 0;
+                            for (i = 0; i < 128; i++){
+                                chameleonMiniRevGDevice.sendByte(mifare1k[(currentBlock - 1) * 128 + i]);
+                                checkSum = checkSum + mifare1k[(currentBlock - 1) * 128 + i];
+                            }
+                            chameleonMiniRevGDevice.sendByte((byte)checkSum);
                         }
-                    });
+                    } finally {
+                        chameleonMiniRevGDevice.setBytewise(false);
+                    }
                 } finally {
                     chameleonMiniRevGDevice.setReceiving(false);
                 }

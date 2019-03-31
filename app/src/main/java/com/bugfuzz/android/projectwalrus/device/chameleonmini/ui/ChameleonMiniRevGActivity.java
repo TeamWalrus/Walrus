@@ -41,7 +41,7 @@ import java.io.IOException;
 public class ChameleonMiniRevGActivity extends AppCompatActivity
         implements FindVersionFragment.OnFindVersionCallback {
 
-    public static final String DEFAULT_SLOT_KEY = "default_chameleon_cardslot";
+    public static final String DEFAULT_SLOT_KEY = "default_chameleon_rev_g_cardslot";
     private static final String EXTRA_DEVICE =
             "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevGActivity"
                     + ".EXTRA_DEVICE";
@@ -104,7 +104,7 @@ public class ChameleonMiniRevGActivity extends AppCompatActivity
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            addPreferencesFromResource(R.xml.preferences_chameleon_mini);
+            addPreferencesFromResource(R.xml.preferences_chameleon_mini_rev_g);
         }
 
         @Override
