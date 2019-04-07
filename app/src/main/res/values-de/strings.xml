@@ -123,8 +123,8 @@
     <string name="choose_source">Gerät auswählen</string>
     <string name="open_source_preference">Open Source</string>
     <string name="delete_all_cards_preference">Alle Karten löschen</string>
-    <string name="default_card_slot_preference">Standard-Kartensteckplatz</string>
-    <string name="default_card_slot_preference_message">Standard <xliff:g>Chameleon-Mini</xliff:g>-Kartensteckplatz
+    <string name="card_slot_preference">Standard-Kartensteckplatz</string>
+    <string name="card_slot_preference_message">Standard <xliff:g>Chameleon-Mini</xliff:g>-Kartensteckplatz
         für Emulation
     </string>
     <string name="device_disconnected">

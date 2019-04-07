@@ -24,7 +24,7 @@
 
     <com.bugfuzz.android.projectwalrus.device.chameleonmini.ui.ChameleonMiniSlotPickerPreference
         android:defaultValue="1"
-        android:key="chameleon_mini_rev_g_cardslot"
+        android:key="chameleon_mini_rev_e_rebooted_cardslot"
         android:summary="@string/card_slot_preference_message"
         android:title="@string/card_slot_preference"
         style="@style/AppPreference.DialogPreference"

@@ -33,21 +33,21 @@ import android.widget.TextView;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.device.CardDevice;
 import com.bugfuzz.android.projectwalrus.device.CardDeviceManager;
-import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevGDevice;
+import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevERebootedDevice;
 import com.bugfuzz.android.projectwalrus.device.ui.FindVersionFragment;
 
 import java.io.IOException;
 
-public class ChameleonMiniRevGActivity extends AppCompatActivity
+public class ChameleonMiniRevERebootedActivity extends AppCompatActivity
         implements FindVersionFragment.OnFindVersionCallback {
 
-    public static final String SLOT_KEY = "chameleon_mini_rev_g_cardslot";
+    public static final String SLOT_KEY = "chameleon_mini_rev_e_rebooted_cardslot";
     private static final String EXTRA_DEVICE =
-            "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevGActivity"
+            "com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevERebootedActivity"
                     + ".EXTRA_DEVICE";
 
-    public static Intent getStartActivityIntent(Context context, ChameleonMiniRevGDevice device) {
-        Intent intent = new Intent(context, ChameleonMiniRevGActivity.class);
+    public static Intent getStartActivityIntent(Context context, ChameleonMiniRevERebootedDevice device) {
+        Intent intent = new Intent(context, ChameleonMiniRevERebootedActivity.class);
 
         intent.putExtra(EXTRA_DEVICE, device.getId());
 
@@ -57,7 +57,7 @@ public class ChameleonMiniRevGActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chameleon_mini_rev_g);
+        setContentView(R.layout.activity_chameleon_mini_rev_e_rebooted);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
@@ -72,20 +72,20 @@ public class ChameleonMiniRevGActivity extends AppCompatActivity
             finish();
             return;
         }
-        ChameleonMiniRevGDevice chameleonMiniRevGDevice;
+        ChameleonMiniRevERebootedDevice chameleonMiniRevERebootedDevice;
         try {
-            chameleonMiniRevGDevice = (ChameleonMiniRevGDevice) cardDevice;
+            chameleonMiniRevERebootedDevice = (ChameleonMiniRevERebootedDevice) cardDevice;
         } catch (ClassCastException e) {
             finish();
             return;
         }
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings, new ChameleonMiniRevGActivity.SettingsFragment())
+                .replace(R.id.settings, new ChameleonMiniRevERebootedActivity.SettingsFragment())
                 .commit();
 
         getSupportFragmentManager().beginTransaction()
-                .add(FindVersionFragment.show(chameleonMiniRevGDevice), "find_version_fragment_id")
+                .add(FindVersionFragment.show(chameleonMiniRevERebootedDevice), "find_version_fragment_id")
                 .commit();
     }
 
@@ -104,7 +104,7 @@ public class ChameleonMiniRevGActivity extends AppCompatActivity
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            addPreferencesFromResource(R.xml.preferences_chameleon_mini_rev_g);
+            addPreferencesFromResource(R.xml.preferences_chameleon_mini_rev_e_rebooted);
         }
 
         @Override

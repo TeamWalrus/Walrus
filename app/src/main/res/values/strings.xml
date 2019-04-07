@@ -288,18 +288,24 @@
 
 
     <!--
-        ChameleonMiniRevGActivity
+        ChameleonMiniActivity
     -->
 
     <!-- Activity title -->
-    <string name="chameleon_mini_activity_name" translatable="false">Chameleon Mini Rev.G</string>
+    <string name="chameleon_mini_rev_g_activity_name" translatable="false">Chameleon Mini</string>
+
+    <!-- Activity title -->
+    <string name="chameleon_mini_rev_e_rebooted_activity_name" translatable="false">Chameleon Mini</string>
 
     <!-- Device name -->
-    <string name="chameleon_mini" translatable="false">Chameleon Mini</string>
+    <string name="chameleon_mini_rev_g" translatable="false">Rev.G</string>
+
+    <!-- Device name -->
+    <string name="chameleon_mini_rev_e_rebooted" translatable="false">Rev.E Rebooted</string>
 
 
     <!--
-        ChameleonMiniRevGDevice
+        ChameleonMiniDevice
         Proxmark3Device
     -->
 
@@ -323,7 +329,7 @@
 
 
     <!--
-        ChameleonMiniRevGDevice
+        ChameleonMiniDevice
     -->
 
     <!-- Shown in error message -->
@@ -535,14 +541,14 @@
 
 
     <!--
-        preferences_chameleon_mini_rev_g
+        preferences_chameleon_mini
     -->
 
     <!-- Preference title -->
-    <string name="default_card_slot_preference">Default Card Slot</string>
+    <string name="card_slot_preference">Card Slot</string>
 
     <!-- Preference message -->
-    <string name="default_card_slot_preference_message">Default <xliff:g>Chameleon Mini</xliff:g> card
+    <string name="card_slot_preference_message"><xliff:g>Chameleon Mini</xliff:g> card
         keySlot to be used for emulation
     </string>
 

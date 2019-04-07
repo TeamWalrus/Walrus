@@ -38,9 +38,9 @@ import com.bugfuzz.android.projectwalrus.R;
 public class ChameleonMiniSlotPickerPreference extends DialogPreference {
 
     private int value;
-    private static final int MAX_VALUE = 8;
-    private static final int MIN_VALUE = 1;
-    private int mDialogLayoutResId = R.xml.preferences_chameleon_mini_rev_g;
+    private final int minSlot;
+    private final int maxSlot;
+    //private int mDialogLayoutResId = R.xml.preferences_chameleon_mini_rev_g;
 
     public ChameleonMiniSlotPickerPreference(Context context) {
         this(context, null);
@@ -58,6 +58,11 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
     public ChameleonMiniSlotPickerPreference(Context context, AttributeSet attrs,
             int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ChameleonMiniSlotPickerPreference,
+                defStyleAttr, 0);
+        minSlot = a.getInt(R.styleable.ChameleonMiniSlotPickerPreference_minSlot, 1);
+        maxSlot = a.getInt(R.styleable.ChameleonMiniSlotPickerPreference_maxSlot, 8);
+        a.recycle();
     }
 
     public int getValue() {
@@ -80,10 +85,10 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
         setValue(restorePersistedValue ? getPersistedInt(value) : (int) defaultValue);
     }
 
-    @Override
+    /*@Override
     public int getDialogLayoutResource() {
         return mDialogLayoutResId;
-    }
+    }*/
 
     public static class NumberPickerFragment extends DialogFragment {
 
@@ -96,8 +101,8 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
         @Override
         public Dialog onCreateDialog(final Bundle savedInstanceState) {
             final NumberPicker np = new NumberPicker(getContext());
-            np.setMinValue(MIN_VALUE);
-            np.setMaxValue(MAX_VALUE);
+            np.setMinValue(getPreference().minSlot);
+            np.setMaxValue(getPreference().maxSlot);
             np.setValue(getPreference().getValue());
             boolean wrapInScrollView = false;
             return new MaterialDialog.Builder(getActivity())

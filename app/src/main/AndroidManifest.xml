@@ -97,7 +97,12 @@
 
         <activity
             android:name=".device.chameleonmini.ui.ChameleonMiniRevGActivity"
-            android:label="@string/chameleon_mini_activity_name"
+            android:label="@string/chameleon_mini_rev_g_activity_name"
+            android:parentActivityName=".device.ui.DevicesActivity"/>
+
+        <activity
+            android:name=".device.chameleonmini.ui.ChameleonMiniRevERebootedActivity"
+            android:label="@string/chameleon_mini_rev_e_rebooted_activity_name"
             android:parentActivityName=".device.ui.DevicesActivity"/>
 
         <activity
