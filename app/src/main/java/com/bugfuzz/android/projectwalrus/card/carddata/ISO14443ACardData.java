@@ -23,7 +23,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.util.MiscUtils;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -33,16 +32,12 @@ import org.parceler.Parcel;
 import org.parceler.ParcelPropertyConverter;
 
 import java.math.BigInteger;
-import java.util.Random;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
 @SuppressWarnings({"WeakerAccess", "checkstyle:abbreviationaswordinname"})
 @Parcel
-@CardData.Metadata(
-        name = "ISO 14443A",
-        iconId = R.drawable.drawable_mifare
-)
 public class ISO14443ACardData extends CardData {
 
     private static final TypeMatcher[] TYPE_MATCHERS;
@@ -51,8 +46,11 @@ public class ISO14443ACardData extends CardData {
         /*
            Scraped from:
                https://www.nxp.com/docs/en/application-note/AN10833.pdf
+                   (https://web.archive.org/web/20170823151734/https://www.nxp.com/docs/en/application-note/AN10833.pdf)
                http://nfc-tools.org/index.php/ISO14443A
+                   (https://web.archive.org/web/20180607101049/http://nfc-tools.org/index.php/ISO14443A)
                Proxmark3 client's CmdHF14AInfo
+                   (as of commit 2bb7f7e327df13f288b2b98a71bb390c516cc982)
         */
         TYPE_MATCHERS = new TypeMatcher[]{
                 new StaticTypeMatcher(new Type("NXP", "MIFARE Ultralight"), 0x0044, 0x00),
@@ -101,24 +99,22 @@ public class ISO14443ACardData extends CardData {
     public short atqa;
     public BigInteger uid;
     public byte sak;
-    public int[] ats;
+    public byte[] ats;
 
     public ISO14443ACardData() {
         uid = BigInteger.ZERO;
-        ats = new int[]{};
+        ats = new byte[]{};
     }
 
-    public ISO14443ACardData(short atqa, BigInteger uid, byte sak, int[] ats) {
+    public ISO14443ACardData(ISO14443ACardData other) {
+        this(other.atqa, other.uid, other.sak, other.ats);
+    }
+
+    public ISO14443ACardData(short atqa, BigInteger uid, byte sak, byte[] ats) {
         this.atqa = atqa;
         this.uid = uid;
         this.sak = sak;
         this.ats = ats;
-    }
-
-    @SuppressWarnings("unused")
-    public static ISO14443ACardData newDebugInstance() {
-        return new ISO14443ACardData((short) 0x0004, new BigInteger(32, new Random()), (byte) 0x08,
-                new int[]{});
     }
 
     @Nullable
@@ -145,7 +141,12 @@ public class ISO14443ACardData extends CardData {
 
     @Override
     public String getHumanReadableText() {
-        return uid.toString(16);
+        byte[] uidArray = uid.toByteArray();
+        if (uidArray[0] == 0x00) {
+            return "UID " + MiscUtils.bytesToHex(Arrays.copyOfRange(uidArray,1,uidArray.length), false);
+        } else {
+            return "UID " + MiscUtils.bytesToHex(uidArray, false);
+        }
     }
 
     @Override

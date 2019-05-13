@@ -18,6 +18,7 @@
   ~ along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
+<!--suppress ALL -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.bugfuzz.android.projectwalrus">
@@ -98,14 +99,20 @@
             android:parentActivityName=".device.proxmark3.ui.Proxmark3Activity"/>
 
         <activity
-            android:name=".device.chameleonmini.ui.ChameleonMiniActivity"
-            android:label="@string/chameleon_mini_activity_name"
+            android:name=".device.chameleonmini.ui.ChameleonMiniRevGActivity"
+            android:label="@string/chameleon_mini_rev_g_activity_name"
+            android:parentActivityName=".device.ui.DevicesActivity"/>
+
+        <activity
+            android:name=".device.chameleonmini.ui.ChameleonMiniRevERebootedActivity"
+            android:label="@string/chameleon_mini_rev_e_rebooted_activity_name"
             android:parentActivityName=".device.ui.DevicesActivity"/>
 
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/settings_activity_name"
-            android:parentActivityName=".card.ui.WalletActivity"/>
+            android:parentActivityName=".card.ui.WalletActivity"
+            android:theme="@style/AppPreference.SettingActivity"/>
 
         <activity
             android:name=".ui.WebViewActivity"

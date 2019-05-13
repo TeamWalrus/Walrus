@@ -19,12 +19,15 @@
 
 package com.bugfuzz.android.projectwalrus.device;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 
 import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 
@@ -36,51 +39,67 @@ import java.lang.annotation.Target;
 
 public abstract class CardDevice {
 
-    public static final String ACTION_STATUS_UPDATE =
-            "com.bugfuzz.android.projectwalrus.device.CardDevice.ACTION_STATUS_UPDATE";
-
-    private static final String EXTRA_DEVICE_ID =
-            "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_DEVICE_ID";
-    private static final String EXTRA_STATUS =
-            "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_STATUS";
+    public static final String ACTION_STATUS_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDevice.ACTION_STATUS_UPDATE";
+    private static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_DEVICE_ID";
+    private static final String EXTRA_STATUS = "com.bugfuzz.android.projectwalrus.device.CardDevice.EXTRA_STATUS";
 
     private static int nextId;
 
-    protected final Context context;
+    protected Context context;
 
-    private final int id;
+    private int id;
 
     private String status;
 
-<<<<<<< HEAD
-    CardDevice(Context context) {
-=======
-    protected CardDevice(Context context, String status) {
->>>>>>> 4abb030e... Add BTHackDevice
+    public void CardDevice(Context context, String status) {
         this.context = context;
 
         id = nextId++;
+
+        setStatus(status);
     }
 
-    public int getId() {
-        return id;
+    public void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink) throws IOException {
+      throw new UnsupportedOperationException("Device does not support card reading");
     }
 
-    public void readCardData(Class<? extends CardData> cardDataClass, CardDataSink cardDataSink)
-            throws IOException {
-        throw new UnsupportedOperationException("Device does not support card reading");
+    public void writeCardData(CardData cardData, CardDataOperationCallbacks callbacks) throws IOException {
+      throw new UnsupportedOperationException("Device does not support card writing");
     }
 
-    public void writeCardData(CardData cardData, CardDataOperationCallbacks callbacks)
-            throws IOException {
-        throw new UnsupportedOperationException("Device does not support card writing");
+    public void emulateCardData(CardData cardData, CardDataOperationCallbacks callbacks) throws IOException {
+      throw new UnsupportedOperationException("Device does not support card emulation");
     }
 
-    public void emulateCardData(CardData cardData, CardDataOperationCallbacks callbacks)
-            throws IOException {
-        throw new UnsupportedOperationException("Device does not support card emulation");
+
+    public interface CardDataOperationCallbacks {
+      @UiThread
+      void onStarting();
+
+      @WorkerThread
+      boolean shouldContinue();
+
+      @WorkerThread
+      void onError(String message);
+
+      @WorkerThread
+      void onFinish();
     }
 
+    public interface CardDataSink extends CardDataOperationCallbacks {
+      @WorkerThread
+      void onCardData(CardData cardData);
+    }
+
+    @UiThread
+    public abstract void createReadCardDataOperation(AppCompatActivity activity,
+            Class<? extends CardData> cardDataClass, int callbackId);
+
+    @UiThread
+    public abstract void createWriteOrEmulateDataOperation(AppCompatActivity activity,
+            CardData cardData, boolean write, int callbackId);
+
+    // TODO: use LiveData instead (and elsewhere)?
     protected void setStatus(String status) {
         this.status = status;
 
@@ -94,6 +113,7 @@ public abstract class CardDevice {
         return status;
     }
 
+    @Nullable
     public Intent getDeviceActivityIntent(Context context) {
         return null;
     }
@@ -101,25 +121,23 @@ public abstract class CardDevice {
     void close() {
     }
 
-    public interface CardDataOperationCallbacks {
+    public int getId() {
+        return id;
+    }
+
+    protected void ensureOperationCreatedCallbackSupported(Activity activity) {
+        if (!(activity instanceof OnOperationCreatedCallback)) {
+            throw new IllegalArgumentException("Activity doesn't implement operation creation "
+                    + "callback interface");
+        }
+    }
+
+    public interface OnOperationCreatedCallback {
         @UiThread
-        void onStarting();
-
-        @WorkerThread
-        boolean shouldContinue();
-
-        @WorkerThread
-        void onError(String message);
-
-        @WorkerThread
-        void onFinish();
+        void onOperationCreated(CardDeviceOperation operation, int callbackId);
     }
 
-    public interface CardDataSink extends CardDataOperationCallbacks {
-        @WorkerThread
-        void onCardData(CardData cardData);
-    }
-
+    // TODO: this should really be treated as any other async operation
     public interface Versioned {
         String getVersion() throws IOException;
     }

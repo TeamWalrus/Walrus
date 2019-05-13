@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2018 Daniel Underhay & Matthew Daley.
+  ~
+  ~ This file is part of Walrus.
+  ~
+  ~ Walrus is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Walrus is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!--suppress ALL -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <!--suppress AndroidUnknownAttribute -->
+    <data class="StaticKeyMifareReadStepDialogBinding">
+
+        <import type="com.bugfuzz.android.projectwalrus.card.carddata.MifareCardData.KeySlot"/>
+        <import type="com.bugfuzz.android.projectwalrus.card.carddata.MifareReadStep.KeySlotAttempts"/>
+
+        <variable name="viewModel"
+                  type="com.bugfuzz.android.projectwalrus.card.carddata.ui.StaticKeyMifareReadStepDialogViewModel"/>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/blocks_to_read"
+            android:text="@string/blocks_to_read"/>
+
+        <EditText
+            android:id="@+id/blocks_to_read"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textNoSuggestions"
+            android:text="@={viewModel.blocks}"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:labelFor="@id/key"
+            android:text="@string/key"/>
+
+        <EditText
+            android:id="@+id/key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textNoSuggestions"
+            android:text="@={viewModel.key}"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:labelFor="@id/keySlots"
+            android:text="@string/key_slots"/>
+
+        <LinearLayout
+            android:id="@+id/keySlots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@{viewModel.keySlotAttempts == KeySlotAttempts.A || viewModel.keySlotAttempts == KeySlotAttempts.BOTH}"
+                android:onCheckedChanged="@{(view, isChecked) -> viewModel.onSlotCheckedChanged(KeySlot.A, isChecked)}"
+                android:text="A"
+                tools:ignore="HardcodedText"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:checked="@{viewModel.keySlotAttempts == KeySlotAttempts.B || viewModel.keySlotAttempts == KeySlotAttempts.BOTH}"
+                android:onCheckedChanged="@{(view, isChecked) -> viewModel.onSlotCheckedChanged(KeySlot.B, isChecked)}"
+                android:text="B"
+                tools:ignore="HardcodedText"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

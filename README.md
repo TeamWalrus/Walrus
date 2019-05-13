@@ -1,26 +1,33 @@
 # Walrus
+[![Build Status](https://img.shields.io/badge/status-alpha-orange.svg)](https://play.google.com/store/apps/details?id=com.bugfuzz.android.projectwalrus&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+[![GitHub release](https://img.shields.io/badge/release-v0.2.1-blue.svg)](https://github.com/TeamWalrus/Walrus/releases/)
+[![GPLv3 license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE)
+[![Slack invite](https://img.shields.io/badge/chat-on%20slack-00aac1.svg)](https://join.slack.com/t/walrusapp/shared_invite/enQtNDI0NDc1MDMzNDk0LTk5MTdhNWE4ZjBkNDBkOTkzY2EzMWE0ZWU3MDEwZjYzZmViZDFlZDQ5NDU1ZmZkZTdkMWVjMDVjYzkxZDFjODA)
 
-*Make the most of your card cloning devices.*
+## Intro
 
-Walrus enables you to use your existing contactless card cloning devices with your Android device. Using a simple interface, cards can be read into a wallet to be written or emulated later.
+Walrus is an Android app for contactless card cloning devices such as the Proxmark3 and Chameleon Mini. Using a simple interface in the style of Google Pay, access control cards can be read into a wallet to be written or emulated later.
 
-Designed for physical security assessors, Walrus has features that will help you in your next red team engagement.
+Designed for physical security assessors during red team engagements, Walrus supports basic tasks such as card reading, writing and emulation, as well as device-specific functionality such as antenna tuning and device configuration. More advanced functionality such as location tagging makes handling multiple targets easy, while bulk reading allows the stealthy capture of multiple cards while “war-walking” a target.
 
-**For end-user information such as what Walrus is, how to install it and how to use it, check out the [Walrus website](https://walrus.app/)! This readme outlines information intended for developers.**
+## Installing
 
-## Licensing
+<a href="https://play.google.com/store/apps/details?id=com.bugfuzz.android.projectwalrus&amp;pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" width="160"></a>
 
-Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](mailto:team@walrus.app)!) and is [open source](https://github.com/TeamWalrus/Walrus), released under the [GNU General Public License v3.0](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE).
+## Documentation
+
+[Documentation and Getting Started](https://walrus.app/docs/getting-started/). For end-user information such as what Walrus is, and how it can be used in the field, check out the [Walrus website](https://walrus.app/)!
+
+
+## Development
+
+Walrus is developed by Daniel Underhay and Matthew Daley (a.k.a. [Team Walrus](mailto:team@walrus.app)!) and is [![Open Source](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/TeamWalrus/Walrus/blob/master/LICENSE)
 
 ## Building
 
 Walrus is a standard Android Studio project. At this stage there are no unusual dependencies or build steps beyond the usual cloning of the repository and opening the project in Android Studio.
 
 TODO: When we refresh and remove the current Google Maps API key from the repo, we'll need to point out that this needs to be generated and set manually if maps are needed.
-
-## Testing
-
-We don't currently have a test suite, we're naughty ;\_;
 
 ## Codebase
 
@@ -46,10 +53,42 @@ The current layout of Walrus's source code is as follows:
 
     * `/util`: Miscellaneous.
 
+
+## Device Support
+Here’s a table of the current devices / card type pairs we support and in what manner.
+
+**Key**: R = reading, W = writing, E = emulating, WIP = work in progress
+
+|                   | Proxmark3 Original | Pm3 Evo | Pm3 RDV4 | Pm3 Iceman Fork | Chameleon Mini Rev.G | C.M Rev.E Rebooted |
+|-----------------------|:------------------:|:-------:|:--------:|:---------------:|:--------------------:|:--------------:|
+| **HID Prox**          | R / W              | R / W   | R / W    | R / W           | -                    | -              |
+| **ISO14443A - UID**   | -                  | -       | -        |  -              | R / E                | WIP            |
+| **Mifare Ultralight** | -                  | -       | -        |  -              | WIP                  | WIP            |
+| **Mifare Classic 1K** | R / W              | R / W   | R / W    | R / W           | WIP                  | WIP            |
+| **Mifare Classic 4K** | ?                  | ?       | ?        | ?               | ?                    | ?              |
+| **Mifare Classic 4B** | ?                  | ?       | ?        | ?               | ?                    | ?              |
+| **Mifare Classic 7B** | ?                  | ?       | ?        | ?               | ?                    | ?              |
+| **Mifare DESFire**    | ?                  | ?       | ?        | ?               | ?                    | ?              |
+
 ## Contributing
 
 We welcome all kinds of contributions and bug reports, big or small! Development takes place at our [GitHub repository](https://github.com/TeamWalrus/Walrus). There you can file issues (both bugs and enhancement requests) and submit pull requests.
+Feel free to join our [Slack channel](https://join.slack.com/t/walrusapp/shared_invite/enQtNDI0NDc1MDMzNDk0LTk5MTdhNWE4ZjBkNDBkOTkzY2EzMWE0ZWU3MDEwZjYzZmViZDFlZDQ5NDU1ZmZkZTdkMWVjMDVjYzkxZDFjODA). 
 
 During the initial development of Walrus, changes to the codebase are likely to be frequent and wide-ranging, so if you want to work on a feature, it's wise to reach out first to ensure that your hard work won't be soon obsoleted. After our first full release we hope to gain stability and bring in some of the additional resources expected of a project today, such as a proper test suite and continuous integration.
 
 One area we'd love your help with is contributing translations! If you think you can help us out translating our [Android string resources](https://github.com/TeamWalrus/Walrus/blob/master/app/src/main/res/values/strings.xml) to another language, please get in touch!
+
+
+## FAQ
+
+### App was working before the update!?
+If the app crashes after the update, please try clear the app cache and app data. We have some made pretty big changes in release __0.2.1__ which include database scheme changes. Unfortunately - this means that you will lose the cards currently stored in the database. This sucks, we know - sorry! We are working on a way to make future updates not do this.
+
+
+This can be done in your Android Settings as follows:
+ 1. Open the Android Settings menu.
+ 2. Find Apps (or Applications, depending on your device) in the Settings menu, then locate the Walrus app.
+ 3. Tap on Storage, and then tap the "Clear Data" and "Clear Cache" buttons.
+
+![clear-app-data](https://pbs.twimg.com/media/D1XRwBaU4AAZK5j.jpg:small)

@@ -67,6 +67,10 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
         data = BigInteger.ZERO;
     }
 
+    public HIDCardData(HIDCardData other) {
+        this(other.data, other.dataBinaryFormatId);
+    }
+
     public HIDCardData(BigInteger data) {
         this.data = data;
 
@@ -88,6 +92,7 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
         this.dataBinaryFormatId = dataBinaryFormatId;
     }
 
+    // TODO: separate out start sentinels?
     public static void setup(Context context) {
         String facilityCode = context.getString(R.string.hid_facility_code);
         String cardNumber = context.getString(R.string.hid_card_number);
@@ -132,7 +137,7 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
 
                 new BinaryFormat(context.getString(R.string.hid_37_bit),
                         Arrays.asList(
-                                new FixedElement(null, null, 37, null, BigInteger.ONE),
+                                new FixedElement(null, null, 37, null, BigInteger.ZERO),
                                 new OpaqueElement("card_number", cardNumber, 1, 35, false),
                                 new ParityElement(null, null, 36, 1, 18, 1, 0, 18, true),
                                 new ParityElement(null, null, 0, 1, 1, 1, 0, 18, false)
@@ -140,7 +145,7 @@ public class HIDCardData extends CardData implements ComponentSourceAndSink {
 
                 new BinaryFormat(context.getString(R.string.hid_37_bit_with_facility_code),
                         Arrays.asList(
-                                new FixedElement(null, null, 37, null, BigInteger.ONE),
+                                new FixedElement(null, null, 37, null, BigInteger.ZERO),
                                 new OpaqueElement("facility_code", facilityCode, 1 + 19, 16, false),
                                 new OpaqueElement("card_number", cardNumber, 1, 19, false),
                                 new ParityElement(null, null, 36, 1, 18, 1, 0, 18, true),

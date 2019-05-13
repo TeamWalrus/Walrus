@@ -35,7 +35,7 @@ public abstract class CardData implements Serializable, Cloneable {
         // noinspection unchecked
         return new Class[]{
                 HIDCardData.class,
-                ISO14443ACardData.class
+                MifareCardData.class
         };
     }
 

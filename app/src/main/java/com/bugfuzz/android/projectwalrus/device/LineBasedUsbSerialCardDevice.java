@@ -30,10 +30,11 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
 
     private final String delimiter;
     private final String charsetName;
+    private boolean bytewise = false;
 
     protected LineBasedUsbSerialCardDevice(Context context, UsbDevice usbDevice, String delimiter,
-            String charsetName) throws IOException {
-        super(context, usbDevice);
+            String charsetName, String status) throws IOException {
+        super(context, usbDevice, status);
 
         this.delimiter = delimiter;
         this.charsetName = charsetName;
@@ -41,6 +42,12 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
 
     @Override
     protected Pair<String, Integer> sliceIncoming(byte[] in) {
+        if (bytewise) {
+            if (in.length == 0) {
+                return null;
+            }
+            return new Pair<>(new String(new byte[]{in[0]}), 1);
+        }
         String string;
         try {
             string = new String(in, charsetName);
@@ -59,10 +66,28 @@ public abstract class LineBasedUsbSerialCardDevice extends UsbSerialCardDevice<S
 
     @Override
     protected byte[] formatOutgoing(String out) {
+        if (bytewise) {
+            return new byte[] { (byte) out.charAt(0) };
+        }
         try {
             return (out + delimiter).getBytes(charsetName);
         } catch (UnsupportedEncodingException e) {
             return null;
         }
+    }
+
+    protected void setBytewise(boolean bytewise) {
+        this.bytewise = bytewise;
+    }
+
+    protected void sendByte(byte b) {
+        try {
+            send(new String(new byte[]{b}, "ISO-8859-1"));
+        } catch (UnsupportedEncodingException e) {
+        }
+    }
+
+    protected byte receiveByte(long timeout) {
+        return receive(timeout).getBytes()[0];
     }
 }

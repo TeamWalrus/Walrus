@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 
 import java.util.HashSet;

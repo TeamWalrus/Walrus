@@ -44,6 +44,8 @@ public class Proxmark3TuneFragment extends Fragment {
         return fragment;
     }
 
+    // TODO: check for activity callback implementation on attach
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

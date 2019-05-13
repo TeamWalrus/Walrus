@@ -30,7 +30,7 @@ import java.util.List;
 
 public class MultiComponent extends ContainerComponent {
 
-    public static final int VERTICAL_SPACE_PX = 12;
+    private static final int VERTICAL_SPACE_DP = 12;
 
     private final List<Component> children;
     private final LinearLayout viewGroup;
@@ -59,7 +59,7 @@ public class MultiComponent extends ContainerComponent {
     public static View createSpacer(Context context) {
         Space space = new Space(context);
         space.setMinimumHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                MultiComponent.VERTICAL_SPACE_PX, space.getResources().getDisplayMetrics()));
+                MultiComponent.VERTICAL_SPACE_DP, space.getResources().getDisplayMetrics()));
         return space;
     }
 

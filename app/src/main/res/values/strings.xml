@@ -30,9 +30,26 @@
     <!-- Application name -->
     <string name="app_name" translatable="false">Walrus</string>
 
+    <!--
+        WalletActivity
+    -->
 
     <!--
-        BulkReadCardDataSink
+        Update Notification Dialog
+    -->
+
+    <!-- Update notification title displayed when the application starts -->
+    <string name="update_notification_title">Important Notification</string>
+
+    <!-- Update notification message displayed when the application starts -->
+    <string name="update_notification_message">Hi Alpha Testers! ❤️\n\nSome upcoming releases will contain new features such as extended device and card support and general bugfixes. However, future releases will most likely also contain database schema as well as architecture changes to an extent where it is difficult for us to correctly migrate databases across. This means any existing cards will be lost between future releases until we leave alpha or we notify otherwise.\n\nWe recommend you manually store card information in the meantime and apologize for any inconvenience caused!\n\n- Team Walrus</string>
+
+    <!-- Update notification button text-->
+    <string name="update_notification_neutral_button">OK</string>
+
+
+    <!--
+        BulkReadCardDataOperationRunner
     -->
 
     <!-- Toast displayed when bulk card reading fails with an error -->
@@ -69,15 +86,13 @@
     <!-- Dialog title -->
     <string name="bulk_reading_cards">Bulk reading cards</string>
 
+    <!-- Shown for operations with devices that have gone -->
+    <string name="device_gone">Disconnected device</string>
+
 
     <!--
         BulkReadCardsService
     -->
-
-    <!-- Toast displayed when bulk card reading fails with an error -->
-    <string name="failed_start_bulk_reading">Failed to start bulk reading cards:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
 
     <!-- Name for bulk read notification channel -->
     <string name="bulk_read_notification_channel_name">Bulk card reads</string>
@@ -180,21 +195,6 @@
     <!-- Dialog title -->
     <string name="choose_card_type">Choose card type</string>
 
-    <!-- Toast displayed when card writing fails with an error -->
-    <string name="failed_to_write">Failed to write card:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
-
-    <!-- Toast displayed when card emulation fails with an error -->
-    <string name="failed_to_emulate">Failed to emulate card:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
-
-    <!-- Toast displayed when card reading fails with an error -->
-    <string name="failed_to_read">Failed to read card:
-        <xliff:g id="error">%1$s</xliff:g>
-    </string>
-
     <!-- Dialog message -->
     <string name="discard_card_changes">Discard changes?</string>
 
@@ -209,6 +209,9 @@
 
     <!-- Card device status -->
     <string name="emulating_card">Emulating card</string>
+
+    <!-- Card device status -->
+    <string name="performing_operation">Performing operation</string>
 
     <!-- Card device status -->
     <string name="waiting_for_card">Waiting for card</string>
@@ -232,7 +235,43 @@
 
 
     <!--
-        ChameleonMiniActivity
+        CardDataIOView
+    -->
+
+    <!-- Textual description of read image -->
+    <string name="read_description">Reading</string>
+
+    <!-- Textual description of write image -->
+    <string name="write_description">Writing</string>
+
+
+    <!--
+        CardDataIOOperationFragment
+    -->
+
+    <!-- Toast displayed when card writing fails with an error -->
+    <string name="failed_to_write">Failed to write card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when card emulation fails with an error -->
+    <string name="failed_to_emulate">Failed to emulate card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when card reading fails with an error -->
+    <string name="failed_to_read">Failed to read card:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+    <!-- Toast displayed when some other card operation fails with an error -->
+    <string name="failed_to_perform_operation">Failed to perform operation:
+        <xliff:g id="error">%1$s</xliff:g>
+    </string>
+
+
+    <!--
+        ChameleonMiniRevGActivity
         Proxmark3Activity
     -->
 
@@ -253,10 +292,16 @@
     -->
 
     <!-- Activity title -->
-    <string name="chameleon_mini_activity_name" translatable="false">Chameleon Mini</string>
+    <string name="chameleon_mini_rev_g_activity_name" translatable="false">Chameleon Mini</string>
+
+    <!-- Activity title -->
+    <string name="chameleon_mini_rev_e_rebooted_activity_name" translatable="false">Chameleon Mini</string>
 
     <!-- Device name -->
-    <string name="chameleon_mini" translatable="false">Chameleon Mini</string>
+    <string name="chameleon_mini_rev_g" translatable="false">Rev.G</string>
+
+    <!-- Device name -->
+    <string name="chameleon_mini_rev_e_rebooted" translatable="false">Rev.E Rebooted</string>
 
 
     <!--
@@ -278,6 +323,9 @@
 
     <!-- Shown in error message -->
     <string name="get_version_timeout">Timed out while getting version</string>
+
+    <!-- Error message when operation performed on device that has already gone -->
+    <string name="device_is_gone">Device is gone</string>
 
 
     <!--
@@ -383,8 +431,19 @@
 
 
     <!--
-        menu_mywallet
-        menu_mywallet_fab
+        menu_view_card
+    -->
+
+    <!-- Shown in toolbar menu -->
+    <string name="delete">Delete</string>
+
+    <!-- Shown in toolbar menu -->
+    <string name="duplicate">Duplicate</string>
+
+
+    <!--
+        menu_wallet
+        menu_wallet_fab
     -->
 
     <!-- Shown in floating action button speed dial -->
@@ -401,7 +460,7 @@
 
 
     <!--
-        menu_mywallet
+        menu_wallet
         WalletActivity
     -->
 
@@ -410,14 +469,21 @@
 
 
     <!--
-        menu_view_card
+        MifareCardData
     -->
 
-    <!-- Shown in toolbar menu -->
-    <string name="delete">Delete</string>
 
-    <!-- Shown in toolbar menu -->
-    <string name="duplicate">Duplicate</string>
+    <!--
+        MifareReadSetupDialogFragment
+    -->
+
+    <!-- Dialog title -->
+    <string name="setup_mifare_read">Setup MIFARE read</string>
+
+    <!-- Button -->
+    <string name="add">Add</string>
+
+    <string name="read_steps">Read steps</string>
 
 
     <!--
@@ -429,7 +495,7 @@
 
 
     <!--
-        PickCardDataSourceDialogFragment
+        PickCardDataTargetDialogFragment
     -->
 
     <!-- Dialog title -->
@@ -479,11 +545,11 @@
     -->
 
     <!-- Preference title -->
-    <string name="default_card_slot_preference">Default Card Slot</string>
+    <string name="card_slot_preference">Card Slot</string>
 
     <!-- Preference message -->
-    <string name="default_card_slot_preference_message">Default <xliff:g>Chameleon Mini</xliff:g> card
-        slot to be used for emulation
+    <string name="card_slot_preference_message"><xliff:g>Chameleon Mini</xliff:g> card
+        keySlot to be used for emulation
     </string>
 
 
@@ -595,6 +661,29 @@
 
 
     <!--
+        StaticKeyMifareReadStepDialogFragment
+    -->
+
+    <!-- Dialog title -->
+    <string name="add_mifare_static_key_read_step">Add static key read step</string>
+
+    <!-- Dialog title -->
+    <string name="edit_mifare_static_key_read_step">Edit static key read step</string>
+
+    <!-- Label -->
+    <string name="blocks_to_read">Block(s) to read</string>
+
+    <!-- Label -->
+    <string name="key">Key</string>
+
+    <!-- Label -->
+    <string name="key_slots">Key slots</string>
+
+    <!-- Shown when both A and B slots are picked -->
+    <string name="both">both</string>
+
+
+    <!--
         UsbCardDevice
     -->
 
@@ -656,6 +745,5 @@
     -->
     <string name="dummy_to_catch_unsorted_stuff"
             tools:keep="@string/dummy_to_catch_unsorted_stuff"/>
-
 
 </resources>

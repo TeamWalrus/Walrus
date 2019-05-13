@@ -30,7 +30,8 @@ import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.bugfuzz.android.projectwalrus.device.bthack.BTHackDevice;
-import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniDevice;
+import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevGDevice;
+import com.bugfuzz.android.projectwalrus.device.chameleonmini.ChameleonMiniRevERebootedDevice;
 import com.bugfuzz.android.projectwalrus.device.proxmark3.Proxmark3Device;
 
 import java.io.IOException;
@@ -47,23 +48,18 @@ import java.util.Set;
 public enum CardDeviceManager {
     INSTANCE;
 
-    public static final String ACTION_UPDATE =
-            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_UPDATE";
-    public static final String EXTRA_DEVICE_WAS_ADDED =
-            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
-    public static final String EXTRA_DEVICE_ID =
-            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
-    public static final String EXTRA_DEVICE_NAME =
-            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
+    public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.ACTION_UPDATE";
+    public static final String EXTRA_DEVICE_WAS_ADDED = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_WAS_ADDED";
+    public static final String EXTRA_DEVICE_ID = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_ID";
+    public static final String EXTRA_DEVICE_NAME = "com.bugfuzz.android.projectwalrus.device.CardDeviceManager.EXTRA_DEVICE_NAME";
 
-    private static final String ACTION_USB_PERMISSION_RESULT =
-            "com.bugfuzz.android.projectwalrus.device.CardDeviceManager"
-                    + ".ACTION_USB_PERMISSION_RESULT";
+    private static final String ACTION_USB_PERMISSION_RESULT ="com.bugfuzz.android.projectwalrus.device.CardDeviceManager" + ".ACTION_USB_PERMISSION_RESULT";
 
     private static final Set<Class<? extends UsbCardDevice>> usbCardDeviceClasses =
             new HashSet<Class<? extends UsbCardDevice>>(Arrays.asList(
                     Proxmark3Device.class,
-                    ChameleonMiniDevice.class));
+                    ChameleonMiniRevGDevice.class,
+                    ChameleonMiniRevERebootedDevice.class));
 
     private final Map<Integer, CardDevice> cardDevices = new LinkedHashMap<>();
 
@@ -104,7 +100,7 @@ public enum CardDeviceManager {
                         Intent permissionIntent = new Intent(ACTION_USB_PERMISSION_RESULT);
                         permissionIntent.setClass(context, UsbPermissionReceiver.class);
                         usbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(
-                                context, 0, permissionIntent, 0));
+                                context,    0, permissionIntent, 0));
 
                         askingForUsbPermission = true;
                     }
@@ -264,7 +260,7 @@ public enum CardDeviceManager {
     }
 
     public void attachBTHack(Context context, BluetoothDevice bluetoothDevice) {
-        BTHackDevice btHackDevice = new BTHackDevice(context, bluetoothDevice);
-        cardDevices.put(btHackDevice.getId(), btHackDevice);
+      BTHackDevice btHackDevice = new BTHackDevice(context, bluetoothDevice);
+      cardDevices.put(btHackDevice.getId(), btHackDevice);
     }
 }

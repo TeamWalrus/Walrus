@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
         name = "Bluetooth Wiegand",
         iconId = R.drawable.drawable_arduino,
         supportsRead = {HIDCardData.class},
-        supportsWrite = {},
+        supportsWrite = {HIDCardData.class},
         supportsEmulate = {}
 )
 public class BTHackDevice extends CardDevice {
@@ -61,12 +61,12 @@ public class BTHackDevice extends CardDevice {
     private volatile boolean reading = false;
 
     public BTHackDevice(Context context, BluetoothDevice bluetoothDevice) {
-        super(context, context.getString(R.string.idle));
+//        super(context, context.getString(R.string.idle));
 
         new Thread(new IORunnable(bluetoothDevice)).start();
     }
 
-    @Override
+    //@Override
     @UiThread
     public void createReadCardDataOperation(final AppCompatActivity activity,
             Class<? extends CardData> cardDataClass, final int callbackId) {
@@ -78,6 +78,9 @@ public class BTHackDevice extends CardDevice {
         } else {
             throw new RuntimeException("Invalid card data class");
         }
+    }
+
+    private void ensureOperationCreatedCallbackSupported(AppCompatActivity activity) {
     }
 
     @Override

@@ -19,68 +19,59 @@
 
 package com.bugfuzz.android.projectwalrus.device.chameleonmini.ui;
 
+
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.preference.DialogPreference;
+import android.support.v4.app.DialogFragment;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bugfuzz.android.projectwalrus.R;
+
 
 public class ChameleonMiniSlotPickerPreference extends DialogPreference {
 
-    private static final int MAX_VALUE = 8;
-    private static final int MIN_VALUE = 1;
-
-    private static final boolean WRAP_SELECTOR_WHEEL = true;
-
-    private NumberPicker np;
     private int value;
+    private final int minSlot;
+    private final int maxSlot;
+    //private int mDialogLayoutResId = R.xml.preferences_chameleon_mini_rev_g;
+
+    public ChameleonMiniSlotPickerPreference(Context context) {
+        this(context, null);
+    }
 
     public ChameleonMiniSlotPickerPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public ChameleonMiniSlotPickerPreference(Context context, AttributeSet attrs,
             int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+        this(context, attrs, defStyleAttr, defStyleAttr);
     }
 
-    @Override
-    protected View onCreateDialogView() {
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.CENTER;
-
-        np = new NumberPicker(getContext());
-        np.setLayoutParams(layoutParams);
-
-        FrameLayout dialogView = new FrameLayout(getContext());
-        dialogView.addView(np);
-
-        return dialogView;
+    public ChameleonMiniSlotPickerPreference(Context context, AttributeSet attrs,
+            int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ChameleonMiniSlotPickerPreference,
+                defStyleAttr, 0);
+        minSlot = a.getInt(R.styleable.ChameleonMiniSlotPickerPreference_minSlot, 1);
+        maxSlot = a.getInt(R.styleable.ChameleonMiniSlotPickerPreference_maxSlot, 8);
+        a.recycle();
     }
 
-    @Override
-    protected void onBindDialogView(View view) {
-        super.onBindDialogView(view);
-        np.setMinValue(MIN_VALUE);
-        np.setMaxValue(MAX_VALUE);
-        np.setWrapSelectorWheel(WRAP_SELECTOR_WHEEL);
-        np.setValue(getValue());
+    public int getValue() {
+        return value;
     }
 
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        if (positiveResult) {
-            np.clearFocus();
-            int newValue = np.getValue();
-            if (callChangeListener(newValue)) {
-                setValue(newValue);
-            }
-        }
+    public void setValue(int value) {
+        this.value = value;
+        persistInt(value);
     }
 
     @Override
@@ -89,16 +80,53 @@ public class ChameleonMiniSlotPickerPreference extends DialogPreference {
     }
 
     @Override
-    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        setValue(restorePersistedValue ? getPersistedInt(1) : (Integer) defaultValue);
+    protected void onSetInitialValue(boolean restorePersistedValue,
+            Object defaultValue) {
+        setValue(restorePersistedValue ? getPersistedInt(value) : (int) defaultValue);
     }
 
-    private int getValue() {
-        return this.value;
+    /*@Override
+    public int getDialogLayoutResource() {
+        return mDialogLayoutResId;
+    }*/
+
+    public static class NumberPickerFragment extends DialogFragment {
+
+        private ChameleonMiniSlotPickerPreference getPreference(){
+            return ((ChameleonMiniSlotPickerPreference)
+                    (((DialogPreference.TargetFragment)getParentFragment()).findPreference(getArguments().getString("key"))));
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(final Bundle savedInstanceState) {
+            final NumberPicker np = new NumberPicker(getContext());
+            np.setMinValue(getPreference().minSlot);
+            np.setMaxValue(getPreference().maxSlot);
+            np.setValue(getPreference().getValue());
+            boolean wrapInScrollView = false;
+            return new MaterialDialog.Builder(getActivity())
+                    .title("Default Card Slot")
+                    .customView(np, wrapInScrollView)
+                    .positiveText("Set")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                @NonNull DialogAction which) {
+                            getPreference().setValue(np.getValue());
+                            dialog.dismiss();
+                        }
+                    })
+                    .negativeText(R.string.cancel_button)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .build();
+        }
     }
 
-    private void setValue(int value) {
-        this.value = value;
-        persistInt(this.value);
-    }
 }

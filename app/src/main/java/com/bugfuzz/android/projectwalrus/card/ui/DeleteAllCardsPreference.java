@@ -19,14 +19,19 @@
 
 package com.bugfuzz.android.projectwalrus.card.ui;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.preference.DialogPreference;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.Card;
 import com.bugfuzz.android.projectwalrus.card.DatabaseHelper;
@@ -40,34 +45,48 @@ public class DeleteAllCardsPreference extends DialogPreference {
 
     public DeleteAllCardsPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        setDialogLayoutResource(R.layout.dialog_delete_all_cards);
-        setPositiveButtonText(R.string.delete_button);
-        setNegativeButtonText(android.R.string.cancel);
     }
 
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case DialogInterface.BUTTON_POSITIVE:
-                try {
-                    TableUtils.clearTable(
-                            OpenHelperManager.getHelper(getContext(), DatabaseHelper.class)
-                                    .getConnectionSource(),
-                            Card.class);
-                } catch (SQLException e) {
-                    return;
-                }
-                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(
-                        new Intent(QueryUtils.ACTION_WALLET_UPDATE));
+    public static class ConfirmDialogFragment extends DialogFragment {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(final Bundle savedInstanceState) {
+            return new MaterialDialog.Builder(getActivity())
+                    .title(R.string.warning)
+                    .titleColorRes(R.color.secondaryColor)
+                    .content(R.string.delete_all_cards)
+                    .positiveText(R.string.delete_button)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                @NonNull DialogAction which) {
+                            try {
+                                TableUtils.clearTable(
+                                        OpenHelperManager.getHelper(getContext(),
+                                                DatabaseHelper.class)
+                                                .getConnectionSource(),
+                                        Card.class);
+                            } catch (SQLException e) {
+                                return;
+                            }
+                            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(
+                                    new Intent(QueryUtils.ACTION_WALLET_UPDATE));
 
-                Toast.makeText(getContext(), R.string.all_cards_deleted, Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), R.string.all_cards_deleted,
+                                    Toast.LENGTH_LONG).show();
 
-                dialog.dismiss();
-                break;
-
-            case DialogInterface.BUTTON_NEGATIVE:
-                dialog.cancel();
-                break;
+                            dialog.dismiss();
+                        }
+                    })
+                    .negativeText(R.string.cancel_button)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .build();
         }
     }
 }

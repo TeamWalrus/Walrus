@@ -32,8 +32,8 @@ import android.location.Location;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.bugfuzz.android.projectwalrus.card.carddata.HIDCardData;
@@ -114,7 +114,8 @@ public class WalrusApplication extends Application {
 
         context = getApplicationContext();
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini_rev_g, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_chameleon_mini_rev_e_rebooted, false);
 
         HIDCardData.setup(context);
 

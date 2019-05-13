@@ -28,12 +28,15 @@ android {
     defaultConfig {
         applicationId "com.bugfuzz.android.projectwalrus"
         minSdkVersion 19
-        targetSdkVersion 27
-        versionCode 1
-        versionName "0.1"
+        targetSdkVersion 28
+        versionCode 4
+        versionName "0.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "google_maps_key",
                 (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+    }
+    dataBinding {
+        enabled = true
     }
     if (new File("../walrus-keystore.properties").exists()) {
         def keystorePropertiesFile = rootProject.file("../walrus-keystore.properties")
@@ -58,7 +61,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             if (new File("../walrus-keystore.properties").exists())
@@ -69,19 +72,20 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:preference-v7:27.1.1'
+    implementation 'com.android.support:preference-v14:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.github.felHR85:UsbSerial:4.5.1'
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.j256.ormlite:ormlite-android:5.0'
     implementation 'com.j256.ormlite:ormlite-core:5.0'
     implementation 'io.github.yavski:fab-speed-dial:1.0.6'

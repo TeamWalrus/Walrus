@@ -41,9 +41,7 @@ import com.bugfuzz.android.projectwalrus.card.carddata.CardData;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public class BulkReadCardDataSink implements CardDevice.CardDataSink {
-
-    public static final String ACTION_UPDATE =
-            "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
+    public static final String ACTION_UPDATE = "com.bugfuzz.android.projectwalrus.device.BulkReadCardDataSink.ACTION_UPDATE";
     private static int nextId;
     private final int id;
     private final Context context;
@@ -82,47 +80,45 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
 
     @Override
     @WorkerThread
-<<<<<<< HEAD:app/src/main/java/com/bugfuzz/android/projectwalrus/device/BulkReadCardDataSink.java
     public void onCardData(CardData cardData) {
         if (cardData.equals(lastCardData)) {
-=======
-    public void onResult(CardData cardData) {
-        if (cardData.equals(lastCardData) && System.currentTimeMillis() < lastCardDataTime + 5000) {
->>>>>>> 4abb030e... Add BTHackDevice:app/src/main/java/com/bugfuzz/android/projectwalrus/device/BulkReadCardDataOperationRunner.java
-            return;
-        }
-        lastCardData = cardData;
-        lastCardDataTime = System.currentTimeMillis();
+            if (cardData.equals(lastCardData) && System.currentTimeMillis() < lastCardDataTime + 5000) {
+                return;
+            }
+            lastCardData = cardData;
+            lastCardDataTime = System.currentTimeMillis();
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        if (sharedPref.getBoolean("pref_key_bulk_read_vibrate", true)) {
-            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            if (vibrator != null) {
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(300, 255));
-                } else {
-                    vibrator.vibrate(300);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            if (sharedPref.getBoolean("pref_key_bulk_read_vibrate", true)) {
+                Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                if (vibrator != null) {
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(300, 255));
+                    } else {
+                        vibrator.vibrate(300);
+                    }
                 }
             }
+
+            final Card card = Card.copyOf(cardTemplate);
+            // noinspection NonAtomicOperationOnVolatileField
+            card.name += " (" + ++numberOfCardsRead + ")";
+            card.setCardData(cardData, WalrusApplication.getCurrentBestLocation());
+
+            new Handler(context.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    LocalBroadcastManager localBroadcastManager =
+                            LocalBroadcastManager.getInstance(context);
+
+                    databaseHelper.getCardDao().create(card);
+                    localBroadcastManager.sendBroadcast(
+                            new Intent(QueryUtils.ACTION_WALLET_UPDATE));
+
+                    localBroadcastManager.sendBroadcast(new Intent(ACTION_UPDATE));
+                }
+            });
         }
-
-        final Card card = Card.copyOf(cardTemplate);
-        // noinspection NonAtomicOperationOnVolatileField
-        card.name += " (" + ++numberOfCardsRead + ")";
-        card.setCardData(cardData, WalrusApplication.getCurrentBestLocation());
-
-        new Handler(context.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                LocalBroadcastManager localBroadcastManager =
-                        LocalBroadcastManager.getInstance(context);
-
-                databaseHelper.getCardDao().create(card);
-                localBroadcastManager.sendBroadcast(new Intent(QueryUtils.ACTION_WALLET_UPDATE));
-
-                localBroadcastManager.sendBroadcast(new Intent(ACTION_UPDATE));
-            }
-        });
     }
 
     @Override
@@ -149,13 +145,12 @@ public class BulkReadCardDataSink implements CardDevice.CardDataSink {
     @WorkerThread
     public void onFinish() {
         OpenHelperManager.releaseHelper();
-
         onStopCallback.onStop(this);
     }
 
     public CardDevice getCardDevice() {
-        return cardDevice;
-    }
+            return cardDevice;
+        }
 
     public Class<? extends CardData> getCardDataClass() {
         return cardDataClass;

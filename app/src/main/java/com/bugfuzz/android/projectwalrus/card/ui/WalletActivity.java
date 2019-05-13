@@ -20,11 +20,16 @@
 package com.bugfuzz.android.projectwalrus.card.ui;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
@@ -72,15 +77,39 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     private SearchView sv;
 
+    private boolean isFirstRun = true;
+    private SharedPreferences mSharedPreferences;
+
     public WalletActivity() {
         super(DatabaseHelper.class);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.App_WithTransitions);
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_mywallet);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isFirstRun = mSharedPreferences.getBoolean("isFirstRun", true);
+
+        if(isFirstRun){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.update_notification_title);
+            builder.setMessage(R.string.update_notification_message);
+            builder.setNeutralButton(R.string.update_notification_neutral_button, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    isFirstRun = false;
+                    mSharedPreferences.edit().putBoolean("isFirstRun", isFirstRun).apply();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
+
+        setContentView(R.layout.activity_wallet);
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
@@ -164,7 +193,7 @@ public class WalletActivity extends OrmLiteBaseAppCompatActivity<DatabaseHelper>
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_mywallet, menu);
+        getMenuInflater().inflate(R.menu.menu_wallet, menu);
         return true;
     }
 
