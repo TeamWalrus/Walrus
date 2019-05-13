@@ -43,15 +43,15 @@
             <ImageView
                 android:layout_width="128dp"
                 android:layout_height="96dp"
-                android:padding="8dp"
-                app:srcCompat="@drawable/drawable_chameleon_mini"
+                android:paddingTop="8dp"
+                app:srcCompat="@drawable/drawable_chameleon_mini_rev_g"
                 tools:ignore="ContentDescription"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/chameleon_mini"
+                android:text="@string/chameleon_mini_rev_g"
                 android:textAlignment="center"
                 android:textSize="24sp"/>
 
