@@ -53,22 +53,25 @@ The current layout of Walrus's source code is as follows:
 
     * `/util`: Miscellaneous.
 
+## Hardware
+Team Walrus is powered by [Lab401](https://twitter.com/lab_401), our official hardware sponsor 🥳 Check out their [website](https://lab401.com/) for some great deals on hardware!
 
 ## Device Support
 Here’s a table of the current devices / card type pairs we support and in what manner.
 
-**Key**: R = reading, W = writing, E = emulating, WIP = work in progress
+**Key**: R = reading, W = writing, U = upload
 
 |                   | Proxmark3 Original | Pm3 Evo | Pm3 RDV4 | Pm3 Iceman Fork | Chameleon Mini Rev.G | C.M Rev.E Rebooted |
 |-----------------------|:------------------:|:-------:|:--------:|:---------------:|:--------------------:|:--------------:|
 | **HID Prox**          | R / W              | R / W   | R / W    | R / W           | -                    | -              |
-| **ISO14443A - UID**   | -                  | -       | -        |  -              | R / E                | WIP            |
-| **Mifare Ultralight** | -                  | -       | -        |  -              | WIP                  | WIP            |
-| **Mifare Classic 1K** | R / W              | R / W   | R / W    | R / W           | WIP                  | WIP            |
+| **ISO14443A - UID**   | -                  | -       | -        |  -              | R / U                | U              |
+| **Mifare Ultralight** | -                  | -       | -        |  -              | -                    | -              |
+| **Mifare Classic 1K** | R / W              | R / W   | R / W    | R / W           | U                    | U              |
 | **Mifare Classic 4K** | ?                  | ?       | ?        | ?               | ?                    | ?              |
 | **Mifare Classic 4B** | ?                  | ?       | ?        | ?               | ?                    | ?              |
 | **Mifare Classic 7B** | ?                  | ?       | ?        | ?               | ?                    | ?              |
 | **Mifare DESFire**    | ?                  | ?       | ?        | ?               | ?                    | ?              |
+
 
 ## Contributing
 
@@ -78,17 +81,3 @@ Feel free to join our [Slack channel](https://join.slack.com/t/walrusapp/shared_
 During the initial development of Walrus, changes to the codebase are likely to be frequent and wide-ranging, so if you want to work on a feature, it's wise to reach out first to ensure that your hard work won't be soon obsoleted. After our first full release we hope to gain stability and bring in some of the additional resources expected of a project today, such as a proper test suite and continuous integration.
 
 One area we'd love your help with is contributing translations! If you think you can help us out translating our [Android string resources](https://github.com/TeamWalrus/Walrus/blob/master/app/src/main/res/values/strings.xml) to another language, please get in touch!
-
-
-## FAQ
-
-### App was working before the update!?
-If the app crashes after the update, please try clear the app cache and app data. We have some made pretty big changes in release __0.2.1__ which include database scheme changes. Unfortunately - this means that you will lose the cards currently stored in the database. This sucks, we know - sorry! We are working on a way to make future updates not do this.
-
-
-This can be done in your Android Settings as follows:
- 1. Open the Android Settings menu.
- 2. Find Apps (or Applications, depending on your device) in the Settings menu, then locate the Walrus app.
- 3. Tap on Storage, and then tap the "Clear Data" and "Clear Cache" buttons.
-
-![clear-app-data](https://pbs.twimg.com/media/D1XRwBaU4AAZK5j.jpg:small)
