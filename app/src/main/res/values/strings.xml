@@ -456,6 +456,9 @@
     <string name="devices">Devices</string>
 
     <!-- Shown as alternative to toolbar icon -->
+    <string name="bluetooth_devices">Bluetooth</string>
+
+    <!-- Shown as alternative to toolbar icon -->
     <string name="settings">Settings</string>
 
 
@@ -466,6 +469,22 @@
 
     <!-- Shown as placeholder text for card search in wallet and as alternative to toolbar icon -->
     <string name="search_cards">Search cards</string>
+
+    <!--
+            menu_add_bluetooth_device
+            BluetoothDevicesActivity
+        -->
+
+    <!-- Shown as placeholder text for Pairing new bluetooth device and as alternative to toolbar icon -->
+    <string name="pair_new_bluetooth_device">Pair New Device</string>
+
+    <!--
+                menu_add_new_device
+                DevicesActivity
+            -->
+
+    <!-- Shown as placeholder text for adding new device in devices activity and as alternative to toolbar icon -->
+    <string name="add_new_device">Add New Device</string>
 
 
     <!--
@@ -739,6 +758,8 @@
         connected
     </string>
 
+    <!-- Activity title -->
+    <string name="bluetooth_devices_activity_name">Paired Bluetooth Devices</string>
 
     <!--
         Unsorted stuff falls here...

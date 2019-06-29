@@ -27,7 +27,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -54,6 +53,7 @@ import com.bugfuzz.android.projectwalrus.card.OrmLiteBaseAppCompatActivity;
 import com.bugfuzz.android.projectwalrus.card.QueryUtils;
 import com.bugfuzz.android.projectwalrus.device.ui.BulkReadCardsActivity;
 import com.bugfuzz.android.projectwalrus.device.ui.DevicesActivity;
+import com.bugfuzz.android.projectwalrus.ui.BluetoothDevicesActivity;
 import com.bugfuzz.android.projectwalrus.ui.SettingsActivity;
 
 import java.util.List;

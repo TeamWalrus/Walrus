@@ -23,28 +23,10 @@
       xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/search"
-        android:icon="@drawable/ic_search_white_24px"
-        android:title="@string/search_cards"
+        android:id="@+id/add_new_device"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/pair_new_bluetooth_device"
         app:showAsAction="always"
         tools:ignore="AlwaysShowAction"/>
 
-    <item
-        android:id="@+id/bulk_read_cards"
-        android:icon="@drawable/ic_library_add_white_24px"
-        android:title="@string/bulk_read_cards"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction"/>
-
-    <item
-        android:id="@+id/devices"
-        android:orderInCategory="1"
-        android:title="@string/devices"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/settings"
-        android:orderInCategory="2"
-        android:title="@string/settings"
-        app:showAsAction="never"/>
 </menu>

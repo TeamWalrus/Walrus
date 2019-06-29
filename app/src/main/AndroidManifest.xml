@@ -27,6 +27,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
     <application
         android:name=".WalrusApplication"
         android:allowBackup="true"
@@ -120,6 +123,9 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.BluetoothDevicesActivity"
+            android:label="@string/bluetooth_devices_activity_name"
+            android:parentActivityName=".device.ui.DevicesActivity"/>
     </application>
-
 </manifest>
