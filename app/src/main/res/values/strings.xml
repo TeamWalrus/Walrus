@@ -30,6 +30,9 @@
     <!-- Application name -->
     <string name="app_name" translatable="false">Walrus</string>
 
+    <!-- Application version -->
+    <string name="app_version" translatable="false">Version</string>
+
     <!--
         WalletActivity
     -->

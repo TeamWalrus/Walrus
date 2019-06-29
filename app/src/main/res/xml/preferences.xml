@@ -47,6 +47,12 @@
 
     <PreferenceCategory android:title="@string/about_settings_preference">
 
+        <Preference
+            android:title="@string/app_version"
+            android:key="version"
+            android:summary="1.0">
+        </Preference>
+
         <Preference android:title="@string/open_source_preference">
             <intent android:action=".ui.WebViewActivity">
                 <!--suppress AndroidElementNotAllowed -->

@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
+import com.bugfuzz.android.projectwalrus.BuildConfig;
 import com.bugfuzz.android.projectwalrus.R;
 import com.bugfuzz.android.projectwalrus.card.ui.DeleteAllCardsPreference;
 
@@ -44,6 +45,9 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.preferences);
+            Preference versionPreference = findPreference( "version" );
+            String versionName = BuildConfig.VERSION_NAME;
+            versionPreference.setSummary(versionName);
         }
 
         @Override
