@@ -17,7 +17,7 @@
  * along with Walrus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bugfuzz.android.projectwalrus.device.walrusgand;
+package com.bugfuzz.android.projectwalrus.device.tusk;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
@@ -41,19 +41,19 @@ import java.math.BigInteger;
 import java.util.concurrent.Semaphore;
 
 @CardDevice.Metadata(
-        name = "Walrusgand",
-        iconId = R.drawable.drawable_walrusgand,
+        name = "Tusk",
+        iconId = R.drawable.drawable_tusk,
         supportsRead = {HIDCardData.class},
         supportsWrite = {},
         supportsEmulate = {}
 )
 @UsbCardDevice.UsbIds({@UsbCardDevice.UsbIds.Ids(vendorId = 0x1209, productId = 0xa420)})
-public class WalrusgandDevice extends LineBasedUsbSerialCardDevice {
+public class TuskDevice extends LineBasedUsbSerialCardDevice {
 
     private final Semaphore semaphore = new Semaphore(1);
 
     @Keep
-    public WalrusgandDevice(Context context, UsbDevice usbDevice) throws IOException {
+    public TuskDevice(Context context, UsbDevice usbDevice) throws IOException {
         super(context, usbDevice, "\r\n", "ISO-8859-1", context.getString(R.string.idle));
     }
 
@@ -105,18 +105,18 @@ public class WalrusgandDevice extends LineBasedUsbSerialCardDevice {
         @Override
         public void execute(Context context, ShouldContinueCallback shouldContinueCallback,
                 ResultSink resultSink) throws IOException {
-            WalrusgandDevice walrusgandDevice = (WalrusgandDevice) getCardDeviceOrThrow();
+            TuskDevice tuskDevice = (TuskDevice) getCardDeviceOrThrow();
 
-            if (!walrusgandDevice.tryAcquireAndSetStatus(context.getString(R.string.reading))) {
+            if (!tuskDevice.tryAcquireAndSetStatus(context.getString(R.string.reading))) {
                 throw new IOException(context.getString(R.string.device_busy));
             }
 
             try {
-                walrusgandDevice.setReceiving(true);
+                tuskDevice.setReceiving(true);
 
                 try {
                     while (shouldContinueCallback.shouldContinue()) {
-                        String line = walrusgandDevice.receive(500);
+                        String line = tuskDevice.receive(500);
                         if (line == null) {
                             continue;
                         }
@@ -131,10 +131,10 @@ public class WalrusgandDevice extends LineBasedUsbSerialCardDevice {
                         resultSink.onResult(hidCardData);
                     }
                 } finally {
-                    walrusgandDevice.setReceiving(false);
+                    tuskDevice.setReceiving(false);
                 }
             } finally {
-                walrusgandDevice.releaseAndSetStatus();
+                tuskDevice.releaseAndSetStatus();
             }
         }
 
