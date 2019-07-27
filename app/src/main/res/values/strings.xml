@@ -175,7 +175,7 @@
     </string>
 
     <!-- Dialog title -->
-    <string name="delete_card">Delete card</string>
+    <string name="delete_card">Delete Card</string>
 
     <!-- Warning when a user deletes a card -->
     <string name="delete_message">This action cannot be undone. Are you sure you want to continue?
@@ -357,7 +357,7 @@
     </string>
 
     <!-- Toast message shown after all cards have been deleted -->
-    <string name="all_cards_deleted">All cards deleted</string>
+    <string name="all_cards_deleted">All cards deleted!</string>
 
 
     <!--

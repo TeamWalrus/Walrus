@@ -19,13 +19,15 @@
   -->
 
 <resources>
-
-    <color name="primaryColor">#00aac1</color>
-    <color name="primaryLightColor">#5ddcf4</color>
-    <color name="primaryDarkColor">#007a91</color>
-    <color name="secondaryColor">#c11700</color>
-    <color name="secondaryLightColor">#fc542f</color>
-    <color name="secondaryDarkColor">#890000</color>
+    <color name="primaryColor">#455a64</color>
+    <color name="primaryLightColor">#718792</color>
+    <color name="primaryDarkColor">#1c313a</color>
+    <color name="secondaryColor">#00ddff</color>
+    <color name="secondaryLightColor">#6dffff</color>
+    <color name="secondaryDarkColor">#00abcc</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#212121</color>
+    <color name="warningTextColor">#b71c1c</color>
 
     <color name="primaryCardTextColor">#212121</color>
     <color name="primaryCardBackground">#cfd8dc</color>
@@ -33,5 +35,4 @@
     <color name="secondaryCardBackground">#374c4f</color>
 
     <color name="ic_launcher_background">#00AAC1</color>
-
 </resources>

@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/date_acquired"
-                android:textColor="@color/secondaryColor"/>
+                android:textColor="@color/secondaryTextColor"/>
 
             <TextView
                 android:id="@+id/dateAcquired"
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/location"
-                android:textColor="@color/secondaryColor"/>
+                android:textColor="@color/secondaryTextColor"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -133,7 +133,7 @@
                     android:layout_gravity="center"
                     android:background="@android:color/darker_gray"
                     android:text="@string/unknown"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/primaryTextColor"
                     android:visibility="gone"/>
 
             </FrameLayout>
@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/notes"
-                android:textColor="@color/secondaryColor"/>
+                android:textColor="@color/secondaryTextColor"/>
 
             <TextView
                 android:id="@+id/notes"
